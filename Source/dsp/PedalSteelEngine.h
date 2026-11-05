@@ -106,7 +106,9 @@ private:
         float vibratoEnv = 0.0f;
         double vibratoPhase = 0.0;
 
-        // Multi-Sample playback state
+        // Multi-Sample & Studio Phrase Articulation playback state
+        bool isPhraseSlice = false;
+        int phraseSliceIdx = 0;
         int multiSampleIdx = 0;
         double samplePos = 0.0;
 
@@ -208,5 +210,7 @@ private:
     void reassignChordRoles();
     int chooseBestStringForNote(int midiNote, float velocity, bool& outIsLegatoTransfer, float& outPrevBarMidi);
     int selectBestMultiSample(int midiNote, int style) const;
-    float readMultiSampleHermite(int sampleIdx, double pos) const;
+    int selectPhraseSlice(int midiNote, int style) const;
+    void readStereoMultiSampleHermite(int sampleIdx, double relPos, float& outL, float& outR) const;
+    void readStereoPhraseSliceHermite(int phraseIdx, double relPos, float& outL, float& outR) const;
 };

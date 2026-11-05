@@ -37,6 +37,7 @@ set(PEDALSTEEL_SOURCES
     Source/PluginEditor.cpp
     Source/Presets.cpp
     Source/dsp/PedalSteelEngine.cpp
+    Source/dsp/PedalSteelStudioBank.cpp
 )
 
 target_sources(PedalSteel PRIVATE ${PEDALSTEEL_SOURCES})
@@ -92,6 +93,7 @@ target_sources(PedalSteelRender PRIVATE
     tools/render/RenderMain.cpp
     Source/Presets.cpp
     Source/dsp/PedalSteelEngine.cpp
+    Source/dsp/PedalSteelStudioBank.cpp
 )
 target_include_directories(PedalSteelRender PRIVATE Source Source/dsp)
 target_compile_definitions(PedalSteelRender PRIVATE
