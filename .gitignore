@@ -1,0 +1,17 @@
+# CMake / Visual Studio build directory
+build/
+out/
+.vs/
+*.user
+*.suo
+*.sln
+*.vcxproj*
+
+# Intermediate WAV files (keep MP3s and UI screenshots)
+renders/*.wav
+references/*.wav
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
