@@ -69,46 +69,48 @@ int main() {
     juce::File outDir = juce::File::getCurrentWorkingDirectory().getChildFile("renders");
     outDir.createDirectory();
 
-    // 1. Sweet Georgia E9 (83 BPM, E Major) - Exact transcription of CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav
+    // 1. Sweet Georgia E9 (83 BPM, E Major) - Exact 100% diatonic E-Major transcription of CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav
     {
         std::vector<ScheduledMidiEvent> ev;
         auto noteOn  = [&](double t, int n, float v) { ev.push_back({ t, juce::MidiMessage::noteOn(1, n, v) }); };
         auto noteOff = [&](double t, int n)          { ev.push_back({ t, juce::MidiMessage::noteOff(1, n) }); };
 
-        // Phrase 1: F#4 (66) bending up to G#4 (68), then F#4 sliding down to E4 (64)
-        noteOn(0.02, 66, 0.80f);
-        noteOff(0.14, 66);
-        noteOn(0.15, 68, 0.84f); // Legato B-pedal pull F#4 -> G#4
-        noteOff(2.12, 68);
+        // Phrase 1: F#4 (66) bending up to G#4 (68) via B-pedal at 0.24s, then fresh pluck on F#4 at 2.17s sliding down to E4 (64) at 2.85s
+        noteOn(0.02, 66, 0.84f);
+        noteOff(0.23, 66);
+        noteOn(0.24, 68, 0.86f); // Smooth B-pedal pull F#4 -> G#4
+        noteOff(2.08, 68);       // Clean 90ms separation so F#4 at 2.17s is freshly plucked, not slid!
 
-        noteOn(2.18, 66, 0.88f);
-        noteOff(2.74, 66);
-        noteOn(2.75, 65, 0.78f);
-        noteOff(2.94, 65);
-        noteOn(2.95, 64, 0.82f); // Resolves to E4
-        noteOff(5.45, 64);
+        noteOn(2.17, 66, 0.88f); // Fresh fingerpick on F#4
+        noteOff(2.84, 66);
+        noteOn(2.85, 64, 0.84f); // Direct E-Major slide F#4 -> E4
+        noteOff(5.55, 64);
 
-        // Phrase 2: High B4 (71) stationary anchor while F#4 (66) bends obliquely to G#4 (68) and back to E4 (64)
-        noteOn(5.78, 71, 0.84f);
-        noteOn(6.50, 66, 0.86f);
-        noteOff(7.14, 66);
-        noteOn(7.15, 68, 0.86f); // Oblique pedal raise F#4 -> G#4 under stationary B4!
-        noteOff(7.96, 71);
-        noteOn(7.98, 71, 0.86f); // Re-plucked high B4 at t=7.98s before oblique release!
-        noteOff(8.22, 68);
-        noteOn(8.23, 66, 0.84f); // Oblique release G#4 -> F#4
-        noteOff(8.56, 66);
-        noteOn(8.57, 65, 0.76f);
-        noteOff(8.75, 65);
-        noteOn(8.76, 64, 0.80f); // Resolves to E4 + B4
-        noteOff(9.92, 64);
-        noteOff(9.92, 71);
+        // Phrase 2: High B4 (71) bell chime at 5.78s held as an oblique dyad while F#4 (66) -> G#4 (68) moves underneath,
+        // then fresh B4 re-pluck at 7.96s while G#4 -> F#4 -> E4 resolves underneath!
+        noteOn(5.78, 71, 0.86f); // String 5 (B4) rings out across the dyad!
 
-        // Pickup note at t=9.96s: E4 -> F#4
-        noteOn(9.96, 64, 0.76f);
-        noteOff(10.08, 64);
-        noteOn(10.09, 66, 0.82f);
-        noteOff(10.60, 66);
+        noteOn(6.50, 66, 0.86f); // Fresh pluck F#4 on String 1 under held B4
+        noteOff(7.13, 66);
+        noteOn(7.14, 68, 0.88f); // Oblique B-pedal pull F#4 -> G#4 under held B4
+
+        noteOff(7.90, 71);
+        noteOn(7.96, 71, 0.86f); // Fresh re-pluck on high B4 at 7.96s while G#4 stays held
+
+        noteOff(8.29, 68);
+        noteOn(8.30, 66, 0.84f); // Oblique B-pedal release G#4 -> F#4
+        noteOff(8.68, 66);
+        noteOn(8.69, 64, 0.82f); // Resolves cleanly to E4 under decaying B4
+        noteOff(9.90, 71);
+        noteOff(9.90, 64);
+
+        // Pickup note at t=9.96s: E4 -> F#4 -> E4
+        noteOn(9.96, 64, 0.78f);
+        noteOff(9.98, 64);
+        noteOn(9.99, 66, 0.84f);
+        noteOff(10.74, 66);
+        noteOn(10.75, 64, 0.78f);
+        noteOff(11.10, 64);
 
         renderSequenceToWav(0, 11.5, ev, outDir.getChildFile("01_sweet_georgia_EMaj.wav"));
     }
@@ -120,40 +122,34 @@ int main() {
         auto noteOff = [&](double t, int n)          { ev.push_back({ t, juce::MidiMessage::noteOff(1, n) }); };
 
         // Phrase 1: A4 (69) bending up to B4 (71) via A-pedal, then D5 (74) sliding down to A4 (69)
-        noteOn(0.02, 69, 0.82f);
+        noteOn(0.02, 69, 0.88f);
         noteOff(0.56, 69);
-        noteOn(0.57, 71, 0.86f); // Smooth A-pedal pull A4 -> B4
-        noteOn(1.98, 74, 0.88f); // High D5 enters while B4 rings
-        noteOff(2.38, 71);
-        noteOff(2.55, 74);
-        noteOn(2.56, 69, 0.82f); // Resolves to A4 + D5 dyad
-        noteOn(2.60, 74, 0.70f);
+        noteOn(0.57, 71, 0.92f); // Smooth crying A-pedal pull A4 -> B4
+        noteOff(1.94, 71);
+        noteOn(1.98, 74, 0.94f); // High D5 enters with metallic pick bite
+        noteOff(2.58, 74);
+        noteOn(2.59, 69, 0.88f); // Crying bar slide D5 -> A4 with warm 2nd-harmonic octave bloom
         noteOff(5.25, 69);
-        noteOff(5.25, 74);
 
-        // Phrase 2 (5.38s - 10.50s): C4 (60) + G4 (67) -> D4 (62) -> G4 (67) + D5 (74) -> A3/A4 sliding up to B3/B4
-        noteOn(5.38, 60, 0.88f);
-        noteOn(5.40, 67, 0.78f);
-        noteOff(5.96, 60);
-        noteOn(5.97, 62, 0.84f); // Legato slide C4 -> D4
-        noteOff(6.72, 67);
-        noteOn(6.74, 67, 0.84f); // G4 + D5 chime at 6.74s
-        noteOn(6.76, 74, 0.76f);
-        noteOff(7.92, 62);
-        noteOff(7.92, 67);
-        noteOff(7.92, 74);
+        // Phrase 2 (5.36s - 11.40s): C4 (60) -> D4 (62) -> G4 (67) -> A4 (69) -> B4 (71) -> E5 (76) -> F#5 (78) -> G5 (79)
+        noteOn(5.36, 60, 0.90f); // Low-mid C4 (with natural MS_5_HB_C4 H2=C5 and H3=G5 octave bloom!)
+        noteOff(5.88, 60);
+        noteOn(5.89, 62, 0.88f); // Smooth legato slide C4 -> D4
+        noteOn(6.70, 67, 0.90f); // G4 chime enters over ringing D4
+        noteOff(7.90, 62);
+        noteOff(7.90, 67);
 
-        // 8.00s: A3 (57) + A4 (69) + E5 (76) sliding up at 8.62s to B3 (59) + B4 (71)
-        noteOn(7.98, 57, 0.84f);
-        noteOn(8.00, 69, 0.88f);
-        noteOn(8.02, 76, 0.76f);
-        noteOff(8.60, 57);
-        noteOff(8.60, 69);
-        noteOn(8.61, 59, 0.84f);
-        noteOn(8.62, 71, 0.86f);
-        noteOff(10.60, 59);
-        noteOff(10.60, 71);
-        noteOff(10.60, 76);
+        // 7.98s: Pure crying A4 (69) sliding smoothly up at 8.58s to B4 (71), then E5 -> F#5 -> G5 resolution!
+        noteOn(7.98, 69, 0.92f);
+        noteOff(8.57, 69);
+        noteOn(8.58, 71, 0.90f); // Smooth A-pedal pull A4 -> B4 on the same string
+        noteOn(10.02, 76, 0.88f); // High E5 chime enters at 10.02s over held B4
+        noteOff(10.72, 76);
+        noteOn(10.73, 78, 0.86f); // Slides E5 -> F#5 -> G5
+        noteOff(10.85, 78);
+        noteOn(10.86, 79, 0.88f);
+        noteOff(11.35, 71);
+        noteOff(11.35, 79);
 
         renderSequenceToWav(1, 11.5, ev, outDir.getChildFile("02_hedonist_bootgaze_GMaj.wav"));
     }
@@ -163,9 +159,16 @@ int main() {
         std::vector<ScheduledMidiEvent> ev;
         auto noteOn  = [&](double t, int n, float v) { ev.push_back({ t, juce::MidiMessage::noteOn(1, n, v) }); };
         auto noteOff = [&](double t, int n)          { ev.push_back({ t, juce::MidiMessage::noteOff(1, n) }); };
-        auto bend    = [&](double t, float semitones) {
+        auto bend = [&](double t, float semitones) {
             int pw = juce::jlimit(0, 16383, 8192 + static_cast<int>(std::round((semitones / 7.0f) * 8191.0f)));
             ev.push_back({ t, juce::MidiMessage::pitchWheel(1, pw) });
+        };
+        auto slideCurve = [&](double t0, double t1, float s0, float s1) {
+            for (int k = 0; k <= 24; ++k) {
+                double u = static_cast<double>(k) / 24.0;
+                double shape = 0.5 * (1.0 - std::cos(3.14159265358979323846 * u));
+                bend(t0 + (t1 - t0) * u, s0 + (s1 - s0) * static_cast<float>(shape));
+            }
         };
 
         // Staggered pick entry: A5 (81) at 0.06s, then F#5 (78) at 0.54s!
@@ -173,10 +176,10 @@ int main() {
         noteOn(0.06, 81, 0.78f);
         noteOn(0.54, 78, 0.90f);
 
-        // Smooth 2nd-order tonebar slide down -7 semitones from F#5+A5 to B4+D5 (t=0.95s), hold, then slide back up to D5+F#5+A5 (t=2.05s)
-        bend(0.95, -7.0f);
-        bend(2.05, 0.0f);
-        noteOn(2.45, 74, 0.78f); // D5 joins F#5+A5 at top of resolution!
+        // Smooth human tonebar slide down -7 semitones (1.02s -> 1.70s), brief pocket hold, then slide back up (1.96s -> 2.48s)
+        slideCurve(1.02, 1.70, 0.0f, -7.0f);
+        slideCurve(1.96, 2.48, -7.0f, 0.0f);
+        noteOn(2.48, 74, 0.78f); // D5 joins F#5+A5 at top of resolution!
         // Let the resolved D5 + F#5 + A5 triad ring out naturally into the spring/plate canyon until 7.80s
         noteOff(5.80, 81);
         noteOff(6.40, 78);
@@ -186,12 +189,12 @@ int main() {
         bend(7.95, 0.0f);
         noteOn(7.98, 78, 0.92f);
         noteOn(8.55, 81, 0.84f);
-        bend(8.95, -7.0f);
-        bend(9.90, 0.0f);
-        noteOn(10.35, 74, 0.74f);
-        noteOff(11.30, 74);
-        noteOff(11.30, 78);
-        noteOff(11.30, 81);
+        slideCurve(8.98, 9.76, 0.0f, -7.0f);
+        slideCurve(9.98, 10.52, -7.0f, 0.0f);
+        noteOn(10.52, 74, 0.74f);
+        noteOff(11.40, 74);
+        noteOff(11.40, 78);
+        noteOff(11.40, 81);
 
         renderSequenceToWav(2, 11.8, ev, outDir.getChildFile("03_mikeys_grit_vibey_DMaj.wav"));
     }

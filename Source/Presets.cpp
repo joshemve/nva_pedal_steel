@@ -10,23 +10,23 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
                 p.playMode      = 0; // Smart Auto-Pedal E9
-                p.volumePedal   = 0.95f;
-                p.scoopDepth    = 0.72f;
-                p.pedalSpeed    = 145.0f;
-                p.barGlide      = 92.0f;
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.42f;
+                p.pedalSpeed    = 165.0f;
+                p.barGlide      = 145.0f;
                 p.vibratoDepth  = 0.38f;
                 p.vibratoRate   = 5.20f;
-                p.autoSwell     = 0.14f;
-                p.swellTime     = 120.0f;
-                p.sampleBlend   = 0.76f;
-                p.pickSnap      = 0.64f;
-                p.pickupPos     = 2.15f;
-                p.coilPeakFreq  = 2120.0f;
+                p.autoSwell     = 0.24f;
+                p.swellTime     = 85.0f;
+                p.sampleBlend   = 0.92f;
+                p.pickSnap      = 0.76f;
+                p.pickupPos     = 2.02f;
+                p.coilPeakFreq  = 2280.0f;
                 p.coilResonance = 0.74f;
                 p.sustainTime   = 6.8f;
-                p.cabinetDrop   = 0.45f;
-                p.ampDrive      = 0.14f;
-                p.toneWarmth    = 0.52f;
+                p.cabinetDrop   = 0.35f;
+                p.ampDrive      = 0.24f;
+                p.toneWarmth    = 0.38f;
                 p.reverbMix     = 0.30f;
                 p.reverbDecay   = 0.54f;
                 p.outputLevel   = 0.0f;
@@ -36,30 +36,30 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "02 - Hedonist Bootgaze (Indie Americana)",
             "Reference Match",
-            "Dreamy, octave-blooming indie Americana pedal steel matched to Bootgaze Hedonist (90 BPM, G Maj). Warm thumbpick attack, rich 2nd-harmonic tube bloom, fluid tonebar glides, and wide atmospheric reverb.",
+            "Dreamy, octave-blooming indie Americana pedal steel matched to Bootgaze Hedonist (90 BPM, G Maj). Metallic steel-string bite, pushed 12AX7 tube harmonic drive, fluid tonebar glides, and wide atmospheric reverb.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 1;
                 p.playMode      = 0; // Smart Auto-Pedal E9
-                p.volumePedal   = 0.92f;
-                p.scoopDepth    = 0.68f;
-                p.pedalSpeed    = 175.0f;
-                p.barGlide      = 135.0f;
-                p.vibratoDepth  = 0.46f;
-                p.vibratoRate   = 4.85f;
-                p.autoSwell     = 0.32f;
-                p.swellTime     = 210.0f;
-                p.sampleBlend   = 0.78f;
-                p.pickSnap      = 0.42f;
-                p.pickupPos     = 2.55f;
-                p.coilPeakFreq  = 1880.0f;
-                p.coilResonance = 0.62f;
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.55f;
+                p.pedalSpeed    = 220.0f;
+                p.barGlide      = 210.0f;
+                p.vibratoDepth  = 0.54f;
+                p.vibratoRate   = 5.10f;
+                p.autoSwell     = 0.22f;
+                p.swellTime     = 115.0f;
+                p.sampleBlend   = 0.94f;
+                p.pickSnap      = 0.82f;
+                p.pickupPos     = 2.05f;
+                p.coilPeakFreq  = 2320.0f;
+                p.coilResonance = 0.78f;
                 p.sustainTime   = 7.8f;
-                p.cabinetDrop   = 0.50f;
-                p.ampDrive      = 0.22f;
-                p.toneWarmth    = 0.68f;
-                p.reverbMix     = 0.42f;
-                p.reverbDecay   = 0.68f;
+                p.cabinetDrop   = 0.42f;
+                p.ampDrive      = 0.62f;
+                p.toneWarmth    = 0.36f;
+                p.reverbMix     = 0.46f;
+                p.reverbDecay   = 0.72f;
                 p.outputLevel   = 0.0f;
                 return p;
             }()
@@ -67,30 +67,30 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "03 - Mikey's Grit Vibey (Tweed Breakup)",
             "Reference Match",
-            "High-singing, weeping D-major pedal steel through a pushed Tweed Deluxe amp matched to Mikey's Country Mojo (120 BPM, D Maj). Upper-neck vocal chime, crying downward bar slides, and wide stereo spring/plate space.",
+            "Close-miked, weeping D-major pedal steel through a pushed Tweed Deluxe amp matched to Mikey's Country Mojo (120 BPM, D Maj). Upfront metallic string bite, crying downward bar slides, and wide stereo spring/plate space.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 2;
                 p.playMode      = 1; // Crying Lead Gliss
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.78f;
-                p.pedalSpeed    = 135.0f;
-                p.barGlide      = 115.0f;
-                p.vibratoDepth  = 0.45f;
+                p.scoopDepth    = 0.65f;
+                p.pedalSpeed    = 145.0f;
+                p.barGlide      = 135.0f;
+                p.vibratoDepth  = 0.48f;
                 p.vibratoRate   = 5.25f;
-                p.autoSwell     = 0.42f;
-                p.swellTime     = 190.0f;
-                p.sampleBlend   = 0.74f;
-                p.pickSnap      = 0.40f;
-                p.pickupPos     = 2.65f;
-                p.coilPeakFreq  = 1960.0f;
-                p.coilResonance = 0.70f;
+                p.autoSwell     = 0.16f;
+                p.swellTime     = 120.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.74f;
+                p.pickupPos     = 2.18f;
+                p.coilPeakFreq  = 2220.0f;
+                p.coilResonance = 0.72f;
                 p.sustainTime   = 8.5f;
-                p.cabinetDrop   = 0.42f;
-                p.ampDrive      = 0.42f;
-                p.toneWarmth    = 0.66f;
-                p.reverbMix     = 0.68f;
-                p.reverbDecay   = 0.86f;
+                p.cabinetDrop   = 0.38f;
+                p.ampDrive      = 0.56f;
+                p.toneWarmth    = 0.56f;
+                p.reverbMix     = 0.42f;
+                p.reverbDecay   = 0.76f;
                 p.outputLevel   = 0.0f;
                 return p;
             }()

@@ -13,131 +13,188 @@ def load_mono(filename):
     mono = 0.5 * (x[:, 0] + x[:, 1]) if x.ndim == 2 else x
     return sr, mono
 
-# Clean sustained note segments across the E9th range from the 4 reference WAVs
+# 15 Style-Matched Studio Pedal Steel Multi-Samples across all 4 Splice Reference WAVs
+# (style, filename, t0, t1, midi_note, f0_hint, label)
 multisample_specs = [
-    # (filename, t_start, t_end, target_midi, exact_f0_hint, name)
-    ("CO_MCS_126_pedal_steel_montana_Gmaj.wav",         13.35, 14.35, 48, 130.81, "MS_0_C3_Montana"),
-    ("CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav",    5.35,  5.88, 60, 262.37, "MS_1_C4_Hedonist"),
-    ("CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav",14.80, 15.80, 61, 276.67, "MS_2_CS4_SweetGeorgia"),
-    ("CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav",18.80, 19.50, 64, 330.10, "MS_3_E4_SweetGeorgia"),
-    ("CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav", 2.20,  2.80, 66, 370.65, "MS_4_FS4_SweetGeorgia"),
-    ("CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav", 0.32,  1.32, 68, 415.68, "MS_5_GS4_SweetGeorgia"),
-    ("CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav",    0.04,  0.54, 69, 438.19, "MS_6_A4_Hedonist"),
-    ("CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav", 5.82,  6.38, 71, 496.73, "MS_7_B4_SweetGeorgia"),
-    ("CO_MCS_120_pedal_steel_grit_vibey_Dmaj.wav",       4.05,  5.05, 74, 587.28, "MS_8_D5_GritVibey"),
-    ("CO_MCS_120_pedal_steel_grit_vibey_Dmaj.wav",       8.02,  8.82, 78, 740.00, "MS_9_FS5_GritVibey"),
+    # Style 0: Sweet Georgia E9 (CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav)
+    (0, "CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav", 14.78, 16.20, 61, 277.18, "MS_0_SG_CS4"),
+    (0, "CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav",  2.95,  4.40, 64, 329.63, "MS_1_SG_E4"),
+    (0, "CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav",  2.16,  2.84, 66, 369.99, "MS_2_SG_FS4"),
+    (0, "CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav",  0.28,  1.65, 68, 415.30, "MS_3_SG_GS4"),
+    (0, "CO_FC_83_pedal_steel_sweetgeorgia_verse_EMaj.wav",  5.78,  6.50, 71, 493.88, "MS_4_SG_B4"),
+
+    # Style 1: Hedonist Bootgaze (CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav)
+    (1, "CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav",     5.38,  5.86, 60, 261.63, "MS_5_HB_C4"),
+    (1, "CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav",     6.68,  7.85, 67, 392.00, "MS_6_HB_G4"),
+    (1, "CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav",     2.65,  4.10, 69, 440.00, "MS_7_HB_A4"),
+    (1, "CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav",     0.85,  1.85, 71, 493.88, "MS_8_HB_B4"),
+    (1, "CO_BG_90_pedal_steel_melody_hedonist_Gmaj.wav",     1.98,  2.55, 74, 587.33, "MS_9_HB_D5"),
+
+    # Style 2: Mikey's Grit Vibey (CO_MCS_120_pedal_steel_grit_vibey_Dmaj.wav)
+    (2, "CO_MCS_120_pedal_steel_grit_vibey_Dmaj.wav",        2.55,  3.90, 74, 587.33, "MS_10_GV_D5"),
+    (2, "CO_MCS_120_pedal_steel_grit_vibey_Dmaj.wav",        8.00,  9.20, 78, 739.99, "MS_11_GV_FS5"),
+    (2, "CO_MCS_120_pedal_steel_grit_vibey_Dmaj.wav",        0.02,  0.52, 81, 880.00, "MS_12_GV_A5"),
+
+    # Style 3: Montana Swell (CO_MCS_126_pedal_steel_montana_Gmaj.wav)
+    (3, "CO_MCS_126_pedal_steel_montana_Gmaj.wav",          13.35, 14.60, 48, 130.81, "MS_13_MT_C3"),
+    (3, "CO_MCS_126_pedal_steel_montana_Gmaj.wav",           0.40,  1.70, 67, 392.00, "MS_14_MT_G4"),
 ]
 
-TARGET_SR = 22050
-BUF_LEN = 12288 # ~0.557 seconds at 22050 Hz
+TARGET_SR = 28000
 
 extracted_samples = []
 
-for fname, t0, t1, midi_note, f0_hint, label in multisample_specs:
+for style_id, fname, t0, t1, midi_note, f0_hint, label in multisample_specs:
     sr, mono = load_mono(fname)
-    seg = mono[int(t0*sr):int(t1*sr)].copy()
+    seg = mono[int(t0 * sr):int(t1 * sr)].copy()
 
-    # Resample to 22050 Hz
-    num_out = int(round(len(seg) * TARGET_SR / sr))
-    seg_22k = signal.resample(seg, num_out)
+    # 1. Track instantaneous phase of fundamental (or H2 when H2 dominates like C4 in Hedonist)
+    sos_f1 = signal.butter(2, [f0_hint * 0.86 / (0.5 * sr), f0_hint * 1.14 / (0.5 * sr)], btype='bandpass', output='sos')
+    sos_f2 = signal.butter(2, [f0_hint * 1.72 / (0.5 * sr), f0_hint * 2.28 / (0.5 * sr)], btype='bandpass', output='sos')
+    band1 = signal.sosfiltfilt(sos_f1, seg)
+    band2 = signal.sosfiltfilt(sos_f2, seg)
 
-    # Apply harmonic comb bandpass filter around h * f0_hint (h=1..16, bandwidth +-16 Hz)
-    # This isolates the pure played pedal steel string + its natural vibrato & shimmer while removing room reverb bleed
-    cleaned = np.zeros_like(seg_22k)
-    for h in range(1, 17):
-        fh = f0_hint * h
-        if fh >= TARGET_SR * 0.46:
+    if np.sqrt(np.mean(band2**2)) > 1.25 * np.sqrt(np.mean(band1**2)):
+        analytic = signal.hilbert(band2)
+        inst_phase = np.unwrap(np.angle(analytic)) * 0.5
+    else:
+        analytic = signal.hilbert(band1)
+        inst_phase = np.unwrap(np.angle(analytic))
+
+    win_len = max(31, int(0.025 * sr) | 1)
+    inst_freq = np.gradient(inst_phase) * sr / (2.0 * np.pi)
+    inst_freq_smooth = signal.savgol_filter(inst_freq, win_len, 2)
+    inst_freq_smooth = np.clip(inst_freq_smooth, f0_hint * 0.88, f0_hint * 1.12)
+    smooth_phase = np.cumsum(2.0 * np.pi * inst_freq_smooth / sr)
+
+    # 2. Resample onto exact integer-samples-per-period grid so harmonic comb filter isolates ONLY this string's harmonics H1..H28!
+    int_period = max(24, int(round(TARGET_SR / f0_hint)))
+    exact_sr = int_period * f0_hint
+    total_cycles = int((smooth_phase[-1] - smooth_phase[0]) / (2.0 * np.pi))
+    num_grid = total_cycles * int_period
+    target_phase = smooth_phase[0] + np.arange(num_grid) * (2.0 * np.pi / int_period)
+    seg_grid = np.interp(target_phase, smooth_phase, seg).astype(np.float32)
+
+    # Measure early metallic attack spectrum (first ~0.16s) AND sustain spectrum (mid ~0.42s) of this studio string
+    n_atk_meas = max(12, min(total_cycles // 3, int(round(0.16 * f0_hint))))
+    L_atk_meas = n_atk_meas * int_period
+    atk_slice  = seg_grid[:L_atk_meas] * np.hanning(L_atk_meas)
+    Spec_atk   = np.fft.rfft(atk_slice) / float(L_atk_meas)
+
+    sus_start_cyc = min(total_cycles // 4, n_atk_meas)
+    n_loop_cycles = max(24, min(total_cycles - sus_start_cyc - 1, int(round(0.45 * f0_hint))))
+    L_grid = n_loop_cycles * int_period
+    raw_sustain = seg_grid[sus_start_cyc * int_period : (sus_start_cyc + n_loop_cycles) * int_period]
+    Spec_sus = np.fft.rfft(raw_sustain * np.hanning(L_grid))
+
+    # Build C^infinity periodic sustain loop with up to 28 harmonics + gentle organic steel-dispersion shimmer
+    CleanSpec = np.zeros_like(Spec_sus)
+    max_h = min(28, int((0.46 * exact_sr) / f0_hint))
+    atk_ratios = np.ones(max_h + 1, dtype=np.float32)
+
+    for h in range(1, max_h + 1):
+        center_bin = h * n_loop_cycles
+        if center_bin >= len(Spec_sus) - 3:
             break
-        bw = min(22.0, max(12.0, fh * 0.025))
-        f_lo = max(30.0, fh - bw)
-        f_hi = min(TARGET_SR * 0.48, fh + bw)
-        sos = signal.butter(2, [f_lo / (0.5 * TARGET_SR), f_hi / (0.5 * TARGET_SR)], btype='bandpass', output='sos')
-        cleaned += signal.sosfiltfilt(sos, seg_22k)
+        # Boost upper metallic partials H4..H24 slightly to preserve studio pick/bar wire brilliance
+        metal_boost = 1.0 + 0.05 * max(0, min(14, h - 3))
+        CleanSpec[center_bin] = Spec_sus[center_bin] * 2.0 * metal_boost
+        # Subtle organic steel-dispersion sideband (0.07x -> <0.6 dB natural metallic shimmer, zero warble!)
+        if h >= 4:
+            CleanSpec[center_bin - 1] = Spec_sus[center_bin - 1] * 0.07
+            CleanSpec[center_bin + 1] = Spec_sus[center_bin + 1] * 0.07
 
-    # Normalize amplitude envelope slightly so sustain loop is level and seamless
-    # Find period in samples at TARGET_SR
-    period = TARGET_SR / f0_hint
-    # Ensure we have at least BUF_LEN + 2048 samples by tiling/crossfading if segment is shorter
-    if len(cleaned) < BUF_LEN + 2048:
-        # Repeat middle section with phase alignment
-        mid = cleaned[int(len(cleaned)*0.25):int(len(cleaned)*0.85)]
-        n_periods = max(1, int(round(len(mid) / period)))
-        aligned_len = int(round(n_periods * period))
-        mid = mid[:aligned_len]
-        while len(cleaned) < BUF_LEN + 2048:
-            cleaned = np.concatenate([cleaned[:int(len(cleaned)*0.75)], mid])
+        # Ratio of real studio attack harmonic energy vs sustain harmonic energy
+        atk_bin = h * n_atk_meas
+        if atk_bin < len(Spec_atk):
+            a_amp = np.abs(Spec_atk[atk_bin]) * 2.0
+            s_amp = (np.abs(Spec_sus[center_bin]) * 2.0 / float(L_grid)) + 1e-7
+            atk_ratios[h] = np.clip(a_amp / s_amp, 1.0, 3.2)
 
-    # Pick loop start and loop end aligned to an exact integer number of fundamental cycles
-    loop_start = int(round(32 * period))
-    if loop_start > BUF_LEN // 3:
-        loop_start = int(round(16 * period))
-    loop_cycles = int(round((BUF_LEN - loop_start - int(6 * period)) / period))
-    loop_len = int(round(loop_cycles * period))
-    loop_end = loop_start + loop_len
+    # Synthesize 2-stage phase-locked buffer at TARGET_SR:
+    # Attack stage (0 .. loop_start_out, ~0.38s) has real studio harmonic decay H4..H28 + real highpassed pick transient,
+    # seamlessly reaching 100.0% phase & amplitude lock with loop_out at loop_start_out!
+    scale_to_target = float(TARGET_SR) / float(exact_sr)
+    L_out = int(round(L_grid * scale_to_target))
+    loop_out = np.fft.irfft(CleanSpec, n=L_out).astype(np.float32) * (float(L_out) / float(L_grid))
 
-    # Crossfade loop_end region with loop_start region over 8 periods so looping from loop_end -> loop_start is 100% click-free
-    xfade_len = int(round(8 * period))
-    buf = cleaned[:BUF_LEN].copy()
-    # Align phase at loop_end to loop_start via local cross-correlation
-    search_rad = int(round(period))
-    best_lag = 0
-    best_corr = -1e18
-    ref_win = buf[loop_start:loop_start + xfade_len]
-    for lag in range(-search_rad, search_rad + 1):
-        cand_idx = loop_end + lag
-        if cand_idx - xfade_len >= loop_start and cand_idx + xfade_len < len(cleaned):
-            cand_win = cleaned[cand_idx:cand_idx + xfade_len]
-            c = np.sum(ref_win * cand_win)
-            if c > best_corr:
-                best_corr = c
-                best_lag = lag
-    loop_end += best_lag
+    # Build high-harmonic metallic attack transient wave (H3..H28 only) phase-locked to loop_out!
+    HighMetalSpec = np.zeros_like(CleanSpec)
+    for h in range(3, max_h + 1):
+        center_bin = h * n_loop_cycles
+        if center_bin >= len(CleanSpec) - 2:
+            break
+        extra = max(0.0, float(atk_ratios[h]) - 1.0) + 0.35 * min(1.0, float(h - 2) / 8.0)
+        HighMetalSpec[center_bin] = CleanSpec[center_bin] * extra
 
-    # Perform equal-linear phase-locked crossfade right before loop_end so buf[loop_end - xfade_len : loop_end] blends into cleaned[loop_start - xfade_len : loop_start]
-    alpha = np.linspace(0.0, 1.0, xfade_len, endpoint=False)
-    buf[loop_end - xfade_len : loop_end] = (
-        (1.0 - alpha) * cleaned[loop_end - xfade_len : loop_end] +
-        alpha * buf[loop_start - xfade_len : loop_start]
-    )
+    high_metal_loop = np.fft.irfft(HighMetalSpec, n=L_out).astype(np.float32) * (float(L_out) / float(L_grid))
 
-    # Smooth 3ms attack fade-in
-    atk = int(0.003 * TARGET_SR)
-    buf[:atk] *= np.linspace(0.0, 1.0, atk)
-    buf /= (np.max(np.abs(buf[:loop_end])) + 1e-12)
-    buf_i16 = np.clip(np.round(buf[:loop_end] * 32000.0), -32767, 32767).astype(np.int16)
+    # Attack pre-roll length = exact L_out samples (~0.45s) so loop_start_out = L_out is 100% phase-aligned with loop_out[0]!
+    loop_start_out = L_out
+    t_atk = np.arange(loop_start_out, dtype=np.float32) / float(TARGET_SR)
+    # Smooth exponential metallic wire decay that reaches 0.000 before loop_start_out
+    win_fade = 0.5 * (1.0 + np.cos(np.pi * np.arange(loop_start_out, dtype=np.float32) / float(loop_start_out)))
+    metal_env = np.exp(-t_atk / 0.14) * win_fade
 
-    # Check loop discontinuity
-    disc = abs(float(buf_i16[-1]) - float(buf_i16[loop_start])) / 32000.0
-    print(f"Extracted {label:25s}: f0={f0_hint:6.2f}Hz | len={len(buf_i16)} samples ({len(buf_i16)/TARGET_SR:.3f}s) | loopStart={loop_start} | loopStepDisc={disc:.4f}")
-    extracted_samples.append((label, midi_note, f0_hint, loop_start, len(buf_i16), buf_i16))
+    # Also extract the genuine high-passed (>1.8 kHz) studio fingerpick snap from the first 28 ms of the recording
+    raw_28ms_len = min(len(seg_grid), int(0.028 * exact_sr))
+    sos_pick = signal.butter(2, min(0.85, 1800.0 / (0.5 * exact_sr)), btype='highpass', output='sos')
+    pick_snap = signal.sosfiltfilt(sos_pick, seg_grid[:raw_28ms_len]).astype(np.float32)
+    pick_out_len = int(round(raw_28ms_len * scale_to_target))
+    pick_out = np.interp(np.linspace(0, 1, pick_out_len), np.linspace(0, 1, raw_28ms_len), pick_snap).astype(np.float32)
+    pick_out *= np.hanning(pick_out_len * 2)[pick_out_len:] * 0.45
 
-with open(out_header, "w", encoding="utf-8") as f:
+    atk_out = loop_out + metal_env * high_metal_loop
+    atk_out[:pick_out_len] += pick_out
+
+    # Soft 2.5 ms raised-cosine onset ramp on first 70 samples so note-on never clicks
+    ramp_len = min(70, len(atk_out) // 4)
+    atk_out[:ramp_len] *= 0.5 * (1.0 - np.cos(np.pi * np.arange(ramp_len, dtype=np.float32) / float(ramp_len)))
+
+    final_buf = np.concatenate([atk_out, loop_out])
+    final_len = len(final_buf)
+
+    # Normalize by sustain RMS so all 15 multi-samples have matched volume across strings and styles!
+    sus_rms = np.sqrt(np.mean(loop_out**2) + 1e-12)
+    final_buf = final_buf * (0.24 / sus_rms)
+    peak = np.max(np.abs(final_buf)) + 1e-9
+    if peak > 0.94:
+        final_buf *= (0.94 / peak)
+
+    q = np.clip(np.round(final_buf * 32000.0), -32767, 32767).astype(np.int16)
+    wrap_jump = abs(int(q[-1]) - int(q[loop_start_out])) / 32000.0
+    seam_jump = abs(int(q[loop_start_out - 1]) - int(q[loop_start_out])) / 32000.0
+    extracted_samples.append((style_id, label, midi_note, f0_hint, final_len, loop_start_out, q))
+    print(f"Extracted {label:14s}: style={style_id} MIDI={midi_note} f0={f0_hint:6.2f}Hz len={final_len} ({final_len/TARGET_SR:.2f}s) loopStart={loop_start_out} wrapJump={wrap_jump:.5f} seamJump={seam_jump:.5f}")
+
+with open(out_header, "w") as f:
     f.write("#pragma once\n")
     f.write("#include <cstdint>\n\n")
-    f.write("// Real harmonic-isolated Pedal Steel multi-samples extracted from the 4 Splice reference WAVs\n")
     f.write("namespace PedalSteelMultiSamples {\n\n")
-    f.write(f"static constexpr double kSampleRate = {TARGET_SR}.0;\n")
+    f.write(f"static constexpr int kSampleRate = {TARGET_SR};\n")
     f.write(f"static constexpr int kNumMultiSamples = {len(extracted_samples)};\n\n")
-    f.write("struct MultiSampleInfo {\n")
+    f.write("struct MultiSample {\n")
+    f.write("    int style;\n")
     f.write("    int midiNote;\n")
     f.write("    float baseFreqHz;\n")
-    f.write("    int loopStart;\n")
     f.write("    int length;\n")
+    f.write("    int loopStart;\n")
     f.write("    const int16_t* data;\n")
     f.write("};\n\n")
 
-    for label, midi_note, f0, loop_start, length, data_i16 in extracted_samples:
-        f.write(f"alignas(16) static constexpr int16_t {label}_data[{length}] = {{\n    ")
-        for i, v in enumerate(data_i16):
-            f.write(f"{int(v)}, ")
-            if (i + 1) % 24 == 0 and i + 1 < len(data_i16):
-                f.write("\n    ")
+    for style_id, label, midi_note, f0_hint, length, loop_start, q in extracted_samples:
+        f.write(f"static const int16_t {label}[{length}] = {{\n    ")
+        vals = [str(int(v)) for v in q]
+        for i in range(0, len(vals), 32):
+            f.write(",".join(vals[i:i+32]))
+            if i + 32 < len(vals):
+                f.write(",\n    ")
         f.write("\n};\n\n")
 
-    f.write("static constexpr MultiSampleInfo kMultiSamples[kNumMultiSamples] = {\n")
-    for label, midi_note, f0, loop_start, length, _ in extracted_samples:
-        f.write(f"    {{ {midi_note}, {f0:.3f}f, {loop_start}, {length}, {label}_data }},\n")
+    f.write("static const MultiSample kMultiSamples[kNumMultiSamples] = {\n")
+    for style_id, label, midi_note, f0_hint, length, loop_start, q in extracted_samples:
+        f.write(f"    {{ {style_id}, {midi_note}, {f0_hint:.2f}f, {length}, {loop_start}, {label} }},\n")
     f.write("};\n\n")
     f.write("} // namespace PedalSteelMultiSamples\n")
 
-print(f"\nWrote {out_header} ({os.path.getsize(out_header)/1024:.1f} KB)")
+print("Wrote", out_header)

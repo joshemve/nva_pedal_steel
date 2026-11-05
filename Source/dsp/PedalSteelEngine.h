@@ -120,6 +120,7 @@ private:
 
         // Per-string filters
         float pickLpState = 0.0f;
+        float msHpState = 0.0f;
         float slideNoiseLp = 0.0f;
         float lastOutput = 0.0f;
     };
@@ -184,13 +185,19 @@ private:
     double globalVibratoPhase = 0.0;
     float globalSwellEnv = 1.0f;
 
-    // Master filter chain (Pickup LC Tank + 15" Speaker Cabinet + Post-Amp Tone)
+    // Master filter chain (Pickup Mid-Scoop + LC Tank + 15" Speaker Cabinet + Post-Amp Tone)
+    Biquad midScoopFilter;
     Biquad pickupPeakFilter;
     Biquad speakerBodyFilter;
     Biquad speakerPresenceFilter;
     Biquad speakerLowpass1;
     Biquad speakerLowpass2;
     Biquad dcBlocker;
+
+    // Close-miked stereo speaker cabinet dual-mic (SM57 dustcap L + R121 cone R with 0.55ms baffle offset)
+    std::array<float, 64> cabHaasBuf{};
+    int cabHaasPos = 0;
+    float cabConeLpR = 0.0f;
 
     SympatheticBank sympathetic;
     StudioReverb reverb;
