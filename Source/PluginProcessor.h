@@ -21,10 +21,10 @@ public:
     bool acceptsMidi() const override { return true; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthSeconds() const override { return 4.0; }
+    double getTailLengthSeconds() const override { return 4.5; }
 
     int getNumPrograms() override;
-    int getCurrentProgram() override { return currentPresetIndex; }
+    int getCurrentProgram() override { return currentPresetIndex.load(); }
     void setCurrentProgram(int index) override;
     const juce::String getProgramName(int index) override;
     void changeProgramName(int, const juce::String&) override {}
@@ -36,15 +36,41 @@ public:
     juce::MidiKeyboardState keyboardState;
 
     void loadPreset(int index);
+    void stepPreset(int delta);
     void setLivePedalState(int pedalIdx, float val);
     void triggerChordAudition(int chordIdx);
-    CopedentStatus getLiveStatus() const { return engine.getStatus(); }
+    void triggerPhraseAudition();
+    void triggerPanic();
+    void triggerFretboardNote(int stringIdx, float fret);
+    void slideFretboardNote(int stringIdx, float fret);
+    void releaseFretboardNote(int stringIdx);
+
+    CopedentStatus getLiveStatus() const;
+    float getOutputPeakL() const { return outputPeakL.load(std::memory_order_relaxed); }
+    float getOutputPeakR() const { return outputPeakR.load(std::memory_order_relaxed); }
+    double getHostBpm() const    { return currentHostBpm.load(std::memory_order_relaxed); }
 
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
 private:
+    enum class UiCmdType { Chord, Phrase, Panic, FretDown, FretDrag, FretUp };
+    struct UiCmd {
+        UiCmdType type = UiCmdType::Chord;
+        int intArg = 0;
+        float floatArg = 0.0f;
+    };
+
     PedalSteelEngine engine;
-    int currentPresetIndex = 0;
+    mutable juce::SpinLock statusLock;
+    CopedentStatus cachedStatus{};
+
+    juce::SpinLock uiCmdLock;
+    std::vector<UiCmd> pendingUiCmds;
+
+    std::atomic<int> currentPresetIndex{ 0 };
+    std::atomic<float> outputPeakL{ 0.0f };
+    std::atomic<float> outputPeakR{ 0.0f };
+    std::atomic<double> currentHostBpm{ 120.0 };
 
     // Cached atomic parameter pointers
     std::atomic<float>* pPresetStyle   = nullptr;
@@ -58,6 +84,7 @@ private:
     std::atomic<float>* pScoopDepth    = nullptr;
     std::atomic<float>* pPedalSpeed    = nullptr;
     std::atomic<float>* pBarGlide      = nullptr;
+    std::atomic<float>* pBarSlideNoise = nullptr;
     std::atomic<float>* pVibratoDepth  = nullptr;
     std::atomic<float>* pVibratoRate   = nullptr;
     std::atomic<float>* pAutoSwell     = nullptr;
@@ -69,8 +96,12 @@ private:
     std::atomic<float>* pCoilResonance = nullptr;
     std::atomic<float>* pSustainTime   = nullptr;
     std::atomic<float>* pCabinetDrop   = nullptr;
+    std::atomic<float>* pStereoWidth   = nullptr;
     std::atomic<float>* pAmpDrive      = nullptr;
     std::atomic<float>* pToneWarmth    = nullptr;
+    std::atomic<float>* pDelayMix      = nullptr;
+    std::atomic<float>* pDelayTime     = nullptr;
+    std::atomic<float>* pTempoSync     = nullptr;
     std::atomic<float>* pReverbMix     = nullptr;
     std::atomic<float>* pReverbDecay   = nullptr;
     std::atomic<float>* pOutputLevel   = nullptr;

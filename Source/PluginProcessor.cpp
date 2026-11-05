@@ -5,6 +5,8 @@ PedalSteelAudioProcessor::PedalSteelAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true)),
       apvts(*this, nullptr, "Parameters", createParameterLayout())
 {
+    pendingUiCmds.reserve(64);
+
     pPresetStyle   = apvts.getRawParameterValue(ParamIDs::presetStyle);
     pPlayMode      = apvts.getRawParameterValue(ParamIDs::playMode);
     pPedalA        = apvts.getRawParameterValue(ParamIDs::pedalA);
@@ -16,6 +18,7 @@ PedalSteelAudioProcessor::PedalSteelAudioProcessor()
     pScoopDepth    = apvts.getRawParameterValue(ParamIDs::scoopDepth);
     pPedalSpeed    = apvts.getRawParameterValue(ParamIDs::pedalSpeed);
     pBarGlide      = apvts.getRawParameterValue(ParamIDs::barGlide);
+    pBarSlideNoise = apvts.getRawParameterValue(ParamIDs::barSlideNoise);
     pVibratoDepth  = apvts.getRawParameterValue(ParamIDs::vibratoDepth);
     pVibratoRate   = apvts.getRawParameterValue(ParamIDs::vibratoRate);
     pAutoSwell     = apvts.getRawParameterValue(ParamIDs::autoSwell);
@@ -27,8 +30,12 @@ PedalSteelAudioProcessor::PedalSteelAudioProcessor()
     pCoilResonance = apvts.getRawParameterValue(ParamIDs::coilResonance);
     pSustainTime   = apvts.getRawParameterValue(ParamIDs::sustainTime);
     pCabinetDrop   = apvts.getRawParameterValue(ParamIDs::cabinetDrop);
+    pStereoWidth   = apvts.getRawParameterValue(ParamIDs::stereoWidth);
     pAmpDrive      = apvts.getRawParameterValue(ParamIDs::ampDrive);
     pToneWarmth    = apvts.getRawParameterValue(ParamIDs::toneWarmth);
+    pDelayMix      = apvts.getRawParameterValue(ParamIDs::delayMix);
+    pDelayTime     = apvts.getRawParameterValue(ParamIDs::delayTime);
+    pTempoSync     = apvts.getRawParameterValue(ParamIDs::tempoSync);
     pReverbMix     = apvts.getRawParameterValue(ParamIDs::reverbMix);
     pReverbDecay   = apvts.getRawParameterValue(ParamIDs::reverbDecay);
     pOutputLevel   = apvts.getRawParameterValue(ParamIDs::outputLevel);
@@ -45,7 +52,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::playMode, 1 }, "Performance Mode",
-        juce::StringArray{ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent" }, 0));
+        juce::StringArray{ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent", "Studio Phrase Licks" }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::pedalA, 1 }, "Pedal A (B->C# +2)",
@@ -73,79 +80,102 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::scoopDepth, 1 }, "Auto Pedal Scoop",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.68f));
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.42f));
+
+    auto withUnit = [](const char* unit) {
+        return juce::AudioParameterFloatAttributes().withLabel(unit);
+    };
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::pedalSpeed, 1 }, "Pedal Pull Speed",
-        juce::NormalisableRange<float>(40.0f, 350.0f, 1.0f), 145.0f, "ms"));
+        juce::NormalisableRange<float>(40.0f, 350.0f, 1.0f), 165.0f, withUnit("ms")));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::barGlide, 1 }, "Tonebar Glide",
-        juce::NormalisableRange<float>(10.0f, 500.0f, 1.0f), 95.0f, "ms"));
+        juce::NormalisableRange<float>(10.0f, 500.0f, 1.0f), 145.0f, withUnit("ms")));
+
+    layout.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{ ParamIDs::barSlideNoise, 1 }, "Bar Slide Sheen",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.30f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::vibratoDepth, 1 }, "Bar Vibrato Depth",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.40f));
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.38f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::vibratoRate, 1 }, "Bar Vibrato Rate",
-        juce::NormalisableRange<float>(3.0f, 7.5f, 0.01f), 5.15f, "Hz"));
+        juce::NormalisableRange<float>(3.0f, 7.5f, 0.01f), 5.20f, withUnit("Hz")));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::autoSwell, 1 }, "Auto Swell Bloom",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.18f));
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.24f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::swellTime, 1 }, "Swell Rise Time",
-        juce::NormalisableRange<float>(30.0f, 800.0f, 1.0f), 160.0f, "ms"));
+        juce::NormalisableRange<float>(30.0f, 800.0f, 1.0f), 85.0f, withUnit("ms")));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{ ParamIDs::sampleBlend, 1 }, "Reference DNA Blend",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.75f));
+        juce::ParameterID{ ParamIDs::sampleBlend, 1 }, "Studio DNA Blend",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.92f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{ ParamIDs::pickSnap, 1 }, "Fingerpick & Bar Noise",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.58f));
+        juce::ParameterID{ ParamIDs::pickSnap, 1 }, "Fingerpick Snap",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.76f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::pickupPos, 1 }, "Pickup Distance",
-        juce::NormalisableRange<float>(1.2f, 4.0f, 0.01f), 2.20f, "in"));
+        juce::NormalisableRange<float>(1.2f, 4.0f, 0.01f), 2.02f, withUnit("in")));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::coilPeakFreq, 1 }, "Pickup Coil Peak",
-        juce::NormalisableRange<float>(1400.0f, 3200.0f, 1.0f), 2120.0f, "Hz"));
+        juce::NormalisableRange<float>(1400.0f, 3200.0f, 1.0f), 2280.0f, withUnit("Hz")));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::coilResonance, 1 }, "Pickup Sing Q",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.70f));
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.74f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::sustainTime, 1 }, "String Sustain",
-        juce::NormalisableRange<float>(1.5f, 12.0f, 0.1f), 6.8f, "s"));
+        juce::NormalisableRange<float>(1.5f, 12.0f, 0.1f), 6.8f, withUnit("s")));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::cabinetDrop, 1 }, "Cabinet Resonance",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.45f));
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.35f));
+
+    layout.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{ ParamIDs::stereoWidth, 1 }, "Stereo Width",
+        juce::NormalisableRange<float>(0.0f, 1.5f, 0.01f), 1.00f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::ampDrive, 1 }, "Tube / Tweed Drive",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.16f));
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.24f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::toneWarmth, 1 }, "15\" Speaker Warmth",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.54f));
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.38f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{ ParamIDs::reverbMix, 1 }, "Spring + Plate Mix",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.34f));
+        juce::ParameterID{ ParamIDs::delayMix, 1 }, "Tape Delay Mix",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.00f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID{ ParamIDs::reverbDecay, 1 }, "Reverb Decay & Width",
-        juce::NormalisableRange<float>(0.1f, 1.0f, 0.001f), 0.58f));
+        juce::ParameterID{ ParamIDs::delayTime, 1 }, "Tape Delay Time",
+        juce::NormalisableRange<float>(40.0f, 900.0f, 1.0f), 360.0f, withUnit("ms")));
+
+    layout.push_back(std::make_unique<juce::AudioParameterBool>(
+        juce::ParameterID{ ParamIDs::tempoSync, 1 }, "Host Tempo Sync", false));
+
+    layout.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{ ParamIDs::reverbMix, 1 }, "Plate Reverb Mix",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.30f));
+
+    layout.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{ ParamIDs::reverbDecay, 1 }, "Reverb Decay",
+        juce::NormalisableRange<float>(0.1f, 1.0f, 0.001f), 0.54f));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::outputLevel, 1 }, "Output Level",
-        juce::NormalisableRange<float>(-24.0f, 12.0f, 0.1f), 0.0f, "dB"));
+        juce::NormalisableRange<float>(-24.0f, 12.0f, 0.1f), 0.0f, withUnit("dB")));
 
     return { layout.begin(), layout.end() };
 }
@@ -163,6 +193,7 @@ PedalSteelParams PedalSteelAudioProcessor::readParamsFromAtomics() const {
     p.scoopDepth    = pScoopDepth->load();
     p.pedalSpeed    = pPedalSpeed->load();
     p.barGlide      = pBarGlide->load();
+    p.barSlideNoise = pBarSlideNoise->load();
     p.vibratoDepth  = pVibratoDepth->load();
     p.vibratoRate   = pVibratoRate->load();
     p.autoSwell     = pAutoSwell->load();
@@ -174,8 +205,13 @@ PedalSteelParams PedalSteelAudioProcessor::readParamsFromAtomics() const {
     p.coilResonance = pCoilResonance->load();
     p.sustainTime   = pSustainTime->load();
     p.cabinetDrop   = pCabinetDrop->load();
+    p.stereoWidth   = pStereoWidth->load();
     p.ampDrive      = pAmpDrive->load();
     p.toneWarmth    = pToneWarmth->load();
+    p.delayMix      = pDelayMix->load();
+    p.delayTime     = pDelayTime->load();
+    p.tempoSync     = (pTempoSync->load() >= 0.5f);
+    p.hostBpm       = currentHostBpm.load(std::memory_order_relaxed);
     p.reverbMix     = pReverbMix->load();
     p.reverbDecay   = pReverbDecay->load();
     p.outputLevel   = pOutputLevel->load();
@@ -185,6 +221,8 @@ PedalSteelParams PedalSteelAudioProcessor::readParamsFromAtomics() const {
 void PedalSteelAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     engine.prepare(sampleRate, samplesPerBlock);
     keyboardState.reset();
+    outputPeakL.store(0.0f, std::memory_order_relaxed);
+    outputPeakR.store(0.0f, std::memory_order_relaxed);
 }
 
 void PedalSteelAudioProcessor::releaseResources() {
@@ -201,6 +239,35 @@ bool PedalSteelAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts
 void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
     juce::ScopedNoDenormals noDenormals;
     buffer.clear();
+
+    // Query DAW host tempo if available
+    if (auto* ph = getPlayHead()) {
+        if (auto pos = ph->getPosition()) {
+            if (auto bpm = pos->getBpm()) {
+                if (*bpm >= 30.0 && *bpm <= 300.0) {
+                    currentHostBpm.store(*bpm, std::memory_order_relaxed);
+                }
+            }
+        }
+    }
+
+    // Drain any lock-free UI commands safely on the audio thread
+    {
+        const juce::SpinLock::ScopedTryLockType lock(uiCmdLock);
+        if (lock.isLocked() && !pendingUiCmds.empty()) {
+            for (const auto& cmd : pendingUiCmds) {
+                switch (cmd.type) {
+                    case UiCmdType::Chord:    engine.triggerAuditionChord(cmd.intArg); break;
+                    case UiCmdType::Phrase:   engine.triggerPhraseAudition(); break;
+                    case UiCmdType::Panic:    engine.allNotesOff(); break;
+                    case UiCmdType::FretDown: engine.triggerFretboardNote(cmd.intArg, cmd.floatArg); break;
+                    case UiCmdType::FretDrag: engine.slideFretboardNote(cmd.intArg, cmd.floatArg); break;
+                    case UiCmdType::FretUp:   engine.releaseFretboardNote(cmd.intArg); break;
+                }
+            }
+            pendingUiCmds.clear();
+        }
+    }
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
     engine.setParams(readParamsFromAtomics());
@@ -220,6 +287,30 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
     if (currentSample < numSamples) {
         engine.renderBlock(buffer, currentSample, numSamples - currentSample);
     }
+
+    // Update stereo output peak meters with smooth ballistics
+    if (numSamples > 0) {
+        const float blkL = buffer.getMagnitude(0, 0, numSamples);
+        const float blkR = (buffer.getNumChannels() > 1) ? buffer.getMagnitude(1, 0, numSamples) : blkL;
+        const float decay = std::exp(-static_cast<float>(numSamples) / (0.22f * static_cast<float>(std::max(8000.0, getSampleRate()))));
+        const float prevL = outputPeakL.load(std::memory_order_relaxed);
+        const float prevR = outputPeakR.load(std::memory_order_relaxed);
+        outputPeakL.store(std::max(blkL, prevL * decay), std::memory_order_relaxed);
+        outputPeakR.store(std::max(blkR, prevR * decay), std::memory_order_relaxed);
+    }
+
+    // Publish live copedent status snapshot for UI visualizer
+    {
+        const juce::SpinLock::ScopedTryLockType lock(statusLock);
+        if (lock.isLocked()) {
+            cachedStatus = engine.getStatus();
+        }
+    }
+}
+
+CopedentStatus PedalSteelAudioProcessor::getLiveStatus() const {
+    const juce::SpinLock::ScopedLockType lock(statusLock);
+    return cachedStatus;
 }
 
 int PedalSteelAudioProcessor::getNumPrograms() {
@@ -237,10 +328,18 @@ const juce::String PedalSteelAudioProcessor::getProgramName(int index) {
     return {};
 }
 
+void PedalSteelAudioProcessor::stepPreset(int delta) {
+    const int total = getNumPrograms();
+    if (total <= 0) return;
+    int next = (currentPresetIndex.load() + delta) % total;
+    if (next < 0) next += total;
+    loadPreset(next);
+}
+
 void PedalSteelAudioProcessor::loadPreset(int index) {
     const auto& presets = getPedalSteelPresets();
     if (index < 0 || index >= static_cast<int>(presets.size())) return;
-    currentPresetIndex = index;
+    currentPresetIndex.store(index);
     const auto& p = presets[static_cast<size_t>(index)].params;
 
     auto setParam = [&](const char* id, float plainVal) {
@@ -260,6 +359,7 @@ void PedalSteelAudioProcessor::loadPreset(int index) {
     setParam(ParamIDs::scoopDepth,    p.scoopDepth);
     setParam(ParamIDs::pedalSpeed,    p.pedalSpeed);
     setParam(ParamIDs::barGlide,      p.barGlide);
+    setParam(ParamIDs::barSlideNoise, p.barSlideNoise);
     setParam(ParamIDs::vibratoDepth,  p.vibratoDepth);
     setParam(ParamIDs::vibratoRate,   p.vibratoRate);
     setParam(ParamIDs::autoSwell,     p.autoSwell);
@@ -271,8 +371,12 @@ void PedalSteelAudioProcessor::loadPreset(int index) {
     setParam(ParamIDs::coilResonance, p.coilResonance);
     setParam(ParamIDs::sustainTime,   p.sustainTime);
     setParam(ParamIDs::cabinetDrop,   p.cabinetDrop);
+    setParam(ParamIDs::stereoWidth,   p.stereoWidth);
     setParam(ParamIDs::ampDrive,      p.ampDrive);
     setParam(ParamIDs::toneWarmth,    p.toneWarmth);
+    setParam(ParamIDs::delayMix,      p.delayMix);
+    setParam(ParamIDs::delayTime,     p.delayTime);
+    setParam(ParamIDs::tempoSync,     p.tempoSync ? 1.0f : 0.0f);
     setParam(ParamIDs::reverbMix,     p.reverbMix);
     setParam(ParamIDs::reverbDecay,   p.reverbDecay);
     setParam(ParamIDs::outputLevel,   p.outputLevel);
@@ -289,18 +393,50 @@ void PedalSteelAudioProcessor::setLivePedalState(int pedalIdx, float val) {
 }
 
 void PedalSteelAudioProcessor::triggerChordAudition(int chordIdx) {
-    engine.triggerAuditionChord(chordIdx);
+    const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::Chord, chordIdx, 0.0f });
+}
+
+void PedalSteelAudioProcessor::triggerPhraseAudition() {
+    const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::Phrase, 0, 0.0f });
+}
+
+void PedalSteelAudioProcessor::triggerPanic() {
+    keyboardState.allNotesOff(0);
+    const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::Panic, 0, 0.0f });
+}
+
+void PedalSteelAudioProcessor::triggerFretboardNote(int stringIdx, float fret) {
+    const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::FretDown, stringIdx, fret });
+}
+
+void PedalSteelAudioProcessor::slideFretboardNote(int stringIdx, float fret) {
+    const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::FretDrag, stringIdx, fret });
+}
+
+void PedalSteelAudioProcessor::releaseFretboardNote(int stringIdx) {
+    const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::FretUp, stringIdx, 0.0f });
 }
 
 void PedalSteelAudioProcessor::getStateInformation(juce::MemoryBlock& destData) {
     auto state = apvts.copyState();
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
-    copyXmlToBinary(*xml, destData);
+    if (xml != nullptr) {
+        xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
+        copyXmlToBinary(*xml, destData);
+    }
 }
 
 void PedalSteelAudioProcessor::setStateInformation(const void* data, int sizeInBytes) {
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
     if (xmlState != nullptr && xmlState->hasTagName(apvts.state.getType())) {
+        const int savedPreset = xmlState->getIntAttribute("currentPresetIndex", 0);
+        currentPresetIndex.store(juce::jlimit(0, std::max(0, getNumPrograms() - 1), savedPreset));
         apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
     }
 }

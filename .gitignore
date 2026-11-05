@@ -7,10 +7,11 @@ out/
 *.sln
 *.vcxproj*
 
-# Intermediate WAV files (keep MP3s and UI screenshots)
+# Intermediate WAV files, local dist binaries, and design mockups
 renders/*.wav
 references/*.wav
 dist/
+concepts/
 
 # OS files
 .DS_Store

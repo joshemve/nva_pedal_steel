@@ -5,7 +5,7 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "01 - Sweet Georgia E9 (Flyover Country)",
             "Reference Match",
-            "Intimate, close-miked modern country E9th pedal steel matched to Flyover Country (83 BPM, E Maj). Sweet 2.12 kHz Emmons single-coil vocal sing, fingerpick snap, oblique B-pedal & A-pedal suspensions, and warm studio plate.",
+            "Intimate, close-miked modern country E9th pedal steel matched to Flyover Country (83 BPM, E Maj). Sweet 2.28 kHz Emmons single-coil vocal sing, fingerpick snap, oblique B-pedal & A-pedal suspensions, and warm studio plate.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
@@ -14,6 +14,7 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.scoopDepth    = 0.42f;
                 p.pedalSpeed    = 165.0f;
                 p.barGlide      = 145.0f;
+                p.barSlideNoise = 0.30f;
                 p.vibratoDepth  = 0.38f;
                 p.vibratoRate   = 5.20f;
                 p.autoSwell     = 0.24f;
@@ -25,8 +26,12 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.coilResonance = 0.74f;
                 p.sustainTime   = 6.8f;
                 p.cabinetDrop   = 0.35f;
+                p.stereoWidth   = 1.00f;
                 p.ampDrive      = 0.24f;
                 p.toneWarmth    = 0.38f;
+                p.delayMix      = 0.00f;
+                p.delayTime     = 360.0f;
+                p.tempoSync     = false;
                 p.reverbMix     = 0.30f;
                 p.reverbDecay   = 0.54f;
                 p.outputLevel   = 0.0f;
@@ -45,6 +50,7 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.scoopDepth    = 0.55f;
                 p.pedalSpeed    = 220.0f;
                 p.barGlide      = 210.0f;
+                p.barSlideNoise = 0.36f;
                 p.vibratoDepth  = 0.54f;
                 p.vibratoRate   = 5.10f;
                 p.autoSwell     = 0.22f;
@@ -56,8 +62,12 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.coilResonance = 0.78f;
                 p.sustainTime   = 7.8f;
                 p.cabinetDrop   = 0.42f;
+                p.stereoWidth   = 1.05f;
                 p.ampDrive      = 0.62f;
                 p.toneWarmth    = 0.36f;
+                p.delayMix      = 0.00f;
+                p.delayTime     = 500.0f;
+                p.tempoSync     = false;
                 p.reverbMix     = 0.46f;
                 p.reverbDecay   = 0.72f;
                 p.outputLevel   = 0.0f;
@@ -76,6 +86,7 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.scoopDepth    = 0.65f;
                 p.pedalSpeed    = 145.0f;
                 p.barGlide      = 135.0f;
+                p.barSlideNoise = 0.42f;
                 p.vibratoDepth  = 0.48f;
                 p.vibratoRate   = 5.25f;
                 p.autoSwell     = 0.16f;
@@ -87,8 +98,12 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.coilResonance = 0.72f;
                 p.sustainTime   = 8.5f;
                 p.cabinetDrop   = 0.38f;
+                p.stereoWidth   = 1.08f;
                 p.ampDrive      = 0.56f;
                 p.toneWarmth    = 0.56f;
+                p.delayMix      = 0.00f;
+                p.delayTime     = 375.0f;
+                p.tempoSync     = false;
                 p.reverbMix     = 0.42f;
                 p.reverbDecay   = 0.76f;
                 p.outputLevel   = 0.0f;
@@ -107,19 +122,24 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.scoopDepth    = 0.64f;
                 p.pedalSpeed    = 210.0f;
                 p.barGlide      = 165.0f;
+                p.barSlideNoise = 0.12f;
                 p.vibratoDepth  = 0.34f;
                 p.vibratoRate   = 4.60f;
                 p.autoSwell     = 0.88f;
                 p.swellTime     = 340.0f;
-                p.sampleBlend   = 0.80f;
+                p.sampleBlend   = 0.88f;
                 p.pickSnap      = 0.15f;
                 p.pickupPos     = 2.95f;
                 p.coilPeakFreq  = 1680.0f;
                 p.coilResonance = 0.52f;
                 p.sustainTime   = 9.2f;
                 p.cabinetDrop   = 0.55f;
+                p.stereoWidth   = 1.12f;
                 p.ampDrive      = 0.16f;
                 p.toneWarmth    = 0.84f;
+                p.delayMix      = 0.00f;
+                p.delayTime     = 475.0f;
+                p.tempoSync     = false;
                 p.reverbMix     = 0.48f;
                 p.reverbDecay   = 0.76f;
                 p.outputLevel   = 0.5f;
@@ -129,7 +149,7 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "05 - Nashville 400 Crying Lead",
             "Studio Lead",
-            "Classic 1970s push-pull E9th lead voice through a clean Peavey Nashville 400 15-inch Black Widow combo. Fast bellcrank A/B pulls and singing 5th-harmonic cry.",
+            "Classic 1970s push-pull E9th lead voice through a Peavey Nashville 400 15-inch Black Widow combo with warm Echoplex quarter-note tape echo.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
@@ -137,92 +157,215 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.volumePedal   = 0.96f;
                 p.scoopDepth    = 0.82f;
                 p.pedalSpeed    = 125.0f;
-                p.barGlide      = 80.0f;
+                p.barGlide      = 85.0f;
+                p.barSlideNoise = 0.38f;
                 p.vibratoDepth  = 0.48f;
                 p.vibratoRate   = 5.35f;
                 p.autoSwell     = 0.18f;
                 p.swellTime     = 130.0f;
-                p.sampleBlend   = 0.72f;
+                p.sampleBlend   = 0.88f;
                 p.pickSnap      = 0.68f;
                 p.pickupPos     = 2.05f;
                 p.coilPeakFreq  = 2220.0f;
                 p.coilResonance = 0.78f;
                 p.sustainTime   = 7.2f;
                 p.cabinetDrop   = 0.48f;
-                p.ampDrive      = 0.18f;
-                p.toneWarmth    = 0.48f;
-                p.reverbMix     = 0.34f;
-                p.reverbDecay   = 0.58f;
+                p.stereoWidth   = 1.05f;
+                p.ampDrive      = 0.24f;
+                p.toneWarmth    = 0.42f;
+                p.delayMix      = 0.22f;
+                p.delayTime     = 640.0f; // 1/4 note when synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.36f;
+                p.reverbDecay   = 0.60f;
                 p.outputLevel   = 0.0f;
                 return p;
             }()
         },
         {
-            "06 - Bakersfield Bright Twang",
+            "06 - Bakersfield Tape Slapback",
             "Vintage Country",
-            "Snappy close-bridge fingerpicking with Fender Twin Reverb sparkle, fast 105ms pedal pulls, and vintage spring reverb bounce.",
+            "Snappy close-bridge fingerpicking with Fender Twin Reverb sparkle, fast 105ms bellcrank pulls, and 115ms analog tape slapback bounce.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
                 p.playMode      = 0;
                 p.volumePedal   = 0.98f;
-                p.scoopDepth    = 0.60f;
+                p.scoopDepth    = 0.56f;
                 p.pedalSpeed    = 105.0f;
                 p.barGlide      = 65.0f;
+                p.barSlideNoise = 0.28f;
                 p.vibratoDepth  = 0.32f;
                 p.vibratoRate   = 5.60f;
                 p.autoSwell     = 0.05f;
                 p.swellTime     = 80.0f;
-                p.sampleBlend   = 0.68f;
-                p.pickSnap      = 0.82f;
+                p.sampleBlend   = 0.85f;
+                p.pickSnap      = 0.84f;
                 p.pickupPos     = 1.75f;
                 p.coilPeakFreq  = 2420.0f;
-                p.coilResonance = 0.80f;
+                p.coilResonance = 0.82f;
                 p.sustainTime   = 5.8f;
                 p.cabinetDrop   = 0.40f;
-                p.ampDrive      = 0.24f;
-                p.toneWarmth    = 0.36f;
-                p.reverbMix     = 0.28f;
+                p.stereoWidth   = 0.90f;
+                p.ampDrive      = 0.30f;
+                p.toneWarmth    = 0.32f;
+                p.delayMix      = 0.28f;
+                p.delayTime     = 115.0f; // Classic studio slapback
+                p.tempoSync     = false;
+                p.reverbMix     = 0.26f;
                 p.reverbDecay   = 0.46f;
                 p.outputLevel   = 0.0f;
                 return p;
             }()
         },
         {
-            "07 - Slow-Gear Dream Steel (Ambient)",
-            "Indie / Ambient",
-            "Hands-free optical volume-pedal swells with deep Bootgaze octave warmth and infinite cathedral shimmer.",
+            "07 - Cosmic Bootgaze Dotted-8th",
+            "Indie / Shoegaze",
+            "Tempo-synced 1/8D Echoplex stereo tape delay into pushed 12AX7 tube saturation and wide Dattorro figure-8 plate.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 1;
+                p.playMode      = 0;
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.62f;
+                p.pedalSpeed    = 200.0f;
+                p.barGlide      = 175.0f;
+                p.barSlideNoise = 0.40f;
+                p.vibratoDepth  = 0.52f;
+                p.vibratoRate   = 5.05f;
+                p.autoSwell     = 0.34f;
+                p.swellTime     = 180.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.72f;
+                p.pickupPos     = 2.10f;
+                p.coilPeakFreq  = 2300.0f;
+                p.coilResonance = 0.80f;
+                p.sustainTime   = 8.5f;
+                p.cabinetDrop   = 0.44f;
+                p.stereoWidth   = 1.28f;
+                p.ampDrive      = 0.68f;
+                p.toneWarmth    = 0.38f;
+                p.delayMix      = 0.38f;
+                p.delayTime     = 500.0f; // 1/8D synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.54f;
+                p.reverbDecay   = 0.82f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "08 - Slow-Gear Dream Steel (Ambient)",
+            "Indie / Ambient",
+            "Hands-free Goodrich optical volume-pedal swells with tempo-synced stereo tape echoes and infinite cathedral plate shimmer.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3;
                 p.playMode      = 2;
                 p.volumePedal   = 0.94f;
-                p.scoopDepth    = 0.74f;
+                p.scoopDepth    = 0.72f;
                 p.pedalSpeed    = 230.0f;
                 p.barGlide      = 190.0f;
-                p.vibratoDepth  = 0.52f;
+                p.barSlideNoise = 0.18f;
+                p.vibratoDepth  = 0.46f;
                 p.vibratoRate   = 4.70f;
                 p.autoSwell     = 0.92f;
                 p.swellTime     = 420.0f;
-                p.sampleBlend   = 0.82f;
-                p.pickSnap      = 0.22f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.16f;
                 p.pickupPos     = 2.75f;
                 p.coilPeakFreq  = 1820.0f;
-                p.coilResonance = 0.64f;
+                p.coilResonance = 0.58f;
                 p.sustainTime   = 10.5f;
                 p.cabinetDrop   = 0.52f;
-                p.ampDrive      = 0.26f;
-                p.toneWarmth    = 0.76f;
-                p.reverbMix     = 0.58f;
-                p.reverbDecay   = 0.86f;
+                p.stereoWidth   = 1.35f;
+                p.ampDrive      = 0.20f;
+                p.toneWarmth    = 0.80f;
+                p.delayMix      = 0.34f;
+                p.delayTime     = 520.0f; // 1/8D synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.62f;
+                p.reverbDecay   = 0.88f;
                 p.outputLevel   = 0.5f;
                 return p;
             }()
         },
         {
-            "08 - Manual 10-String E9th Workstation",
+            "09 - Cryin' In My Beer Ballad",
+            "Classic Ballad",
+            "Deep vocal tonebar glide with physical stainless-steel winding slide whistle, warm 15-inch speaker chest, and lush late-night plate.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 2;
+                p.playMode      = 1;
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.78f;
+                p.pedalSpeed    = 175.0f;
+                p.barGlide      = 185.0f;
+                p.barSlideNoise = 0.58f;
+                p.vibratoDepth  = 0.56f;
+                p.vibratoRate   = 4.95f;
+                p.autoSwell     = 0.30f;
+                p.swellTime     = 165.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.64f;
+                p.pickupPos     = 2.25f;
+                p.coilPeakFreq  = 2160.0f;
+                p.coilResonance = 0.74f;
+                p.sustainTime   = 8.8f;
+                p.cabinetDrop   = 0.45f;
+                p.stereoWidth   = 1.15f;
+                p.ampDrive      = 0.48f;
+                p.toneWarmth    = 0.64f;
+                p.delayMix      = 0.24f;
+                p.delayTime     = 660.0f; // 1/4 synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.78f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "10 - Hot Tweed Roadhouse Grit",
+            "Roots / Southern Rock",
+            "Overdriven 1957 Fender Tweed Deluxe breakup with aggressive metal fingerpick bite, sympathetic cabinet growl, and tight room slap.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 2;
+                p.playMode      = 0;
+                p.volumePedal   = 0.98f;
+                p.scoopDepth    = 0.58f;
+                p.pedalSpeed    = 120.0f;
+                p.barGlide      = 105.0f;
+                p.barSlideNoise = 0.50f;
+                p.vibratoDepth  = 0.44f;
+                p.vibratoRate   = 5.40f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 90.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.88f;
+                p.pickupPos     = 1.90f;
+                p.coilPeakFreq  = 2360.0f;
+                p.coilResonance = 0.80f;
+                p.sustainTime   = 7.5f;
+                p.cabinetDrop   = 0.42f;
+                p.stereoWidth   = 1.02f;
+                p.ampDrive      = 0.84f;
+                p.toneWarmth    = 0.48f;
+                p.delayMix      = 0.18f;
+                p.delayTime     = 135.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.32f;
+                p.reverbDecay   = 0.55f;
+                p.outputLevel   = -0.5f;
+                return p;
+            }()
+        },
+        {
+            "11 - Manual 10-String E9th Workstation",
             "Workstation",
-            "Direct manual copedent control over Pedals A, B, C and Knee Levers LKL (E->F) & LKR (E->D#) via UI pedals, Mod Wheel, or Keyswitches C1-G1.",
+            "Direct manual copedent & MPE control over Pedals A, B, C and Knee Levers LKL (E->F) & LKR (E->D#) via UI pedals, Mod Wheel, MPE, or Keyswitches C0-G0.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
@@ -231,19 +374,60 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.scoopDepth    = 0.0f;
                 p.pedalSpeed    = 140.0f;
                 p.barGlide      = 85.0f;
+                p.barSlideNoise = 0.36f;
                 p.vibratoDepth  = 0.40f;
                 p.vibratoRate   = 5.15f;
                 p.autoSwell     = 0.15f;
                 p.swellTime     = 140.0f;
-                p.sampleBlend   = 0.75f;
-                p.pickSnap      = 0.60f;
-                p.pickupPos     = 2.20f;
-                p.coilPeakFreq  = 2120.0f;
-                p.coilResonance = 0.72f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.66f;
+                p.pickupPos     = 2.10f;
+                p.coilPeakFreq  = 2240.0f;
+                p.coilResonance = 0.74f;
+                p.sustainTime   = 7.4f;
+                p.cabinetDrop   = 0.46f;
+                p.stereoWidth   = 1.00f;
+                p.ampDrive      = 0.24f;
+                p.toneWarmth    = 0.42f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 360.0f;
+                p.tempoSync     = true;
+                p.reverbMix     = 0.32f;
+                p.reverbDecay   = 0.56f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "12 - Studio Phrase Lick Machine (Chromatic)",
+            "Phrase Workstation",
+            "Selects studio licks via C1-F1 and transposes real recorded pedal-steel articulations chromatically across any key on your MIDI keyboard!",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 4; // Studio Phrase Licks
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.45f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 130.0f;
+                p.barSlideNoise = 0.32f;
+                p.vibratoDepth  = 0.38f;
+                p.vibratoRate   = 5.20f;
+                p.autoSwell     = 0.20f;
+                p.swellTime     = 100.0f;
+                p.sampleBlend   = 0.92f;
+                p.pickSnap      = 0.72f;
+                p.pickupPos     = 2.02f;
+                p.coilPeakFreq  = 2280.0f;
+                p.coilResonance = 0.74f;
                 p.sustainTime   = 7.0f;
-                p.cabinetDrop   = 0.48f;
-                p.ampDrive      = 0.16f;
-                p.toneWarmth    = 0.54f;
+                p.cabinetDrop   = 0.35f;
+                p.stereoWidth   = 1.04f;
+                p.ampDrive      = 0.24f;
+                p.toneWarmth    = 0.38f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 480.0f;
+                p.tempoSync     = true;
                 p.reverbMix     = 0.32f;
                 p.reverbDecay   = 0.56f;
                 p.outputLevel   = 0.0f;

@@ -1,6 +1,35 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+namespace {
+    inline juce::Font makeFont(float height, int styleFlags = juce::Font::plain) {
+        return juce::Font(juce::FontOptions(height, styleFlags));
+    }
+
+    inline bool isOpenE9StringMidi(int midiNote) {
+        static constexpr int kOpen[10] = { 47, 50, 52, 54, 56, 59, 63, 64, 66, 68 };
+        for (int m : kOpen) if (m == midiNote) return true;
+        return false;
+    }
+
+    inline const char* getKeyswitchShortLabel(int midiNote) {
+        switch (midiNote) {
+            case 24: return "A";
+            case 25: return "C";
+            case 26: return "B";
+            case 28: return "AB";
+            case 29: return "LK";
+            case 31: return "LR";
+            case 36: return "L1";
+            case 38: return "L2";
+            case 40: return "L3";
+            case 41: return "L4";
+            case 43: return "LP";
+            default: return nullptr;
+        }
+    }
+}
+
 //==============================================================================
 PedalSteelLookAndFeel::PedalSteelLookAndFeel() {
     setColour(juce::ComboBox::backgroundColourId, juce::Colour(0xff1d1814));
@@ -10,15 +39,17 @@ PedalSteelLookAndFeel::PedalSteelLookAndFeel() {
     setColour(juce::PopupMenu::textColourId, juce::Colour(0xfff3e8d2));
     setColour(juce::PopupMenu::highlightedBackgroundColourId, juce::Colour(0xffb87b31));
     setColour(juce::TextButton::buttonColourId, juce::Colour(0xff2a211b));
+    setColour(juce::TextButton::buttonOnColourId, juce::Colour(0xffc9822b));
     setColour(juce::TextButton::textColourOffId, juce::Colour(0xfff0dec2));
+    setColour(juce::TextButton::textColourOnId, juce::Colour(0xff140f0a));
 }
 
 void PedalSteelLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
                                              float sliderPos, float rotaryStartAngle,
                                              float rotaryEndAngle, juce::Slider& slider) {
-    const float radius = static_cast<float>(juce::jmin(width / 2, height / 2)) - 5.0f;
+    const float radius = static_cast<float>(juce::jmin(width / 2, height / 2)) - 6.0f;
     const float centreX = static_cast<float>(x) + static_cast<float>(width) * 0.5f;
-    const float centreY = static_cast<float>(y) + static_cast<float>(height) * 0.5f - 2.0f;
+    const float centreY = static_cast<float>(y) + static_cast<float>(height) * 0.5f - 4.0f;
     const float rx = centreX - radius;
     const float ry = centreY - radius;
     const float rw = radius * 2.0f;
@@ -43,28 +74,99 @@ void PedalSteelLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, in
     g.fillEllipse(rx, ry, rw, rw);
 
     // Chrome inner cap
-    const float capR = radius * 0.66f;
+    const float capR = radius * 0.65f;
     juce::ColourGradient capGrad(juce::Colour(0xffd8cfc0), centreX - capR * 0.4f, centreY - capR * 0.4f,
                                  juce::Colour(0xff6e655c), centreX + capR * 0.5f, centreY + capR * 0.5f, true);
     g.setGradientFill(capGrad);
     g.fillEllipse(centreX - capR, centreY - capR, capR * 2.0f, capR * 2.0f);
 
     g.setColour(juce::Colour(0xff14110e));
-    g.drawEllipse(rx, ry, rw, rw, 1.5f);
+    g.drawEllipse(rx, ry, rw, rw, 1.4f);
 
     // Pointer indicator line
     juce::Path p;
     const float pointerLength = radius * 0.85f;
-    const float pointerThickness = 2.6f;
+    const float pointerThickness = 2.5f;
     p.addRoundedRectangle(-pointerThickness * 0.5f, -radius + 2.0f, pointerThickness, pointerLength * 0.58f, 1.0f);
     p.applyTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
     g.setColour(juce::Colour(0xffffdca0));
     g.fillPath(p);
 
-    // Draw current value readout at bottom of knob
-    g.setColour(juce::Colour(0xffcbbba0));
-    g.setFont(juce::Font(11.0f, juce::Font::bold));
+    // Value readout at bottom of knob
+    g.setColour(juce::Colour(0xffd8c7ab));
+    g.setFont(makeFont(10.5f, juce::Font::bold));
     g.drawText(slider.getTextFromValue(slider.getValue()), x, y + height - 14, width, 14, juce::Justification::centred, false);
+}
+
+//==============================================================================
+void PedalSteelKeyboardComponent::drawWhiteNote(int midiNoteNumber, juce::Graphics& g, juce::Rectangle<float> area,
+                                                bool isDown, bool isOver, juce::Colour /*lineColour*/, juce::Colour /*textColour*/) {
+    const bool isPedalKs  = (midiNoteNumber >= 24 && midiNoteNumber <= 31);
+    const bool isPhraseKs = (midiNoteNumber >= 36 && midiNoteNumber <= 43);
+
+    juce::Colour baseCol = juce::Colour(0xfff5efe4); // Warm vintage ivory
+    if (isPedalKs)       baseCol = juce::Colour(0xff6b4722); // Amber Pedal Keyswitches (C0..G0)
+    else if (isPhraseKs) baseCol = juce::Colour(0xff234c54); // Teal Studio Lick Keyswitches (C1..G1)
+    else if (midiNoteNumber < 45) baseCol = juce::Colour(0xffcfc5b4);
+
+    if (isDown)      baseCol = isPhraseKs ? juce::Colour(0xff4cd4dc) : juce::Colour(0xffffa834);
+    else if (isOver) baseCol = baseCol.brighter(0.14f);
+
+    juce::ColourGradient grad(baseCol.darker(0.08f), area.getX(), area.getY(),
+                              baseCol, area.getX(), area.getBottom(), false);
+    g.setGradientFill(grad);
+    g.fillRect(area);
+
+    g.setColour(juce::Colour(0xff261f1a));
+    g.drawRect(area, 0.8f);
+
+    // Subtle open E9th string gold dot indicator
+    if (!isPedalKs && !isPhraseKs && isOpenE9StringMidi(midiNoteNumber)) {
+        g.setColour(juce::Colour(0xffd48728).withAlpha(0.75f));
+        g.fillEllipse(area.getCentreX() - 2.5f, area.getBottom() - 23.0f, 5.0f, 5.0f);
+    }
+
+    if (const char* ksLbl = getKeyswitchShortLabel(midiNoteNumber)) {
+        g.setColour(isDown ? juce::Colour(0xff14100c) : juce::Colour(0xffffeed2));
+        g.setFont(makeFont(10.0f, juce::Font::bold));
+        g.drawText(ksLbl, area.withTrimmedTop(area.getHeight() - 28.0f).withHeight(14.0f).toNearestInt(), juce::Justification::centred, false);
+    }
+
+    if (midiNoteNumber % 12 == 0) {
+        const int oct = (midiNoteNumber / 12) - 2;
+        g.setColour((isPedalKs || isPhraseKs) ? juce::Colour(0xffdfd2bc) : juce::Colour(0xff524538));
+        g.setFont(makeFont(9.5f, juce::Font::bold));
+        g.drawText("C" + juce::String(oct), area.withTrimmedTop(area.getHeight() - 14.0f).toNearestInt(), juce::Justification::centred, false);
+    }
+}
+
+void PedalSteelKeyboardComponent::drawBlackNote(int midiNoteNumber, juce::Graphics& g, juce::Rectangle<float> area,
+                                                bool isDown, bool isOver, juce::Colour /*noteFillColour*/) {
+    const bool isPedalKs  = (midiNoteNumber >= 24 && midiNoteNumber <= 31);
+    const bool isPhraseKs = (midiNoteNumber >= 36 && midiNoteNumber <= 43);
+
+    juce::Colour col = juce::Colour(0xff1e1915);
+    if (isPedalKs)       col = juce::Colour(0xff3f2812);
+    else if (isPhraseKs) col = juce::Colour(0xff152e34);
+
+    if (isDown)      col = isPhraseKs ? juce::Colour(0xff3dc2ca) : juce::Colour(0xffe59b3c);
+    else if (isOver) col = col.brighter(0.22f);
+
+    g.setColour(col);
+    g.fillRoundedRectangle(area, 2.0f);
+    g.setColour(juce::Colour(0xff0b0907));
+    g.drawRoundedRectangle(area, 2.0f, 1.0f);
+
+    if (!isPedalKs && !isPhraseKs && isOpenE9StringMidi(midiNoteNumber)) {
+        g.setColour(juce::Colour(0xffe59b3c).withAlpha(0.85f));
+        g.fillEllipse(area.getCentreX() - 2.2f, area.getBottom() - 10.0f, 4.4f, 4.4f);
+    }
+
+    if (const char* ksLbl = getKeyswitchShortLabel(midiNoteNumber)) {
+        g.setColour(isDown ? juce::Colour(0xff120e0a) : juce::Colour(0xffffdca0));
+        g.setFont(makeFont(9.0f, juce::Font::bold));
+        g.drawText(ksLbl, area.withTrimmedTop(area.getHeight() - 15.0f).toNearestInt(), juce::Justification::centred, false);
+    }
 }
 
 //==============================================================================
@@ -91,6 +193,21 @@ void FretboardVisualizer::mouseDown(const juce::MouseEvent& e) {
             return;
         }
     }
+
+    // Interactive 10-String Fretboard Pluck & Continuous Tonebar Slide!
+    if (cachedNeckArea.contains(pt) && cachedScaleWidth > 10.0f) {
+        const int sIdx = juce::jlimit(0, 9, static_cast<int>(std::round((pt.y - cachedStrTop) / std::max(1.0f, cachedStrStep))));
+        const float fret = juce::jlimit(0.0f, 24.0f, ((pt.x - cachedNutX) / cachedScaleWidth) * 24.0f);
+        draggedString = sIdx;
+        processor.triggerFretboardNote(sIdx, fret);
+    }
+}
+
+void FretboardVisualizer::mouseDrag(const juce::MouseEvent& e) {
+    if (draggedString >= 0 && cachedScaleWidth > 10.0f) {
+        const float fret = juce::jlimit(0.0f, 24.0f, ((e.position.x - cachedNutX) / cachedScaleWidth) * 24.0f);
+        processor.slideFretboardNote(draggedString, fret);
+    }
 }
 
 void FretboardVisualizer::mouseUp(const juce::MouseEvent&) {
@@ -103,6 +220,10 @@ void FretboardVisualizer::mouseUp(const juce::MouseEvent&) {
         else if (heldUiPedal == 5) processor.setLivePedalState(4, 0.0f);
         heldUiPedal = -1;
         repaint();
+    }
+    if (draggedString >= 0) {
+        processor.releaseFretboardNote(draggedString);
+        draggedString = -1;
     }
 }
 
@@ -117,32 +238,33 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
     g.setColour(juce::Colour(0xff8c6d46));
     g.drawRoundedRectangle(bounds.reduced(1.0f), 8.0f, 1.5f);
 
-    // Fretboard area (top 72%) and Interactive Pedal/Knee Lever Bar (bottom 28%)
     auto neckArea = bounds.reduced(14.0f, 10.0f);
-    auto pedalStrip = neckArea.removeFromBottom(44.0f);
+    auto pedalStrip = neckArea.removeFromBottom(42.0f);
     neckArea.removeFromBottom(6.0f);
+    cachedNeckArea = neckArea;
 
-    // Dark rosewood/ebony fret board with pearloid position markers
+    // Dark rosewood/ebony fretboard with pearloid position markers
     g.setColour(juce::Colour(0xff120f0d));
     g.fillRoundedRectangle(neckArea, 5.0f);
     g.setColour(juce::Colour(0xff524538));
     g.drawRoundedRectangle(neckArea, 5.0f, 1.2f);
 
-    const float nutX = neckArea.getX() + 58.0f;
+    const float nutX = neckArea.getX() + 62.0f;
     const float pickupX = neckArea.getRight() - 62.0f;
-    const float scaleWidth = pickupX - nutX - 24.0f;
+    const float scaleWidth = std::max(40.0f, pickupX - nutX - 24.0f);
+    cachedNutX = nutX;
+    cachedScaleWidth = scaleWidth;
 
-    // Draw 24 frets along neck
     static constexpr int kMarkerFrets[] = { 3, 5, 7, 9, 12, 15, 17, 19, 24 };
-    g.setFont(juce::Font(10.0f, juce::Font::bold));
+    g.setFont(makeFont(10.0f, juce::Font::bold));
     for (int f = 0; f <= 24; ++f) {
-        float normX = static_cast<float>(f) / 24.0f;
-        float fx = nutX + normX * scaleWidth;
+        const float normX = static_cast<float>(f) / 24.0f;
+        const float fx = nutX + normX * scaleWidth;
         bool isMarker = false;
         for (int mf : kMarkerFrets) if (mf == f) isMarker = true;
 
         g.setColour(f == 0 ? juce::Colour(0xffd9ceb8) : (isMarker ? juce::Colour(0xff7a6a58) : juce::Colour(0xff362f29)));
-        g.drawLine(fx, neckArea.getY() + 4.0f, fx, neckArea.getBottom() - 14.0f, f == 0 ? 3.0f : 1.2f);
+        g.drawLine(fx, neckArea.getY() + 15.0f, fx, neckArea.getBottom() - 15.0f, f == 0 ? 3.0f : 1.2f);
 
         if (isMarker || f == 0) {
             g.setColour(juce::Colour(0xffa89882));
@@ -150,39 +272,44 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
         }
     }
 
-    // Draw High-Inductance Single-Coil Pickup & All-Pull Changer Bridge on right
-    juce::Rectangle<float> pickupRect(pickupX - 8.0f, neckArea.getY() + 6.0f, 18.0f, neckArea.getHeight() - 20.0f);
+    // Subtle interactive hint cleanly in top-right margin above String 1 (zero fret-number overlap!)
+    g.setColour(juce::Colour(0xff9c8972));
+    g.setFont(makeFont(9.0f, juce::Font::bold));
+    g.drawText("CLICK & DRAG STRINGS TO SLIDE CHROME BAR",
+               static_cast<int>(pickupX - 260.0f), static_cast<int>(neckArea.getY() + 2.0f), 246, 12, juce::Justification::centredRight, false);
+
+    // High-Inductance Single-Coil Pickup & All-Pull Changer Bridge
+    juce::Rectangle<float> pickupRect(pickupX - 8.0f, neckArea.getY() + 14.0f, 18.0f, neckArea.getHeight() - 28.0f);
     g.setColour(juce::Colour(0xff252220));
     g.fillRoundedRectangle(pickupRect, 4.0f);
     g.setColour(juce::Colour(0xff9c8e7b));
     g.drawRoundedRectangle(pickupRect, 4.0f, 1.2f);
 
-    juce::Rectangle<float> changerRect(neckArea.getRight() - 34.0f, neckArea.getY() + 4.0f, 26.0f, neckArea.getHeight() - 18.0f);
+    juce::Rectangle<float> changerRect(neckArea.getRight() - 34.0f, neckArea.getY() + 12.0f, 26.0f, neckArea.getHeight() - 26.0f);
     juce::ColourGradient chromeGrad(juce::Colour(0xffd0cbc2), changerRect.getX(), changerRect.getY(),
                                     juce::Colour(0xff5e5952), changerRect.getRight(), changerRect.getBottom(), false);
     g.setGradientFill(chromeGrad);
     g.fillRoundedRectangle(changerRect, 3.0f);
 
-    // Draw the 10 Nashville E9th Strings + Live Vibration Glow + Individual String Pull Indicators
     static const char* kStringNames[10] = {
         "1 F#4", "2 D#4", "3 G#4 (B)", "4 E4 (C/LK)", "5 B3 (A)",
         "6 G#3 (B)", "7 F#3", "8 E3 (LK)", "9 D3", "10 B2 (A)"
     };
-    const float strTop = neckArea.getY() + 10.0f;
+    const float strTop = neckArea.getY() + 18.0f;
     const float strBot = neckArea.getBottom() - 20.0f;
     const float strStep = (strBot - strTop) / 9.0f;
+    cachedStrTop = strTop;
+    cachedStrStep = strStep;
 
-    g.setFont(juce::Font(10.0f, juce::Font::bold));
+    g.setFont(makeFont(10.0f, juce::Font::bold));
     for (int s = 0; s < 10; ++s) {
         const float sy = strTop + static_cast<float>(s) * strStep;
         const float energy = status.stringEnergy[static_cast<size_t>(s)];
         const float bend = status.stringBendSemis[static_cast<size_t>(s)];
 
-        // Left string label
         g.setColour(energy > 0.05f ? juce::Colour(0xffffb84d) : juce::Colour(0xff9e8f7c));
-        g.drawText(kStringNames[s], static_cast<int>(neckArea.getX() + 4), static_cast<int>(sy - 6), 52, 12, juce::Justification::centredLeft, false);
+        g.drawText(kStringNames[s], static_cast<int>(neckArea.getX() + 4), static_cast<int>(sy - 6), 56, 12, juce::Justification::centredLeft, false);
 
-        // String gauge thickness (plain 1..5, wound 6..10)
         const float thickness = 1.0f + static_cast<float>(s) * 0.16f;
         if (energy > 0.02f) {
             g.setColour(juce::Colour(0xffe59b3c).withAlpha(juce::jlimit(0.0f, 0.85f, energy * 0.9f)));
@@ -191,11 +318,9 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
         g.setColour(energy > 0.02f ? juce::Colour(0xfffff0d4) : juce::Colour(0xff8c8275));
         g.drawLine(nutX, sy, changerRect.getX(), sy, thickness);
 
-        // Pole piece on pickup
         g.setColour(juce::Colour(0xffd0c8b8));
         g.fillEllipse(pickupRect.getCentreX() - 2.5f, sy - 2.5f, 5.0f, 5.0f);
 
-        // Individual changer finger bend readout on right when string is pulled by pedal/lever!
         if (std::abs(bend) > 0.08f) {
             juce::String bendTxt = (bend > 0.0f ? "+" : "") + juce::String(bend, 1);
             g.setColour(bend > 0.0f ? juce::Colour(0xffffa834) : juce::Colour(0xff5ec4ff));
@@ -203,7 +328,7 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
         }
     }
 
-    // Draw Animated 3/4" Solid Chrome Tonebar at current fret position
+    // Animated 3/4" Solid Chrome Tonebar
     if (status.activeVoiceCount > 0) {
         const float clampedFret = juce::jlimit(0.0f, 24.0f, status.barPositionFret);
         const float barX = nutX + (clampedFret / 24.0f) * scaleWidth;
@@ -212,14 +337,14 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
                                      juce::Colour(0xff778088), barRect.getRight(), barRect.getY(), false);
         g.setGradientFill(barGrad);
         g.fillRoundedRectangle(barRect, 6.0f);
-        g.setColour(juce::Colour(0xffffaa33));
+        g.setColour(status.phrasePlaying ? juce::Colour(0xff4cd4dc) : juce::Colour(0xffffaa33));
         g.drawRoundedRectangle(barRect, 6.0f, 1.5f);
     }
 
-    // Draw Interactive Floor Pedals & Knee Levers Strip at bottom of visualizer
+    // Interactive Floor Pedals & Knee Levers Strip
     static const char* kPedalTitles[6] = {
         "PEDAL A (+2 B->C#)",
-        "A + B PEDALS (I->IV)",
+        "A + B SLANT (I->IV)",
         "PEDAL B (+1 G#->A)",
         "PEDAL C (+2 E/B)",
         "LKL (+1 E->F)",
@@ -234,9 +359,9 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
         status.leverLKR
     };
 
-    const float pWidth = (pedalStrip.getWidth() - 160.0f) / 6.0f;
+    const float pWidth = (pedalStrip.getWidth() - 158.0f) / 6.0f;
     for (int i = 0; i < 6; ++i) {
-        auto r = juce::Rectangle<float>(pedalStrip.getX() + i * pWidth + 3.0f, pedalStrip.getY() + 2.0f, pWidth - 6.0f, pedalStrip.getHeight() - 4.0f);
+        auto r = juce::Rectangle<float>(pedalStrip.getX() + i * pWidth + 2.5f, pedalStrip.getY() + 2.0f, pWidth - 5.0f, pedalStrip.getHeight() - 4.0f);
         pedalRects[static_cast<size_t>(i)] = r;
         const float val = juce::jlimit(0.0f, 1.0f, pedalValues[i]);
 
@@ -247,22 +372,22 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
             g.fillRoundedRectangle(r.withHeight(r.getHeight() * val).withBottomY(r.getBottom()), 5.0f);
         }
         g.setColour(val > 0.1f ? juce::Colour(0xffffb84d) : juce::Colour(0xff6b5844));
-        g.drawRoundedRectangle(r, 5.0f, 1.4f);
+        g.drawRoundedRectangle(r, 5.0f, 1.3f);
 
         g.setColour(juce::Colour(0xfff5ead6));
-        g.setFont(juce::Font(11.0f, juce::Font::bold));
+        g.setFont(makeFont(10.5f, juce::Font::bold));
         g.drawText(kPedalTitles[i], r.toNearestInt(), juce::Justification::centred, false);
     }
 
-    // Volume Swell Meter on right of pedal strip
+    // Optical Volume Swell Meter
     auto volRect = juce::Rectangle<float>(pedalStrip.getRight() - 150.0f, pedalStrip.getY() + 2.0f, 147.0f, pedalStrip.getHeight() - 4.0f);
     g.setColour(juce::Colour(0xff1a1512));
     g.fillRoundedRectangle(volRect, 5.0f);
     const float vFill = juce::jlimit(0.0f, 1.0f, status.volumePedal);
-    g.setColour(juce::Colour(0xff52b788).withAlpha(0.75f));
+    g.setColour(juce::Colour(0xff52b788).withAlpha(0.78f));
     g.fillRoundedRectangle(volRect.withWidth(volRect.getWidth() * vFill), 5.0f);
     g.setColour(juce::Colour(0xff6b5844));
-    g.drawRoundedRectangle(volRect, 5.0f, 1.4f);
+    g.drawRoundedRectangle(volRect, 5.0f, 1.3f);
     g.setColour(juce::Colour(0xfff5ead6));
     g.drawText("OPTICAL SWELL: " + juce::String(static_cast<int>(vFill * 100.0f)) + "%", volRect.toNearestInt(), juce::Justification::centred, false);
 }
@@ -275,9 +400,25 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
       midiKeyboard(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     setLookAndFeel(&lookAndFeel);
-    setSize(1060, 700);
+    setResizable(true, true);
+    setResizeLimits(1020, 660, 1560, 980);
+    setSize(1180, 720);
 
-    // Preset ComboBox
+    // Preset Stepper & ComboBox
+    prevPresetBtn.setTooltip("Previous Factory Preset");
+    prevPresetBtn.onClick = [this] {
+        audioProcessor.stepPreset(-1);
+        presetBox.setSelectedId(audioProcessor.getCurrentProgram() + 1, juce::dontSendNotification);
+    };
+    addAndMakeVisible(prevPresetBtn);
+
+    nextPresetBtn.setTooltip("Next Factory Preset");
+    nextPresetBtn.onClick = [this] {
+        audioProcessor.stepPreset(1);
+        presetBox.setSelectedId(audioProcessor.getCurrentProgram() + 1, juce::dontSendNotification);
+    };
+    addAndMakeVisible(nextPresetBtn);
+
     const auto& presets = getPedalSteelPresets();
     for (int i = 0; i < static_cast<int>(presets.size()); ++i) {
         presetBox.addItem(presets[static_cast<size_t>(i)].name, i + 1);
@@ -289,21 +430,39 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     };
     addAndMakeVisible(presetBox);
 
-    // Voice Style & Play Mode ComboBoxes
+    // Voice Style & Performance Mode ComboBoxes
     styleBox.addItemList({ "Sweet Georgia E9", "Hedonist Bootgaze", "Mikey's Grit Tweed", "Montana Lush Swell" }, 1);
+    styleBox.setTooltip("Selects 44.1 kHz Stereo Studio Pedal-Steel DNA & Amp Voicing");
     addAndMakeVisible(styleBox);
     styleAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::presetStyle, styleBox);
 
-    modeBox.addItemList({ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent" }, 1);
+    modeBox.addItemList({ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent", "Studio Phrase Licks" }, 1);
+    modeBox.setTooltip("Performance Mode (Choose 'Studio Phrase Licks' to transpose real studio licks across the keyboard, or trigger licks anytime on C1-G1)");
     addAndMakeVisible(modeBox);
     modeAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::playMode, modeBox);
 
-    // 4 Instant Audition Chord Buttons
-    static const char* kChordLabels[4] = { "Audition E Maj", "Audition G Maj", "Audition D Maj", "Audition C Maj" };
+    // Host Tempo Sync Button
+    syncBtn.setClickingTogglesState(true);
+    syncBtn.setTooltip("Locks Tape Delay Time (1/16, 1/8, 1/8D, 1/4) & Swell Pocket to DAW Host BPM");
+    addAndMakeVisible(syncBtn);
+    syncAttach = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
+        audioProcessor.apvts, ParamIDs::tempoSync, syncBtn);
+
+    // Play Studio Lick Audition Button
+    lickBtn.setTooltip("Audition & cycle the 4 recorded 44.1 kHz stereo studio licks for the active style (click again to stop, or trigger via C1-G1)");
+    lickBtn.onClick = [this] {
+        audioProcessor.triggerPhraseAudition();
+    };
+    addAndMakeVisible(lickBtn);
+
+    // 4 Instant Triad Audition Buttons
+    static const char* kChordLabels[4] = { "E", "G", "D", "C" };
+    static const char* kChordTips[4]   = { "Audition E Major E9th Triad", "Audition G Major E9th Triad", "Audition D Major E9th Triad", "Audition C Major E9th Triad" };
     for (int i = 0; i < 4; ++i) {
         chordButtons[static_cast<size_t>(i)].setButtonText(kChordLabels[i]);
+        chordButtons[static_cast<size_t>(i)].setTooltip(kChordTips[i]);
         chordButtons[static_cast<size_t>(i)].onClick = [this, i] {
             audioProcessor.triggerChordAudition(i);
         };
@@ -312,58 +471,72 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
 
     addAndMakeVisible(fretboard);
 
-    // Setup 20 Rotary Knobs
-    struct KnobSpec { const char* id; const char* title; };
-    static constexpr KnobSpec kSpecs[20] = {
-        // Panel 1: Copedent & Tonebar Articulation (7 knobs)
-        { ParamIDs::scoopDepth,    "AUTO SCOOP" },
-        { ParamIDs::pedalSpeed,    "PEDAL SPEED" },
-        { ParamIDs::barGlide,      "BAR GLIDE" },
-        { ParamIDs::vibratoDepth,  "VIB DEPTH" },
-        { ParamIDs::vibratoRate,   "VIB RATE" },
-        { ParamIDs::autoSwell,     "AUTO SWELL" },
-        { ParamIDs::swellTime,     "SWELL TIME" },
+    // Setup 24 Symmetrical Rotary Knobs (8 + 8 + 8 across the 3 studio hardware panels)
+    struct KnobSpec { const char* id; const char* title; const char* tip; };
+    static constexpr KnobSpec kSpecs[24] = {
+        // Panel I: Copedent & Tonebar Articulation (8 knobs)
+        { ParamIDs::scoopDepth,    "AUTO SCOOP",   "Automatic A/B pedal grace-note scoop depth on attacks and triads" },
+        { ParamIDs::pedalSpeed,    "PEDAL SPEED",  "Mechanical bellcrank pull speed (ms) for Pedals A, B, C & Knee Levers" },
+        { ParamIDs::barGlide,      "BAR GLIDE",    "Solid 3/4-inch chrome tonebar portamento glide time (ms)" },
+        { ParamIDs::barSlideNoise, "BAR SLIDE FX", "Physical stainless-steel winding slide sheen & harmonic whistle during multi-fret glides" },
+        { ParamIDs::vibratoDepth,  "VIB DEPTH",    "Delayed wrist-roll tonebar vibrato depth (also responds to MIDI Aftertouch)" },
+        { ParamIDs::vibratoRate,   "VIB RATE",     "Tonebar vibrato speed (Hz)" },
+        { ParamIDs::autoSwell,     "AUTO SWELL",   "Hands-free Goodrich optical volume-pedal swell bloom on attacks" },
+        { ParamIDs::swellTime,     "SWELL TIME",   "Optical volume-pedal swell rise time" },
 
-        // Panel 2: E9th Pickup, String & Cabinet Physics (7 knobs)
-        { ParamIDs::sampleBlend,   "REF DNA BLEND" },
-        { ParamIDs::pickSnap,      "PICK & BAR" },
-        { ParamIDs::pickupPos,     "PICKUP POS" },
-        { ParamIDs::coilPeakFreq,  "COIL PEAK HZ" },
-        { ParamIDs::coilResonance, "COIL SING Q" },
-        { ParamIDs::sustainTime,   "SUSTAIN" },
-        { ParamIDs::cabinetDrop,   "CABINET SYMP" },
+        // Panel II: E9th Pickup, String & Cabinet DNA (8 knobs)
+        { ParamIDs::sampleBlend,   "STUDIO DNA",   "Blend between 44.1 kHz Stereo Studio Multi-Samples and Physical 12-Harmonic E9th String Engine" },
+        { ParamIDs::pickSnap,      "PICK SNAP",    "Dunlop metal fingerpick & thumbpick attack transient bite" },
+        { ParamIDs::pickupPos,     "PICKUP POS",   "Single-coil pickup distance from bridge (inches)" },
+        { ParamIDs::coilPeakFreq,  "COIL PEAK HZ", "High-inductance single-coil pickup LC resonant vocal frequency (Hz)" },
+        { ParamIDs::coilResonance, "COIL SING Q",  "Pickup resonant vocal sing (delta-calibrated around studio baseline)" },
+        { ParamIDs::sustainTime,   "SUSTAIN",      "Plucked pedal-steel string ring-out decay time (seconds)" },
+        { ParamIDs::cabinetDrop,   "CABINET SYMP", "Mechanical cabinet drop & sympathetic open-string resonance" },
+        { ParamIDs::stereoWidth,   "STEREO WIDTH", "Stereo panorama width (0.0 = Mono Combo, 1.0 = Studio Stereo, 1.5 = Wide Panorama)" },
 
-        // Panel 3: Amp, 15" Speaker & Studio Reverb (6 knobs)
-        { ParamIDs::volumePedal,   "VOL PEDAL" },
-        { ParamIDs::ampDrive,      "TWEED DRIVE" },
-        { ParamIDs::toneWarmth,    "15\" WARMTH" },
-        { ParamIDs::reverbMix,     "SPRING+PLATE" },
-        { ParamIDs::reverbDecay,   "REV DECAY" },
-        { ParamIDs::outputLevel,   "OUTPUT dB" }
+        // Panel III: Volume Pedal, Tweed Amp, Tape Echo & Studio Plate (8 knobs)
+        { ParamIDs::volumePedal,   "VOL PEDAL",    "Goodrich optical floor volume pedal (also controlled via CC11 / CC7)" },
+        { ParamIDs::ampDrive,      "TWEED DRIVE",  "Push-pull 12AX7 / 6V6 Fender Twin clean to Tweed Deluxe harmonic breakup" },
+        { ParamIDs::toneWarmth,    "15\" WARMTH",  "15-inch JBL / Black Widow speaker body warmth vs presence tilt" },
+        { ParamIDs::delayMix,      "TAPE DELAY",   "Warm Echoplex / BBD stereo analog tape delay mix with dynamic ducking" },
+        { ParamIDs::delayTime,     "DELAY TIME",   "Tape echo delay time (ms, or musical beat subdivision 1/16..1/4D when SYNC is active)" },
+        { ParamIDs::reverbMix,     "PLATE REVERB", "Lush Dattorro Figure-8 cross-coupled stereo plate reverb mix" },
+        { ParamIDs::reverbDecay,   "REV DECAY",    "Stereo plate reverb decay tail length" },
+        { ParamIDs::outputLevel,   "OUTPUT dB",    "Master plugin output trim (dB)" }
     };
 
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 24; ++i) {
         auto& k = knobs[static_cast<size_t>(i)];
         k.slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
         k.slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+        k.slider.setTooltip(kSpecs[i].tip);
         addAndMakeVisible(k.slider);
 
         k.label.setText(kSpecs[i].title, juce::dontSendNotification);
         k.label.setJustificationType(juce::Justification::centred);
         k.label.setColour(juce::Label::textColourId, juce::Colour(0xfff0e2c8));
-        k.label.setFont(juce::Font(11.0f, juce::Font::bold));
+        k.label.setFont(makeFont(10.5f, juce::Font::bold));
         addAndMakeVisible(k.label);
 
         k.attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
             audioProcessor.apvts, kSpecs[i].id, k.slider);
     }
 
-    // Playable bottom MIDI keyboard
+    // Dynamic subdivision label readout on DELAY TIME knob (index 20) when SYNC is enabled!
+    knobs[20].slider.textFromValueFunction = [this](double val) -> juce::String {
+        if (syncBtn.getToggleState()) {
+            return PedalSteelEngine::getSyncedSubdivisionLabel(static_cast<float>(val));
+        }
+        return juce::String(static_cast<int>(std::round(val))) + " ms";
+    };
+
+    // Playable Color-Coded Keyswitch & E9th MIDI Keyboard (spans 24..96 = 43 white keys cleanly across 100% width!)
     midiKeyboard.setAvailableRange(24, 96);
-    midiKeyboard.setLowestVisibleKey(36);
-    midiKeyboard.setKeyWidth(22.0f);
+    midiKeyboard.setLowestVisibleKey(24);
+    midiKeyboard.setScrollButtonsVisible(false);
     addAndMakeVisible(midiKeyboard);
 
+    resized();
     startTimerHz(30);
 }
 
@@ -372,41 +545,97 @@ PedalSteelAudioProcessorEditor::~PedalSteelAudioProcessorEditor() {
     setLookAndFeel(nullptr);
 }
 
+void PedalSteelAudioProcessorEditor::refreshVisualizer() {
+    const auto st = audioProcessor.getLiveStatus();
+    phraseActiveUi = st.phrasePlaying;
+    meterL = audioProcessor.getOutputPeakL();
+    meterR = audioProcessor.getOutputPeakR();
+    fretboard.updateStatus(st);
+}
+
 void PedalSteelAudioProcessorEditor::timerCallback() {
-    fretboard.updateStatus(audioProcessor.getLiveStatus());
+    const int hostProg = audioProcessor.getCurrentProgram() + 1;
+    if (presetBox.getSelectedId() != hostProg && !presetBox.isPopupActive()) {
+        presetBox.setSelectedId(hostProg, juce::dontSendNotification);
+    }
+
+    const int bpmInt = static_cast<int>(std::round(audioProcessor.getHostBpm()));
+    syncBtn.setButtonText(syncBtn.getToggleState() ? ("SYNC " + juce::String(bpmInt)) : "SYNC");
+    knobs[20].slider.repaint();
+
+    const auto st = audioProcessor.getLiveStatus();
+    if (st.phrasePlaying != phraseActiveUi) {
+        phraseActiveUi = st.phrasePlaying;
+        lickBtn.setButtonText(phraseActiveUi ? ("STOP L" + juce::String(st.activeLickSlot + 1)) : "PLAY LICK");
+        lickBtn.setColour(juce::TextButton::buttonColourId, phraseActiveUi ? juce::Colour(0xff236a73) : juce::Colour(0xff2a211b));
+    }
+
+    meterL = audioProcessor.getOutputPeakL();
+    meterR = audioProcessor.getOutputPeakR();
+    fretboard.updateStatus(st);
+    repaint(getWidth() - 78, 8, 68, 48);
 }
 
 void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
+    const float w = static_cast<float>(getWidth());
+    const float h = static_cast<float>(getHeight());
+
     // Rich dark studio chassis background
     juce::ColourGradient bg(juce::Colour(0xff1a1512), 0.0f, 0.0f,
-                            juce::Colour(0xff0e0b09), 0.0f, static_cast<float>(getHeight()), false);
+                            juce::Colour(0xff0e0b09), 0.0f, h, false);
     g.setGradientFill(bg);
     g.fillAll();
 
     // Top Header Banner
-    auto headerRect = juce::Rectangle<float>(12.0f, 8.0f, static_cast<float>(getWidth() - 24), 48.0f);
+    auto headerRect = juce::Rectangle<float>(12.0f, 8.0f, w - 24.0f, 48.0f);
     g.setColour(juce::Colour(0xff261e18));
     g.fillRoundedRectangle(headerRect, 6.0f);
     g.setColour(juce::Colour(0xff7a5c3c));
     g.drawRoundedRectangle(headerRect, 6.0f, 1.2f);
 
     g.setColour(juce::Colour(0xffffb84d));
-    g.setFont(juce::Font(18.5f, juce::Font::bold));
-    g.drawText("NVA PEDAL STEEL", 22, 12, 210, 24, juce::Justification::centredLeft, false);
+    g.setFont(makeFont(17.5f, juce::Font::bold));
+    g.drawText("NVA PEDAL STEEL", 20, 11, 200, 22, juce::Justification::centredLeft, false);
     g.setColour(juce::Colour(0xffbfb099));
-    g.setFont(juce::Font(10.5f, juce::Font::plain));
-    g.drawText("10-STRING E9th COPEDENT & REFERENCE DNA WORKSTATION", 22, 33, 290, 16, juce::Justification::centredLeft, false);
+    g.setFont(makeFont(9.5f, juce::Font::plain));
+    g.drawText("C0-G0: PEDALS  |  C1-G1: LICKS  |  MPE READY", 20, 32, 236, 16, juce::Justification::centredLeft, false);
 
-    // Draw 3 Brushed Hardware Module Panels
-    const float panelY = 308.0f;
-    const float panelH = 282.0f;
-    const float panelW1 = 362.0f;
-    const float panelW2 = 362.0f;
-    const float panelW3 = static_cast<float>(getWidth()) - 24.0f - panelW1 - panelW2 - 16.0f;
+    // Live Stereo Output Peak Meter on right of header
+    auto meterBox = juce::Rectangle<float>(w - 68.0f, 15.0f, 48.0f, 34.0f);
+    g.setColour(juce::Colour(0xff14100d));
+    g.fillRoundedRectangle(meterBox, 4.0f);
+    g.setColour(juce::Colour(0xff5b4733));
+    g.drawRoundedRectangle(meterBox, 4.0f, 1.0f);
 
-    juce::Rectangle<float> p1(12.0f, panelY, panelW1, panelH);
-    juce::Rectangle<float> p2(12.0f + panelW1 + 8.0f, panelY, panelW2, panelH);
-    juce::Rectangle<float> p3(12.0f + panelW1 + panelW2 + 16.0f, panelY, panelW3, panelH);
+    auto drawBar = [&](juce::Rectangle<float> bar, float linPeak) {
+        const float db = juce::Decibels::gainToDecibels(std::max(1e-4f, linPeak), -48.0f);
+        const float norm = juce::jlimit(0.0f, 1.0f, (db + 48.0f) / 48.0f);
+        if (norm > 0.01f) {
+            juce::Colour col = (linPeak > 0.94f) ? juce::Colour(0xffff4d4d)
+                             : (linPeak > 0.65f) ? juce::Colour(0xffffb84d)
+                                                 : juce::Colour(0xff52b788);
+            g.setColour(col);
+            g.fillRoundedRectangle(bar.withWidth(bar.getWidth() * norm), 2.0f);
+        }
+    };
+    drawBar(juce::Rectangle<float>(meterBox.getX() + 14.0f, meterBox.getY() + 6.0f,  30.0f, 8.0f), meterL);
+    drawBar(juce::Rectangle<float>(meterBox.getX() + 14.0f, meterBox.getY() + 19.0f, 30.0f, 8.0f), meterR);
+    g.setColour(juce::Colour(0xffbfb099));
+    g.setFont(makeFont(8.5f, juce::Font::bold));
+    g.drawText("L", static_cast<int>(meterBox.getX() + 3), static_cast<int>(meterBox.getY() + 4),  10, 11, juce::Justification::centred, false);
+    g.drawText("R", static_cast<int>(meterBox.getX() + 3), static_cast<int>(meterBox.getY() + 17), 10, 11, juce::Justification::centred, false);
+
+    // 3 Symmetrical Brushed Hardware Module Panels
+    const float fretH  = std::round((h - 64.0f) * 0.365f);
+    const float kbH    = std::round(juce::jlimit(82.0f, 108.0f, h * 0.132f));
+    const float panelY = 62.0f + fretH + 8.0f;
+    const float panelH = h - panelY - kbH - 16.0f;
+    const float availW = w - 24.0f - 16.0f;
+    const float pw     = availW / 3.0f;
+
+    juce::Rectangle<float> p1(12.0f,                panelY, pw, panelH);
+    juce::Rectangle<float> p2(12.0f + pw + 8.0f,    panelY, pw, panelH);
+    juce::Rectangle<float> p3(12.0f + 2.0f * (pw + 8.0f), panelY, pw, panelH);
 
     auto drawPanel = [&](juce::Rectangle<float> r, const char* title) {
         g.setColour(juce::Colour(0xff211a15));
@@ -414,59 +643,89 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
         g.setColour(juce::Colour(0xff634c36));
         g.drawRoundedRectangle(r, 7.0f, 1.3f);
 
-        auto banner = r.removeFromTop(26.0f);
+        auto banner = r.removeFromTop(25.0f);
         g.setColour(juce::Colour(0xff31251c));
         g.fillRoundedRectangle(banner, 7.0f);
         g.setColour(juce::Colour(0xffe59b3c));
-        g.setFont(juce::Font(12.0f, juce::Font::bold));
+        g.setFont(makeFont(11.5f, juce::Font::bold));
         g.drawText(title, banner.toNearestInt(), juce::Justification::centred, false);
     };
 
     drawPanel(p1, "I. COPEDENT PEDALS & TONEBAR ARTICULATION");
     drawPanel(p2, "II. E9th PICKUP, STRING & CABINET DNA");
-    drawPanel(p3, "III. SWELL PEDAL, TWEED AMP & STUDIO SPACE");
+    drawPanel(p3, "III. SWELL, TWEED AMP, TAPE ECHO & PLATE");
 }
 
 void PedalSteelAudioProcessorEditor::resized() {
-    // Top bar layout
-    presetBox.setBounds(316, 18, 222, 28);
-    styleBox.setBounds(544, 18, 142, 28);
-    modeBox.setBounds(692, 18, 148, 28);
+    const int w = getWidth();
+    const int h = getHeight();
 
-    int btnX = 848;
+    // Header Bar Controls (responsive across 980..1520 px)
+    const int rightFixed = 74; // meter area
+    const int chordGroupW = 4 * 28 + 3 * 3;
+    const int lickW = 78;
+    const int syncW = 68;
+    const int rightButtonsStart = w - rightFixed - chordGroupW - lickW - syncW - 16;
+
+    int x = 232;
+    prevPresetBtn.setBounds(x, 18, 22, 28); x += 24;
+    nextPresetBtn.setBounds(x, 18, 22, 28); x += 25;
+
+    const int combosAvail = std::max(280, rightButtonsStart - x - 8);
+    const int presetW = static_cast<int>(combosAvail * 0.45f);
+    const int styleW  = static_cast<int>(combosAvail * 0.27f);
+    const int modeW   = combosAvail - presetW - styleW - 10;
+
+    presetBox.setBounds(x, 18, presetW, 28); x += presetW + 5;
+    styleBox.setBounds(x, 18, styleW, 28);   x += styleW + 5;
+    modeBox.setBounds(x, 18, modeW, 28);     x += modeW + 6;
+
+    syncBtn.setBounds(x, 18, syncW, 28);     x += syncW + 5;
+    lickBtn.setBounds(x, 18, lickW, 28);     x += lickW + 5;
+
     for (int i = 0; i < 4; ++i) {
-        chordButtons[static_cast<size_t>(i)].setBounds(btnX + i * 50, 18, 48, 28);
-        chordButtons[static_cast<size_t>(i)].setButtonText(i == 0 ? "E Maj" : i == 1 ? "G Maj" : i == 2 ? "D Maj" : "C Maj");
+        chordButtons[static_cast<size_t>(i)].setBounds(x + i * 31, 18, 28, 28);
     }
 
     // Center Fretboard & Copedent Visualizer
-    fretboard.setBounds(12, 62, getWidth() - 24, 238);
+    const int fretH  = static_cast<int>(std::round((h - 64.0f) * 0.365f));
+    const int kbH    = static_cast<int>(std::round(juce::jlimit(82.0f, 108.0f, h * 0.132f)));
+    const int panelY = 62 + fretH + 8;
+    const int panelH = h - panelY - kbH - 16;
 
-    // Layout knobs in the 3 panels
-    const int panelY = 308;
-    const int panelW1 = 362;
-    const int panelW2 = 362;
-    const int panelW3 = getWidth() - 24 - panelW1 - panelW2 - 16;
+    fretboard.setBounds(12, 62, w - 24, fretH);
 
-    auto layoutPanelKnobs = [&](int startIdx, int count, int px, int pw) {
-        const int cols = (count <= 6) ? 3 : 4;
-        const int cellW = pw / cols;
-        const int rowH = 118;
-        for (int i = 0; i < count; ++i) {
-            int r = i / cols;
-            int c = i % cols;
-            int cx = px + c * cellW;
-            int cy = panelY + 34 + r * rowH;
+    // Symmetrical 4x2 Rotary Knobs inside each of the 3 Hardware Panels
+    const float availW = static_cast<float>(w - 24 - 16);
+    const float pw = availW / 3.0f;
+
+    auto layoutPanelKnobs = [&](int startIdx, float px) {
+        constexpr int cols = 4;
+        const float cellW = pw / static_cast<float>(cols);
+        const float bodyH = static_cast<float>(panelH - 30);
+        const float rowH  = bodyH * 0.5f;
+
+        for (int i = 0; i < 8; ++i) {
+            const int r = i / cols;
+            const int c = i % cols;
+            const int cx = static_cast<int>(std::round(px + c * cellW));
+            const int cy = static_cast<int>(std::round(static_cast<float>(panelY + 29) + r * rowH));
+            const int cw = static_cast<int>(std::round(cellW));
+            const int ch = static_cast<int>(std::round(rowH));
+
             auto& k = knobs[static_cast<size_t>(startIdx + i)];
-            k.label.setBounds(cx + 2, cy, cellW - 4, 16);
-            k.slider.setBounds(cx + 6, cy + 16, cellW - 12, 92);
+            k.label.setBounds(cx + 2, cy, cw - 4, 15);
+            k.slider.setBounds(cx + 4, cy + 15, cw - 8, std::max(56, ch - 17));
         }
     };
 
-    layoutPanelKnobs(0, 7, 12, panelW1);
-    layoutPanelKnobs(7, 7, 12 + panelW1 + 8, panelW2);
-    layoutPanelKnobs(14, 6, 12 + panelW1 + panelW2 + 16, panelW3);
+    layoutPanelKnobs(0,  12.0f);
+    layoutPanelKnobs(8,  12.0f + pw + 8.0f);
+    layoutPanelKnobs(16, 12.0f + 2.0f * (pw + 8.0f));
 
-    // Bottom Playable MIDI Keyboard
-    midiKeyboard.setBounds(12, 598, getWidth() - 24, 92);
+    // Bottom Playable Color-Coded Keyboard (24..96 = 43 white keys -> spans 100.0% of width with zero gap!)
+    const int kbWidth = w - 24;
+    midiKeyboard.setBounds(12, h - kbH - 8, kbWidth, kbH);
+    midiKeyboard.setLowestVisibleKey(24);
+    midiKeyboard.setKeyWidth(static_cast<float>(kbWidth) / 43.0f);
 }

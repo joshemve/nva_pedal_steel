@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "../Params.h"
 #include <array>
+#include <vector>
 
 struct CopedentStatus {
     float pedalA = 0.0f;
@@ -12,6 +13,8 @@ struct CopedentStatus {
     float volumePedal = 0.92f;
     float barPositionFret = 0.0f;
     int activeVoiceCount = 0;
+    bool phrasePlaying = false;
+    int activeLickSlot = 0;
     std::array<float, 10> stringEnergy{};
     std::array<float, 10> stringPitchSemis{};
     std::array<float, 10> stringBendSemis{};
@@ -33,7 +36,18 @@ public:
     // Direct performance triggers from UI or automation
     void setManualPedal(int pedalIndex, float value); // 0=A, 1=B, 2=C, 3=LKL, 4=LKR
     void triggerAuditionChord(int chordIndex);
+    void triggerPhraseAudition();
+    void allNotesOff();
+
+    // Interactive 10-String Fretboard mouse pluck & continuous chrome-bar slide
+    void triggerFretboardNote(int stringIndex, float fret);
+    void slideFretboardNote(int stringIndex, float fret);
+    void releaseFretboardNote(int stringIndex);
+
     CopedentStatus getStatus() const;
+
+    static double computeSyncedDelayMs(float delayParamMs, double bpm);
+    static juce::String getSyncedSubdivisionLabel(float delayParamMs);
 
 private:
     static constexpr int kNumStrings = 10;
@@ -80,6 +94,7 @@ private:
         bool active = false;
         bool held = false;
         bool sustainedByPedal = false;
+        bool uiTriggered = false;
         int stringIndex = 0;       // 0..9 (Strings 1..10)
         int midiNote = 60;         // Currently assigned target MIDI note
         int channel = 1;
@@ -90,15 +105,17 @@ private:
         double releaseAgeSec = 0.0;
         uint64_t triggerOrder = 0;
 
-        // Continuous Tonebar & Mechanical Changer states
+        // Continuous Tonebar, MPE & Mechanical Changer states
         float barTargetMidi = 60.0f;
         float barCurrentMidi = 60.0f;
-        float barVelocity = 0.0f;   // For 2nd-order smooth tonebar inertia
+        float barVelocity = 0.0f;
 
-        float scoopOffsetSemis = 0.0f;   // Decaying grace scoop (-2..0 or -1..0)
+        float scoopOffsetSemis = 0.0f;
         float scoopVel = 0.0f;
-        float pedalCurrentSemis = 0.0f;  // Smoothed mechanical changer pull offset
+        float pedalCurrentSemis = 0.0f;
         float pedalVel = 0.0f;
+        float mpePitchSemis = 0.0f;
+        float mpePitchVel = 0.0f;
 
         // Swell & Amp Envelope
         float ampEnv = 0.0f;
@@ -109,6 +126,7 @@ private:
         // Multi-Sample & Studio Phrase Articulation playback state
         bool isPhraseSlice = false;
         int phraseSliceIdx = 0;
+        float phraseTransposeSemis = 0.0f;
         int multiSampleIdx = 0;
         double samplePos = 0.0;
 
@@ -120,15 +138,31 @@ private:
         double transientPos = 0.0;
         float transientGain = 0.0f;
 
-        // Per-string filters
+        // Per-string pick & chrome-bar winding slide resonator state
         float pickLpState = 0.0f;
-        float msHpState = 0.0f;
-        float slideNoiseLp = 0.0f;
+        float slideSvfBand = 0.0f;
+        float slideSvfLow  = 0.0f;
         float lastOutput = 0.0f;
     };
 
-    // Zero-Comb-Warble Velvet Multi-Tap + 8-Stage Unit-Gain Schroeder Allpass Stereo Plate Reverb
-    // Specially engineered for continuous pedal-steel glissandos (0.0 dB comb-tooth ripple during bar slides!)
+    // Warm Stereo Echoplex / BBD Tape Delay with Capstan Modulation & Dynamic Ducking
+    struct StudioTapeDelay {
+        std::vector<float> bufL, bufR;
+        int writePos = 0;
+        int maxLen = 1;
+        float smoothDelaySamples = 15000.0f;
+        double wowPhase = 0.0;
+        float fbLpL = 0.0f, fbLpR = 0.0f;
+        float fbHpL = 0.0f, fbHpR = 0.0f;
+        float duckEnv = 0.0f;
+        float slideDuckSmooth = 1.0f;
+
+        void prepare(double sr);
+        void reset();
+        void processSample(double sr, float inL, float inR, float delayMs, float mix, float slideSpeed, float& outWetL, float& outWetR);
+    };
+
+    // Dattorro Figure-8 Cross-Coupled Stereo Plate Reverb
     struct StudioReverb {
         std::vector<float> velvetBufL, velvetBufR;
         int velvetPos = 0;
@@ -150,7 +184,7 @@ private:
         void processSample(float inL, float inR, float decay, float width, float& outL, float& outR);
     };
 
-    // Sympathetic E9th string resonator bank
+    // Sympathetic E9th string & wood cabinet resonator bank
     struct SympatheticBank {
         std::array<std::vector<float>, 4> combBufs;
         std::array<int, 4> combPos{};
@@ -167,11 +201,15 @@ private:
     uint64_t noteCounter = 0;
     uint32_t rngState = 0x9E3779B9u;
 
-    // Live MIDI / Keyswitch / UI pedal states
+    // Live MIDI / Keyswitch / MPE / UI pedal states
     bool sustainPedalDown = false;
-    float pitchWheelNorm = 0.0f;   // -1..+1
+    float pitchWheelNorm = 0.0f;   // Master Channel 1 pitch wheel (-1..+1)
+    std::array<float, 17> mpeChannelPitchNorm{}; // Per-channel MPE pitch bend (channels 1..16)
+    std::array<float, 17> mpeChannelPressure{};  // Per-channel aftertouch pressure (0..1)
     float modWheelNorm = 0.0f;     // 0..1
     float expressionNorm = 1.0f;   // 0..1
+    int selectedLickSlot = 0;      // 0..3 selected studio lick slot
+    int uiAuditionLickCycle = 0;   // Cycles licks 0..3 when clicking UI "PLAY LICK"
     std::array<float, 5> keyswitchPedals{}; // A, B, C, LKL, LKR
     std::array<float, 5> uiPedals{};        // A, B, C, LKL, LKR
 
@@ -187,21 +225,21 @@ private:
     double globalVibratoPhase = 0.0;
     float globalSwellEnv = 1.0f;
 
-    // Master filter chain (Pickup Mid-Scoop + LC Tank + 15" Speaker Cabinet + Post-Amp Tone)
+    // Physical String Bus Filter Chain (Pickup Mid-Scoop + LC Tank + 15" Speaker Cabinet)
     Biquad midScoopFilter;
     Biquad pickupPeakFilter;
     Biquad speakerBodyFilter;
     Biquad speakerPresenceFilter;
-    Biquad speakerLowpass1;
-    Biquad speakerLowpass2;
-    Biquad dcBlocker;
+    Biquad dcBlockerPhys;
 
-    // Close-miked stereo speaker cabinet dual-mic (SM57 dustcap L + R121 cone R with 0.55ms baffle offset)
-    std::array<float, 64> cabHaasBuf{};
-    int cabHaasPos = 0;
-    float cabConeLpR = 0.0f;
+    // Delta-Calibrated Studio Sample & Phrase Bus Filters (0.0 dB transparent at preset baseline!)
+    Biquad studioDeltaCoilFilter;
+    Biquad studioDeltaWarmthFilter;
+    Biquad studioDeltaTrebleFilter;
+    Biquad dcBlockerStudio;
 
     SympatheticBank sympathetic;
+    StudioTapeDelay tapeDelay;
     StudioReverb reverb;
 
     // Helper methods
@@ -209,8 +247,9 @@ private:
     void updateFilterCoeffs();
     void reassignChordRoles();
     int chooseBestStringForNote(int midiNote, float velocity, bool& outIsLegatoTransfer, float& outPrevBarMidi);
-    int selectBestMultiSample(int midiNote, int style) const;
-    int selectPhraseSlice(int midiNote, int style) const;
+    int selectBestMultiSample(int midiNote, int style, float velocity) const;
+    int selectPhraseSliceBySlot(int slotIndex, int style) const;
+    void startPhraseVoice(int phraseIdx, int midiNote, int channel, float vel, float transposeSemis, bool fromUi);
     void readStereoMultiSampleHermite(int sampleIdx, double relPos, float& outL, float& outR) const;
     void readStereoPhraseSliceHermite(int phraseIdx, double relPos, float& outL, float& outR) const;
 };

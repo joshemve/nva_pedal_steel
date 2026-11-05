@@ -13,21 +13,21 @@ int main(int argc, char* argv[]) {
     PedalSteelAudioProcessor processor;
     processor.prepareToPlay(44100.0, 512);
 
-    // Trigger an E-major E9th chord and engage Pedal A & B so the visualizer shows live string energy & bends
+    // Load Preset 05 (Nashville 400 Crying Lead with SYNC active) or Preset 01, trigger E9th chord & engage Pedals A+B
+    processor.loadPreset(0);
     processor.triggerChordAudition(0);
     processor.setLivePedalState(0, 0.85f);
     processor.setLivePedalState(1, 1.0f);
 
     juce::AudioBuffer<float> audioBuf(2, 512);
     juce::MidiBuffer midiBuf;
-    for (int i = 0; i < 12; ++i) {
+    for (int i = 0; i < 16; ++i) {
         processor.processBlock(audioBuf, midiBuf);
     }
 
     std::unique_ptr<juce::AudioProcessorEditor> editor(processor.createEditor());
-    editor->setSize(1060, 700);
+    editor->setSize(1180, 720);
 
-    // Refresh visualizer state
     if (auto* psEditor = dynamic_cast<PedalSteelAudioProcessorEditor*>(editor.get())) {
         psEditor->refreshVisualizer();
     }
