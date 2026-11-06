@@ -1,0 +1,71 @@
+name: Build & Audit NVA Pedal Steel (Windows & macOS)
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Windows x64 (VST3 + Standalone + DSP Audit)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Release Targets
+        run: cmake --build build --config Release --parallel 4
+
+      - name: Run Multi-Rate DSP & State Audit
+        run: |
+          .\build\PedalSteelRender_artefacts\Release\PedalSteelRender.exe --audit
+          .\build\PedalSteelShot_artefacts\Release\PedalSteelShot.exe
+
+      - name: Stage Windows Bundle
+        run: |
+          New-Item -ItemType Directory -Force -Path package_win
+          Copy-Item -Path "build\PedalSteel_artefacts\Release\VST3\NVA Pedal Steel.vst3" -Destination "package_win\" -Recurse -Force
+          Copy-Item -Path "build\PedalSteel_artefacts\Release\Standalone\NVA Pedal Steel.exe" -Destination "package_win\" -Force
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: NVA-Pedal-Steel-Windows-x64
+          path: package_win
+
+  build-macos:
+    name: macOS Universal (AU + VST3 + Standalone + DSP Audit)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake (Universal arm64 + x86_64)
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0"
+
+      - name: Build Release Targets
+        run: cmake --build build --config Release --parallel 4
+
+      - name: Ad-Hoc Sign Universal Bundles & Run DSP Audit
+        run: |
+          codesign --force --deep --sign - "build/PedalSteel_artefacts/Release/VST3/NVA Pedal Steel.vst3"
+          codesign --force --deep --sign - "build/PedalSteel_artefacts/Release/AU/NVA Pedal Steel.component"
+          codesign --force --deep --sign - "build/PedalSteel_artefacts/Release/Standalone/NVA Pedal Steel.app"
+          ./build/PedalSteelRender_artefacts/Release/PedalSteelRender --audit
+
+      - name: Stage macOS Bundle
+        run: |
+          mkdir -p package_mac
+          cp -R "build/PedalSteel_artefacts/Release/VST3/NVA Pedal Steel.vst3" package_mac/
+          cp -R "build/PedalSteel_artefacts/Release/AU/NVA Pedal Steel.component" package_mac/
+          cp -R "build/PedalSteel_artefacts/Release/Standalone/NVA Pedal Steel.app" package_mac/
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: NVA-Pedal-Steel-macOS-Universal
+          path: package_mac

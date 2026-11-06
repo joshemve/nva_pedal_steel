@@ -1,6 +1,6 @@
 # NVA Pedal Steel (`Nvps`)
 
-**NVA Pedal Steel** is a C++20 / JUCE 8 MIDI & MPE-playable Nashville E9th 10-String Pedal Steel Guitar instrument plugin (`VST3` and `Standalone`).
+**NVA Pedal Steel** is a C++20 / JUCE 8 MIDI & MPE-playable Nashville E9th 10-String Pedal Steel Guitar instrument plugin (`VST3`, `AU` on macOS, and `Standalone`).
 
 ![NVA Pedal Steel UI](renders/ui_screenshot.png)
 
@@ -23,7 +23,8 @@
   - Dedicated first-principles hardware modeling for modern Indie, R&B, Space-Rock, and Psych-Soul production alongside classic studio steel: **Tascam 424 4-Track Cassette** (`3.45 kHz` 4-pole tape roll-off + dual-capstan wow/flutter + dynamic preamp sag), **Coles 4038 Ribbon + Teletronix LA-2A Opto Velvet** (plush `215 Hz` chest + modulated Lexicon reverb pre-delay), **4-Stage Script Phase 90 / Uni-Vibe Analog Optical Phaser** (`0.24 Hz` *Dark Side* twin-notch sweep + Hiwatt Class-A tube warmth), **Accutronics 3-Spring Tank Drip + Deep Fender Vibrolux Optical Bias Tremolo**, **24 dB/oct `1.35 kHz` Resampled Alt-R&B Underwater Filter**, and **Boss VB-2 `1.55 Hz` Analog Pitch Vibrato + Stereo CE-2 + 12AX7 Tube Honey**.
 - **Full Studio QOL & Interactive UI**:
   - **Interactive 10-String Fretboard**: Click any string to pluck and drag horizontally across frets `0–24` to slide the solid chrome bar in real time.
-  - **18 Factory Presets** with `<`/`>` quick-steppers, `PLAY LICK` & `E / G / D / C` chord audition buttons, live stereo `L/R` peak meter, resizable vector UI (`1020×660` to `1560×980`), hover tooltips, and full DAW state persistence.
+  - **Front-Panel Analog Character Selector**: Mix and match any of the 6 hardware character circuits onto any preset with click-free `17 ms` live crossfading.
+  - **18 Factory Presets + User Preset Save/Load** (`Documents/NVA Pedal Steel/Presets/*.nvps`), `<`/`>` quick-steppers, preset-aware double-click knob reset, `Ctrl/Cmd + Drag` fine precision mode, `PLAY LICK` & `E / G / D / C` chord audition buttons, live stereo `L/R` peak meter, resizable vector UI (`1060×660` to `1600×980`), hover tooltips, and full DAW state persistence.
 
 ## MIDI, Keyswitch & MPE Reference
 
@@ -39,15 +40,16 @@
 | **`CC 65 / 66 / 67 / 68 / 69`** | Continuous **Pedal A / Pedal B / Pedal C / LKL / LKR** control |
 | **`Pitch Wheel` (Ch 1)** | Solid Chrome Tonebar glissando (`±7` semitones) with hand/bar mass inertia |
 
-## Building
+## Building & Automated Audit
 
-Requires CMake 3.22+, Visual Studio 2022 (or Clang/Xcode), and JUCE 8.
+Requires CMake 3.22+ and Visual Studio 2022 (Windows) or Xcode / Clang (macOS). Uses a local `JUCE_SOURCE` cache if present, or automatically fetches `JUCE 8.0.6` via CMake `FetchContent`.
 
 ```powershell
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release --parallel 8
+.\build\PedalSteelRender_artefacts\Release\PedalSteelRender.exe --audit
 ```
 
-Pre-built Windows x64 release binaries are also included in [`dist/`](dist/):
+GitHub Actions CI ([`.github/workflows/build.yml`](.github/workflows/build.yml)) builds and audits both **Windows x64 (`VST3` + `Standalone`)** and **macOS Universal `arm64 + x86_64` (`AU` + `VST3` + `Standalone`)** bundles. Pre-built Windows x64 release binaries are also included in [`dist/`](dist/):
 - **VST3**: `dist/NVA Pedal Steel.vst3`
 - **Standalone**: `dist/NVA Pedal Steel.exe`

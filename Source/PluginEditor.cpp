@@ -183,12 +183,12 @@ void FretboardVisualizer::mouseDown(const juce::MouseEvent& e) {
     for (int i = 0; i < 6; ++i) {
         if (pedalRects[static_cast<size_t>(i)].contains(pt)) {
             heldUiPedal = i;
-            if (i == 0) processor.setLivePedalState(0, 1.0f);
-            else if (i == 1) { processor.setLivePedalState(0, 1.0f); processor.setLivePedalState(1, 1.0f); }
-            else if (i == 2) processor.setLivePedalState(1, 1.0f);
-            else if (i == 3) processor.setLivePedalState(2, 1.0f);
-            else if (i == 4) processor.setLivePedalState(3, 1.0f);
-            else if (i == 5) processor.setLivePedalState(4, 1.0f);
+            if (i == 0) processor.setLivePedalState(0, 1.0f, true, false);
+            else if (i == 1) { processor.setLivePedalState(0, 1.0f, true, false); processor.setLivePedalState(1, 1.0f, true, false); }
+            else if (i == 2) processor.setLivePedalState(1, 1.0f, true, false);
+            else if (i == 3) processor.setLivePedalState(2, 1.0f, true, false);
+            else if (i == 4) processor.setLivePedalState(3, 1.0f, true, false);
+            else if (i == 5) processor.setLivePedalState(4, 1.0f, true, false);
             repaint();
             return;
         }
@@ -212,12 +212,12 @@ void FretboardVisualizer::mouseDrag(const juce::MouseEvent& e) {
 
 void FretboardVisualizer::mouseUp(const juce::MouseEvent&) {
     if (heldUiPedal >= 0) {
-        if (heldUiPedal == 0) processor.setLivePedalState(0, 0.0f);
-        else if (heldUiPedal == 1) { processor.setLivePedalState(0, 0.0f); processor.setLivePedalState(1, 0.0f); }
-        else if (heldUiPedal == 2) processor.setLivePedalState(1, 0.0f);
-        else if (heldUiPedal == 3) processor.setLivePedalState(2, 0.0f);
-        else if (heldUiPedal == 4) processor.setLivePedalState(3, 0.0f);
-        else if (heldUiPedal == 5) processor.setLivePedalState(4, 0.0f);
+        if (heldUiPedal == 0) processor.setLivePedalState(0, 0.0f, false, true);
+        else if (heldUiPedal == 1) { processor.setLivePedalState(0, 0.0f, false, true); processor.setLivePedalState(1, 0.0f, false, true); }
+        else if (heldUiPedal == 2) processor.setLivePedalState(1, 0.0f, false, true);
+        else if (heldUiPedal == 3) processor.setLivePedalState(2, 0.0f, false, true);
+        else if (heldUiPedal == 4) processor.setLivePedalState(3, 0.0f, false, true);
+        else if (heldUiPedal == 5) processor.setLivePedalState(4, 0.0f, false, true);
         heldUiPedal = -1;
         repaint();
     }
@@ -401,36 +401,53 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
 {
     setLookAndFeel(&lookAndFeel);
     setResizable(true, true);
-    setResizeLimits(1020, 660, 1560, 980);
-    setSize(1180, 720);
+    setResizeLimits(1060, 660, 1600, 980);
+    setSize(1220, 720);
 
-    // Preset Stepper & ComboBox
+    // Preset Stepper & Factory/User Preset Menu
     prevPresetBtn.setTooltip("Previous Factory Preset");
     prevPresetBtn.onClick = [this] {
         audioProcessor.stepPreset(-1);
-        presetBox.setSelectedId(audioProcessor.getCurrentProgram() + 1, juce::dontSendNotification);
+        syncPresetComboSelection();
+        updateKnobDoubleClickTargets();
     };
     addAndMakeVisible(prevPresetBtn);
 
     nextPresetBtn.setTooltip("Next Factory Preset");
     nextPresetBtn.onClick = [this] {
         audioProcessor.stepPreset(1);
-        presetBox.setSelectedId(audioProcessor.getCurrentProgram() + 1, juce::dontSendNotification);
+        syncPresetComboSelection();
+        updateKnobDoubleClickTargets();
     };
     addAndMakeVisible(nextPresetBtn);
 
-    const auto& presets = getPedalSteelPresets();
-    for (int i = 0; i < static_cast<int>(presets.size()); ++i) {
-        presetBox.addItem(presets[static_cast<size_t>(i)].name, i + 1);
-    }
-    presetBox.setSelectedId(audioProcessor.getCurrentProgram() + 1, juce::dontSendNotification);
+    presetBox.setTooltip("Factory & User Presets (Save or Load custom .nvps patches at the bottom of this menu)");
+    rebuildPresetMenu();
     presetBox.onChange = [this] {
-        int idx = presetBox.getSelectedId() - 1;
-        if (idx >= 0) audioProcessor.loadPreset(idx);
+        const int id = presetBox.getSelectedId();
+        if (id >= 1 && id <= static_cast<int>(getPedalSteelPresets().size())) {
+            audioProcessor.loadPreset(id - 1);
+            syncPresetComboSelection();
+            updateKnobDoubleClickTargets();
+        } else if (id >= 1000 && id < 1000 + static_cast<int>(cachedUserPresets.size())) {
+            const auto file = cachedUserPresets[static_cast<size_t>(id - 1000)];
+            audioProcessor.loadUserPreset(file);
+            rebuildPresetMenu();
+            updateKnobDoubleClickTargets();
+        } else if (id == 9001) {
+            syncPresetComboSelection();
+            promptSaveUserPreset();
+        } else if (id == 9002) {
+            syncPresetComboSelection();
+            promptLoadUserPreset();
+        } else if (id == 9003) {
+            syncPresetComboSelection();
+            PedalSteelAudioProcessor::getUserPresetsFolder().revealToUser();
+        }
     };
     addAndMakeVisible(presetBox);
 
-    // Voice Style & Performance Mode ComboBoxes
+    // Voice Style, Performance Mode & Analog Character ComboBoxes
     styleBox.addItemList({ "Sweet Georgia E9", "Hedonist Bootgaze", "Mikey's Grit Tweed", "Montana Lush Swell" }, 1);
     styleBox.setTooltip("Selects 44.1 kHz Stereo Studio Pedal-Steel DNA & Amp Voicing");
     addAndMakeVisible(styleBox);
@@ -442,6 +459,20 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     addAndMakeVisible(modeBox);
     modeAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::playMode, modeBox);
+
+    charBox.addItemList({
+        "Studio Standard",
+        "4-Track Cassette",
+        "Ribbon Opto Velvet",
+        "Analog Phaser",
+        "Spring + Bias Trem",
+        "Underwater R&B",
+        "Vintage Warble"
+    }, 1);
+    charBox.setTooltip("Analog Character Circuit: Mix & match Tascam 4-Track Cassette, Coles Ribbon + LA-2A, 4-Stage Phase 90, Spring + Bias Trem, Underwater R&B, or VB-2 Vintage Warble onto any preset!");
+    addAndMakeVisible(charBox);
+    charAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        audioProcessor.apvts, ParamIDs::fxCharacter, charBox);
 
     // Host Tempo Sync Button
     syncBtn.setClickingTogglesState(true);
@@ -507,9 +538,11 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
 
     for (int i = 0; i < 24; ++i) {
         auto& k = knobs[static_cast<size_t>(i)];
+        k.paramId = kSpecs[i].id;
         k.slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
         k.slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-        k.slider.setTooltip(kSpecs[i].tip);
+        k.slider.setVelocityModeParameters(1.0, 1, 0.08, true, juce::ModifierKeys::ctrlAltCommandModifiers);
+        k.slider.setTooltip(juce::String(kSpecs[i].tip) + "  (Double-click: reset to preset | Ctrl/Cmd+Drag: fine)");
         addAndMakeVisible(k.slider);
 
         k.label.setText(kSpecs[i].title, juce::dontSendNotification);
@@ -521,6 +554,9 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
         k.attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
             audioProcessor.apvts, kSpecs[i].id, k.slider);
     }
+
+    updateKnobDoubleClickTargets();
+    lastSeenPresetRevision = audioProcessor.getPresetRevision();
 
     // Dynamic subdivision label readout on DELAY TIME knob (index 20) when SYNC is enabled!
     knobs[20].slider.textFromValueFunction = [this](double val) -> juce::String {
@@ -537,6 +573,7 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     addAndMakeVisible(midiKeyboard);
 
     resized();
+    refreshVisualizer();
     startTimerHz(30);
 }
 
@@ -546,22 +583,18 @@ PedalSteelAudioProcessorEditor::~PedalSteelAudioProcessorEditor() {
 }
 
 void PedalSteelAudioProcessorEditor::refreshVisualizer() {
-    const auto st = audioProcessor.getLiveStatus();
-    phraseActiveUi = st.phrasePlaying;
-    meterL = audioProcessor.getOutputPeakL();
-    meterR = audioProcessor.getOutputPeakR();
-    fretboard.updateStatus(st);
-}
-
-void PedalSteelAudioProcessorEditor::timerCallback() {
-    const int hostProg = audioProcessor.getCurrentProgram() + 1;
-    if (presetBox.getSelectedId() != hostProg && !presetBox.isPopupActive()) {
-        presetBox.setSelectedId(hostProg, juce::dontSendNotification);
+    const int charId = charBox.getSelectedId();
+    if (charId != lastCharSelectedId) {
+        lastCharSelectedId = charId;
+        const bool charActive = (charId > 1);
+        charBox.setColour(juce::ComboBox::outlineColourId, charActive ? juce::Colour(0xffe59b3c) : juce::Colour(0xff6b533b));
+        charBox.setColour(juce::ComboBox::textColourId,    charActive ? juce::Colour(0xffffdca0) : juce::Colour(0xfff3e8d2));
+        charBox.lookAndFeelChanged();
+        charBox.repaint();
     }
 
     const int bpmInt = static_cast<int>(std::round(audioProcessor.getHostBpm()));
     syncBtn.setButtonText(syncBtn.getToggleState() ? ("SYNC " + juce::String(bpmInt)) : "SYNC");
-    knobs[20].slider.repaint();
 
     const auto st = audioProcessor.getLiveStatus();
     if (st.phrasePlaying != phraseActiveUi) {
@@ -573,6 +606,134 @@ void PedalSteelAudioProcessorEditor::timerCallback() {
     meterL = audioProcessor.getOutputPeakL();
     meterR = audioProcessor.getOutputPeakR();
     fretboard.updateStatus(st);
+}
+
+void PedalSteelAudioProcessorEditor::rebuildPresetMenu() {
+    presetBox.clear(juce::dontSendNotification);
+    auto* menu = presetBox.getRootMenu();
+    menu->addSectionHeader("Factory Presets (18)");
+
+    const auto& presets = getPedalSteelPresets();
+    for (int i = 0; i < static_cast<int>(presets.size()); ++i) {
+        menu->addItem(i + 1, presets[static_cast<size_t>(i)].name);
+    }
+
+    cachedUserPresets = audioProcessor.getUserPresetFiles();
+    const juce::String activeUser = audioProcessor.getActiveUserPresetName();
+    bool foundActiveInFolder = false;
+
+    if (!cachedUserPresets.empty()) {
+        menu->addSeparator();
+        menu->addSectionHeader("User Presets");
+        for (int i = 0; i < static_cast<int>(cachedUserPresets.size()); ++i) {
+            const juce::String name = cachedUserPresets[static_cast<size_t>(i)].getFileNameWithoutExtension();
+            if (activeUser.isNotEmpty() && name.equalsIgnoreCase(activeUser)) {
+                foundActiveInFolder = true;
+            }
+            menu->addItem(1000 + i, "[User] " + name);
+        }
+    }
+
+    if (activeUser.isNotEmpty() && !foundActiveInFolder) {
+        menu->addSeparator();
+        menu->addItem(999, "[User] " + activeUser);
+    }
+
+    menu->addSeparator();
+    menu->addItem(9001, "Save User Preset...");
+    menu->addItem(9002, "Load Preset File...");
+    menu->addItem(9003, "Open User Presets Folder");
+
+    syncPresetComboSelection();
+    lastSeenPresetRevision = audioProcessor.getPresetRevision();
+}
+
+void PedalSteelAudioProcessorEditor::syncPresetComboSelection() {
+    const juce::String activeUser = audioProcessor.getActiveUserPresetName();
+    if (activeUser.isNotEmpty()) {
+        for (int i = 0; i < static_cast<int>(cachedUserPresets.size()); ++i) {
+            if (cachedUserPresets[static_cast<size_t>(i)].getFileNameWithoutExtension().equalsIgnoreCase(activeUser)) {
+                presetBox.setSelectedId(1000 + i, juce::dontSendNotification);
+                return;
+            }
+        }
+        if (presetBox.indexOfItemId(999) >= 0) {
+            presetBox.setSelectedId(999, juce::dontSendNotification);
+            return;
+        }
+    }
+    presetBox.setSelectedId(audioProcessor.getCurrentProgram() + 1, juce::dontSendNotification);
+}
+
+void PedalSteelAudioProcessorEditor::updateKnobDoubleClickTargets() {
+    for (auto& k : knobs) {
+        if (k.paramId != nullptr && k.paramId[0] != '\0') {
+            k.slider.setDoubleClickReturnValue(true, audioProcessor.getBaselineParamValue(k.paramId));
+        }
+    }
+}
+
+void PedalSteelAudioProcessorEditor::promptSaveUserPreset() {
+    const auto dir = PedalSteelAudioProcessor::getUserPresetsFolder();
+    const juce::String curUser = audioProcessor.getActiveUserPresetName();
+    const juce::String suggested = curUser.isNotEmpty() ? curUser : "My Pedal Steel";
+    activeFileChooser = std::make_shared<juce::FileChooser>(
+        "Save NVA Pedal Steel User Preset",
+        dir.getChildFile(suggested + ".nvps"),
+        "*.nvps");
+
+    juce::Component::SafePointer<PedalSteelAudioProcessorEditor> safeThis(this);
+    activeFileChooser->launchAsync(
+        juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting,
+        [safeThis](const juce::FileChooser& fc) {
+            if (safeThis == nullptr) return;
+            const auto result = fc.getResult();
+            if (result != juce::File{}) {
+                if (safeThis->audioProcessor.saveUserPreset(result)) {
+                    safeThis->rebuildPresetMenu();
+                    safeThis->updateKnobDoubleClickTargets();
+                }
+            }
+        });
+}
+
+void PedalSteelAudioProcessorEditor::promptLoadUserPreset() {
+    const auto dir = PedalSteelAudioProcessor::getUserPresetsFolder();
+    activeFileChooser = std::make_shared<juce::FileChooser>(
+        "Load NVA Pedal Steel Preset",
+        dir,
+        "*.nvps;*.xml");
+
+    juce::Component::SafePointer<PedalSteelAudioProcessorEditor> safeThis(this);
+    activeFileChooser->launchAsync(
+        juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+        [safeThis](const juce::FileChooser& fc) {
+            if (safeThis == nullptr) return;
+            const auto result = fc.getResult();
+            if (result.existsAsFile()) {
+                if (safeThis->audioProcessor.loadUserPreset(result)) {
+                    safeThis->rebuildPresetMenu();
+                    safeThis->updateKnobDoubleClickTargets();
+                }
+            }
+        });
+}
+
+void PedalSteelAudioProcessorEditor::timerCallback() {
+    const uint32_t rev = audioProcessor.getPresetRevision();
+    if (rev != lastSeenPresetRevision && !presetBox.isPopupActive()) {
+        rebuildPresetMenu();
+        updateKnobDoubleClickTargets();
+    } else if (!presetBox.isPopupActive() && audioProcessor.getActiveUserPresetName().isEmpty()) {
+        const int hostProg = audioProcessor.getCurrentProgram() + 1;
+        if (presetBox.getSelectedId() != hostProg) {
+            presetBox.setSelectedId(hostProg, juce::dontSendNotification);
+            updateKnobDoubleClickTargets();
+        }
+    }
+
+    refreshVisualizer();
+    knobs[20].slider.repaint();
     repaint(getWidth() - 78, 8, 68, 48);
 }
 
@@ -594,11 +755,11 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     g.drawRoundedRectangle(headerRect, 6.0f, 1.2f);
 
     g.setColour(juce::Colour(0xffffb84d));
-    g.setFont(makeFont(17.5f, juce::Font::bold));
-    g.drawText("NVA PEDAL STEEL", 20, 11, 200, 22, juce::Justification::centredLeft, false);
+    g.setFont(makeFont(17.0f, juce::Font::bold));
+    g.drawText("NVA PEDAL STEEL", 18, 11, 190, 22, juce::Justification::centredLeft, false);
     g.setColour(juce::Colour(0xffbfb099));
-    g.setFont(makeFont(9.5f, juce::Font::plain));
-    g.drawText("C0-G0: PEDALS  |  C1-G1: LICKS  |  MPE READY", 20, 32, 236, 16, juce::Justification::centredLeft, false);
+    g.setFont(makeFont(9.0f, juce::Font::plain));
+    g.drawText("C0-G0: PEDALS | C1-G1: LICKS | MPE", 18, 32, 196, 16, juce::Justification::centredLeft, false);
 
     // Live Stereo Output Peak Meter on right of header
     auto meterBox = juce::Rectangle<float>(w - 68.0f, 15.0f, 48.0f, 34.0f);
@@ -653,38 +814,42 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
 
     drawPanel(p1, "I. COPEDENT PEDALS & TONEBAR ARTICULATION");
     drawPanel(p2, "II. E9th PICKUP, STRING & CABINET DNA");
-    drawPanel(p3, "III. SWELL, TWEED AMP, TAPE ECHO & PLATE");
+    drawPanel(p3, "III. SWELL, AMP, CHARACTER & SPACE");
 }
 
 void PedalSteelAudioProcessorEditor::resized() {
     const int w = getWidth();
     const int h = getHeight();
 
-    // Header Bar Controls (responsive across 980..1520 px)
-    const int rightFixed = 74; // meter area
-    const int chordGroupW = 4 * 28 + 3 * 3;
-    const int lickW = 78;
+    // Header Bar Controls (responsive across 1060..1600 px with Preset + Style + Mode + Analog Character)
+    const int rightFixed = 72; // meter area
+    const int chordBtnW = 26;
+    const int chordBtnStep = 29;
+    const int chordGroupW = 4 * chordBtnW + 3 * 3;
+    const int lickW = 74;
     const int syncW = 68;
-    const int rightButtonsStart = w - rightFixed - chordGroupW - lickW - syncW - 16;
+    const int rightButtonsStart = w - rightFixed - chordGroupW - lickW - syncW - 14;
 
-    int x = 232;
+    int x = 214;
     prevPresetBtn.setBounds(x, 18, 22, 28); x += 24;
     nextPresetBtn.setBounds(x, 18, 22, 28); x += 25;
 
-    const int combosAvail = std::max(280, rightButtonsStart - x - 8);
-    const int presetW = static_cast<int>(combosAvail * 0.45f);
-    const int styleW  = static_cast<int>(combosAvail * 0.27f);
-    const int modeW   = combosAvail - presetW - styleW - 10;
+    const int combosAvail = std::max(340, rightButtonsStart - x - 6);
+    const int presetW = static_cast<int>(combosAvail * 0.34f);
+    const int styleW  = static_cast<int>(combosAvail * 0.22f);
+    const int modeW   = static_cast<int>(combosAvail * 0.22f);
+    const int charW   = combosAvail - presetW - styleW - modeW - 12;
 
-    presetBox.setBounds(x, 18, presetW, 28); x += presetW + 5;
-    styleBox.setBounds(x, 18, styleW, 28);   x += styleW + 5;
-    modeBox.setBounds(x, 18, modeW, 28);     x += modeW + 6;
+    presetBox.setBounds(x, 18, presetW, 28); x += presetW + 4;
+    styleBox.setBounds(x, 18, styleW, 28);   x += styleW + 4;
+    modeBox.setBounds(x, 18, modeW, 28);     x += modeW + 4;
+    charBox.setBounds(x, 18, charW, 28);     x += charW + 6;
 
-    syncBtn.setBounds(x, 18, syncW, 28);     x += syncW + 5;
-    lickBtn.setBounds(x, 18, lickW, 28);     x += lickW + 5;
+    syncBtn.setBounds(x, 18, syncW, 28);     x += syncW + 4;
+    lickBtn.setBounds(x, 18, lickW, 28);     x += lickW + 4;
 
     for (int i = 0; i < 4; ++i) {
-        chordButtons[static_cast<size_t>(i)].setBounds(x + i * 31, 18, 28, 28);
+        chordButtons[static_cast<size_t>(i)].setBounds(x + i * chordBtnStep, 18, chordBtnW, 28);
     }
 
     // Center Fretboard & Copedent Visualizer

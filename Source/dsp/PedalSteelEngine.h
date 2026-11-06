@@ -180,6 +180,7 @@ private:
         std::array<int, kNumAllpass> allpassPosL{}, allpassPosR{};
 
         float dampStateL = 0.0f, dampStateR = 0.0f;
+        float dampCoeff = 0.24f;
         Biquad reverbToneFilter;
 
         void prepare(double sr);
@@ -192,6 +193,7 @@ private:
         std::array<std::vector<float>, 4> combBufs;
         std::array<int, 4> combPos{};
         std::array<float, 4> combLp{};
+        float lpCoeff = 0.14f;
         void prepare(double sr);
         void reset();
         float process(float input, float amount);
@@ -221,9 +223,14 @@ private:
 
         // 4-stage Dispersive Accutronics 3-Spring Tank Allpass Chirp Network
         std::array<std::vector<float>, 4> springApL, springApR;
-        std::array<int, 4> springApPos{};
+        std::array<int, 4> springApPosL{}, springApPosR{};
 
-        int lastMode = -1;
+        int currentMode = 0;
+        int targetMode = 0;
+        int lastCoeffMode = -1;
+        float wetGain = 0.0f;
+        bool hasRendered = false;
+
         Biquad charFilter1;
         Biquad charFilter2;
         Biquad charFilter3;
@@ -232,8 +239,11 @@ private:
 
         void prepare(double sr);
         void reset();
-        void updateCoeffs(double sr, int mode);
-        void processSample(double sr, int mode, double hostBpm, bool tempoSync,
+        void setTargetMode(double sr, int mode);
+        void applyModeCoeffs(double sr, int mode);
+        int getCurrentMode() const { return currentMode; }
+        float getWetMix() const { return (currentMode > 0) ? wetGain : 0.0f; }
+        void processSample(double sr, int desiredMode, double hostBpm, bool tempoSync,
                            float& ioL, float& ioR, float& outExtraRevL, float& outExtraRevR);
     };
 

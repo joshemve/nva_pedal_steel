@@ -37,13 +37,22 @@ public:
 
     void loadPreset(int index);
     void stepPreset(int delta);
-    void setLivePedalState(int pedalIdx, float val);
+    void setLivePedalState(int pedalIdx, float val, bool beginGesture = false, bool endGesture = false);
     void triggerChordAudition(int chordIdx);
     void triggerPhraseAudition();
     void triggerPanic();
     void triggerFretboardNote(int stringIdx, float fret);
     void slideFretboardNote(int stringIdx, float fret);
     void releaseFretboardNote(int stringIdx);
+
+    // User Preset Management (.nvps XML in Documents/NVA Pedal Steel/Presets)
+    static juce::File getUserPresetsFolder();
+    std::vector<juce::File> getUserPresetFiles() const;
+    bool saveUserPreset(const juce::File& file);
+    bool loadUserPreset(const juce::File& file);
+    juce::String getActiveUserPresetName() const;
+    uint32_t getPresetRevision() const { return presetRevision.load(std::memory_order_relaxed); }
+    float getBaselineParamValue(const juce::String& paramId) const;
 
     CopedentStatus getLiveStatus() const;
     float getOutputPeakL() const { return outputPeakL.load(std::memory_order_relaxed); }
@@ -53,7 +62,7 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
 private:
-    enum class UiCmdType { Chord, Phrase, Panic, FretDown, FretDrag, FretUp };
+    enum class UiCmdType { Chord, Phrase, Panic, FretDown, FretDrag, FretUp, Pedal };
     struct UiCmd {
         UiCmdType type = UiCmdType::Chord;
         int intArg = 0;
@@ -67,10 +76,17 @@ private:
     juce::SpinLock uiCmdLock;
     std::vector<UiCmd> pendingUiCmds;
 
+    mutable juce::CriticalSection presetMetaLock;
+    juce::String activeUserPresetName;
+    std::map<juce::String, float> baselineParamValues;
+
     std::atomic<int> currentPresetIndex{ 0 };
+    std::atomic<uint32_t> presetRevision{ 1 };
     std::atomic<float> outputPeakL{ 0.0f };
     std::atomic<float> outputPeakR{ 0.0f };
     std::atomic<double> currentHostBpm{ 120.0 };
+
+    void captureCurrentAsBaseline();
 
     // Cached atomic parameter pointers
     std::atomic<float>* pPresetStyle   = nullptr;

@@ -56,10 +56,19 @@ public:
 
 private:
     void timerCallback() override;
+    void rebuildPresetMenu();
+    void syncPresetComboSelection();
+    void updateKnobDoubleClickTargets();
+    void promptSaveUserPreset();
+    void promptLoadUserPreset();
 
     PedalSteelAudioProcessor& audioProcessor;
     PedalSteelLookAndFeel lookAndFeel;
     juce::TooltipWindow tooltipWindow{ this, 450 };
+    std::shared_ptr<juce::FileChooser> activeFileChooser;
+    std::vector<juce::File> cachedUserPresets;
+    uint32_t lastSeenPresetRevision = 0;
+    int lastCharSelectedId = -1;
 
     // Top bar controls
     juce::TextButton prevPresetBtn{ "<" };
@@ -67,12 +76,14 @@ private:
     juce::ComboBox presetBox;
     juce::ComboBox styleBox;
     juce::ComboBox modeBox;
+    juce::ComboBox charBox;
     juce::TextButton syncBtn{ "SYNC" };
     juce::TextButton lickBtn{ "PLAY LICK" };
     std::array<juce::TextButton, 4> chordButtons;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> styleAttach;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeAttach;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> charAttach;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> syncAttach;
 
     // Center E9th Fretboard & Copedent Visualizer
@@ -80,6 +91,7 @@ private:
 
     // 24 Symmetrical Rotary Knobs (8 + 8 + 8 across 3 studio hardware panels)
     struct KnobWithLabel {
+        const char* paramId = "";
         juce::Slider slider;
         juce::Label label;
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attach;

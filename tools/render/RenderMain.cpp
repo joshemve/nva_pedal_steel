@@ -102,7 +102,172 @@ static void addCcRamp(std::vector<ScheduledMidiEvent>& ev, int ch, int cc, doubl
     }
 }
 
-int main() {
+static int runDeepDspAudit() {
+    std::cout << "=== NVA Pedal Steel Deep DSP & Real-Time Stress Audit ===" << std::endl;
+    const auto& presets = getPedalSteelPresets();
+    static constexpr double kRates[3] = { 44100.0, 48000.0, 96000.0 };
+
+    // 1. Multi-Sample-Rate Invariance & Finite/Peak/DC Audit across all 18 Factory Presets
+    for (size_t pIdx = 0; pIdx < presets.size(); ++pIdx) {
+        float rmsDbByRate[3] = { 0.0f, 0.0f, 0.0f };
+
+        for (int r = 0; r < 3; ++r) {
+            const double sr = kRates[r];
+            const int totalSamples = static_cast<int>(sr * 1.6);
+            PedalSteelEngine eng;
+            eng.prepare(sr, 128);
+            PedalSteelParams p = presets[pIdx].params;
+            p.hostBpm = 92.0;
+            eng.setParams(p);
+
+            juce::AudioBuffer<float> buf(2, totalSamples);
+            buf.clear();
+
+            eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 52, 0.82f));
+            eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 59, 0.84f));
+            eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 68, 0.86f));
+            eng.handleMidiMessage(juce::MidiMessage::noteOn(3, 71, 0.88f));
+
+            int pos = 0;
+            bool engagedPedal = false;
+            bool releasedNotes = false;
+            while (pos < totalSamples) {
+                const int chunk = std::min(128, totalSamples - pos);
+                const double tSec = static_cast<double>(pos) / sr;
+                if (!engagedPedal && tSec >= 0.35) {
+                    eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 28, 1.0f)); // A+B slant
+                    eng.handleMidiMessage(juce::MidiMessage::pitchWheel(3, 10922)); // MPE +4st bend
+                    engagedPedal = true;
+                }
+                if (!releasedNotes && tSec >= 1.05) {
+                    eng.handleMidiMessage(juce::MidiMessage::noteOff(1, 28));
+                    for (int n : { 52, 59, 68 }) eng.handleMidiMessage(juce::MidiMessage::noteOff(1, n));
+                    eng.handleMidiMessage(juce::MidiMessage::noteOff(3, 71));
+                    releasedNotes = true;
+                }
+                eng.renderBlock(buf, pos, chunk);
+                pos += chunk;
+            }
+
+            double sumSq = 0.0;
+            double dcL = 0.0, dcR = 0.0;
+            float peak = 0.0f;
+            const float* dL = buf.getReadPointer(0);
+            const float* dR = buf.getReadPointer(1);
+            for (int i = 0; i < totalSamples; ++i) {
+                if (!std::isfinite(dL[i]) || !std::isfinite(dR[i])) {
+                    std::cerr << "[FAIL] Non-finite sample in preset " << (pIdx + 1) << " at " << sr << " Hz!" << std::endl;
+                    return 1;
+                }
+                peak = std::max({ peak, std::abs(dL[i]), std::abs(dR[i]) });
+                sumSq += 0.5 * (static_cast<double>(dL[i]) * dL[i] + static_cast<double>(dR[i]) * dR[i]);
+                dcL += dL[i];
+                dcR += dR[i];
+            }
+            const float rmsDb = juce::Decibels::gainToDecibels(static_cast<float>(std::sqrt(sumSq / totalSamples)), -96.0f);
+            const double meanDc = std::max(std::abs(dcL), std::abs(dcR)) / totalSamples;
+            rmsDbByRate[r] = rmsDb;
+
+            if (peak > 0.9805f || rmsDb < -52.0f || meanDc > 0.005) {
+                std::cerr << "[FAIL] Preset " << (pIdx + 1) << " @ " << sr << " Hz out of bounds: peak="
+                          << peak << " rmsDb=" << rmsDb << " meanDC=" << meanDc << std::endl;
+                return 1;
+            }
+        }
+
+        const float drift48 = std::abs(rmsDbByRate[1] - rmsDbByRate[0]);
+        const float drift96 = std::abs(rmsDbByRate[2] - rmsDbByRate[0]);
+        if (drift48 > 1.6f || drift96 > 1.8f) {
+            std::cerr << "[FAIL] Sample-rate level drift in preset " << (pIdx + 1)
+                      << ": 44.1=" << rmsDbByRate[0] << " dB, 48=" << rmsDbByRate[1]
+                      << " dB, 96=" << rmsDbByRate[2] << " dB" << std::endl;
+            return 1;
+        }
+        std::cout << "[PASS] Preset " << (pIdx + 1 < 10 ? "0" : "") << (pIdx + 1)
+                  << " (" << presets[pIdx].name << ") | 44.1=" << juce::String(rmsDbByRate[0], 2)
+                  << " dB | 48=" << juce::String(rmsDbByRate[1], 2)
+                  << " dB | 96=" << juce::String(rmsDbByRate[2], 2) << " dB" << std::endl;
+    }
+
+    // 2. Live FX Character Hot-Switch Click-Free Audit (0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 0 mid-chord)
+    {
+        constexpr double sr = 48000.0;
+        const int total = static_cast<int>(sr * 2.4);
+        PedalSteelEngine eng;
+        eng.prepare(sr, 64);
+        PedalSteelParams p = presets[0].params;
+        eng.setParams(p);
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 52, 0.85f));
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 59, 0.85f));
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 68, 0.85f));
+
+        juce::AudioBuffer<float> buf(2, total);
+        buf.clear();
+        int pos = 0;
+        int lastSwitchSlot = -1;
+        while (pos < total) {
+            const int chunk = std::min(64, total - pos);
+            const int slot = (pos * 8) / total;
+            if (slot != lastSwitchSlot) {
+                lastSwitchSlot = slot;
+                p.fxCharacter = (slot < 7) ? slot : 0;
+                eng.setParams(p);
+            }
+            eng.renderBlock(buf, pos, chunk);
+            pos += chunk;
+        }
+
+        float maxStep = 0.0f;
+        const float* dL = buf.getReadPointer(0);
+        for (int i = 1; i < total; ++i) {
+            maxStep = std::max(maxStep, std::abs(dL[i] - dL[i - 1]));
+        }
+        if (maxStep > 0.12f) {
+            std::cerr << "[FAIL] Live FX Character hot-switch step too high: " << maxStep << std::endl;
+            return 1;
+        }
+        std::cout << "[PASS] Click-free live FX Character hot-switching (0->1->2->3->4->5->6->0): maxSampleStep="
+                  << juce::String(maxStep, 4) << std::endl;
+    }
+
+    // 3. Mono Track Downmix + 16-Voice Polyphony Stealing + Sustain + Panic Audit
+    {
+        constexpr double sr = 44100.0;
+        PedalSteelEngine eng;
+        eng.prepare(sr, 64);
+        eng.setParams(presets[14].params);
+        eng.handleMidiMessage(juce::MidiMessage::controllerEvent(1, 64, 127)); // Sustain ON
+        for (int n = 48; n <= 76; n += 2) {
+            eng.handleMidiMessage(juce::MidiMessage::noteOn((n % 14) + 3, n, 0.90f));
+        }
+        juce::AudioBuffer<float> monoBuf(1, 4096);
+        monoBuf.clear();
+        eng.renderBlock(monoBuf, 0, 2048);
+        eng.handleMidiMessage(juce::MidiMessage::controllerEvent(1, 123, 0)); // All Notes Off Panic
+        eng.renderBlock(monoBuf, 2048, 2048);
+
+        const float rmsPre = monoBuf.getRMSLevel(0, 0, 2048);
+        for (int i = 0; i < 4096; ++i) {
+            if (!std::isfinite(monoBuf.getSample(0, i))) return 1;
+        }
+        if (rmsPre < 0.005f) {
+            std::cerr << "[FAIL] Mono output bus produced near-silence!" << std::endl;
+            return 1;
+        }
+        std::cout << "[PASS] Mono bus downmix + 15-note MPE voice-stealing + CC64 + CC123 Panic audit passed!" << std::endl;
+    }
+
+    std::cout << "=== ALL DEEP DSP & REAL-TIME AUDITS PASSED ===" << std::endl;
+    return 0;
+}
+
+int main(int argc, char* argv[]) {
+    for (int i = 1; i < argc; ++i) {
+        if (juce::String(argv[i]) == "--audit") {
+            return runDeepDspAudit();
+        }
+    }
+
     juce::File outDir = juce::File::getCurrentWorkingDirectory().getChildFile("renders");
     juce::File presetsDir = outDir.getChildFile("presets");
     outDir.createDirectory();

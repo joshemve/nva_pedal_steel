@@ -9,10 +9,17 @@ out/
 
 # Intermediate WAV files, local dist binaries, and design mockups
 renders/*.wav
+renders/presets/*.wav
+renders/*.tmp.mp3
+renders/presets/*.tmp.mp3
 renders/preset_audition_board.html
 references/*.wav
 dist/
+package_win/
+package_mac/
 concepts/
+design/
+images/
 
 # OS files
 .DS_Store

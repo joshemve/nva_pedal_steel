@@ -269,6 +269,7 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
                     case UiCmdType::FretDown: engine.triggerFretboardNote(cmd.intArg, cmd.floatArg); break;
                     case UiCmdType::FretDrag: engine.slideFretboardNote(cmd.intArg, cmd.floatArg); break;
                     case UiCmdType::FretUp:   engine.releaseFretboardNote(cmd.intArg); break;
+                    case UiCmdType::Pedal:    engine.setManualPedal(cmd.intArg, cmd.floatArg); break;
                 }
             }
             pendingUiCmds.clear();
@@ -387,14 +388,130 @@ void PedalSteelAudioProcessor::loadPreset(int index) {
     setParam(ParamIDs::reverbMix,     p.reverbMix);
     setParam(ParamIDs::reverbDecay,   p.reverbDecay);
     setParam(ParamIDs::outputLevel,   p.outputLevel);
+
+    {
+        const juce::ScopedLock sl(presetMetaLock);
+        activeUserPresetName.clear();
+    }
+    captureCurrentAsBaseline();
+    presetRevision.fetch_add(1, std::memory_order_relaxed);
 }
 
-void PedalSteelAudioProcessor::setLivePedalState(int pedalIdx, float val) {
-    engine.setManualPedal(pedalIdx, val);
+void PedalSteelAudioProcessor::captureCurrentAsBaseline() {
+    const juce::ScopedLock sl(presetMetaLock);
+    for (auto* p : getParameters()) {
+        if (auto* rp = dynamic_cast<juce::RangedAudioParameter*>(p)) {
+            baselineParamValues[rp->getParameterID()] = rp->convertFrom0to1(rp->getValue());
+        }
+    }
+}
+
+float PedalSteelAudioProcessor::getBaselineParamValue(const juce::String& paramId) const {
+    {
+        const juce::ScopedLock sl(presetMetaLock);
+        auto it = baselineParamValues.find(paramId);
+        if (it != baselineParamValues.end()) return it->second;
+    }
+    if (auto* rp = apvts.getParameter(paramId)) {
+        return rp->convertFrom0to1(rp->getDefaultValue());
+    }
+    return 0.0f;
+}
+
+juce::File PedalSteelAudioProcessor::getUserPresetsFolder() {
+    auto dir = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+                   .getChildFile("NVA Pedal Steel")
+                   .getChildFile("Presets");
+    if (!dir.exists()) {
+        dir.createDirectory();
+    }
+    return dir;
+}
+
+std::vector<juce::File> PedalSteelAudioProcessor::getUserPresetFiles() const {
+    std::vector<juce::File> result;
+    const auto dir = getUserPresetsFolder();
+    if (!dir.isDirectory()) return result;
+
+    juce::Array<juce::File> found;
+    dir.findChildFiles(found, juce::File::findFiles, false, "*.nvps;*.xml");
+    found.sort();
+    for (const auto& f : found) result.push_back(f);
+    return result;
+}
+
+bool PedalSteelAudioProcessor::saveUserPreset(const juce::File& file) {
+    auto state = apvts.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    if (xml == nullptr) return false;
+
+    const juce::String cleanName = file.getFileNameWithoutExtension().trim();
+    xml->setAttribute("pluginVersion", "1.1.0");
+    xml->setAttribute("presetName", cleanName);
+    xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
+
+    auto targetFile = file.hasFileExtension("nvps;xml") ? file : file.withFileExtension(".nvps");
+    targetFile.getParentDirectory().createDirectory();
+    if (!xml->writeTo(targetFile)) return false;
+
+    {
+        const juce::ScopedLock sl(presetMetaLock);
+        activeUserPresetName = cleanName;
+    }
+    captureCurrentAsBaseline();
+    presetRevision.fetch_add(1, std::memory_order_relaxed);
+    return true;
+}
+
+bool PedalSteelAudioProcessor::loadUserPreset(const juce::File& file) {
+    if (!file.existsAsFile()) return false;
+    std::unique_ptr<juce::XmlElement> xml = juce::XmlDocument::parse(file);
+    if (xml == nullptr || !xml->hasTagName(apvts.state.getType())) return false;
+
+    // Apply parameter-by-parameter via setValueNotifyingHost so DAW host automation lanes stay synced!
+    bool appliedAny = false;
+    for (auto* child : xml->getChildWithTagNameIterator("PARAM")) {
+        const juce::String id = child->getStringAttribute("id");
+        if (id.isNotEmpty() && child->hasAttribute("value")) {
+            if (auto* param = apvts.getParameter(id)) {
+                const float val = static_cast<float>(child->getDoubleAttribute("value", param->convertFrom0to1(param->getValue())));
+                param->setValueNotifyingHost(param->convertTo0to1(val));
+                appliedAny = true;
+            }
+        }
+    }
+    if (!appliedAny) {
+        apvts.replaceState(juce::ValueTree::fromXml(*xml));
+    }
+
+    {
+        const juce::ScopedLock sl(presetMetaLock);
+        activeUserPresetName = xml->getStringAttribute("presetName", file.getFileNameWithoutExtension()).trim();
+    }
+    captureCurrentAsBaseline();
+    presetRevision.fetch_add(1, std::memory_order_relaxed);
+    return true;
+}
+
+juce::String PedalSteelAudioProcessor::getActiveUserPresetName() const {
+    const juce::ScopedLock sl(presetMetaLock);
+    return activeUserPresetName;
+}
+
+void PedalSteelAudioProcessor::setLivePedalState(int pedalIdx, float val, bool beginGesture, bool endGesture) {
+    const float clamped = juce::jlimit(0.0f, 1.0f, val);
+    {
+        const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+        if (pendingUiCmds.size() < 64) {
+            pendingUiCmds.push_back({ UiCmdType::Pedal, pedalIdx, clamped });
+        }
+    }
     const char* ids[5] = { ParamIDs::pedalA, ParamIDs::pedalB, ParamIDs::pedalC, ParamIDs::leverLKL, ParamIDs::leverLKR };
     if (pedalIdx >= 0 && pedalIdx < 5) {
         if (auto* param = apvts.getParameter(ids[pedalIdx])) {
-            param->setValueNotifyingHost(juce::jlimit(0.0f, 1.0f, val));
+            if (beginGesture) param->beginChangeGesture();
+            param->setValueNotifyingHost(clamped);
+            if (endGesture) param->endChangeGesture();
         }
     }
 }
@@ -435,6 +552,10 @@ void PedalSteelAudioProcessor::getStateInformation(juce::MemoryBlock& destData) 
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
     if (xml != nullptr) {
         xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
+        const juce::String userName = getActiveUserPresetName();
+        if (userName.isNotEmpty()) {
+            xml->setAttribute("userPresetName", userName);
+        }
         copyXmlToBinary(*xml, destData);
     }
 }
@@ -444,7 +565,13 @@ void PedalSteelAudioProcessor::setStateInformation(const void* data, int sizeInB
     if (xmlState != nullptr && xmlState->hasTagName(apvts.state.getType())) {
         const int savedPreset = xmlState->getIntAttribute("currentPresetIndex", 0);
         currentPresetIndex.store(juce::jlimit(0, std::max(0, getNumPrograms() - 1), savedPreset));
+        {
+            const juce::ScopedLock sl(presetMetaLock);
+            activeUserPresetName = xmlState->getStringAttribute("userPresetName", "");
+        }
         apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+        captureCurrentAsBaseline();
+        presetRevision.fetch_add(1, std::memory_order_relaxed);
     }
 }
 

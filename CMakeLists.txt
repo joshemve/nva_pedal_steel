@@ -1,24 +1,46 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(PedalSteel VERSION 1.0.0 LANGUAGES C CXX)
+project(PedalSteel VERSION 1.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(JUCE_SOURCE "C:/Users/Joshua/Documents/guitar_synth_midi/JUCE" CACHE PATH "JUCE source directory")
-add_subdirectory("${JUCE_SOURCE}" "${CMAKE_BINARY_DIR}/JUCE")
+if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Build Universal macOS binaries" FORCE)
+endif()
+
+set(JUCE_SOURCE "C:/Users/Joshua/Documents/guitar_synth_midi/JUCE" CACHE PATH "Optional local JUCE source directory")
+if(EXISTS "${JUCE_SOURCE}/CMakeLists.txt")
+    message(STATUS "Using local JUCE from: ${JUCE_SOURCE}")
+    add_subdirectory("${JUCE_SOURCE}" "${CMAKE_BINARY_DIR}/JUCE")
+else()
+    message(STATUS "Local JUCE not found at '${JUCE_SOURCE}'; fetching JUCE 8.0.6 via FetchContent...")
+    include(FetchContent)
+    FetchContent_Declare(
+        JUCE
+        GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
+        GIT_TAG        8.0.6
+        GIT_SHALLOW    TRUE
+    )
+    FetchContent_MakeAvailable(JUCE)
+endif()
 
 set(PLUGIN_NAME "NVA Pedal Steel")
 set(PLUGIN_CODE "Nvps")
 set(PLUGIN_MANUFACTURER "Northern Valley Audio")
 set(PLUGIN_MANUFACTURER_CODE "Nval")
 
+set(PLUGIN_FORMATS VST3 Standalone)
+if(APPLE)
+    list(APPEND PLUGIN_FORMATS AU)
+endif()
+
 juce_add_plugin(PedalSteel
     COMPANY_NAME "${PLUGIN_MANUFACTURER}"
     PLUGIN_MANUFACTURER_CODE "${PLUGIN_MANUFACTURER_CODE}"
     PLUGIN_CODE "${PLUGIN_CODE}"
     BUNDLE_ID "com.northernvalleyaudio.pedalsteel"
-    FORMATS VST3 Standalone
+    FORMATS ${PLUGIN_FORMATS}
     PRODUCT_NAME "${PLUGIN_NAME}"
     PLUGIN_NAME "${PLUGIN_NAME}"
     IS_SYNTH TRUE
@@ -115,4 +137,8 @@ if(MSVC)
     target_compile_options(PedalSteel PRIVATE /utf-8 /O2)
     target_compile_options(PedalSteelShot PRIVATE /utf-8 /O2)
     target_compile_options(PedalSteelRender PRIVATE /utf-8 /O2)
+else()
+    target_compile_options(PedalSteel PRIVATE -O3)
+    target_compile_options(PedalSteelShot PRIVATE -O3)
+    target_compile_options(PedalSteelRender PRIVATE -O3)
 endif()
