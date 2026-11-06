@@ -322,43 +322,43 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.tempoSync     = true;
                 p.reverbMix     = 0.48f;
                 p.reverbDecay   = 0.78f;
-                p.outputLevel   = 0.0f;
+                p.outputLevel   = 0.5f;
                 return p;
             }()
         },
         {
             "10 - Hot Tweed Roadhouse Grit",
             "Roots / Southern Rock",
-            "Jumped-channel '57 Fender 5E3 Tweed Deluxe 6V6 breakup with 1.38 kHz midrange bark, dynamic cathode sag, 4.95 kHz Jensen P12R Alnico speaker edge, and tight 118 ms slapback.",
+            "Jumped-channel '57 Fender 5E3 Tweed Deluxe 6V6 breakup with woody 940 Hz pine-cab bark, dynamic cathode sag, 4.55 kHz Jensen P12R Alnico cone, and tight 118 ms slapback.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 2;
                 p.playMode      = 1; // Crying Lead Gliss (authentic chrome-bar slides!)
-                p.volumePedal   = 0.98f;
+                p.volumePedal   = 0.94f;
                 p.scoopDepth    = 0.72f;
                 p.pedalSpeed    = 120.0f;
                 p.barGlide      = 135.0f;
-                p.barSlideNoise = 0.44f;
-                p.vibratoDepth  = 0.50f;
-                p.vibratoRate   = 5.30f;
-                p.autoSwell     = 0.14f;
-                p.swellTime     = 95.0f;
+                p.barSlideNoise = 0.40f;
+                p.vibratoDepth  = 0.48f;
+                p.vibratoRate   = 5.25f;
+                p.autoSwell     = 0.16f;
+                p.swellTime     = 105.0f;
                 p.sampleBlend   = 0.90f;
-                p.pickSnap      = 0.78f;
-                p.pickupPos     = 2.10f;
-                p.coilPeakFreq  = 2260.0f;
-                p.coilResonance = 0.84f;
+                p.pickSnap      = 0.72f;
+                p.pickupPos     = 2.18f;
+                p.coilPeakFreq  = 2060.0f;
+                p.coilResonance = 0.72f;
                 p.sustainTime   = 8.2f;
                 p.cabinetDrop   = 0.44f;
                 p.stereoWidth   = 1.06f;
-                p.ampDrive      = 0.88f;
-                p.toneWarmth    = 0.58f;
+                p.ampDrive      = 0.86f;
+                p.toneWarmth    = 0.64f;
                 p.delayMix      = 0.14f;
                 p.delayTime     = 118.0f;
                 p.tempoSync     = false;
                 p.reverbMix     = 0.30f;
                 p.reverbDecay   = 0.56f;
-                p.outputLevel   = 1.0f;
+                p.outputLevel   = -1.6f;
                 return p;
             }()
         },

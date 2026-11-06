@@ -530,8 +530,8 @@ void PedalSteelEngine::updateFilterCoeffs() {
     studioDeltaTrebleFilter.setPeak(sampleRate, 3650.0f, 0.78f, -0.65f * deltaWarmthDb + deltaDriveAir);
 
     const float extraDrive = std::max(0.0f, params.ampDrive - kBaseDrive[st]);
-    studioTweedBarkFilter.setPeak(sampleRate, 1380.0f, 0.92f, juce::jlimit(0.0f, 5.4f, extraDrive * 15.0f));
-    studioTweedCabFilter.setLowpass(sampleRate, 4950.0f, 0.88f);
+    studioTweedBarkFilter.setPeak(sampleRate, 940.0f, 0.78f, juce::jlimit(0.0f, 3.6f, extraDrive * 10.5f));
+    studioTweedCabFilter.setLowpass(sampleRate, 4550.0f, 0.82f);
 }
 
 float PedalSteelEngine::nextRandomSigned() {
@@ -1680,11 +1680,11 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             tweedSagEnv += sagAlpha * (inPeak - tweedSagEnv);
             const float sagComp = 1.0f / (1.0f + 0.48f * extraDrive * tweedSagEnv);
 
-            const float g = (1.0f + 5.20f * extraDrive) * sagComp;
+            const float g = (1.0f + 4.60f * extraDrive) * sagComp;
             const float asym = 0.36f * extraDrive;
-            const float makeup = (1.0f + 0.42f * extraDrive) / (1.0f + 0.68f * extraDrive);
-            float drvL = (fastTanh(preL * g + asym * preL * preL) - fastTanh(asym * preL * preL) * 0.18f) * makeup * 1.18f;
-            float drvR = (fastTanh(preR * g + asym * preR * preR) - fastTanh(asym * preR * preR) * 0.18f) * makeup * 1.18f;
+            const float makeup = 1.0f / (1.0f + 2.85f * extraDrive);
+            float drvL = (fastTanh(preL * g + asym * preL * preL) - fastTanh(asym * preL * preL) * 0.18f) * makeup;
+            float drvR = (fastTanh(preR * g + asym * preR * preR) - fastTanh(asym * preR * preR) * 0.18f) * makeup;
 
             // Blend through 4.95 kHz Jensen P12R Alnico cone roll-off so pushed 6V6 breakup snarls warmly with zero fizz!
             const float cabBlend = juce::jlimit(0.0f, 0.86f, extraDrive * 2.2f);

@@ -68,13 +68,18 @@ static void renderSequenceToWav(int presetIndex, double durationSec, double bpm,
     }
 
     float peak = outBuf.getMagnitude(0, totalSamples);
+    float rawRms = 0.5f * (outBuf.getRMSLevel(0, 0, totalSamples) + outBuf.getRMSLevel(1, 0, totalSamples));
     if (peak > 1e-5f) {
-        float targetPeak = juce::Decibels::decibelsToGain(-2.5f);
+        const float targetDb = juce::jlimit(-10.0f, -1.5f, -2.5f + p.outputLevel);
+        float targetPeak = juce::Decibels::decibelsToGain(targetDb);
         outBuf.applyGain(targetPeak / peak);
     }
 
     if (writeWavFile(outFile, outBuf, kSr)) {
-        std::cout << "Rendered preset " << (presetIndex + 1) << " -> " << outFile.getFullPathName() << std::endl;
+        std::cout << "Rendered preset " << (presetIndex + 1)
+                  << " [rawPeak=" << juce::Decibels::gainToDecibels(peak)
+                  << " dB, rawRMS=" << juce::Decibels::gainToDecibels(rawRms) << " dB] -> "
+                  << outFile.getFullPathName() << std::endl;
     }
 }
 
@@ -399,35 +404,39 @@ int main() {
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Authentic human E9th roadhouse phrasing (modeled after real studio steel: asynchronous string plucks
-        // ringing into biting 6V6 Tweed double-stops, weeping downward on the chrome bar with breathing room!)
+        // Authentic E9th roadhouse phrasing grounded in the warm middle strings + pine-cab thumb root:
+        // asynchronous string plucks ringing into chewy 6V6 Tweed double-stops and weeping downward on the bar!
 
-        // Phrase 1 (0.10s - 3.65s): Pluck high A5 (GV_A5_Grit!), add E5 half-beat later so both strings snarl together,
-        // then weep the chrome bar down 2 frets (E5+A5 -> D5+G5 Mixolydian b7 cry) and curl back into C#5+A5 sixth!
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 81, 0.96f) }); // High A5 (real GV_A5_Grit zone!)
-        ev.push_back({ 0.56, juce::MidiMessage::noteOn(1, 76, 0.94f) }); // Add E5 while A5 rings -> biting Tweed 4th!
-        addPitchWheelRamp(ev, 1, 0.95, 1.48, 0.0f, -2.0f / 7.0f);        // Weeping 2-fret bar cry down to D5+G5!
-        ev.push_back({ 2.25, juce::MidiMessage::noteOff(1, 81) });
-        ev.push_back({ 2.25, juce::MidiMessage::noteOff(1, 76) });
-        ev.push_back({ 2.30, juce::MidiMessage::pitchWheel(1, 8192) });  // Clean reset in the breathing gap!
+        // Phrase 1 (0.10s - 2.95s): Warm A3 thumb anchor + E5 -> C#5 asynchronous sixth/third double-stop
+        // weeping the chrome bar down 2 frets (C#5+E5 -> B4+D5 Mixolydian cry) with breathing room!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 57, 0.78f) }); // A3 woody 5E3 pine-cab thumb root
+        ev.push_back({ 0.13, juce::MidiMessage::noteOn(1, 76, 0.87f) }); // E5 singing middle-top string
+        ev.push_back({ 0.56, juce::MidiMessage::noteOn(1, 73, 0.85f) }); // Add C#5 -> chewy 6V6 intermodulation!
+        addPitchWheelRamp(ev, 1, 0.98, 1.52, 0.0f, -2.0f / 7.0f);        // Weeping 2-fret bar cry!
+        ev.push_back({ 2.30, juce::MidiMessage::noteOff(1, 57) });
+        ev.push_back({ 2.30, juce::MidiMessage::noteOff(1, 76) });
+        ev.push_back({ 2.30, juce::MidiMessage::noteOff(1, 73) });
+        ev.push_back({ 2.36, juce::MidiMessage::pitchWheel(1, 8192) });  // Clean reset in the breathing gap!
 
-        // Phrase 2 (3.35s - 6.65s): Pluck F#5 (GV_FS5_Accent!), add C#5 -> slide up 2 frets into G#5/E5 -> weep down to E4+C#5!
-        ev.push_back({ 3.35, juce::MidiMessage::noteOn(1, 78, 0.96f) }); // F#5 (real GV_FS5_Accent zone!)
-        ev.push_back({ 3.78, juce::MidiMessage::noteOn(1, 73, 0.93f) }); // Add C#5 -> rich 6V6 harmonic intermodulation!
-        addPitchWheelRamp(ev, 1, 4.15, 4.68, 0.0f, -2.0f / 7.0f);        // Greasy whole-step bar cry down to B4+E5!
-        addPitchWheelRamp(ev, 1, 4.95, 5.30, -2.0f / 7.0f, -1.0f / 7.0f);// Bluesy curl into C5/C#5!
+        // Phrase 2 (3.30s - 6.10s): Throaty D4 + F#5 -> D5 roadhouse sixth/tenth weeping down 2 frets & curling bluesily!
+        ev.push_back({ 3.30, juce::MidiMessage::noteOn(1, 62, 0.79f) }); // D4 warm body anchor
+        ev.push_back({ 3.33, juce::MidiMessage::noteOn(1, 78, 0.86f) }); // F#5 sweet upper voice
+        ev.push_back({ 3.74, juce::MidiMessage::noteOn(1, 74, 0.84f) }); // Add D5 -> rich Tweed Deluxe growl!
+        addPitchWheelRamp(ev, 1, 4.14, 4.68, 0.0f, -2.0f / 7.0f);        // Greasy whole-step bar cry down to C5+E5!
+        addPitchWheelRamp(ev, 1, 4.96, 5.32, -2.0f / 7.0f, -1.0f / 7.0f);// Bluesy curl into C#5!
+        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 62) });
         ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 78) });
-        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 73) });
-        ev.push_back({ 6.00, juce::MidiMessage::pitchWheel(1, 8192) });
+        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 74) });
+        ev.push_back({ 6.02, juce::MidiMessage::pitchWheel(1, 8192) });
 
-        // Phrase 3 (6.80s - 10.6s): Throaty raked A Major roadhouse grip (A3, E4, C#5, E5) whipping A+B -> D/A -> A Major!
-        ev.push_back({ 6.80, juce::MidiMessage::noteOn(1, 57, 0.91f) }); // A3 woody pine-cab root
-        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 64, 0.93f) }); // E4 fifth
-        ev.push_back({ 6.86, juce::MidiMessage::noteOn(1, 73, 0.95f) }); // C#5 major third
-        ev.push_back({ 6.89, juce::MidiMessage::noteOn(1, 81, 0.96f) }); // A5 octave bark
+        // Phrase 3 (6.80s - 10.6s): Throaty raked A Major roadhouse grip (A3, E4, A4, C#5) whipping A+B -> D/A -> A Major!
+        ev.push_back({ 6.80, juce::MidiMessage::noteOn(1, 57, 0.82f) }); // A3 woody pine-cab root
+        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 64, 0.85f) }); // E4 fifth
+        ev.push_back({ 6.86, juce::MidiMessage::noteOn(1, 69, 0.87f) }); // A4 octave body
+        ev.push_back({ 6.89, juce::MidiMessage::noteOn(1, 73, 0.89f) }); // C#5 major third bark
         ev.push_back({ 7.55, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Roadhouse A+B slant -> D/A!
         ev.push_back({ 8.35, juce::MidiMessage::noteOff(1, 28) });       // Melt home into singing Tweed A Major!
-        for (int n : { 57, 64, 73, 81 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
+        for (int n : { 57, 64, 69, 73 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
 
         renderSequenceToWav(9, 11.0, 114.0, ev, presetsDir.getChildFile("10_hot_tweed_roadhouse_grit.wav"));
     }
