@@ -204,14 +204,16 @@ private:
         int modMaxLen = 1;
         double lfoPhase1 = 0.0;
         double lfoPhase2 = 0.27;
+        double lfoPhase3 = 0.61;
         double tremPhase = 0.0;
         float cassetteSagEnv = 0.0f;
 
-        // Sample-rate-adaptive dual-grain C1 Hann-windowed +12st Octave Shimmer Pitch Shifter
+        // Sample-rate-adaptive dual-grain C1 Hann-windowed -12st Sub-Cello & +12st Shimmer Shifter
         std::vector<float> shimBufL, shimBufR;
         int shimWritePos = 0;
         int shimMaxLen = 1;
         double shimPhasor = 0.0;
+        double subPhasor = 0.0;
 
         // 4-stage Dispersive Accutronics 3-Spring Tank Allpass Chirp Network
         std::array<std::vector<float>, 4> springApL, springApR;
@@ -222,6 +224,7 @@ private:
         Biquad charFilter2;
         Biquad charFilter3;
         Biquad dimHpFilter;
+        Biquad subLpFilter;
 
         void prepare(double sr);
         void reset();
@@ -293,7 +296,7 @@ private:
     void updateFilterCoeffs();
     void reassignChordRoles();
     void pushVoiceToChokeTail(const StringVoice& v, int strIdx);
-    int chooseBestStringForNote(int midiNote, float velocity, bool& outIsLegatoTransfer, float& outPrevBarMidi);
+    int chooseBestStringForNote(int midiNote, int channel, float velocity, bool& outIsLegatoTransfer, float& outPrevBarMidi);
     int selectBestMultiSample(int midiNote, int style, float velocity) const;
     int selectPhraseSliceBySlot(int slotIndex, int style) const;
     void startPhraseVoice(int phraseIdx, int midiNote, int channel, float vel, float transposeSemis, bool fromUi);

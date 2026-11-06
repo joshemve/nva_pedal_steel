@@ -507,219 +507,293 @@ int main() {
     }
 
     // =========================================================================
-    // Preset 13: 4-Track Cassette Steel (84 BPM, Eb Major — Dijon / Mk.gee Indie R&B)
+    // Preset 13: 4-Track Cassette Steel (88 BPM, E Major — Dijon / Mk.gee Bedroom Soul)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Phrase 1: Intimate bedroom Eb Major thumb-rolled grip -> Tascam 424 A+B Ab/Eb gospel-soul bloom!
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 51, 0.78f) }); // Eb3 warm cassette head-bump root
-        ev.push_back({ 0.13, juce::MidiMessage::noteOn(1, 58, 0.80f) }); // Bb3
-        ev.push_back({ 0.16, juce::MidiMessage::noteOn(1, 67, 0.83f) }); // G4
-        ev.push_back({ 0.19, juce::MidiMessage::noteOn(1, 70, 0.84f) }); // Bb4
-        ev.push_back({ 1.05, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Oblique A+B -> Ab/Eb soul sigh!
-        ev.push_back({ 2.05, juce::MidiMessage::noteOff(1, 28) });       // Melt back to Eb Major
-        for (int n : { 51, 58, 67, 70 }) ev.push_back({ 3.20, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 2: Warm portastudio sixths (C4 + Ab4 -> D4 + Bb4 IV->V6 bar glide, 100% diatonic Eb Major!)
-        ev.push_back({ 3.55, juce::MidiMessage::noteOn(1, 60, 0.82f) }); // C4
-        ev.push_back({ 3.58, juce::MidiMessage::noteOn(1, 68, 0.86f) }); // Ab4
-        addPitchWheelRamp(ev, 1, 4.05, 4.65, 0.0f, +2.0f / 7.0f);        // Smooth 2-fret slide up to D4 + Bb4!
-        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 60) });
-        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 68) });
-        ev.push_back({ 6.02, juce::MidiMessage::pitchWheel(1, 8192) });  // Clean reset 0.8s before Phrase 3!
+        // Phrase 1: Intimate soft thumb-picked Eadd9 bedroom pocket + quick gospel A/E sigh
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 52, 0.64f) }); // E3 soft warm tape head-bump
+        ev.push_back({ 0.13, juce::MidiMessage::noteOn(1, 59, 0.66f) }); // B3
+        ev.push_back({ 0.16, juce::MidiMessage::noteOn(1, 68, 0.68f) }); // G#4
+        ev.push_back({ 0.62, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Quick gospel A/E slant
+        ev.push_back({ 1.12, juce::MidiMessage::noteOff(1, 28) });
+        for (int n : { 52, 59, 68 }) ev.push_back({ 1.62, juce::MidiMessage::noteOff(1, n) });
 
-        // Phrase 3: Expressive raked Ebadd9/Eb grip pushing into Tascam 424 preamp sag + gentle B-pedal Ebsus4 sigh
-        ev.push_back({ 6.80, juce::MidiMessage::noteOn(1, 51, 0.88f) }); // Eb3
-        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 58, 0.90f) }); // Bb3
-        ev.push_back({ 6.86, juce::MidiMessage::noteOn(1, 67, 0.92f) }); // G4
-        ev.push_back({ 6.89, juce::MidiMessage::noteOn(1, 75, 0.93f) }); // Eb5
-        ev.push_back({ 7.60, juce::MidiMessage::noteOn(1, 26, 1.00f) }); // Gentle Ebsus4 -> Eb resolve
-        ev.push_back({ 8.30, juce::MidiMessage::noteOff(1, 26) });
-        for (int n : { 51, 58, 67, 75 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 2: Syncopated C#m7 pocket + soulful Ch-3 grace-note bar slide (F#4 -> G#4)
+        ev.push_back({ 1.78, juce::MidiMessage::noteOn(1, 49, 0.70f) }); // C#3
+        ev.push_back({ 1.81, juce::MidiMessage::noteOn(1, 56, 0.72f) }); // G#3
+        ev.push_back({ 1.84, juce::MidiMessage::noteOn(1, 64, 0.74f) }); // E4
+        ev.push_back({ 1.88, juce::MidiMessage::noteOn(3, 66, 0.80f) }); // F#4 -> G#4 grace slide!
+        addPitchWheelRamp(ev, 3, 1.94, 2.18, 0.0f, +2.0f / 12.0f);
+        for (int n : { 49, 56, 64 }) ev.push_back({ 3.28, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 3.28, juce::MidiMessage::noteOff(3, 66) });
+        ev.push_back({ 3.34, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        renderSequenceToWav(12, 10.8, 84.0, ev, presetsDir.getChildFile("13_4track_cassette_steel.wav"));
+        // Phrase 3: HARD Tascam 424 Channel-1 Preamp Blast Rake on Amaj7 (vel=0.98 triggers warm oxide sag!)
+        ev.push_back({ 3.50, juce::MidiMessage::noteOn(1, 45, 0.96f) }); // A2 deep wound 10th-string bark!
+        ev.push_back({ 3.53, juce::MidiMessage::noteOn(1, 52, 0.97f) }); // E3
+        ev.push_back({ 3.56, juce::MidiMessage::noteOn(1, 61, 0.98f) }); // C#4
+        ev.push_back({ 3.59, juce::MidiMessage::noteOn(3, 71, 0.99f) }); // B4 -> G#4 crying R&B sigh
+        addPitchWheelRamp(ev, 3, 4.28, 4.78, 0.0f, -3.0f / 12.0f);       // 71 - 3 = 68 (G#4 = Amaj7!)
+        for (int n : { 45, 52, 61 }) ev.push_back({ 5.55, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 5.55, juce::MidiMessage::noteOff(3, 71) });
+        ev.push_back({ 5.61, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Phrase 4: Tight bedroom F#m7 -> B6 pocket walk into warm cassette E6/9
+        ev.push_back({ 5.78, juce::MidiMessage::noteOn(1, 54, 0.72f) }); // F#3
+        ev.push_back({ 5.81, juce::MidiMessage::noteOn(1, 61, 0.74f) }); // C#4
+        ev.push_back({ 5.84, juce::MidiMessage::noteOn(1, 69, 0.76f) }); // A4
+        for (int n : { 54, 61, 69 }) ev.push_back({ 6.45, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 6.58, juce::MidiMessage::noteOn(1, 47, 0.76f) }); // B2
+        ev.push_back({ 6.61, juce::MidiMessage::noteOn(1, 54, 0.78f) }); // F#3
+        ev.push_back({ 6.64, juce::MidiMessage::noteOn(1, 63, 0.80f) }); // D#4
+        ev.push_back({ 6.67, juce::MidiMessage::noteOn(1, 68, 0.82f) }); // G#4 (B6)
+        for (int n : { 47, 54, 63, 68 }) ev.push_back({ 7.25, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 7.40, juce::MidiMessage::noteOn(1, 52, 0.80f) }); // E3
+        ev.push_back({ 7.43, juce::MidiMessage::noteOn(1, 59, 0.82f) }); // B3
+        ev.push_back({ 7.46, juce::MidiMessage::noteOn(1, 68, 0.84f) }); // G#4
+        ev.push_back({ 7.49, juce::MidiMessage::noteOn(3, 66, 0.86f) }); // F#4 -> G#4 double-stop shimmer
+        addPitchWheelRamp(ev, 3, 7.60, 7.92, 0.0f, +2.0f / 12.0f);
+        ev.push_back({ 7.52, juce::MidiMessage::noteOn(1, 71, 0.85f) }); // B4
+        for (int n : { 52, 59, 68, 71 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 9.85, juce::MidiMessage::noteOff(3, 66) });
+
+        renderSequenceToWav(12, 10.6, 88.0, ev, presetsDir.getChildFile("13_4track_cassette_steel.wav"));
     }
 
     // =========================================================================
-    // Preset 14: Golden Hour Velvet (94 BPM, F Major — Kacey Musgraves / Clairo)
+    // Preset 14: Golden Hour Velvet (98 BPM, G Major — Kacey Musgraves / Pop-Folk)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Phrase 1: Feather-soft F Major -> Bb/F Dimension-D chorus bloom + luminous E5 maj7 bell!
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 53, 0.80f) }); // F3
-        ev.push_back({ 0.13, juce::MidiMessage::noteOn(1, 60, 0.82f) }); // C4
-        ev.push_back({ 0.16, juce::MidiMessage::noteOn(1, 69, 0.85f) }); // A4
-        ev.push_back({ 0.19, juce::MidiMessage::noteOn(1, 72, 0.87f) }); // C5
-        ev.push_back({ 0.95, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Lush Bb/F IV/I bloom
-        ev.push_back({ 1.85, juce::MidiMessage::noteOff(1, 28) });       // Resolve to F Major
-        ev.push_back({ 2.20, juce::MidiMessage::noteOn(1, 76, 0.86f) }); // Add silky E5 Fmaj7 top chime!
-        for (int n : { 53, 60, 69, 72, 76 }) ev.push_back({ 3.30, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 2: Dreamy vocal-pocket sixths (G4 + E5 -> F4 + D5 2-fret glide, 100% diatonic F Major!)
-        ev.push_back({ 3.65, juce::MidiMessage::noteOn(1, 67, 0.84f) }); // G4
-        ev.push_back({ 3.68, juce::MidiMessage::noteOn(1, 76, 0.88f) }); // E5
-        addPitchWheelRamp(ev, 1, 4.15, 4.75, 0.0f, -2.0f / 7.0f);        // Velvet bar sigh down to F4 + D5!
-        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 67) });
-        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 76) });
-        ev.push_back({ 6.02, juce::MidiMessage::pitchWheel(1, 8192) });
+        // Bar 1: Sparkling studio-condenser fingerpicked Gadd9 harp arpeggio + C/G lift
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 55, 0.80f) }); // G3
+        ev.push_back({ 0.36, juce::MidiMessage::noteOn(1, 62, 0.82f) }); // D4
+        ev.push_back({ 0.62, juce::MidiMessage::noteOn(1, 71, 0.85f) }); // B4
+        ev.push_back({ 0.88, juce::MidiMessage::noteOn(1, 69, 0.84f) }); // A4 (add9 chime!)
+        ev.push_back({ 1.14, juce::MidiMessage::noteOn(1, 74, 0.88f) }); // D5
+        ev.push_back({ 1.48, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Crisp C/G pedal bloom
+        ev.push_back({ 2.02, juce::MidiMessage::noteOff(1, 28) });
+        for (int n : { 55, 62, 69, 71, 74 }) ev.push_back({ 2.42, juce::MidiMessage::noteOff(1, n) });
 
-        // Phrase 3: Wide 3D Fadd9 studio chorus cloud (F3, C4, G4, A4, C5)
-        ev.push_back({ 6.80, juce::MidiMessage::noteOn(1, 53, 0.81f) });
-        ev.push_back({ 6.84, juce::MidiMessage::noteOn(1, 60, 0.83f) });
-        ev.push_back({ 6.88, juce::MidiMessage::noteOn(1, 67, 0.85f) });
-        ev.push_back({ 6.92, juce::MidiMessage::noteOn(1, 69, 0.87f) });
-        ev.push_back({ 6.96, juce::MidiMessage::noteOn(1, 72, 0.88f) });
-        for (int n : { 53, 60, 67, 69, 72 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
+        // Bar 2: Shimmering Em7 arpeggio -> luminous Dadd4 country-pop turnaround
+        ev.push_back({ 2.54, juce::MidiMessage::noteOn(1, 52, 0.80f) }); // E3
+        ev.push_back({ 2.78, juce::MidiMessage::noteOn(1, 59, 0.82f) }); // B3
+        ev.push_back({ 3.02, juce::MidiMessage::noteOn(1, 67, 0.85f) }); // G4
+        ev.push_back({ 3.26, juce::MidiMessage::noteOn(1, 74, 0.87f) }); // D5
+        for (int n : { 52, 59, 67, 74 }) ev.push_back({ 3.74, juce::MidiMessage::noteOff(1, n) });
 
-        renderSequenceToWav(13, 11.2, 94.0, ev, presetsDir.getChildFile("14_golden_hour_velvet.wav"));
+        ev.push_back({ 3.84, juce::MidiMessage::noteOn(1, 50, 0.81f) }); // D3
+        ev.push_back({ 3.88, juce::MidiMessage::noteOn(1, 57, 0.83f) }); // A3
+        ev.push_back({ 3.92, juce::MidiMessage::noteOn(1, 66, 0.86f) }); // F#4
+        ev.push_back({ 4.18, juce::MidiMessage::noteOn(1, 67, 0.85f) }); // G4 (Dadd4 bell rub!)
+        ev.push_back({ 4.44, juce::MidiMessage::noteOn(1, 74, 0.88f) }); // D5
+        for (int n : { 50, 57, 66, 67, 74 }) ev.push_back({ 4.92, juce::MidiMessage::noteOff(1, n) });
+
+        // Bar 3-4: Cmaj9 vocal-pocket hook -> sparkling Gmaj9 6.2 kHz condenser finale
+        ev.push_back({ 5.04, juce::MidiMessage::noteOn(1, 48, 0.80f) }); // C3
+        ev.push_back({ 5.08, juce::MidiMessage::noteOn(1, 55, 0.82f) }); // G3
+        ev.push_back({ 5.12, juce::MidiMessage::noteOn(1, 64, 0.84f) }); // E4
+        ev.push_back({ 5.18, juce::MidiMessage::noteOn(3, 69, 0.89f) }); // A4 -> B4 -> D5 -> B4 hook!
+        addPitchWheelRamp(ev, 3, 5.38, 5.68, 0.0f, +2.0f / 12.0f);       // 69 + 2 = 71 (B4, Cmaj7!)
+        addPitchWheelRamp(ev, 3, 5.95, 6.28, +2.0f / 12.0f, +5.0f / 12.0f); // 69 + 5 = 74 (D5, Cmaj9!)
+        addPitchWheelRamp(ev, 3, 6.55, 6.88, +5.0f / 12.0f, +2.0f / 12.0f); // Back to B4
+        for (int n : { 48, 55, 64 }) ev.push_back({ 7.22, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 7.22, juce::MidiMessage::noteOff(3, 69) });
+        ev.push_back({ 7.28, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        ev.push_back({ 7.38, juce::MidiMessage::noteOn(1, 55, 0.80f) }); // G3
+        ev.push_back({ 7.44, juce::MidiMessage::noteOn(1, 62, 0.82f) }); // D4
+        ev.push_back({ 7.50, juce::MidiMessage::noteOn(1, 69, 0.84f) }); // A4
+        ev.push_back({ 7.56, juce::MidiMessage::noteOn(1, 71, 0.86f) }); // B4
+        ev.push_back({ 7.62, juce::MidiMessage::noteOn(1, 78, 0.87f) }); // F#5 luminous Gmaj9 bell!
+        for (int n : { 55, 62, 69, 71, 78 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
+
+        renderSequenceToWav(13, 11.2, 98.0, ev, presetsDir.getChildFile("14_golden_hour_velvet.wav"));
     }
 
     // =========================================================================
-    // Preset 15: Apollo Deep Space (66 BPM, B Major — Brian Eno / Daniel Lanois)
+    // Preset 15: Apollo Deep Space (60 BPM, B Major — Eno & Lanois Cello-Register Ascent)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Swell 1: Weightless B Major Goodrich swell -> E/B suspension feeding +12st/+24st Hann octave shimmer!
-        ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 47, 0.84f) }); // B2 deep open 10th string!
-        ev.push_back({ 0.15, juce::MidiMessage::noteOn(1, 54, 0.86f) }); // F#3
-        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 63, 0.89f) }); // D#4
-        ev.push_back({ 0.21, juce::MidiMessage::noteOn(1, 71, 0.91f) }); // B4
-        ev.push_back({ 1.45, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Oblique E/B cathedral lift!
-        ev.push_back({ 2.65, juce::MidiMessage::noteOff(1, 28) });
-        for (int n : { 47, 54, 63, 71 }) ev.push_back({ 3.85, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Swell 2: Ascent IV -> V6 bar glide (E6: E3, B3, G#4, C#5 -> +2st F#6: F#3, C#4, A#4, D#5, 100% B Major!)
-        ev.push_back({ 4.15, juce::MidiMessage::noteOn(1, 52, 0.85f) }); // E3
-        ev.push_back({ 4.18, juce::MidiMessage::noteOn(1, 59, 0.87f) }); // B3
-        ev.push_back({ 4.21, juce::MidiMessage::noteOn(1, 68, 0.90f) }); // G#4
-        ev.push_back({ 4.24, juce::MidiMessage::noteOn(1, 73, 0.92f) }); // C#5
-        addPitchWheelRamp(ev, 1, 5.35, 6.20, 0.0f, +2.0f / 7.0f);        // Weightless orbital glide E6 -> F#6!
-        for (int n : { 52, 59, 68, 73 }) ev.push_back({ 7.40, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 7.46, juce::MidiMessage::pitchWheel(1, 8192) });  // Clean reset 0.8s before finale!
+        // Swell 1: Warm cello/French-horn register B Major (B2 -> B1 61.7 Hz sub-cello!) -> E/B cathedral lift
+        ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 47, 0.86f) }); // B2 (-12st sub-cello = B1!)
+        ev.push_back({ 0.16, juce::MidiMessage::noteOn(1, 54, 0.88f) }); // F#3
+        ev.push_back({ 0.20, juce::MidiMessage::noteOn(1, 63, 0.90f) }); // D#4
+        ev.push_back({ 0.24, juce::MidiMessage::noteOn(1, 66, 0.90f) }); // F#4 (capped warm — zero high screech!)
+        ev.push_back({ 1.60, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Weightless E/B suspension
+        ev.push_back({ 2.85, juce::MidiMessage::noteOff(1, 28) });
+        for (int n : { 47, 54, 63, 66 }) ev.push_back({ 3.95, juce::MidiMessage::noteOff(1, n) });
 
-        // Swell 3: Transcendent Badd9 (B2, F#3, D#4, C#5, F#5) blooming into infinite Apollo space
-        ev.push_back({ 8.25, juce::MidiMessage::noteOn(1, 47, 0.85f) });
-        ev.push_back({ 8.28, juce::MidiMessage::noteOn(1, 54, 0.87f) });
-        ev.push_back({ 8.31, juce::MidiMessage::noteOn(1, 63, 0.90f) });
-        ev.push_back({ 8.34, juce::MidiMessage::noteOn(1, 73, 0.91f) });
-        ev.push_back({ 8.37, juce::MidiMessage::noteOn(1, 78, 0.93f) });
-        for (int n : { 47, 54, 63, 73, 78 }) ev.push_back({ 11.20, juce::MidiMessage::noteOff(1, n) });
+        // Swell 2: Deep Eadd9 (E3 -> E2 82.4 Hz sub-cello!) with slow orbital Ch-3 melody (D#4 -> F#4)
+        ev.push_back({ 4.20, juce::MidiMessage::noteOn(1, 52, 0.86f) }); // E3
+        ev.push_back({ 4.24, juce::MidiMessage::noteOn(1, 59, 0.88f) }); // B3
+        ev.push_back({ 4.28, juce::MidiMessage::noteOn(1, 68, 0.89f) }); // G#4
+        ev.push_back({ 4.32, juce::MidiMessage::noteOn(3, 63, 0.91f) }); // D#4 (Emaj7) -> F#4 (Eadd9)
+        addPitchWheelRamp(ev, 3, 5.20, 6.35, 0.0f, +3.0f / 12.0f);       // 63 + 3 = 66 (F#4!)
+        for (int n : { 52, 59, 68 }) ev.push_back({ 7.65, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 7.65, juce::MidiMessage::noteOff(3, 63) });
+        ev.push_back({ 7.72, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        renderSequenceToWav(14, 13.0, 66.0, ev, presetsDir.getChildFile("15_apollo_deep_space.wav"));
+        // Swell 3: Monumental Bmaj9 (B2, F#3, C#4, D#4, A#4) blooming into dark velvet space
+        ev.push_back({ 8.05, juce::MidiMessage::noteOn(1, 47, 0.88f) }); // B2
+        ev.push_back({ 8.09, juce::MidiMessage::noteOn(1, 54, 0.89f) }); // F#3
+        ev.push_back({ 8.13, juce::MidiMessage::noteOn(1, 61, 0.90f) }); // C#4
+        ev.push_back({ 8.17, juce::MidiMessage::noteOn(1, 63, 0.91f) }); // D#4
+        ev.push_back({ 8.21, juce::MidiMessage::noteOn(1, 70, 0.91f) }); // A#4 warm maj7 crown
+        for (int n : { 47, 54, 61, 63, 70 }) ev.push_back({ 11.40, juce::MidiMessage::noteOff(1, n) });
+
+        renderSequenceToWav(14, 13.2, 60.0, ev, presetsDir.getChildFile("15_apollo_deep_space.wav"));
     }
 
     // =========================================================================
-    // Preset 16: Desert Mirage Spring (98 BPM, A Minor — Khruangbin / Hermanos Gutiérrez)
+    // Preset 16: Desert Mirage Spring (96 BPM, A Minor — Khruangbin / Hermanos Gutiérrez)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
         // Phrase 1: Low A2 desert thumb anchor + dripping spring-tank minor sixths (E4+C5 -> F#4+D5 Dorian mirage -> E4+C5)
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 45, 0.84f) }); // A2 smoky bass note
-        ev.push_back({ 0.42, juce::MidiMessage::noteOn(1, 64, 0.88f) }); // E4
-        ev.push_back({ 0.45, juce::MidiMessage::noteOn(1, 72, 0.91f) }); // C5 minor sixth drip!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 45, 0.86f) }); // A2 smoky bass note
+        ev.push_back({ 0.42, juce::MidiMessage::noteOn(1, 64, 0.90f) }); // E4
+        ev.push_back({ 0.45, juce::MidiMessage::noteOn(1, 72, 0.92f) }); // C5 minor sixth drip!
         addPitchWheelRamp(ev, 1, 0.95, 1.40, 0.0f, +2.0f / 7.0f);        // Sultry slide up to F#4 + D5
         addPitchWheelRamp(ev, 1, 1.75, 2.20, +2.0f / 7.0f, 0.0f);        // Weep back to E4 + C5!
         for (int n : { 45, 64, 72 }) ev.push_back({ 3.10, juce::MidiMessage::noteOff(1, n) });
         ev.push_back({ 3.16, juce::MidiMessage::pitchWheel(1, 8192) });
 
         // Phrase 2: Dmadd9 desert pulse -> Morricone/Gutiérrez E7 staggered spring-tank arpeggio!
-        ev.push_back({ 3.55, juce::MidiMessage::noteOn(1, 50, 0.84f) }); // D3
-        ev.push_back({ 3.58, juce::MidiMessage::noteOn(1, 65, 0.87f) }); // F4
-        ev.push_back({ 3.61, juce::MidiMessage::noteOn(1, 69, 0.89f) }); // A4
-        ev.push_back({ 3.64, juce::MidiMessage::noteOn(1, 76, 0.90f) }); // E5
+        ev.push_back({ 3.55, juce::MidiMessage::noteOn(1, 50, 0.86f) }); // D3
+        ev.push_back({ 3.58, juce::MidiMessage::noteOn(1, 65, 0.88f) }); // F4
+        ev.push_back({ 3.61, juce::MidiMessage::noteOn(1, 69, 0.90f) }); // A4
+        ev.push_back({ 3.64, juce::MidiMessage::noteOn(1, 76, 0.92f) }); // E5
         for (int n : { 50, 65, 69, 76 }) ev.push_back({ 4.95, juce::MidiMessage::noteOff(1, n) });
 
-        ev.push_back({ 5.10, juce::MidiMessage::noteOn(1, 52, 0.85f) }); // E3
-        ev.push_back({ 5.38, juce::MidiMessage::noteOn(1, 68, 0.88f) }); // G#4
-        ev.push_back({ 5.66, juce::MidiMessage::noteOn(1, 71, 0.90f) }); // B4
-        ev.push_back({ 5.94, juce::MidiMessage::noteOn(1, 74, 0.92f) }); // D5 E7 tension!
+        ev.push_back({ 5.10, juce::MidiMessage::noteOn(1, 52, 0.87f) }); // E3
+        ev.push_back({ 5.38, juce::MidiMessage::noteOn(1, 68, 0.89f) }); // G#4
+        ev.push_back({ 5.66, juce::MidiMessage::noteOn(1, 71, 0.91f) }); // B4
+        ev.push_back({ 5.94, juce::MidiMessage::noteOn(1, 74, 0.93f) }); // D5 E7 tension!
         for (int n : { 52, 68, 71, 74 }) ev.push_back({ 6.55, juce::MidiMessage::noteOff(1, n) });
 
-        // Phrase 3: Hypnotic bias-tremolo Amadd9 finale (A2, E3, C4, E4, B4)
-        ev.push_back({ 6.80, juce::MidiMessage::noteOn(1, 45, 0.84f) });
-        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 52, 0.86f) });
-        ev.push_back({ 6.86, juce::MidiMessage::noteOn(1, 60, 0.88f) });
-        ev.push_back({ 6.89, juce::MidiMessage::noteOn(1, 64, 0.90f) });
-        ev.push_back({ 6.92, juce::MidiMessage::noteOn(1, 71, 0.91f) });
+        // Phrase 3: Hypnotic deep bias-tremolo Amadd9 finale (A2, E3, C4, E4, B4)
+        ev.push_back({ 6.80, juce::MidiMessage::noteOn(1, 45, 0.86f) });
+        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 52, 0.88f) });
+        ev.push_back({ 6.86, juce::MidiMessage::noteOn(1, 60, 0.90f) });
+        ev.push_back({ 6.89, juce::MidiMessage::noteOn(1, 64, 0.91f) });
+        ev.push_back({ 6.92, juce::MidiMessage::noteOn(1, 71, 0.92f) });
         for (int n : { 45, 52, 60, 64, 71 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
 
-        renderSequenceToWav(15, 11.2, 98.0, ev, presetsDir.getChildFile("16_desert_mirage_spring.wav"));
+        renderSequenceToWav(15, 11.2, 96.0, ev, presetsDir.getChildFile("16_desert_mirage_spring.wav"));
     }
 
     // =========================================================================
-    // Preset 17: Late-Night R&B Sample Bed (76 BPM, Bbm9 / Db Major — Frank Ocean / SZA)
+    // Preset 17: Late-Night R&B Sample Bed (74 BPM, Bbm9 / Db Major — Frank Ocean / 40)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Chord 1: Underwater 1.88 kHz 4-pole low-passed Bbm9 (Bb2, F3, Db4, Ab4, C5)
+        // Chord 1: Ultra-dark 1.35 kHz 4-pole underwater Bbm9 (Bb2, F3, Db4, Ab4, C5)
         ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 46, 0.82f) }); // Bb2 deep soul root
         ev.push_back({ 0.15, juce::MidiMessage::noteOn(1, 53, 0.84f) }); // F3
         ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 61, 0.86f) }); // Db4
         ev.push_back({ 0.21, juce::MidiMessage::noteOn(1, 68, 0.88f) }); // Ab4
         ev.push_back({ 0.24, juce::MidiMessage::noteOn(1, 72, 0.90f) }); // C5 min9 velvet!
-        for (int n : { 46, 53, 61, 68, 72 }) ev.push_back({ 3.35, juce::MidiMessage::noteOff(1, n) });
+        for (int n : { 46, 53, 61, 68, 72 }) ev.push_back({ 2.85, juce::MidiMessage::noteOff(1, n) });
 
-        // Chord 2: Nocturnal Gbmaj7 + weeping upper R&B sixth slide (Ab4+F5 -> Gb4+Eb5, 100% Db Major!)
-        ev.push_back({ 3.65, juce::MidiMessage::noteOn(1, 54, 0.82f) }); // Gb3
-        ev.push_back({ 3.68, juce::MidiMessage::noteOn(1, 68, 0.87f) }); // Ab4
-        ev.push_back({ 3.71, juce::MidiMessage::noteOn(1, 77, 0.90f) }); // F5
-        addPitchWheelRamp(ev, 1, 4.45, 5.20, 0.0f, -2.0f / 7.0f);        // Liquid bar glide into Gbmaj13!
-        for (int n : { 54, 68, 77 }) ev.push_back({ 6.35, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 6.42, juce::MidiMessage::pitchWheel(1, 8192) });
+        // Chord 2: Pillowy Ebm9 nocturnal shift (Eb3, Bb3, Gb4, Db5, F5)
+        ev.push_back({ 3.05, juce::MidiMessage::noteOn(1, 51, 0.82f) }); // Eb3
+        ev.push_back({ 3.08, juce::MidiMessage::noteOn(1, 58, 0.84f) }); // Bb3
+        ev.push_back({ 3.11, juce::MidiMessage::noteOn(1, 66, 0.86f) }); // Gb4
+        ev.push_back({ 3.14, juce::MidiMessage::noteOn(1, 73, 0.88f) }); // Db5
+        ev.push_back({ 3.17, juce::MidiMessage::noteOn(1, 77, 0.89f) }); // F5
+        for (int n : { 51, 58, 66, 73, 77 }) ev.push_back({ 5.65, juce::MidiMessage::noteOff(1, n) });
 
-        // Chord 3: Plush Dbmaj9 2-AM R&B loop resolution (Db3, Ab3, F4, C5, Eb5)
-        ev.push_back({ 7.15, juce::MidiMessage::noteOn(1, 49, 0.83f) }); // Db3
-        ev.push_back({ 7.18, juce::MidiMessage::noteOn(1, 56, 0.85f) }); // Ab3
-        ev.push_back({ 7.21, juce::MidiMessage::noteOn(1, 65, 0.87f) }); // F4
-        ev.push_back({ 7.24, juce::MidiMessage::noteOn(1, 72, 0.89f) }); // C5
-        ev.push_back({ 7.27, juce::MidiMessage::noteOn(1, 75, 0.90f) }); // Eb5
-        for (int n : { 49, 56, 65, 72, 75 }) ev.push_back({ 10.20, juce::MidiMessage::noteOff(1, n) });
+        // Chord 3: Gbmaj9 + weeping upper R&B sixth slide (Ab4+F5 -> Gb4+Eb5)
+        ev.push_back({ 5.85, juce::MidiMessage::noteOn(1, 54, 0.82f) }); // Gb3
+        ev.push_back({ 5.88, juce::MidiMessage::noteOn(1, 68, 0.87f) }); // Ab4
+        ev.push_back({ 5.91, juce::MidiMessage::noteOn(1, 77, 0.90f) }); // F5
+        addPitchWheelRamp(ev, 1, 6.40, 7.05, 0.0f, -2.0f / 7.0f);        // Liquid bar glide into Gbmaj13!
+        for (int n : { 54, 68, 77 }) ev.push_back({ 7.75, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 7.82, juce::MidiMessage::pitchWheel(1, 8192) });
 
-        renderSequenceToWav(16, 11.6, 76.0, ev, presetsDir.getChildFile("17_latenight_rnb_sample_bed.wav"));
+        // Chord 4: Plush Dbmaj9 2-AM R&B loop resolution (Db3, Ab3, F4, C5, Eb5)
+        ev.push_back({ 8.00, juce::MidiMessage::noteOn(1, 49, 0.83f) }); // Db3
+        ev.push_back({ 8.03, juce::MidiMessage::noteOn(1, 56, 0.85f) }); // Ab3
+        ev.push_back({ 8.06, juce::MidiMessage::noteOn(1, 65, 0.87f) }); // F4
+        ev.push_back({ 8.09, juce::MidiMessage::noteOn(1, 72, 0.89f) }); // C5
+        ev.push_back({ 8.12, juce::MidiMessage::noteOn(1, 75, 0.90f) }); // Eb5
+        for (int n : { 49, 56, 65, 72, 75 }) ev.push_back({ 10.45, juce::MidiMessage::noteOff(1, n) });
+
+        renderSequenceToWav(16, 11.8, 74.0, ev, presetsDir.getChildFile("17_latenight_rnb_sample_bed.wav"));
     }
 
     // =========================================================================
-    // Preset 18: Sunset Slack-Key Lounge (102 BPM, C Major — Mac DeMarco / Faye Webster)
+    // Preset 18: Sunset Slack-Key Lounge (76 BPM, C Major — Sleep Walk / Mac DeMarco / Faye Webster)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Phrase 1: Sunny Hawaiian/indie-slacker 2-fret upward bar slide (F4+D5 -> G4+E5 C6 sixths!)
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 65, 0.84f) }); // F4
-        ev.push_back({ 0.13, juce::MidiMessage::noteOn(1, 74, 0.88f) }); // D5
-        addPitchWheelRamp(ev, 1, 0.28, 0.72, 0.0f, +2.0f / 7.0f);        // Lazy slide up into G4 + E5!
-        ev.push_back({ 2.35, juce::MidiMessage::noteOff(1, 65) });
-        ev.push_back({ 2.35, juce::MidiMessage::noteOff(1, 74) });
-        ev.push_back({ 2.42, juce::MidiMessage::pitchWheel(1, 8192) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(5, 8192) });
 
-        // Phrase 2: Breezy porch-swing C Major -> F Major A+B bounce (C3, G3, E4, C5)
-        ev.push_back({ 3.10, juce::MidiMessage::noteOn(1, 48, 0.82f) }); // C3
-        ev.push_back({ 3.13, juce::MidiMessage::noteOn(1, 55, 0.84f) }); // G3
-        ev.push_back({ 3.16, juce::MidiMessage::noteOn(1, 64, 0.86f) }); // E4
-        ev.push_back({ 3.19, juce::MidiMessage::noteOn(1, 72, 0.88f) }); // C5
-        ev.push_back({ 3.85, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // A+B -> F Major
-        ev.push_back({ 4.65, juce::MidiMessage::noteOff(1, 28) });       // Back to C Major
-        for (int n : { 48, 55, 64, 72 }) ev.push_back({ 5.65, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 1 (C6/maj9): Warm C3+G3+E4 cushion while singing lead glides A4 -> C5, then D5 -> E5 -> D5!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 48, 0.74f) }); // C3 warm tube-combo root
+        ev.push_back({ 0.14, juce::MidiMessage::noteOn(1, 55, 0.76f) }); // G3
+        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 64, 0.78f) }); // E4
+        ev.push_back({ 0.24, juce::MidiMessage::noteOn(3, 69, 0.89f) }); // A4 (C6) -> C5 (+3 frets!)
+        addPitchWheelRamp(ev, 3, 0.42, 0.78, 0.0f, +3.0f / 12.0f);       // 69 + 3 = 72 (C5)
+        ev.push_back({ 1.00, juce::MidiMessage::noteOff(3, 69) });
+        ev.push_back({ 1.03, juce::MidiMessage::noteOn(5, 74, 0.91f) }); // D5 -> E5 (+2 frets pure singing formant!)
+        addPitchWheelRamp(ev, 5, 1.15, 1.56, 0.0f, +2.0f / 12.0f);       // 74 + 2 = 76 (E5 soaring Sleep Walk peak!)
+        addPitchWheelRamp(ev, 5, 2.05, 2.48, +2.0f / 12.0f, 0.0f);       // 76 -> 74 (E5 -> D5 Cadd9 sigh!)
+        for (int n : { 48, 55, 64 }) ev.push_back({ 2.85, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 2.85, juce::MidiMessage::noteOff(5, 74) });
+        ev.push_back({ 2.92, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 2.92, juce::MidiMessage::pitchWheel(5, 8192) });
 
-        // Phrase 3: Walking vintage lounge sixths (A4+F5 -> G4+E5 -> F4+D5) landing on warbly C6/9!
-        auto walkSixth = [&](double t, double dur, int n1, int n2) {
-            ev.push_back({ t, juce::MidiMessage::noteOn(1, n1, 0.84f) });
-            ev.push_back({ t + 0.02, juce::MidiMessage::noteOn(1, n2, 0.87f) });
-            ev.push_back({ t + dur, juce::MidiMessage::noteOff(1, n1) });
-            ev.push_back({ t + dur, juce::MidiMessage::noteOff(1, n2) });
-        };
-        walkSixth(5.90, 0.42, 69, 77); // A4 + F5
-        walkSixth(6.42, 0.42, 67, 76); // G4 + E5
-        walkSixth(6.94, 0.42, 65, 74); // F4 + D5
+        // Phrase 2 (Am9): Lush A2+E3+C4+G4 cushion + weeping Ch-3 slide E5 -> D5 -> C5
+        ev.push_back({ 3.05, juce::MidiMessage::noteOn(1, 45, 0.74f) }); // A2
+        ev.push_back({ 3.09, juce::MidiMessage::noteOn(1, 52, 0.76f) }); // E3
+        ev.push_back({ 3.13, juce::MidiMessage::noteOn(1, 60, 0.78f) }); // C4
+        ev.push_back({ 3.17, juce::MidiMessage::noteOn(1, 67, 0.78f) }); // G4 (Am7)
+        ev.push_back({ 3.24, juce::MidiMessage::noteOn(3, 76, 0.90f) }); // E5 singing lead
+        addPitchWheelRamp(ev, 3, 3.62, 4.05, 0.0f, -2.0f / 12.0f);       // 76 - 2 = 74 (D5)
+        addPitchWheelRamp(ev, 3, 4.35, 4.88, -2.0f / 12.0f, -4.0f / 12.0f); // 76 - 4 = 72 (C5 minor 3rd sigh!)
+        for (int n : { 45, 52, 60, 67 }) ev.push_back({ 5.65, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 5.65, juce::MidiMessage::noteOff(3, 76) });
+        ev.push_back({ 5.72, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Final sunny C6/9 lounge chord (C3, G3, E4, A4, D5)
-        ev.push_back({ 7.48, juce::MidiMessage::noteOn(1, 48, 0.82f) });
-        ev.push_back({ 7.51, juce::MidiMessage::noteOn(1, 55, 0.84f) });
-        ev.push_back({ 7.54, juce::MidiMessage::noteOn(1, 64, 0.86f) });
-        ev.push_back({ 7.57, juce::MidiMessage::noteOn(1, 69, 0.88f) }); // A4 6th!
-        ev.push_back({ 7.60, juce::MidiMessage::noteOn(1, 74, 0.89f) }); // D5 9th!
-        for (int n : { 48, 55, 64, 69, 74 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 3 (Fmaj7 -> Fm6): THE ICONIC SLEEP WALK / MAC DEMARCO MINOR-IV HEARTBREAK MELT!
+        ev.push_back({ 5.85, juce::MidiMessage::noteOn(1, 53, 0.76f) }); // F3
+        ev.push_back({ 5.89, juce::MidiMessage::noteOn(1, 60, 0.78f) }); // C4
+        ev.push_back({ 5.93, juce::MidiMessage::noteOn(4, 69, 0.80f) }); // A4 (Fmaj7 3rd) -> melts to Ab4 (Fm6)!
+        ev.push_back({ 5.98, juce::MidiMessage::noteOn(3, 76, 0.91f) }); // E5 (Fmaj7) -> D5 (Fm6 6th!) -> C5
+        addPitchWheelRamp(ev, 3, 6.28, 6.68, 0.0f, -2.0f / 12.0f);       // 76 - 2 = 74 (D5, F6/maj13!)
+        addPitchWheelRamp(ev, 4, 7.15, 7.55, 0.0f, -1.0f / 12.0f);       // 69 - 1 = 68 (Ab4 — Fm6 minor-IV melt!!)
+        addPitchWheelRamp(ev, 3, 7.58, 8.18, -2.0f / 12.0f, -4.0f / 12.0f); // 74 -> 72 (D5 -> C5 weeping over Fm6!)
+        for (int n : { 53, 60 }) ev.push_back({ 8.85, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 8.85, juce::MidiMessage::noteOff(4, 69) });
+        ev.push_back({ 8.85, juce::MidiMessage::noteOff(3, 76) });
+        ev.push_back({ 8.92, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 8.92, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        renderSequenceToWav(17, 10.8, 102.0, ev, presetsDir.getChildFile("18_sunset_slackkey_lounge.wav"));
+        // Phrase 4 (Cmaj9/6 -> C6): Sun-drenched VB-2 warble & 1959 sunset chamber resolution
+        ev.push_back({ 9.05, juce::MidiMessage::noteOn(1, 48, 0.76f) }); // C3
+        ev.push_back({ 9.09, juce::MidiMessage::noteOn(1, 55, 0.78f) }); // G3
+        ev.push_back({ 9.13, juce::MidiMessage::noteOn(1, 64, 0.80f) }); // E4
+        ev.push_back({ 9.17, juce::MidiMessage::noteOn(1, 69, 0.82f) }); // A4 (6th!)
+        ev.push_back({ 9.22, juce::MidiMessage::noteOn(3, 74, 0.90f) }); // D5 (9th) -> glides into E5!
+        addPitchWheelRamp(ev, 3, 9.50, 10.00, 0.0f, +2.0f / 12.0f);      // 74 + 2 = 76 (E5 golden resolution!)
+        for (int n : { 48, 55, 64, 69 }) ev.push_back({ 11.45, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 11.45, juce::MidiMessage::noteOff(3, 74) });
+
+        renderSequenceToWav(17, 12.6, 76.0, ev, presetsDir.getChildFile("18_sunset_slackkey_lounge.wav"));
     }
 
     // =========================================================================

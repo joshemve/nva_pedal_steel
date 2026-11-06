@@ -404,7 +404,7 @@ void PedalSteelEngine::ModernCharacterProcessor::prepare(double sr) {
     modBufL.assign(static_cast<size_t>(modMaxLen), 0.0f);
     modBufR.assign(static_cast<size_t>(modMaxLen), 0.0f);
 
-    shimMaxLen = std::max(2048, static_cast<int>(sr * 0.115) + 64);
+    shimMaxLen = std::max(2048, static_cast<int>(sr * 0.145) + 64);
     shimBufL.assign(static_cast<size_t>(shimMaxLen), 0.0f);
     shimBufR.assign(static_cast<size_t>(shimMaxLen), 0.0f);
 
@@ -435,13 +435,16 @@ void PedalSteelEngine::ModernCharacterProcessor::reset() {
     shimWritePos = 0;
     lfoPhase1 = 0.0;
     lfoPhase2 = 0.27;
+    lfoPhase3 = 0.61;
     tremPhase = 0.0;
     shimPhasor = 0.0;
+    subPhasor = 0.0;
     cassetteSagEnv = 0.0f;
     charFilter1.reset();
     charFilter2.reset();
     charFilter3.reset();
     dimHpFilter.reset();
+    subLpFilter.reset();
 }
 
 void PedalSteelEngine::ModernCharacterProcessor::updateCoeffs(double sr, int mode) {
@@ -450,41 +453,47 @@ void PedalSteelEngine::ModernCharacterProcessor::updateCoeffs(double sr, int mod
         charFilter2.reset();
         charFilter3.reset();
         dimHpFilter.reset();
+        subLpFilter.reset();
         lastMode = mode;
     }
     if (mode <= 0) return;
 
     if (mode == 1) {
-        // 13: Tascam 424 4-Track Portastudio (Type-II Chrome Head Bump + Intimate Mid + 4.55 kHz Tape Roll-Off)
-        charFilter1.setPeak(sr, 145.0f, 0.76f, 2.8f);
-        charFilter2.setLowpass(sr, 4550.0f, 0.74f);
-        charFilter3.setPeak(sr, 960.0f, 0.82f, 1.5f);
+        // 13: Tascam 424 4-Track Portastudio (138 Hz Head Bump + 880 Hz Intimate Bark + 4-Pole 3.45 kHz Cassette Roll-Off)
+        charFilter1.setPeak(sr, 138.0f, 0.76f, 3.4f);
+        charFilter2.setLowpass(sr, 3450.0f, 0.80f);
+        subLpFilter.setLowpass(sr, 3650.0f, 0.66f);
+        charFilter3.setPeak(sr, 880.0f, 0.82f, 2.2f);
     } else if (mode == 2) {
-        // 14: Roland SDD-320 Dimension D Velvet Chorus (210 Hz Wet HPF + Vocal-Pocket Velvet Dip + 5.8 kHz Condenser Silk)
-        dimHpFilter.setHighpass(sr, 210.0f, 0.707f);
-        charFilter1.setPeak(sr, 2380.0f, 0.92f, -2.4f);
-        charFilter2.setPeak(sr, 5800.0f, 0.72f, 2.0f);
+        // 14: Pure Phase-Coherent Studio Silk Ensemble (220 Hz Wet HPF + Vocal Pocket + 6.2 kHz & 10.2 kHz Condenser Sparkle)
+        dimHpFilter.setHighpass(sr, 220.0f, 0.707f);
+        charFilter1.setPeak(sr, 2450.0f, 0.90f, -2.2f);
+        charFilter2.setPeak(sr, 6200.0f, 0.68f, 3.6f);
+        charFilter3.setPeak(sr, 10200.0f, 0.70f, 1.8f);
     } else if (mode == 3) {
-        // 15: Eno / Lanois Apollo Shimmer (+12st Hann Octave Halo -> 300 Hz HPF + 3.05 kHz Warm Lexicon BBD Lowpass)
-        dimHpFilter.setHighpass(sr, 300.0f, 0.707f);
-        charFilter1.setPeak(sr, 255.0f, 0.75f, 1.8f);
-        charFilter2.setLowpass(sr, 3050.0f, 0.72f);
+        // 15: Eno / Lanois Apollo Deep Space (340 Hz -12st Sub-Cello + 4-Pole 1.48 kHz Dark Velvet +12st Choir Halo — Zero Screech!)
+        dimHpFilter.setHighpass(sr, 240.0f, 0.707f);
+        subLpFilter.setLowpass(sr, 340.0f, 0.72f);
+        charFilter1.setPeak(sr, 220.0f, 0.74f, 2.2f);
+        charFilter2.setLowpass(sr, 1480.0f, 0.82f);
+        charFilter3.setLowpass(sr, 1620.0f, 0.66f);
     } else if (mode == 4) {
-        // 16: Accutronics 3-Spring Tank Drip + Fender Vibrolux Roach Optical Bias Tremolo
+        // 16: Accutronics 3-Spring Tank Drip + Deep Fender Vibrolux Roach Optical Bias Tremolo
         dimHpFilter.setHighpass(sr, 195.0f, 0.707f);
-        charFilter2.setPeak(sr, 2550.0f, 1.30f, 3.8f);
+        charFilter2.setPeak(sr, 2450.0f, 1.35f, 4.2f);
         charFilter3.setLowpass(sr, 4350.0f, 0.76f);
     } else if (mode == 5) {
-        // 17: Nocturnal Alt-R&B Resampled Sample Bed (Warm 215 Hz Chest + True 24 dB/oct 4-Pole 1.88 kHz Ladder Lowpass)
-        dimHpFilter.setHighpass(sr, 185.0f, 0.707f);
-        charFilter1.setPeak(sr, 215.0f, 0.76f, 2.8f);
-        charFilter2.setLowpass(sr, 1880.0f, 0.80f);
-        charFilter3.setLowpass(sr, 1940.0f, 0.64f);
+        // 17: Nocturnal Alt-R&B Resampled Sample Bed (Warm 200 Hz Sub-Chest + True 24 dB/oct 4-Pole 1.35 kHz Underwater Filter)
+        dimHpFilter.setHighpass(sr, 180.0f, 0.707f);
+        charFilter1.setPeak(sr, 200.0f, 0.74f, 3.2f);
+        charFilter2.setLowpass(sr, 1350.0f, 0.86f);
+        charFilter3.setLowpass(sr, 1420.0f, 0.68f);
     } else if (mode == 6) {
-        // 18: 1950s Valco / Oahu Slack-Key Lounge (Hollow Body Scoop + Woody 1.42 kHz Magnet Mid + 4.15 kHz Paper Cone)
-        charFilter1.setPeak(sr, 185.0f, 0.85f, -2.2f);
-        charFilter2.setPeak(sr, 1420.0f, 0.88f, 2.6f);
-        charFilter3.setLowpass(sr, 4150.0f, 0.74f);
+        // 18: Sleep Walk / Mac DeMarco Sunset Lounge (Plush 195 Hz Tube Cushion + Ribbon Silk Dip + 4.05 kHz Alnico 12" Cone)
+        dimHpFilter.setHighpass(sr, 195.0f, 0.707f);
+        charFilter1.setPeak(sr, 195.0f, 0.74f, 2.8f);
+        charFilter2.setPeak(sr, 2550.0f, 0.88f, -2.6f);
+        charFilter3.setLowpass(sr, 4050.0f, 0.72f);
     }
 }
 
@@ -503,99 +512,127 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
     modBufR[static_cast<size_t>(modWritePos)] = ioR;
 
     if (mode == 1) {
-        // 13: 4-Track Cassette (Dual-capstan wow/flutter + level-reactive Tascam 424 preamp sag & chrome tape roll-off)
-        lfoPhase1 += 0.56 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        lfoPhase2 += 1.29 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        // 13: 4-Track Cassette (Dual-capstan wow/flutter + level-reactive Tascam 424 preamp sag & 4-pole 3.45 kHz cassette tape)
+        lfoPhase1 += 0.58 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 1.37 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
 
         const float wowL = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
-        const float wowR = static_cast<float>(std::sin(kTwoPi * lfoPhase1 + 0.32));
+        const float wowR = static_cast<float>(std::sin(kTwoPi * lfoPhase1 + 0.28));
         const float drfL = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
         const float drfR = static_cast<float>(std::cos(kTwoPi * lfoPhase2));
-        const float flt  = static_cast<float>(std::sin(kTwoPi * lfoPhase1 * 9.0));
+        const float flt  = static_cast<float>(std::sin(kTwoPi * lfoPhase1 * 9.5));
 
-        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (3.4f + 0.34f * wowL + 0.11f * drfL + 0.022f * flt) * srMs);
-        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (3.65f + 0.34f * wowR + 0.11f * drfR - 0.022f * flt) * srMs);
+        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (3.8f + 0.46f * wowL + 0.15f * drfL + 0.025f * flt) * srMs);
+        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.05f + 0.46f * wowR + 0.15f * drfR - 0.025f * flt) * srMs);
 
         float wL = readFloatBufHermite(modBufL, modWritePos, dL);
         float wR = readFloatBufHermite(modBufR, modWritePos, dR);
 
         const float pk = std::max(std::abs(wL), std::abs(wR));
-        const float sagAlpha = (pk > cassetteSagEnv) ? 0.008f : 0.00025f;
+        const float sagAlpha = (pk > cassetteSagEnv) ? 0.010f : 0.00022f;
         cassetteSagEnv += sagAlpha * (pk - cassetteSagEnv);
-        const float drv = 1.52f / (1.0f + 0.50f * cassetteSagEnv);
+        const float drv = 1.86f / (1.0f + 0.68f * cassetteSagEnv);
 
-        const float xL = juce::jlimit(-2.8f, 2.8f, wL * drv);
-        const float xR = juce::jlimit(-2.8f, 2.8f, wR * drv);
-        wL = (fastTanh(xL + 0.20f * xL * xL) - 0.036f * xL * xL) * 0.72f;
-        wR = (fastTanh(xR + 0.20f * xR * xR) - 0.036f * xR * xR) * 0.72f;
+        const float xL = juce::jlimit(-3.0f, 3.0f, wL * drv);
+        const float xR = juce::jlimit(-3.0f, 3.0f, wR * drv);
+        wL = (fastTanh(xL + 0.24f * xL * xL) - 0.042f * xL * xL) * 0.64f;
+        wR = (fastTanh(xR + 0.24f * xR * xR) - 0.042f * xR * xR) * 0.64f;
 
-        wL = charFilter3.processL(charFilter2.processL(charFilter1.processL(wL)));
-        wR = charFilter3.processR(charFilter2.processR(charFilter1.processR(wR)));
+        wL = charFilter3.processL(subLpFilter.processL(charFilter2.processL(charFilter1.processL(wL))));
+        wR = charFilter3.processR(subLpFilter.processR(charFilter2.processR(charFilter1.processR(wR))));
         ioL = wL;
         ioR = wR;
     } else if (mode == 2) {
-        // 14: Roland Dimension D SDD-320 Stereo BBD Chorus (anti-phase triangle LFOs + HPF wet cross-matrix)
-        lfoPhase1 += 0.42 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        lfoPhase2 += 0.51 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        // 14: Pure Phase-Coherent Dual-Tap Sine Studio Silk Chorus (zero triangle corners, zero out-of-phase ear pressure!)
+        lfoPhase1 += 0.37 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.53 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
 
-        auto tri = [](double ph) -> float {
-            double u = ph - std::floor(ph);
-            return static_cast<float>(u < 0.5 ? (u * 4.0 - 1.0) : (3.0 - u * 4.0));
-        };
-        const float t1 = tri(lfoPhase1);
-        const float t2 = tri(lfoPhase2);
+        const float s1 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float c1 = static_cast<float>(std::cos(kTwoPi * lfoPhase1));
+        const float s2 = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float c2 = static_cast<float>(std::cos(kTwoPi * lfoPhase2));
 
-        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.8f + 1.45f * t1) * srMs);
-        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.2f - 1.45f * t2) * srMs);
+        const float dL1 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.4f + 1.10f * s1) * srMs);
+        const float dR1 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (8.1f + 1.10f * c1) * srMs);
+        const float dL2 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (12.8f + 0.80f * s2) * srMs);
+        const float dR2 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (13.5f - 0.80f * c2) * srMs);
 
-        const float wetL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dL));
-        const float wetR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dR));
+        const float tapL = 0.62f * readFloatBufHermite(modBufL, modWritePos, dL1)
+                         + 0.38f * readFloatBufHermite(modBufL, modWritePos, dL2);
+        const float tapR = 0.62f * readFloatBufHermite(modBufR, modWritePos, dR1)
+                         + 0.38f * readFloatBufHermite(modBufR, modWritePos, dR2);
 
-        float mL = ioL * 0.84f + wetL * 0.42f - wetR * 0.15f;
-        float mR = ioR * 0.84f + wetR * 0.42f - wetL * 0.15f;
-        ioL = charFilter2.processL(charFilter1.processL(mL));
-        ioR = charFilter2.processR(charFilter1.processR(mR));
+        const float wetL = dimHpFilter.processL(tapL);
+        const float wetR = dimHpFilter.processR(tapR);
+
+        float mL = ioL * 0.82f + wetL * 0.36f;
+        float mR = ioR * 0.82f + wetR * 0.36f;
+        ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(mL)));
+        ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(mR)));
     } else if (mode == 3) {
-        // 15: Eno / Lanois Apollo Deep Space (Dual-Grain C1 Hann-Windowed +12st Octave Shimmer + Shimmer Feedback)
-        const float grainSamples = juce::jlimit(512.0f, static_cast<float>(shimMaxLen - 160), 82.0f * srMs);
+        // 15: Eno / Lanois Apollo Deep Space (-12st Bowed Cello Sub-Octave + 1.48 kHz 4-Pole Dark Velvet +12st Shimmer)
+        const float grainSamples = juce::jlimit(512.0f, static_cast<float>(shimMaxLen - 640), 92.0f * srMs);
+        lfoPhase1 += 0.31 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+
+        // A) -12st Sub-Octave Cello Foundation (0.5x read speed => delay increases by +0.5 samples/sample)
+        subPhasor += 0.5 / static_cast<double>(grainSamples);
+        if (subPhasor >= 1.0) subPhasor -= 1.0;
+        const double subPA = subPhasor;
+        const double subPB = (subPA >= 0.5) ? (subPA - 0.5) : (subPA + 0.5);
+        const float subSA = static_cast<float>(std::sin(kPi * subPA));
+        const float subSB = static_cast<float>(std::sin(kPi * subPB));
+        const float subWA = subSA * subSA;
+        const float subWB = subSB * subSB;
+
+        const float delSubA = 64.0f + static_cast<float>(subPA) * grainSamples;
+        const float delSubB = 64.0f + static_cast<float>(subPB) * grainSamples;
+        float subL = readFloatBufHermite(shimBufL, shimWritePos, delSubA) * subWA
+                   + readFloatBufHermite(shimBufL, shimWritePos, delSubB) * subWB;
+        float subR = readFloatBufHermite(shimBufR, shimWritePos, delSubA) * subWA
+                   + readFloatBufHermite(shimBufR, shimWritePos, delSubB) * subWB;
+        subL = subLpFilter.processL(subL);
+        subR = subLpFilter.processR(subR);
+
+        // B) +12st Dark Velvet Choir Halo (2.0x read speed + organic stereo drift + 4-pole 1.48 kHz silk LP)
         shimPhasor += 1.0 / static_cast<double>(grainSamples);
         if (shimPhasor >= 1.0) shimPhasor -= 1.0;
-
         const double pA = shimPhasor;
         const double pB = (pA >= 0.5) ? (pA - 0.5) : (pA + 0.5);
         const float sA = static_cast<float>(std::sin(kPi * pA));
         const float sB = static_cast<float>(std::sin(kPi * pB));
         const float wA = sA * sA;
-        const float wB = sB * sB; // wA + wB == 1.000000 everywhere with zero slope at wrap!
+        const float wB = sB * sB;
 
-        const float delAL = 64.0f + static_cast<float>(1.0 - pA) * grainSamples;
-        const float delBL = 64.0f + static_cast<float>(1.0 - pB) * grainSamples;
-        const float delAR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), delAL + 11.5f * srMs);
-        const float delBR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), delBL + 11.5f * srMs);
+        const float driftL = (1.8f + 1.1f * static_cast<float>(std::sin(kTwoPi * lfoPhase1))) * srMs;
+        const float driftR = (9.5f + 1.1f * static_cast<float>(std::cos(kTwoPi * lfoPhase1))) * srMs;
+        const float delAL = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftL + static_cast<float>(1.0 - pA) * grainSamples);
+        const float delBL = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftL + static_cast<float>(1.0 - pB) * grainSamples);
+        const float delAR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftR + static_cast<float>(1.0 - pA) * grainSamples);
+        const float delBR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftR + static_cast<float>(1.0 - pB) * grainSamples);
 
         float octL = readFloatBufHermite(shimBufL, shimWritePos, delAL) * wA
                    + readFloatBufHermite(shimBufL, shimWritePos, delBL) * wB;
         float octR = readFloatBufHermite(shimBufR, shimWritePos, delAR) * wA
                    + readFloatBufHermite(shimBufR, shimWritePos, delBR) * wB;
 
-        octL = charFilter2.processL(dimHpFilter.processL(octL));
-        octR = charFilter2.processR(dimHpFilter.processR(octR));
+        octL = charFilter3.processL(charFilter2.processL(dimHpFilter.processL(octL)));
+        octR = charFilter3.processR(charFilter2.processR(dimHpFilter.processR(octR)));
 
-        // Gentle cross-coupled +24st celestial regeneration inside warm 3.05 kHz BBD loop
-        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.5f, 2.5f, ioL + octR * 0.24f));
-        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.5f, 2.5f, ioR + octL * 0.24f));
+        // Subtle velvet regeneration (0.08f prevents +24st screech buildup while sustaining soft choir air)
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.2f, 2.2f, ioL + octR * 0.08f));
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.2f, 2.2f, ioR + octL * 0.08f));
         if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
 
-        ioL = charFilter1.processL(ioL) * 0.92f;
-        ioR = charFilter1.processR(ioR) * 0.92f;
-        outExtraRevL = octL * 0.56f;
-        outExtraRevR = octR * 0.56f;
+        ioL = charFilter1.processL(ioL) * 0.86f + subL * 0.48f;
+        ioR = charFilter1.processR(ioR) * 0.86f + subR * 0.48f;
+        outExtraRevL = octL * 0.62f + subL * 0.20f;
+        outExtraRevR = octR * 0.62f + subR * 0.20f;
     } else if (mode == 4) {
-        // 16: Desert Mirage Spring + Fender Optical Roach Bias Tremolo
-        const float dwellL = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 38.5f * srMs));
-        const float dwellR = readFloatBufHermite(modBufR, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 42.0f * srMs));
-        float spL = dimHpFilter.processL(ioL * 0.70f + dwellR * 0.42f);
-        float spR = dimHpFilter.processR(ioR * 0.70f + dwellL * 0.42f);
+        // 16: Desert Mirage Spring + Deep Fender Optical Roach Bias Tremolo
+        const float dwellL = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 39.0f * srMs));
+        const float dwellR = readFloatBufHermite(modBufR, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 43.0f * srMs));
+        float spL = dimHpFilter.processL(ioL * 0.72f + dwellR * 0.46f);
+        float spR = dimHpFilter.processR(ioR * 0.72f + dwellL * 0.46f);
 
         for (size_t i = 0; i < 4; ++i) {
             auto& bL = springApL[i];
@@ -604,7 +641,7 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
             int idxR = springApPos[i] % static_cast<int>(bR.size());
             const float dL = bL[static_cast<size_t>(idxL)];
             const float dR = bR[static_cast<size_t>(idxR)];
-            const float g = 0.62f;
+            const float g = 0.64f;
             const float inApL = spL + dL * g;
             const float inApR = spR + dR * g;
             bL[static_cast<size_t>(idxL)] = inApL;
@@ -622,46 +659,65 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         tremPhase += tremHz * dt;
         if (tremPhase >= 1.0) tremPhase -= 1.0;
 
-        // Smooth asymmetric optical roach cell wave (warm tube bias throb, subtle stereo offset)
+        // Deep unmistakable optical roach cell wave (warm tube bias heartbeat)
         const float sL = 0.5f + 0.5f * static_cast<float>(std::sin(kTwoPi * tremPhase));
-        const float sR = 0.5f + 0.5f * static_cast<float>(std::sin(kTwoPi * tremPhase + 0.38));
-        const float modL = 0.48f + 0.52f * (sL * sL * (3.0f - 2.0f * sL));
-        const float modR = 0.48f + 0.52f * (sR * sR * (3.0f - 2.0f * sR));
+        const float sR = 0.5f + 0.5f * static_cast<float>(std::sin(kTwoPi * tremPhase + 0.26));
+        const float modL = 0.34f + 0.66f * (sL * sL * (3.0f - 2.0f * sL));
+        const float modR = 0.34f + 0.66f * (sR * sR * (3.0f - 2.0f * sR));
 
-        ioL = (ioL * 0.90f + spL * 0.26f) * modL * 1.18f;
-        ioR = (ioR * 0.90f + spR * 0.26f) * modR * 1.18f;
-        outExtraRevL = spL * 0.44f * modL;
-        outExtraRevR = spR * 0.44f * modR;
+        const float drvL = (ioL * 0.88f + spL * 0.30f) * modL * 1.52f;
+        const float drvR = (ioR * 0.88f + spR * 0.30f) * modR * 1.52f;
+        ioL = fastTanh(juce::jlimit(-2.6f, 2.6f, drvL)) * 1.05f;
+        ioR = fastTanh(juce::jlimit(-2.6f, 2.6f, drvR)) * 1.05f;
+        outExtraRevL = spL * 0.48f * modL;
+        outExtraRevR = spR * 0.48f * modR;
     } else if (mode == 5) {
-        // 17: Late-Night R&B Sample Bed (33-RPM resampled vinyl drift + stereo velvet + 24 dB/oct 1.88 kHz ladder LP)
-        lfoPhase1 += 0.36 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        lfoPhase2 += 0.44 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        // 17: Late-Night R&B Sample Bed (33-RPM resampled vinyl drift + 24 dB/oct 1.35 kHz underwater sample-chop LP)
+        lfoPhase1 += 0.33 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.46 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
 
-        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.8f + 0.32f * static_cast<float>(std::sin(kTwoPi * lfoPhase1))) * srMs);
-        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (5.9f + 0.32f * static_cast<float>(std::cos(kTwoPi * lfoPhase2))) * srMs);
+        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (5.2f + 0.38f * static_cast<float>(std::sin(kTwoPi * lfoPhase1))) * srMs);
+        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.4f + 0.38f * static_cast<float>(std::cos(kTwoPi * lfoPhase2))) * srMs);
 
         const float chorL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dL));
         const float chorR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dR));
 
-        float lpL = ioL * 0.82f + chorL * 0.32f;
-        float lpR = ioR * 0.82f + chorR * 0.32f;
-        lpL = charFilter3.processL(charFilter2.processL(charFilter1.processL(lpL))) * 1.24f;
-        lpR = charFilter3.processR(charFilter2.processR(charFilter1.processR(lpR))) * 1.24f;
+        float lpL = ioL * 0.80f + chorL * 0.34f;
+        float lpR = ioR * 0.80f + chorR * 0.34f;
+        lpL = charFilter3.processL(charFilter2.processL(charFilter1.processL(lpL))) * 1.34f;
+        lpR = charFilter3.processR(charFilter2.processR(charFilter1.processR(lpR))) * 1.34f;
         ioL = lpL;
         ioR = lpR;
     } else if (mode == 6) {
-        // 18: Sunset Slack-Key Lounge (Lazy 2.35 Hz pitch warble + hollow 1950s Valco lap-steel magnet body)
-        lfoPhase1 += 2.32 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        const float vibL = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
-        const float vibR = static_cast<float>(std::sin(kTwoPi * lfoPhase1 + 0.55));
+        // 18: Sunset Slack-Key Lounge (Boss VB-2 1.55 Hz +/-9.8c Pitch Vibrato + Stereo CE-2 Halo + Warm 12AX7 Tube Honey)
+        lfoPhase1 += 1.55 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.39 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        lfoPhase3 += 0.54 * dt; if (lfoPhase3 >= 1.0) lfoPhase3 -= 1.0;
 
-        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (3.9f + 0.27f * vibL) * srMs);
-        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.2f + 0.27f * vibR) * srMs);
+        const float vibL  = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float vibR  = static_cast<float>(std::sin(kTwoPi * lfoPhase1 + 0.20));
+        const float drfL  = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float drfR  = static_cast<float>(std::cos(kTwoPi * lfoPhase2));
+        const float chorS = static_cast<float>(std::sin(kTwoPi * lfoPhase3));
+        const float chorC = static_cast<float>(std::cos(kTwoPi * lfoPhase3));
 
-        float vL = readFloatBufHermite(modBufL, modWritePos, dL);
-        float vR = readFloatBufHermite(modBufR, modWritePos, dR);
-        ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(vL))) * 1.18f;
-        ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(vR))) * 1.18f;
+        const float dVibL  = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.6f + 0.52f * vibL + 0.22f * drfL) * srMs);
+        const float dVibR  = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.85f + 0.52f * vibR + 0.22f * drfR) * srMs);
+        const float dChorL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (10.4f + 1.15f * chorS) * srMs);
+        const float dChorR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (11.1f + 1.15f * chorC) * srMs);
+
+        const float vL = readFloatBufHermite(modBufL, modWritePos, dVibL);
+        const float vR = readFloatBufHermite(modBufR, modWritePos, dVibR);
+        const float cL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dChorL));
+        const float cR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dChorR));
+
+        float uL = (vL * 0.84f + cL * 0.28f) * 1.32f;
+        float uR = (vR * 0.84f + cR * 0.28f) * 1.32f;
+        uL = (fastTanh(juce::jlimit(-2.8f, 2.8f, uL + 0.16f * uL * uL)) - 0.028f * uL * uL) * 0.86f;
+        uR = (fastTanh(juce::jlimit(-2.8f, 2.8f, uR + 0.16f * uR * uR)) - 0.028f * uR * uR) * 0.86f;
+
+        ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(uL)));
+        ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(uR)));
     }
 
     if (++modWritePos >= modMaxLen) modWritePos = 0;
@@ -1073,13 +1129,13 @@ void PedalSteelEngine::reassignChordRoles() {
     }
 }
 
-int PedalSteelEngine::chooseBestStringForNote(int midiNote, float /*velocity*/, bool& outIsLegatoTransfer, float& outPrevBarMidi) {
+int PedalSteelEngine::chooseBestStringForNote(int midiNote, int channel, float /*velocity*/, bool& outIsLegatoTransfer, float& outPrevBarMidi) {
     outIsLegatoTransfer = false;
     outPrevBarMidi = static_cast<float>(midiNote);
 
     for (int i = 0; i < kNumStrings; ++i) {
         const auto& v = voices[i];
-        if (v.active && !v.isPhraseSlice && v.midiNote == midiNote) {
+        if (v.active && !v.isPhraseSlice && v.midiNote == midiNote && v.channel == channel) {
             return i;
         }
     }
@@ -1101,7 +1157,7 @@ int PedalSteelEngine::chooseBestStringForNote(int midiNote, float /*velocity*/, 
 
     for (int i = 0; i < kNumStrings; ++i) {
         const auto& v = voices[i];
-        if (!v.active || v.isPhraseSlice) continue;
+        if (!v.active || v.isPhraseSlice || v.channel != channel) continue;
 
         int dist = std::abs(midiNote - v.midiNote);
         if (dist == 0) continue;
@@ -1204,7 +1260,7 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
         // 5. Standard Chromatic / Copedent / MPE 10-String E9th Voice Allocation
         bool isLegatoTransfer = false;
         float prevMidi = static_cast<float>(note);
-        int strIdx = chooseBestStringForNote(note, vel, isLegatoTransfer, prevMidi);
+        int strIdx = chooseBestStringForNote(note, ch, vel, isLegatoTransfer, prevMidi);
         auto& v = voices[strIdx];
         if (!isLegatoTransfer) {
             pushVoiceToChokeTail(v, strIdx);
@@ -1661,10 +1717,12 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             v.pedalCurrentSemis += v.pedalVel * static_cast<float>(dt);
 
             if (v.channel >= 3) {
-                const float mpeTarget = mpeChannelPitchNorm[static_cast<size_t>(v.channel)] * 12.0f;
-                const float mpeAccel = pedalOmega * pedalOmega * (mpeTarget - v.mpePitchSemis) - 1.95f * pedalOmega * v.mpePitchVel;
-                v.mpePitchVel += mpeAccel * static_cast<float>(dt);
-                v.mpePitchSemis += v.mpePitchVel * static_cast<float>(dt);
+                if (v.held || v.sustainedByPedal) {
+                    const float mpeTarget = mpeChannelPitchNorm[static_cast<size_t>(v.channel)] * 12.0f;
+                    const float mpeAccel = pedalOmega * pedalOmega * (mpeTarget - v.mpePitchSemis) - 1.95f * pedalOmega * v.mpePitchVel;
+                    v.mpePitchVel += mpeAccel * static_cast<float>(dt);
+                    v.mpePitchSemis += v.mpePitchVel * static_cast<float>(dt);
+                }
             } else {
                 v.mpePitchSemis = 0.0f;
                 v.mpePitchVel = 0.0f;
@@ -2009,8 +2067,9 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         float revL = 0.0f, revR = 0.0f;
         reverb.processSample(revSendL, revSendR, params.reverbDecay, params.stereoWidth, revL, revR);
 
-        float finalL = (dryCombinedL + extraRevL * 0.22f + dlyL + revL * 1.25f) * outGain;
-        float finalR = (dryCombinedR + extraRevR * 0.22f + dlyR + revR * 1.25f) * outGain;
+        const float dryExtraGain = (params.fxCharacter == 3) ? 0.0f : 0.22f;
+        float finalL = (dryCombinedL + extraRevL * dryExtraGain + dlyL + revL * 1.25f) * outGain;
+        float finalR = (dryCombinedR + extraRevR * dryExtraGain + dlyL + revR * 1.25f) * outGain;
 
         // Mid/Side Stereo Panorama Width Control (1.0 = natural studio stereo, 0.0 = mono, 1.5 = wide)
         const float mid  = 0.5f * (finalL + finalR);

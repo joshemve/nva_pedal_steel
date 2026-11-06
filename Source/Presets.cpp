@@ -437,222 +437,222 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "13 - 4-Track Cassette Steel",
             "Lo-Fi / Indie R&B",
-            "Dusty Tascam 424 Portastudio 4-track preamp saturation & dynamic sag, dual-capstan tape wow/flutter, thumb-softened mute, and intimate bedroom booth.",
+            "Bone-dry bedroom Tascam 424 Portastudio 4-track preamp grit & dynamic headroom sag, 3.45 kHz cassette tape roll-off, and dual-capstan wow/flutter.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
                 p.playMode      = 0;
                 p.fxCharacter   = 1; // 4-Track Cassette
-                p.volumePedal   = 0.95f;
-                p.scoopDepth    = 0.52f;
-                p.pedalSpeed    = 160.0f;
-                p.barGlide      = 155.0f;
-                p.barSlideNoise = 0.26f;
-                p.vibratoDepth  = 0.34f;
-                p.vibratoRate   = 4.85f;
-                p.autoSwell     = 0.28f;
-                p.swellTime     = 115.0f;
-                p.sampleBlend   = 0.88f;
-                p.pickSnap      = 0.28f;
-                p.pickupPos     = 2.68f;
-                p.coilPeakFreq  = 1860.0f;
-                p.coilResonance = 0.62f;
-                p.sustainTime   = 7.2f;
-                p.cabinetDrop   = 0.44f;
-                p.stereoWidth   = 0.96f;
-                p.ampDrive      = 0.34f;
-                p.toneWarmth    = 0.68f;
-                p.delayMix      = 0.08f;
-                p.delayTime     = 92.0f;
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.56f;
+                p.pedalSpeed    = 145.0f;
+                p.barGlide      = 145.0f;
+                p.barSlideNoise = 0.34f;
+                p.vibratoDepth  = 0.26f;
+                p.vibratoRate   = 4.75f;
+                p.autoSwell     = 0.05f;
+                p.swellTime     = 70.0f;
+                p.sampleBlend   = 0.78f;
+                p.pickSnap      = 0.48f;
+                p.pickupPos     = 2.55f;
+                p.coilPeakFreq  = 1760.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 6.4f;
+                p.cabinetDrop   = 0.46f;
+                p.stereoWidth   = 0.84f;
+                p.ampDrive      = 0.48f;
+                p.toneWarmth    = 0.78f;
+                p.delayMix      = 0.06f;
+                p.delayTime     = 78.0f;
                 p.tempoSync     = false;
-                p.reverbMix     = 0.22f;
-                p.reverbDecay   = 0.38f;
-                p.outputLevel   = -0.6f;
+                p.reverbMix     = 0.12f;
+                p.reverbDecay   = 0.28f;
+                p.outputLevel   = -1.6f;
                 return p;
             }()
         },
         {
             "14 - Golden Hour Velvet",
             "Modern Pop-Folk",
-            "Vocal-friendly modern Nashville/LA pop-folk steel through a 1979 Roland Dimension D stereo BBD chorus, feather-soft Goodrich entry, and silky condenser air.",
+            "Sparkling hi-fi Nashville/LA studio condenser steel with phase-pure dual-sine silk ensemble chorus, crisp fingerpick chime, and airy 6.2 kHz sheen.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 0;
+                p.presetStyle   = 2;
                 p.playMode      = 0;
-                p.fxCharacter   = 2; // Dimension Chorus
+                p.fxCharacter   = 2; // Dimension Chorus (Phase-Pure Sine Silk)
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.50f;
-                p.pedalSpeed    = 170.0f;
-                p.barGlide      = 165.0f;
+                p.scoopDepth    = 0.46f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 150.0f;
                 p.barSlideNoise = 0.24f;
-                p.vibratoDepth  = 0.38f;
+                p.vibratoDepth  = 0.32f;
                 p.vibratoRate   = 4.95f;
-                p.autoSwell     = 0.46f;
-                p.swellTime     = 145.0f;
-                p.sampleBlend   = 0.90f;
-                p.pickSnap      = 0.34f;
-                p.pickupPos     = 2.45f;
-                p.coilPeakFreq  = 2040.0f;
-                p.coilResonance = 0.66f;
-                p.sustainTime   = 8.4f;
-                p.cabinetDrop   = 0.38f;
-                p.stereoWidth   = 1.32f;
-                p.ampDrive      = 0.20f;
-                p.toneWarmth    = 0.54f;
-                p.delayMix      = 0.16f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.58f;
+                p.pickupPos     = 2.15f;
+                p.coilPeakFreq  = 2520.0f;
+                p.coilResonance = 0.74f;
+                p.sustainTime   = 8.2f;
+                p.cabinetDrop   = 0.36f;
+                p.stereoWidth   = 1.12f;
+                p.ampDrive      = 0.12f;
+                p.toneWarmth    = 0.34f;
+                p.delayMix      = 0.15f;
                 p.delayTime     = 500.0f; // 1/8D synced
                 p.tempoSync     = true;
-                p.reverbMix     = 0.44f;
-                p.reverbDecay   = 0.74f;
-                p.outputLevel   = 0.5f;
+                p.reverbMix     = 0.38f;
+                p.reverbDecay   = 0.68f;
+                p.outputLevel   = -0.2f;
                 return p;
             }()
         },
         {
             "15 - Apollo Deep Space",
             "Cinematic Ambient",
-            "Inspired by Brian Eno & Daniel Lanois's Apollo: weightless 420 ms Goodrich swells feeding a dual-grain Hann-windowed +12st octave shimmer and infinite cathedral plate.",
+            "Weightless 480 ms bowed volume swells anchored by a -12st bowed cello sub-octave and a dark 1.48 kHz velvet +12st choir halo inside an infinite cathedral.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 3;
                 p.playMode      = 2; // Lush Swell Pad
-                p.fxCharacter   = 3; // Apollo Shimmer
+                p.fxCharacter   = 3; // Apollo Shimmer (-12st Sub-Cello + Velvet +12st Halo)
                 p.volumePedal   = 0.95f;
-                p.scoopDepth    = 0.78f;
-                p.pedalSpeed    = 295.0f;
-                p.barGlide      = 220.0f;
-                p.barSlideNoise = 0.16f;
-                p.vibratoDepth  = 0.44f;
-                p.vibratoRate   = 4.55f;
-                p.autoSwell     = 0.94f;
-                p.swellTime     = 420.0f;
-                p.sampleBlend   = 0.86f;
-                p.pickSnap      = 0.12f;
-                p.pickupPos     = 2.60f;
-                p.coilPeakFreq  = 1980.0f;
-                p.coilResonance = 0.64f;
-                p.sustainTime   = 11.5f;
-                p.cabinetDrop   = 0.50f;
-                p.stereoWidth   = 1.42f;
-                p.ampDrive      = 0.32f;
-                p.toneWarmth    = 0.66f;
-                p.delayMix      = 0.34f;
+                p.scoopDepth    = 0.74f;
+                p.pedalSpeed    = 310.0f;
+                p.barGlide      = 240.0f;
+                p.barSlideNoise = 0.10f;
+                p.vibratoDepth  = 0.38f;
+                p.vibratoRate   = 4.45f;
+                p.autoSwell     = 0.96f;
+                p.swellTime     = 480.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.04f;
+                p.pickupPos     = 2.90f;
+                p.coilPeakFreq  = 1680.0f;
+                p.coilResonance = 0.54f;
+                p.sustainTime   = 12.0f;
+                p.cabinetDrop   = 0.48f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.24f;
+                p.toneWarmth    = 0.76f;
+                p.delayMix      = 0.32f;
                 p.delayTime     = 520.0f; // 1/8D synced
                 p.tempoSync     = true;
-                p.reverbMix     = 0.64f;
-                p.reverbDecay   = 0.92f;
-                p.outputLevel   = 0.2f;
+                p.reverbMix     = 0.68f;
+                p.reverbDecay   = 0.94f;
+                p.outputLevel   = -0.8f;
                 return p;
             }()
         },
         {
             "16 - Desert Mirage Spring",
             "Psych-Soul / Noir",
-            "Sultry minor-key desert steel with dispersive 3-spring tank drip, synced Fender Vibrolux optical roach bias tremolo, and smoky 1/8 tape echo.",
+            "Twangy bridge-pickup desert noir steel with dispersive 3-spring tank splash, deep BPM-synced Vibrolux optical bias tremolo pulse, and smoky 1/8 echo.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 0;
-                p.playMode      = 1; // Crying Lead Gliss (pure minor sixths & triads!)
+                p.presetStyle   = 2;
+                p.playMode      = 1; // Crying Lead Gliss
                 p.fxCharacter   = 4; // Spring + Bias Trem
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.62f;
+                p.scoopDepth    = 0.64f;
                 p.pedalSpeed    = 140.0f;
                 p.barGlide      = 140.0f;
-                p.barSlideNoise = 0.42f;
-                p.vibratoDepth  = 0.44f;
+                p.barSlideNoise = 0.44f;
+                p.vibratoDepth  = 0.42f;
                 p.vibratoRate   = 5.10f;
-                p.autoSwell     = 0.08f;
-                p.swellTime     = 75.0f;
-                p.sampleBlend   = 0.88f;
-                p.pickSnap      = 0.72f;
-                p.pickupPos     = 2.08f;
-                p.coilPeakFreq  = 2240.0f;
-                p.coilResonance = 0.76f;
+                p.autoSwell     = 0.00f;
+                p.swellTime     = 65.0f;
+                p.sampleBlend   = 0.74f;
+                p.pickSnap      = 0.86f;
+                p.pickupPos     = 1.85f;
+                p.coilPeakFreq  = 2440.0f;
+                p.coilResonance = 0.82f;
                 p.sustainTime   = 7.8f;
                 p.cabinetDrop   = 0.40f;
-                p.stereoWidth   = 1.14f;
-                p.ampDrive      = 0.30f;
-                p.toneWarmth    = 0.48f;
+                p.stereoWidth   = 1.16f;
+                p.ampDrive      = 0.34f;
+                p.toneWarmth    = 0.38f;
                 p.delayMix      = 0.18f;
                 p.delayTime     = 360.0f; // 1/8 synced
                 p.tempoSync     = true;
-                p.reverbMix     = 0.48f;
-                p.reverbDecay   = 0.68f;
-                p.outputLevel   = 0.3f;
+                p.reverbMix     = 0.50f;
+                p.reverbDecay   = 0.70f;
+                p.outputLevel   = 0.2f;
                 return p;
             }()
         },
         {
             "17 - Late-Night R&B Sample Bed",
             "Alt-R&B / Soul",
-            "Dark, underwater 24 dB/oct 1.88 kHz low-passed chords with 33-RPM resampled vinyl drift and warm 215 Hz chest — ready to drop straight over 808s and R&B vocals.",
+            "Ultra-dark underwater 24 dB/oct 1.35 kHz sample-chop filter, 33-RPM resampled vinyl drift, and plush 200 Hz sub-chest — ready to drop under 808s and vocals.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 3;
-                p.playMode      = 1; // Crying Lead Gliss (pure min9/maj9 voicings + liquid portamento!)
+                p.playMode      = 1; // Crying Lead Gliss
                 p.fxCharacter   = 5; // Underwater R&B
                 p.volumePedal   = 0.95f;
                 p.scoopDepth    = 0.68f;
                 p.pedalSpeed    = 190.0f;
                 p.barGlide      = 185.0f;
-                p.barSlideNoise = 0.18f;
-                p.vibratoDepth  = 0.40f;
-                p.vibratoRate   = 4.65f;
-                p.autoSwell     = 0.62f;
-                p.swellTime     = 220.0f;
+                p.barSlideNoise = 0.14f;
+                p.vibratoDepth  = 0.36f;
+                p.vibratoRate   = 4.60f;
+                p.autoSwell     = 0.56f;
+                p.swellTime     = 210.0f;
                 p.sampleBlend   = 0.88f;
-                p.pickSnap      = 0.18f;
-                p.pickupPos     = 2.85f;
-                p.coilPeakFreq  = 1720.0f;
-                p.coilResonance = 0.56f;
-                p.sustainTime   = 9.5f;
+                p.pickSnap      = 0.06f;
+                p.pickupPos     = 3.05f;
+                p.coilPeakFreq  = 1580.0f;
+                p.coilResonance = 0.50f;
+                p.sustainTime   = 9.8f;
                 p.cabinetDrop   = 0.48f;
                 p.stereoWidth   = 1.24f;
-                p.ampDrive      = 0.22f;
-                p.toneWarmth    = 0.82f;
+                p.ampDrive      = 0.20f;
+                p.toneWarmth    = 0.88f;
                 p.delayMix      = 0.16f;
                 p.delayTime     = 620.0f; // 1/4 synced
                 p.tempoSync     = true;
-                p.reverbMix     = 0.46f;
-                p.reverbDecay   = 0.78f;
-                p.outputLevel   = -1.4f;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.80f;
+                p.outputLevel   = -1.5f;
                 return p;
             }()
         },
         {
             "18 - Sunset Slack-Key Lounge",
-            "Indie Slacker / Lounge",
-            "Hollow 1950s Valco/Oahu lap-steel pickup midrange, lazy 2.32 Hz pitch warble, and sunny dry living-room slapback for indie-slacker & Hawaiian C6-style sixths.",
+            "Indie Dream / Lounge",
+            "Syrupy Sleep Walk & Mac DeMarco sunset steel: Boss VB-2 1.72 Hz analog pitch vibrato, stereo CE-2 halo, warm 12AX7 tube honey, and golden 1959 chamber.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 0;
-                p.playMode      = 0;
-                p.fxCharacter   = 6; // Vintage Warble
-                p.volumePedal   = 0.95f;
-                p.scoopDepth    = 0.58f;
-                p.pedalSpeed    = 150.0f;
-                p.barGlide      = 160.0f;
-                p.barSlideNoise = 0.32f;
-                p.vibratoDepth  = 0.30f;
-                p.vibratoRate   = 4.80f;
-                p.autoSwell     = 0.12f;
-                p.swellTime     = 85.0f;
-                p.sampleBlend   = 0.88f;
-                p.pickSnap      = 0.54f;
-                p.pickupPos     = 2.52f;
-                p.coilPeakFreq  = 1820.0f;
-                p.coilResonance = 0.68f;
-                p.sustainTime   = 6.2f;
+                p.presetStyle   = 1;
+                p.playMode      = 1; // Crying Lead Gliss (singing liquid Sleep Walk glides!)
+                p.fxCharacter   = 6; // Vintage Warble (VB-2 Pitch Vibrato + CE-2 + Tube Honey)
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.72f;
+                p.pedalSpeed    = 165.0f;
+                p.barGlide      = 195.0f;
+                p.barSlideNoise = 0.26f;
+                p.vibratoDepth  = 0.14f;
+                p.vibratoRate   = 4.60f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.80f;
+                p.pickSnap      = 0.44f;
+                p.pickupPos     = 2.88f;
+                p.coilPeakFreq  = 1860.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 9.6f;
                 p.cabinetDrop   = 0.42f;
-                p.stereoWidth   = 0.94f;
-                p.ampDrive      = 0.28f;
-                p.toneWarmth    = 0.62f;
-                p.delayMix      = 0.14f;
-                p.delayTime     = 84.0f;
+                p.stereoWidth   = 1.22f;
+                p.ampDrive      = 0.34f;
+                p.toneWarmth    = 0.64f;
+                p.delayMix      = 0.20f;
+                p.delayTime     = 315.0f;
                 p.tempoSync     = false;
-                p.reverbMix     = 0.22f;
-                p.reverbDecay   = 0.38f;
-                p.outputLevel   = 0.8f;
+                p.reverbMix     = 0.44f;
+                p.reverbDecay   = 0.72f;
+                p.outputLevel   = 0.4f;
                 return p;
             }()
         }
