@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b30e-b8c8-77b1-a3cd-083fc5a01504"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two variations with the approved composition preserved and a vintage effects amp integrated into the room behind the steel."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Vintage effects amp behind the steel on the right, with readable cream controls, glowing pilot light and connected cable.\n\nImage 2: Compact vintage effects amp behind the steel on the left, retaining the cream header and walnut-trimmed control deck."}}
+{"type":"turn.completed","usage":{"input_tokens":259062,"cached_input_tokens":233728,"cache_write_input_tokens":0,"output_tokens":1275,"reasoning_output_tokens":46}}

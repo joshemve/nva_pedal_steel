@@ -1,0 +1,44 @@
+[
+ {
+  "name": "i01",
+  "images": [
+   "round20/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. LOCKED: camera, front-on horizontal angle looking down, the steel centred at about the same overall size and position, the rug/room mood, the top bar and the control deck (with its walnut trim) exactly. CHANGE THE INSTRUMENT'S DESIGN so this preset has its own distinct, believable, real-world-style pedal steel model (not the same rectangular box in another colour): describe it through its body shape, end caps, rails, keyhead, changer cover, fretboard style, legs and pedal rack, all anatomically correct (keyhead LEFT, changer RIGHT, ten strings, pedals A B C, knee levers). Ultra-realistic product photograph quality, not cheesy. 1600x1000. Design: classic 1970s push-pull steel: walnut body with softly rounded ends wrapped in thick polished chrome end caps, a bold chrome keyhead with winged tuning keys, a classic 'birdseye' patterned fretboard with mother-of-pearl markers, round chrome legs. Generate 2 images."
+ },
+ {
+  "name": "i01d",
+  "images": [
+   "round20/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. LOCKED: camera, front-on horizontal angle looking down, the steel centred at about the same overall size and position, the rug/room mood, the top bar and the control deck (with its walnut trim) exactly. CHANGE THE INSTRUMENT'S DESIGN so this preset has its own distinct, believable, real-world-style pedal steel model (not the same rectangular box in another colour): describe it through its body shape, end caps, rails, keyhead, changer cover, fretboard style, legs and pedal rack, all anatomically correct (keyhead LEFT, changer RIGHT, ten strings, pedals A B C, knee levers). Ultra-realistic product photograph quality, not cheesy. 1600x1000. Design: a double-neck E9 / C6 professional steel in walnut: two necks side by side (front and back), each with its own fretboard, keyhead and changer, chrome end plates, more pedals on the rack (8 pedals) with A B C clearly marked, still centred at the same size. Generate 2 images."
+ },
+ {
+  "name": "i04",
+  "images": [
+   "round20/r_maple_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. LOCKED: camera, front-on horizontal angle looking down, the steel centred at about the same overall size and position, the rug/room mood, the top bar and the control deck (with its walnut trim) exactly. CHANGE THE INSTRUMENT'S DESIGN so this preset has its own distinct, believable, real-world-style pedal steel model (not the same rectangular box in another colour): describe it through its body shape, end caps, rails, keyhead, changer cover, fretboard style, legs and pedal rack, all anatomically correct (keyhead LEFT, changer RIGHT, ten strings, pedals A B C, knee levers). Ultra-realistic product photograph quality, not cheesy. 1600x1000. Design: sleek modern boutique steel in birdseye maple: slim tapered body with crisp bevelled edges, matte black anodized end plates and keyhead, minimal black fretboard with simple dots, square black legs, a minimalist look like a modern high-end instrument. Generate 2 images."
+ },
+ {
+  "name": "i06",
+  "images": [
+   "round20/r_redsparkle_2.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. LOCKED: camera, front-on horizontal angle looking down, the steel centred at about the same overall size and position, the rug/room mood, the top bar and the control deck (with its walnut trim) exactly. CHANGE THE INSTRUMENT'S DESIGN so this preset has its own distinct, believable, real-world-style pedal steel model (not the same rectangular box in another colour): describe it through its body shape, end caps, rails, keyhead, changer cover, fretboard style, legs and pedal rack, all anatomically correct (keyhead LEFT, changer RIGHT, ten strings, pedals A B C, knee levers). Ultra-realistic product photograph quality, not cheesy. 1600x1000. Design: 1960s Bakersfield steel in oxblood metal-flake: rounded 'bullet' shaped chrome end caps, a chrome front rail with an art-deco nameplate, a cream painted fretboard with black markings, chrome legs with flared feet. Generate 2 images."
+ },
+ {
+  "name": "i13",
+  "images": [
+   "round20/r_pearloid_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. LOCKED: camera, front-on horizontal angle looking down, the steel centred at about the same overall size and position, the rug/room mood, the top bar and the control deck (with its walnut trim) exactly. CHANGE THE INSTRUMENT'S DESIGN so this preset has its own distinct, believable, real-world-style pedal steel model (not the same rectangular box in another colour): describe it through its body shape, end caps, rails, keyhead, changer cover, fretboard style, legs and pedal rack, all anatomically correct (keyhead LEFT, changer RIGHT, ten strings, pedals A B C, knee levers). Ultra-realistic product photograph quality, not cheesy. 1600x1000. Design: 1950s style instrument covered in white mother-of-pearl pearloid with cut corners, art-deco chrome speed stripes along the apron, a black and silver painted fretboard with deco numerals, a chrome hand-rest over the changer, tapered chrome legs. Generate 2 images."
+ },
+ {
+  "name": "i18",
+  "images": [
+   "round20/r_koa_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. LOCKED: camera, front-on horizontal angle looking down, the steel centred at about the same overall size and position, the rug/room mood, the top bar and the control deck (with its walnut trim) exactly. CHANGE THE INSTRUMENT'S DESIGN so this preset has its own distinct, believable, real-world-style pedal steel model (not the same rectangular box in another colour): describe it through its body shape, end caps, rails, keyhead, changer cover, fretboard style, legs and pedal rack, all anatomically correct (keyhead LEFT, changer RIGHT, ten strings, pedals A B C, knee levers). Ultra-realistic product photograph quality, not cheesy. 1600x1000. Design: Hawaiian-inspired console steel in figured koa: a gently curved, rounded body with a raised bevelled koa top, brass hardware and brass end caps, a rosewood fretboard with abalone markers, a slanted koa apron, brass-capped legs. Generate 2 images."
+ }
+]

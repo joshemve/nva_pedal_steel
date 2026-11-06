@@ -1,0 +1,19 @@
+[
+ {
+  "name": "wordmark",
+  "images": [
+   "round1/v2_2.png"
+  ],
+  "prompt": "Image 1 is our plugin UI. Recreate ONLY its 'Pedal Steel' script wordmark as clean logo artwork: the same flowing brush-script lettering 'Pedal Steel' followed by the three horizontal speed stripes, pure solid black (#000) on pure white (#fff), perfectly flat vector-style, crisp smooth edges, no texture, no shadow, no color, no other text, centered with generous white margin, wide landscape canvas. Spell it exactly 'Pedal Steel'. Generate 2 images."
+ },
+ {
+  "name": "rubber_pad",
+  "images": [],
+  "prompt": "Seamless tileable texture swatch of black ribbed rubber pedal-pad, straight parallel ribs running horizontally, evenly spaced, viewed straight down, flat even lighting, as albedo; fills the whole square frame, no objects, no text. Generate 1 image."
+ },
+ {
+  "name": "cream_powdercoat",
+  "images": [],
+  "prompt": "Seamless tileable texture swatch of warm cream (#E9DFCB) fine powder-coated metal faceplate, very subtle orange-peel micro texture, flat even lighting, as albedo; fills the whole square frame, no objects, no text. Generate 1 image."
+ }
+]

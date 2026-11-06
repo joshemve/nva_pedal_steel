@@ -18,7 +18,10 @@ dist/
 package_win/
 package_mac/
 concepts/
-design/
+design/*
+!design/ui_v2/
+design/ui_v2/**/*.blend
+design/ui_v2/**/*.blend1
 images/
 
 # OS files

@@ -1,0 +1,74 @@
+[
+ {
+  "name": "c1",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: knobs like image 3: black knurled machined knobs with a white pointer line and fine printed tick scales on the cream panel; VOLUME PEDAL as a long horizontal slider with an orange-filled track and a satin nickel cap, like image 3; A B C LKL LKR as small round amber jewel lamps above neat cream push-buttons. Generate 2 images."
+ },
+ {
+  "name": "c2",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: knobs like image 2: cream bakelite fluted knobs (scalloped grip) with a dark pointer, the FEEL pair larger; VOLUME PEDAL as a horizontal fader with a cream cap and tick scale like image 2; A B C as miniature satin foot pedals and LKL LKR as small knee-lever paddles, each with an amber LED. Generate 2 images."
+ },
+ {
+  "name": "c3",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: cream knobs with a thin brass skirt engraved 0 to 10, like vintage radio gear; VOLUME PEDAL as a vertical fader in a slot with a big 72% readout; A B C LKL LKR as rectangular cream keys with an amber LED window in each. Generate 2 images."
+ },
+ {
+  "name": "c4",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: minimal premium: smooth cream knobs with a recessed dot, each surrounded by a printed orange value arc showing the setting; VOLUME PEDAL as a wide arc-shaped fader; A B C LKL LKR as rounded cream keys whose label glows amber when engaged. Generate 2 images."
+ },
+ {
+  "name": "c5",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: black Bakelite chicken-head pointer knobs on cream dials printed 0 to 10, classic amp; VOLUME PEDAL as a long horizontal slider with a numbered 0 to 10 scale; A B C LKL LKR as small chrome-free satin toggle switches with amber lamps. Generate 2 images."
+ },
+ {
+  "name": "c6",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: walnut wood knobs with a cream pointer line on the cream panel; VOLUME PEDAL as a horizontal slider with a walnut cap; A B C as miniature foot pedals with cream rubber pads and LKL LKR as small paddles, amber LEDs. Generate 2 images."
+ },
+ {
+  "name": "c7",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: ivory skirted knobs with a black cap and white pointer (like vintage studio desks), medium size, generous spacing; VOLUME PEDAL as a horizontal slider; A B C LKL LKR shown as a small illustrated top-down pedal and lever diagram where the engaged ones glow amber. Generate 2 images."
+ },
+ {
+  "name": "c8",
+  "images": [
+   "round10/s1_2.png",
+   "ref/ref1_layout_353.png",
+   "ref/ref2_brand_378.png"
+  ],
+  "prompt": "Image 1 is our current layout for a pedal steel plugin (Northern Valley Audio): top bar, the walnut pedal steel in the middle, bottom control deck. Images 2 and 3 are Joshua's two favourite older concepts: match their refined, elegant, cream feel and quality of controls and type. Keep image 1's top bar contents (script wordmark with orange stripes, NORTHERN VALLEY AUDIO, amber LED preset display 01 SWEET GEORGIA E9 with arrows, BROWSE, SAVE, OUTPUT meter, TRIM) and the middle steel. Make the whole UI CREAM-DOMINANT: warm cream matte faceplate for the top bar and the bottom deck, walnut accents only as trim, burnt-orange accents, dark brown/black print. Soft matte finishes, no mirror chrome, no gloss on the panels. Bottom deck contains: VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %), MODE Smart Auto-Pedal E9, A B C pedals and LKL LKR knee levers (A and B engaged), VOLUME PEDAL 72%, MIDI LEARN; arrange them cleanly and elegantly. Everything bold and legible from across a room. Ultra-realistic premium render, 1600x1000. Control treatment: follow image 3's left-column style for the main controls: black knurled knobs, the volume as image 3's slider, and image 3's row of amber round LEDs for A B C LKL LKR, but laid out along the cream bottom deck with an AUTO LEAD SWELL OFF / MED / LONG selector. Generate 2 images."
+ }
+]

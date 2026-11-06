@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b310-bee7-7cb2-9f60-13c111dd0e6c"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless pearloid albedo swatch with creamy pearl swirls and faint grey veining."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Creamy white vintage pearloid texture with soft pearl swirls and faint grey veins."}}
+{"type":"turn.completed","usage":{"input_tokens":46418,"cached_input_tokens":40448,"cache_write_input_tokens":0,"output_tokens":242,"reasoning_output_tokens":0}}

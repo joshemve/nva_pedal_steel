@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b315-2485-7510-99ce-592028869886"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless rug texture with the ImageGen tool."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Oatmeal and cream woven wool rug texture with soft grey and sand kilim diamonds, viewed straight from above under even lighting."}}
+{"type":"turn.completed","usage":{"input_tokens":46315,"cached_input_tokens":42240,"cache_write_input_tokens":0,"output_tokens":215,"reasoning_output_tokens":0}}

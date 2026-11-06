@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b315-24b6-7ca0-9e11-7182757337b9"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless caramel-and-cream shag rug texture."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Warm caramel-and-cream 1970s shag rug texture with thick, random tufts, viewed straight from above under even lighting."}}
+{"type":"turn.completed","usage":{"input_tokens":46328,"cached_input_tokens":42240,"cache_write_input_tokens":0,"output_tokens":223,"reasoning_output_tokens":0}}

@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b310-bff7-7463-8103-be33546be615"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless koa veneer albedo swatch with strong vertical curl figure.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Golden reddish-brown Hawaiian koa veneer swatch with pronounced vertical curly flame figure across fine horizontal grain."}}
+{"type":"turn.completed","usage":{"input_tokens":46376,"cached_input_tokens":42240,"cache_write_input_tokens":0,"output_tokens":242,"reasoning_output_tokens":0}}

@@ -1,0 +1,27 @@
+[
+ {
+  "name": "walnut",
+  "prompt": "Book-matched American black walnut veneer, rich medium-dark brown with straight-to-gently-figured grain running horizontally, fine open pores, finished with satin lacquer look but captured as pure albedo color, the classic look of a vintage pedal steel guitar body. Square, seamless tileable texture swatch for 3D rendering (PBR albedo), flat even lighting, no shadows, no highlights, no perspective, no objects, no text, fills the whole frame edge to edge. Generate 1 image.",
+  "images": []
+ },
+ {
+  "name": "rosewood_dark",
+  "prompt": "Dark East Indian rosewood, deep chocolate with darker purple-black streaks, tight grain running horizontally, as pure albedo color. Square, seamless tileable texture swatch for 3D rendering (PBR albedo), flat even lighting, no shadows, no highlights, no perspective, no objects, no text, fills the whole frame edge to edge. Generate 1 image.",
+  "images": []
+ },
+ {
+  "name": "brushed_alu",
+  "prompt": "Brushed aluminium with fine straight horizontal brushing lines, light neutral grey, subtle variation, as pure albedo color (no reflections). Square, seamless tileable texture swatch for 3D rendering (PBR albedo), flat even lighting, no shadows, no highlights, no perspective, no objects, no text, fills the whole frame edge to edge. Generate 1 image.",
+  "images": []
+ },
+ {
+  "name": "black_panel",
+  "prompt": "Black anodized aluminium instrument front panel with very fine bead-blasted micro texture, near-black charcoal, subtle variation, as albedo. Square, seamless tileable texture swatch for 3D rendering (PBR albedo), flat even lighting, no shadows, no highlights, no perspective, no objects, no text, fills the whole frame edge to edge. Generate 1 image.",
+  "images": []
+ },
+ {
+  "name": "cream_bakelite",
+  "prompt": "Aged cream phenolic/bakelite plastic surface, warm ivory, very subtle mottling, as albedo. Square, seamless tileable texture swatch for 3D rendering (PBR albedo), flat even lighting, no shadows, no highlights, no perspective, no objects, no text, fills the whole frame edge to edge. Generate 1 image.",
+  "images": []
+ }
+]

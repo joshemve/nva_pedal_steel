@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b260-b71b-79e1-b421-d289659c4117"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless rosewood albedo swatch with horizontal grain and deep chocolate tones.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Dark East Indian rosewood albedo swatch with deep chocolate tones, purple-black streaks, and tight horizontal grain."}}
+{"type":"turn.completed","usage":{"input_tokens":46356,"cached_input_tokens":35584,"cache_write_input_tokens":0,"output_tokens":218,"reasoning_output_tokens":0}}

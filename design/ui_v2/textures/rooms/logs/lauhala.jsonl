@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b315-2492-79d3-8f10-f5c1658b8e6b"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless lauhala weave texture with even lighting and warm golden tan color."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Warm golden tan lauhala pandanus weave, viewed straight from above with fine leaf fibers filling the square frame."}}
+{"type":"turn.completed","usage":{"input_tokens":46337,"cached_input_tokens":27136,"cache_write_input_tokens":0,"output_tokens":227,"reasoning_output_tokens":0}}

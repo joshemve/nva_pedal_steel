@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b28b-f667-7842-a032-7a7cb66ca559"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two warm-vintage finishes, keeping the reference composition and bold, readable labels locked."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Honey-warm walnut, polished chrome, cream bakelite, and bold illuminated readouts.\nImage 2: Deeper figured walnut, satin-black panels, warm ivory details, and amber pedal LEDs."}}
+{"type":"turn.completed","usage":{"input_tokens":183366,"cached_input_tokens":167680,"cache_write_input_tokens":0,"output_tokens":992,"reasoning_output_tokens":51}}

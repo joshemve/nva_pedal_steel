@@ -1,0 +1,83 @@
+[
+ {
+  "name": "d1",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. MOTION and EFFECTS must feel built into the world, not a bolted-on panel: show the EFFECTS as a small row of real vintage stomp boxes sitting on the rug to the right of the steel's pedals (Drive, Tape Echo, Chorus, Spring Reverb), each with a footswitch and a lit amber LED when on, labelled clearly; clicking one would open its knobs. MOTION controls (Vibrato Rate, Vibrato Depth, Bar Slide, Humanize) appear as a slim row of small knobs on the steel's own front apron. Generate 2 images."
+ },
+ {
+  "name": "d2",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. MOTION and EFFECTS live in the same single control deck: the knob panel has a small engraved 3-position rotary selector at its left edge labelled VOICE, MOTION, FX; turning it swaps the six knobs in place to the other set (show the MOTION set: VIBRATO RATE, VIBRATO DEPTH, BAR SLIDE, HUMANIZE, plus two blanks hidden), same knob styles, so the layout never changes. Generate 2 images."
+ },
+ {
+  "name": "d3",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. Show the EFFECTS as a real vintage tube amp sitting on the floor behind the steel (part of the room): its cream faceplate has the effect knobs (DRIVE, TREMOLO, ECHO, REVERB) readable; the amp's pilot light glows. It reads as one scene: the steel plugs into the amp. Generate 2 images."
+ },
+ {
+  "name": "d4",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. The control deck becomes taller when 'MORE' is pressed: the steel scene shrinks upward smoothly and one continuous walnut-framed deck holds two aligned rows: the main row and a MOTION / EFFECTS row with identical knob styles, grid and spacing, so it reads as one designed console, not a pop-up. Generate 2 images."
+ },
+ {
+  "name": "mi1",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. MIDI LEARN, subtle and elegant: right-clicking a knob opens a small cream context menu (Learn MIDI CC, Clear, Reset to default) next to the SWELL knob; after learning, a tiny engraved 'CC 11' plate appears under that knob in cream on black. Nothing else on screen changes. Generate 2 images."
+ },
+ {
+  "name": "mi2",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. MIDI LEARN mode: when active the whole scene above the deck dims slightly, the MIDI LEARN button becomes a lit amber key, and only assignable controls get a thin cream ring; the SWELL knob pulses with a ring and a small LED-style readout under the preset screen says 'MOVE A CONTROLLER\u2026' in the amber LED font. Generate 2 images."
+ },
+ {
+  "name": "mi3",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. MIDI MAP panel: a cream card slides up from the bottom strip listing assignments in a clean table (Control, MIDI CC, Range, Channel) e.g. Swell CC 11, Pedal A CC 65, Pedal B CC 66, Volume CC 7, with a Learn button per row and a Done button; the deck stays visible behind. Generate 2 images."
+ },
+ {
+  "name": "s04",
+  "images": [
+   "round17/x6_1.png",
+   "round15/k04_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. Image 2 is the skin Joshua liked for this preset; make it more real and refined, keep image 1's exact framing and the steel at true proportions, horizontal, front-on, centred. Preset shown in the LED: '04 MONTANA LUSH SWELL'. The steel is a real, tasteful vintage instrument in natural birdseye maple with clear satin lacquer, nickel hardware, soft cool morning window light, a light wool rug. Generate 2 images."
+ },
+ {
+  "name": "s06",
+  "images": [
+   "round17/x6_1.png",
+   "round15/k06_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. Image 2 is the skin Joshua liked for this preset; make it more real and refined, keep image 1's exact framing and the steel at true proportions, horizontal, front-on, centred. Preset shown in the LED: '06 BAKERSFIELD SLAPBACK'. The steel finished in deep oxblood red metal-flake sparkle lacquer like a real 1960s Bakersfield instrument, chrome hardware, warm tungsten honky-tonk light, worn Persian rug, believable and not cartoonish. Generate 2 images."
+ },
+ {
+  "name": "s18",
+  "images": [
+   "round17/x6_1.png",
+   "round15/k18_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. Image 2 is the skin Joshua liked for this preset; make it more real and refined, keep image 1's exact framing and the steel at true proportions, horizontal, front-on, centred. Preset shown in the LED: '18 SUNSET SLACK-KEY'. The steel in figured Hawaiian koa with deep chatoyance, brass and nickel hardware, golden late-afternoon light across a woven lauhala mat on a wood floor, believable. Generate 2 images."
+ },
+ {
+  "name": "s13",
+  "images": [
+   "round17/x6_1.png",
+   "round15/k13_1.png"
+  ],
+  "prompt": "Image 1 is the approved main screen of our pedal steel plugin (Northern Valley Audio): cream top bar with serif Pedal Steel wordmark, big amber LED preset name dead centre with arrows, OUTPUT and TRIM; the steel lying horizontal and front-on in a warm studio on a Persian rug; one black walnut-trimmed control deck (VOICE/FEEL/SPACE knobs, A B C pedal blocks, LKL LKR paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN). Keep that look, taste and angle exactly. No orange, matte, calm, legible, premium, not cheesy. 1600x1000, ultra-realistic. Image 2 is the skin Joshua liked for this preset; make it more real and refined, keep image 1's exact framing and the steel at true proportions, horizontal, front-on, centred. Preset shown in the LED: '13 4-TRACK CASSETTE'. The steel covered in white mother-of-pearl pearloid like a real 1950s lap/pedal steel, chrome hardware, warm faded 1970s home-studio light, shag rug, a cassette 4-track on a side table out of focus. Generate 2 images."
+ }
+]

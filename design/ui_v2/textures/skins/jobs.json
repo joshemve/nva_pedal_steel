@@ -1,0 +1,22 @@
+[
+ {
+  "name": "maple",
+  "images": [],
+  "prompt": "Natural birdseye maple veneer, pale honey-cream with dense small birdseye figure, grain running horizontally. Seamless tileable texture swatch for 3D rendering (PBR albedo), seen straight on, flat even lighting, no shadows, no reflections, no objects, no text, fills the square frame edge to edge. Generate 1 image."
+ },
+ {
+  "name": "koa",
+  "images": [],
+  "prompt": "Highly figured Hawaiian koa veneer, golden-brown to reddish with strong curly flame figure running vertically across a horizontal grain. Seamless tileable texture swatch for 3D rendering (PBR albedo), seen straight on, flat even lighting, no shadows, no reflections, no objects, no text, fills the square frame edge to edge. Generate 1 image."
+ },
+ {
+  "name": "redsparkle",
+  "images": [],
+  "prompt": "Deep oxblood red metal-flake sparkle lacquer finish, fine dense metallic flakes in red and garnet, like a vintage 1960s instrument finish. Seamless tileable texture swatch for 3D rendering (PBR albedo), seen straight on, flat even lighting, no shadows, no reflections, no objects, no text, fills the square frame edge to edge. Generate 1 image."
+ },
+ {
+  "name": "pearloid",
+  "images": [],
+  "prompt": "White mother-of-toilet-seat pearloid celluloid, creamy white with soft shimmering pearl swirls and faint grey veins, like 1950s guitar pearloid covering. Seamless tileable texture swatch for 3D rendering (PBR albedo), seen straight on, flat even lighting, no shadows, no reflections, no objects, no text, fills the square frame edge to edge. Generate 1 image."
+ }
+]

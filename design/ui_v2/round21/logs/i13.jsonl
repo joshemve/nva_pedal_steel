@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b31c-8afb-7d73-9b0b-d48425e28eb3"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two pearloid Art Deco instrument variants while preserving the camera, room, top bar, and control deck."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Sculpted pearloid body with clipped corners, stepped chrome end caps, triple speed stripes, and a rounded changer hand-rest.\n\nImage 2: Bevelled pearloid body with a bowed apron, twin chrome stripes, silver Deco numeral markers, and an arched changer hand-rest."}}
+{"type":"turn.completed","usage":{"input_tokens":102182,"cached_input_tokens":93824,"cache_write_input_tokens":0,"output_tokens":623,"reasoning_output_tokens":11}}

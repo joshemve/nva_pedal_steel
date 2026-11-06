@@ -1,0 +1,56 @@
+[
+ {
+  "name": "x1",
+  "images": [
+   "round16/w1_1.png",
+   "round8/lock_front.png",
+   "round7/p06_1.png"
+  ],
+  "prompt": "Image 1 is our chosen design for the pedal steel plugin (Northern Valley Audio): keep its frame exactly: the symmetric top bar (serif wordmark left, centred amber LED preset screen 01 SWEET GEORGIA E9 with arrows, OUTPUT and TRIM right), the single cohesive control deck (VOICE / FEEL / SPACE knobs, A B C pedal blocks with A and B lit, LKL LKR knee-lever paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN), the warm studio room with the Persian carpet, the colours and type. No orange. CHANGE THE INSTRUMENT ANGLE: image 2 is the exact angle and proportions wanted, matching image 3: the steel lies horizontally, straight across the window and centred under the LED screen, seen from in front and above looking down about 45 degrees, so the top deck, keyhead with tuning keys (LEFT), ten strings, fretboard, chrome bar, pickup and changer (RIGHT) all read clearly; front apron, chrome legs, pedal rack with pull rods and knee levers below; soft shadow on the carpet; perfectly symmetric, no three-quarter turn. 1600x1000, ultra-realistic. Variation: full instrument visible including legs and pedals, standing on the carpet. Generate 2 images."
+ },
+ {
+  "name": "x2",
+  "images": [
+   "round16/w1_1.png",
+   "round8/lock_front.png",
+   "round7/p06_1.png"
+  ],
+  "prompt": "Image 1 is our chosen design for the pedal steel plugin (Northern Valley Audio): keep its frame exactly: the symmetric top bar (serif wordmark left, centred amber LED preset screen 01 SWEET GEORGIA E9 with arrows, OUTPUT and TRIM right), the single cohesive control deck (VOICE / FEEL / SPACE knobs, A B C pedal blocks with A and B lit, LKL LKR knee-lever paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN), the warm studio room with the Persian carpet, the colours and type. No orange. CHANGE THE INSTRUMENT ANGLE: image 2 is the exact angle and proportions wanted, matching image 3: the steel lies horizontally, straight across the window and centred under the LED screen, seen from in front and above looking down about 45 degrees, so the top deck, keyhead with tuning keys (LEFT), ten strings, fretboard, chrome bar, pickup and changer (RIGHT) all read clearly; front apron, chrome legs, pedal rack with pull rods and knee levers below; soft shadow on the carpet; perfectly symmetric, no three-quarter turn. 1600x1000, ultra-realistic. Variation: the steel larger, spanning about 90% of the width, its legs disappearing behind the control deck so the deck, strings and bar dominate (like image 3). Generate 2 images."
+ },
+ {
+  "name": "x3",
+  "images": [
+   "round16/w1_1.png",
+   "round8/lock_front.png",
+   "round7/p06_1.png"
+  ],
+  "prompt": "Image 1 is our chosen design for the pedal steel plugin (Northern Valley Audio): keep its frame exactly: the symmetric top bar (serif wordmark left, centred amber LED preset screen 01 SWEET GEORGIA E9 with arrows, OUTPUT and TRIM right), the single cohesive control deck (VOICE / FEEL / SPACE knobs, A B C pedal blocks with A and B lit, LKL LKR knee-lever paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN), the warm studio room with the Persian carpet, the colours and type. No orange. CHANGE THE INSTRUMENT ANGLE: image 2 is the exact angle and proportions wanted, matching image 3: the steel lies horizontally, straight across the window and centred under the LED screen, seen from in front and above looking down about 45 degrees, so the top deck, keyhead with tuning keys (LEFT), ten strings, fretboard, chrome bar, pickup and changer (RIGHT) all read clearly; front apron, chrome legs, pedal rack with pull rods and knee levers below; soft shadow on the carpet; perfectly symmetric, no three-quarter turn. 1600x1000, ultra-realistic. Variation: full instrument; control deck mirrored: knob groups left half, pedals and levers right half, one hairline divider at the exact centre under the LED screen. Generate 2 images."
+ },
+ {
+  "name": "x4",
+  "images": [
+   "round16/w1_1.png",
+   "round8/lock_front.png",
+   "round7/p06_1.png"
+  ],
+  "prompt": "Image 1 is our chosen design for the pedal steel plugin (Northern Valley Audio): keep its frame exactly: the symmetric top bar (serif wordmark left, centred amber LED preset screen 01 SWEET GEORGIA E9 with arrows, OUTPUT and TRIM right), the single cohesive control deck (VOICE / FEEL / SPACE knobs, A B C pedal blocks with A and B lit, LKL LKR knee-lever paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN), the warm studio room with the Persian carpet, the colours and type. No orange. CHANGE THE INSTRUMENT ANGLE: image 2 is the exact angle and proportions wanted, matching image 3: the steel lies horizontally, straight across the window and centred under the LED screen, seen from in front and above looking down about 45 degrees, so the top deck, keyhead with tuning keys (LEFT), ten strings, fretboard, chrome bar, pickup and changer (RIGHT) all read clearly; front apron, chrome legs, pedal rack with pull rods and knee levers below; soft shadow on the carpet; perfectly symmetric, no three-quarter turn. 1600x1000, ultra-realistic. Variation: full instrument; wider LED screen with a second line 'FACTORY  E9', BROWSE left of it and SAVE right of it, symmetric. Generate 2 images."
+ },
+ {
+  "name": "x5",
+  "images": [
+   "round16/w1_1.png",
+   "round8/lock_front.png",
+   "round7/p06_1.png"
+  ],
+  "prompt": "Image 1 is our chosen design for the pedal steel plugin (Northern Valley Audio): keep its frame exactly: the symmetric top bar (serif wordmark left, centred amber LED preset screen 01 SWEET GEORGIA E9 with arrows, OUTPUT and TRIM right), the single cohesive control deck (VOICE / FEEL / SPACE knobs, A B C pedal blocks with A and B lit, LKL LKR knee-lever paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN), the warm studio room with the Persian carpet, the colours and type. No orange. CHANGE THE INSTRUMENT ANGLE: image 2 is the exact angle and proportions wanted, matching image 3: the steel lies horizontally, straight across the window and centred under the LED screen, seen from in front and above looking down about 45 degrees, so the top deck, keyhead with tuning keys (LEFT), ten strings, fretboard, chrome bar, pickup and changer (RIGHT) all read clearly; front apron, chrome legs, pedal rack with pull rods and knee levers below; soft shadow on the carpet; perfectly symmetric, no three-quarter turn. 1600x1000, ultra-realistic. Variation: full instrument; all six knobs cream bakelite (fluted GLIDE and SWELL), calm and uniform. Generate 2 images."
+ },
+ {
+  "name": "x6",
+  "images": [
+   "round16/w1_1.png",
+   "round8/lock_front.png",
+   "round7/p06_1.png"
+  ],
+  "prompt": "Image 1 is our chosen design for the pedal steel plugin (Northern Valley Audio): keep its frame exactly: the symmetric top bar (serif wordmark left, centred amber LED preset screen 01 SWEET GEORGIA E9 with arrows, OUTPUT and TRIM right), the single cohesive control deck (VOICE / FEEL / SPACE knobs, A B C pedal blocks with A and B lit, LKL LKR knee-lever paddles, strip with MODE, VOLUME PEDAL 72%, MIDI LEARN), the warm studio room with the Persian carpet, the colours and type. No orange. CHANGE THE INSTRUMENT ANGLE: image 2 is the exact angle and proportions wanted, matching image 3: the steel lies horizontally, straight across the window and centred under the LED screen, seen from in front and above looking down about 45 degrees, so the top deck, keyhead with tuning keys (LEFT), ten strings, fretboard, chrome bar, pickup and changer (RIGHT) all read clearly; front apron, chrome legs, pedal rack with pull rods and knee levers below; soft shadow on the carpet; perfectly symmetric, no three-quarter turn. 1600x1000, ultra-realistic. Variation: steel larger like x2 with the mirrored deck of x3. Generate 2 images."
+ }
+]

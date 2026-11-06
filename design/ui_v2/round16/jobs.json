@@ -1,0 +1,56 @@
+[
+ {
+  "name": "w1",
+  "images": [
+   "round7/orig.png",
+   "round7/p01_2.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Design the final pedal steel guitar plugin UI for Northern Valley Audio. Image 1 = Joshua's original favourite: copy its TOP BAR SYMMETRY (serif 'Pedal Steel' wordmark left with a hairline rule, NORTHERN VALLEY AUDIO spaced caps centred above, preset display DEAD CENTRE, OUTPUT meter + TRIM 0.0 dB right) and its taste (cream bakelite knobs with tick scales and fluted GLIDE/SWELL knobs, black knurled ECHO/REVERB knobs, cream print on black, thin outlined value pills, warm parchment cream, no orange). No PLAY/MOTION/EFFECTS tabs. The preset display is an amber LED dot-matrix screen in a black bezel reading 01 SWEET GEORGIA E9 with arrows beside it (amber only here, the meter and lit pedal LEDs). Image 2 = copy its BOTTOM DECK LAYOUT and its BACKGROUND ROOM: one single continuous control deck where VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %) knob groups, then the A B C pedal blocks (A and B engaged, amber LED above) and the LKL LKR knee-lever paddles all sit in ONE row inside ONE panel, and one thin strip below with MODE Smart Auto-Pedal E9, VOLUME PEDAL slider 72%, MIDI LEARN; and the warm studio room with the Persian carpet behind the steel. Everything must feel like one cohesive, symmetrical, unified design, nothing floating in odd spots. Image 3 = the instrument's TRUE proportions and 3D three-quarter perspective (long and slim, legs, pedal rack, knee levers, contact shadow on the carpet; keyhead LEFT, changer RIGHT). Matte panels, legible from across a room, premium, uncluttered. 1600x1000, ultra-realistic. Variation: faithful synthesis; the deck is a black panel with cream print framed by a slim walnut trim. Generate 2 images."
+ },
+ {
+  "name": "w2",
+  "images": [
+   "round7/orig.png",
+   "round7/p01_2.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Design the final pedal steel guitar plugin UI for Northern Valley Audio. Image 1 = Joshua's original favourite: copy its TOP BAR SYMMETRY (serif 'Pedal Steel' wordmark left with a hairline rule, NORTHERN VALLEY AUDIO spaced caps centred above, preset display DEAD CENTRE, OUTPUT meter + TRIM 0.0 dB right) and its taste (cream bakelite knobs with tick scales and fluted GLIDE/SWELL knobs, black knurled ECHO/REVERB knobs, cream print on black, thin outlined value pills, warm parchment cream, no orange). No PLAY/MOTION/EFFECTS tabs. The preset display is an amber LED dot-matrix screen in a black bezel reading 01 SWEET GEORGIA E9 with arrows beside it (amber only here, the meter and lit pedal LEDs). Image 2 = copy its BOTTOM DECK LAYOUT and its BACKGROUND ROOM: one single continuous control deck where VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %) knob groups, then the A B C pedal blocks (A and B engaged, amber LED above) and the LKL LKR knee-lever paddles all sit in ONE row inside ONE panel, and one thin strip below with MODE Smart Auto-Pedal E9, VOLUME PEDAL slider 72%, MIDI LEARN; and the warm studio room with the Persian carpet behind the steel. Everything must feel like one cohesive, symmetrical, unified design, nothing floating in odd spots. Image 3 = the instrument's TRUE proportions and 3D three-quarter perspective (long and slim, legs, pedal rack, knee levers, contact shadow on the carpet; keyhead LEFT, changer RIGHT). Matte panels, legible from across a room, premium, uncluttered. 1600x1000, ultra-realistic. Variation: the deck is a matte cream panel (like image 2) with the knobs sitting in recessed black wells. Generate 2 images."
+ },
+ {
+  "name": "w3",
+  "images": [
+   "round7/orig.png",
+   "round7/p01_2.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Design the final pedal steel guitar plugin UI for Northern Valley Audio. Image 1 = Joshua's original favourite: copy its TOP BAR SYMMETRY (serif 'Pedal Steel' wordmark left with a hairline rule, NORTHERN VALLEY AUDIO spaced caps centred above, preset display DEAD CENTRE, OUTPUT meter + TRIM 0.0 dB right) and its taste (cream bakelite knobs with tick scales and fluted GLIDE/SWELL knobs, black knurled ECHO/REVERB knobs, cream print on black, thin outlined value pills, warm parchment cream, no orange). No PLAY/MOTION/EFFECTS tabs. The preset display is an amber LED dot-matrix screen in a black bezel reading 01 SWEET GEORGIA E9 with arrows beside it (amber only here, the meter and lit pedal LEDs). Image 2 = copy its BOTTOM DECK LAYOUT and its BACKGROUND ROOM: one single continuous control deck where VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %) knob groups, then the A B C pedal blocks (A and B engaged, amber LED above) and the LKL LKR knee-lever paddles all sit in ONE row inside ONE panel, and one thin strip below with MODE Smart Auto-Pedal E9, VOLUME PEDAL slider 72%, MIDI LEARN; and the warm studio room with the Persian carpet behind the steel. Everything must feel like one cohesive, symmetrical, unified design, nothing floating in odd spots. Image 3 = the instrument's TRUE proportions and 3D three-quarter perspective (long and slim, legs, pedal rack, knee levers, contact shadow on the carpet; keyhead LEFT, changer RIGHT). Matte panels, legible from across a room, premium, uncluttered. 1600x1000, ultra-realistic. Variation: same as w1 but the steel larger and more of a hero, the room slightly darker and warmer around it. Generate 2 images."
+ },
+ {
+  "name": "w4",
+  "images": [
+   "round7/orig.png",
+   "round7/p01_2.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Design the final pedal steel guitar plugin UI for Northern Valley Audio. Image 1 = Joshua's original favourite: copy its TOP BAR SYMMETRY (serif 'Pedal Steel' wordmark left with a hairline rule, NORTHERN VALLEY AUDIO spaced caps centred above, preset display DEAD CENTRE, OUTPUT meter + TRIM 0.0 dB right) and its taste (cream bakelite knobs with tick scales and fluted GLIDE/SWELL knobs, black knurled ECHO/REVERB knobs, cream print on black, thin outlined value pills, warm parchment cream, no orange). No PLAY/MOTION/EFFECTS tabs. The preset display is an amber LED dot-matrix screen in a black bezel reading 01 SWEET GEORGIA E9 with arrows beside it (amber only here, the meter and lit pedal LEDs). Image 2 = copy its BOTTOM DECK LAYOUT and its BACKGROUND ROOM: one single continuous control deck where VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %) knob groups, then the A B C pedal blocks (A and B engaged, amber LED above) and the LKL LKR knee-lever paddles all sit in ONE row inside ONE panel, and one thin strip below with MODE Smart Auto-Pedal E9, VOLUME PEDAL slider 72%, MIDI LEARN; and the warm studio room with the Persian carpet behind the steel. Everything must feel like one cohesive, symmetrical, unified design, nothing floating in odd spots. Image 3 = the instrument's TRUE proportions and 3D three-quarter perspective (long and slim, legs, pedal rack, knee levers, contact shadow on the carpet; keyhead LEFT, changer RIGHT). Matte panels, legible from across a room, premium, uncluttered. 1600x1000, ultra-realistic. Variation: same as w1 with a wider LED screen that shows the preset name and a small second line 'FACTORY  E9', flanked symmetrically by BROWSE on the left and SAVE on the right. Generate 2 images."
+ },
+ {
+  "name": "w5",
+  "images": [
+   "round7/orig.png",
+   "round7/p01_2.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Design the final pedal steel guitar plugin UI for Northern Valley Audio. Image 1 = Joshua's original favourite: copy its TOP BAR SYMMETRY (serif 'Pedal Steel' wordmark left with a hairline rule, NORTHERN VALLEY AUDIO spaced caps centred above, preset display DEAD CENTRE, OUTPUT meter + TRIM 0.0 dB right) and its taste (cream bakelite knobs with tick scales and fluted GLIDE/SWELL knobs, black knurled ECHO/REVERB knobs, cream print on black, thin outlined value pills, warm parchment cream, no orange). No PLAY/MOTION/EFFECTS tabs. The preset display is an amber LED dot-matrix screen in a black bezel reading 01 SWEET GEORGIA E9 with arrows beside it (amber only here, the meter and lit pedal LEDs). Image 2 = copy its BOTTOM DECK LAYOUT and its BACKGROUND ROOM: one single continuous control deck where VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %) knob groups, then the A B C pedal blocks (A and B engaged, amber LED above) and the LKL LKR knee-lever paddles all sit in ONE row inside ONE panel, and one thin strip below with MODE Smart Auto-Pedal E9, VOLUME PEDAL slider 72%, MIDI LEARN; and the warm studio room with the Persian carpet behind the steel. Everything must feel like one cohesive, symmetrical, unified design, nothing floating in odd spots. Image 3 = the instrument's TRUE proportions and 3D three-quarter perspective (long and slim, legs, pedal rack, knee levers, contact shadow on the carpet; keyhead LEFT, changer RIGHT). Matte panels, legible from across a room, premium, uncluttered. 1600x1000, ultra-realistic. Variation: same as w1 but all six knobs cream bakelite (small round for TONE PICK ECHO REVERB, fluted for GLIDE SWELL) for a calmer, more uniform deck. Generate 2 images."
+ },
+ {
+  "name": "w6",
+  "images": [
+   "round7/orig.png",
+   "round7/p01_2.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Design the final pedal steel guitar plugin UI for Northern Valley Audio. Image 1 = Joshua's original favourite: copy its TOP BAR SYMMETRY (serif 'Pedal Steel' wordmark left with a hairline rule, NORTHERN VALLEY AUDIO spaced caps centred above, preset display DEAD CENTRE, OUTPUT meter + TRIM 0.0 dB right) and its taste (cream bakelite knobs with tick scales and fluted GLIDE/SWELL knobs, black knurled ECHO/REVERB knobs, cream print on black, thin outlined value pills, warm parchment cream, no orange). No PLAY/MOTION/EFFECTS tabs. The preset display is an amber LED dot-matrix screen in a black bezel reading 01 SWEET GEORGIA E9 with arrows beside it (amber only here, the meter and lit pedal LEDs). Image 2 = copy its BOTTOM DECK LAYOUT and its BACKGROUND ROOM: one single continuous control deck where VOICE (TONE 65 %, PICK 40 %), FEEL (GLIDE 145 ms, SWELL 35 %), SPACE (ECHO 18 %, REVERB 28 %) knob groups, then the A B C pedal blocks (A and B engaged, amber LED above) and the LKL LKR knee-lever paddles all sit in ONE row inside ONE panel, and one thin strip below with MODE Smart Auto-Pedal E9, VOLUME PEDAL slider 72%, MIDI LEARN; and the warm studio room with the Persian carpet behind the steel. Everything must feel like one cohesive, symmetrical, unified design, nothing floating in odd spots. Image 3 = the instrument's TRUE proportions and 3D three-quarter perspective (long and slim, legs, pedal rack, knee levers, contact shadow on the carpet; keyhead LEFT, changer RIGHT). Matte panels, legible from across a room, premium, uncluttered. 1600x1000, ultra-realistic. Variation: same as w1 but the whole deck centred and symmetric: knob groups on the left half, pedal and lever cluster on the right half, mirrored spacing, one hairline divider in the exact centre. Generate 2 images."
+ }
+]

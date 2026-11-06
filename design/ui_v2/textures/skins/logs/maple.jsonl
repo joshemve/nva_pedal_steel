@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b310-bffc-77b1-8ac9-e6e6a6e128d0"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless birdseye maple albedo swatch with horizontal grain and even lighting.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Pale honey-cream birdseye maple veneer with dense small figure, horizontal grain, and flat, even lighting for a PBR albedo swatch."}}
+{"type":"turn.completed","usage":{"input_tokens":46383,"cached_input_tokens":40448,"cache_write_input_tokens":0,"output_tokens":250,"reasoning_output_tokens":0}}

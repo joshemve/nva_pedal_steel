@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b2b1-4c21-7321-8161-66834b6b8a3e"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two variations with cream controls, black knurled knobs, and the long, slim steel on a softly lit walnut-brown stage."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Minimal walnut-brown stage with soft spotlighting, cream panels, and spacious black-knob controls.\nImage 2: Warm walnut room with cream panels, miniature pedals, knee levers, and amber engagement LEDs."}}
+{"type":"turn.completed","usage":{"input_tokens":239052,"cached_input_tokens":217472,"cache_write_input_tokens":0,"output_tokens":1329,"reasoning_output_tokens":47}}

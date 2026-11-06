@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b315-2490-73d0-9e7b-1b36499dfa3c"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless Persian rug texture with worn dark reds, black, and warm fading."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Worn dark red and black Persian rug texture with warm fading, intricate motifs, and flat overhead lighting."}}
+{"type":"turn.completed","usage":{"input_tokens":46355,"cached_input_tokens":42240,"cache_write_input_tokens":0,"output_tokens":245,"reasoning_output_tokens":0}}

@@ -1,0 +1,34 @@
+[
+ {
+  "name": "a01",
+  "images": [
+   "round7/p01_2.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Image 1 is our concept A frame for a pedal steel guitar plugin (Northern Valley Audio): top bar with the script wordmark, amber LED preset display, BROWSE/SAVE, OUTPUT, TRIM; bottom deck with VOICE/FEEL/SPACE knobs and values, MODE, A B C / LKL LKR controls, VOLUME PEDAL 72%, MIDI LEARN. Keep that frame and its style exactly. No PLAY/MOTION/EFFECTS tabs. REDO ONLY THE MIDDLE: image 2 is a physically correct 3D render of the instrument. Show the selected pedal steel with exactly these true proportions (long and slim, NOT stretched across the window) and real depth: three-quarter view from the player's seat, camera about 30 degrees above and turned about 30 degrees, deck with strings, fretboard and bar visible, front apron and changer end plate visible, four chrome legs in perspective, A B C pedals on their rack with pull rods, knee levers under the apron, a soft contact shadow on the floor. The whole instrument fits inside about 70% of the window width with breathing room around it, standing on a softly lit stage. Keyhead on the LEFT, changer on the RIGHT. Legible from across a room. Ultra-realistic premium product render, 1600x1000. Skin: 01 Sweet Georgia E9, walnut with chrome, warm cream frame, chrome dome knobs. Generate 2 images."
+ },
+ {
+  "name": "a06",
+  "images": [
+   "round7/p06_1.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Image 1 is our concept A frame for a pedal steel guitar plugin (Northern Valley Audio): top bar with the script wordmark, amber LED preset display, BROWSE/SAVE, OUTPUT, TRIM; bottom deck with VOICE/FEEL/SPACE knobs and values, MODE, A B C / LKL LKR controls, VOLUME PEDAL 72%, MIDI LEARN. Keep that frame and its style exactly. No PLAY/MOTION/EFFECTS tabs. REDO ONLY THE MIDDLE: image 2 is a physically correct 3D render of the instrument. Show the selected pedal steel with exactly these true proportions (long and slim, NOT stretched across the window) and real depth: three-quarter view from the player's seat, camera about 30 degrees above and turned about 30 degrees, deck with strings, fretboard and bar visible, front apron and changer end plate visible, four chrome legs in perspective, A B C pedals on their rack with pull rods, knee levers under the apron, a soft contact shadow on the floor. The whole instrument fits inside about 70% of the window width with breathing room around it, standing on a softly lit stage. Keyhead on the LEFT, changer on the RIGHT. Legible from across a room. Ultra-realistic premium product render, 1600x1000. Skin: 06 Bakersfield Tape Slapback, oxblood red sparkle steel, cream frame, chicken-head knobs. Generate 2 images."
+ },
+ {
+  "name": "a02",
+  "images": [
+   "round7/p02_1.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Image 1 is our concept A frame for a pedal steel guitar plugin (Northern Valley Audio): top bar with the script wordmark, amber LED preset display, BROWSE/SAVE, OUTPUT, TRIM; bottom deck with VOICE/FEEL/SPACE knobs and values, MODE, A B C / LKL LKR controls, VOLUME PEDAL 72%, MIDI LEARN. Keep that frame and its style exactly. No PLAY/MOTION/EFFECTS tabs. REDO ONLY THE MIDDLE: image 2 is a physically correct 3D render of the instrument. Show the selected pedal steel with exactly these true proportions (long and slim, NOT stretched across the window) and real depth: three-quarter view from the player's seat, camera about 30 degrees above and turned about 30 degrees, deck with strings, fretboard and bar visible, front apron and changer end plate visible, four chrome legs in perspective, A B C pedals on their rack with pull rods, knee levers under the apron, a soft contact shadow on the floor. The whole instrument fits inside about 70% of the window width with breathing room around it, standing on a softly lit stage. Keyhead on the LEFT, changer on the RIGHT. Legible from across a room. Ultra-realistic premium product render, 1600x1000. Skin: 02 Hedonist Bootgaze, gloss black steel with purple and teal stage glow, charcoal frame, LED-ring knobs. Generate 2 images."
+ },
+ {
+  "name": "a15",
+  "images": [
+   "round7/p15_1.png",
+   "round8/lock3d.png"
+  ],
+  "prompt": "Image 1 is our concept A frame for a pedal steel guitar plugin (Northern Valley Audio): top bar with the script wordmark, amber LED preset display, BROWSE/SAVE, OUTPUT, TRIM; bottom deck with VOICE/FEEL/SPACE knobs and values, MODE, A B C / LKL LKR controls, VOLUME PEDAL 72%, MIDI LEARN. Keep that frame and its style exactly. No PLAY/MOTION/EFFECTS tabs. REDO ONLY THE MIDDLE: image 2 is a physically correct 3D render of the instrument. Show the selected pedal steel with exactly these true proportions (long and slim, NOT stretched across the window) and real depth: three-quarter view from the player's seat, camera about 30 degrees above and turned about 30 degrees, deck with strings, fretboard and bar visible, front apron and changer end plate visible, four chrome legs in perspective, A B C pedals on their rack with pull rods, knee levers under the apron, a soft contact shadow on the floor. The whole instrument fits inside about 70% of the window width with breathing room around it, standing on a softly lit stage. Keyhead on the LEFT, changer on the RIGHT. Legible from across a room. Ultra-realistic premium product render, 1600x1000. Skin: 15 Dark Side Phase Steel, black anodized modern steel, graphite frame, aluminium knobs, cool blue rim light. Generate 2 images."
+ }
+]

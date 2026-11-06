@@ -1,0 +1,27 @@
+[
+ {
+  "name": "target",
+  "images": [
+   "round17/x6_1.png",
+   "round17/x4_3.png"
+  ],
+  "prompt": "Image 1 is our chosen pedal steel plugin UI. Keep it EXACTLY (steel size, angle, carpet room, control deck, colours) but replace its top bar with image 2's top bar: serif Pedal Steel wordmark left, NORTHERN VALLEY AUDIO centred above, a wide amber LED dot-matrix screen dead centre reading '01 SWEET GEORGIA E9' with a second line 'FACTORY  E9', arrows beside it, BROWSE button on its left and SAVE button on its right, OUTPUT meter and TRIM 0.0 dB on the right. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "carpet",
+  "images": [],
+  "prompt": "Seamless tileable texture of a worn antique Persian rug seen straight from above: deep red, rust and navy with cream and gold motifs, dense medallion and floral pattern, wool pile, flat even lighting, as albedo; fills the whole square frame, no border edges, no objects, no text. Generate 1 image."
+ },
+ {
+  "name": "floor",
+  "images": [],
+  "prompt": "Seamless tileable texture of old warm honey-brown oak floorboards running horizontally, seen straight from above, satin worn finish, flat even lighting, as albedo; fills the whole square frame, no objects. Generate 1 image."
+ },
+ {
+  "name": "room",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Using image 1 as mood reference, create ONLY the empty background room behind the instrument, with no pedal steel, no UI, no text: a warm dim recording studio with dark wood walls, vintage tube amps and road cases at the sides, warm Edison bulbs and lamps glowing softly, out of focus (shallow depth of field), seen from standing height looking slightly down toward the far wall. Wide landscape 16:10. Generate 1 image."
+ }
+]

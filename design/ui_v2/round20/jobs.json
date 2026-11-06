@@ -1,0 +1,42 @@
+[
+ {
+  "name": "r_walnut",
+  "images": [
+   "final/skin_walnut.png",
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is a 3D render of our pedal steel plugin UI (Northern Valley Audio). LOCKED: camera, framing, layout, the steel's exact size, position, proportions and angle (horizontal, front-on, seen from above), every control, knob, pedal block, lever paddle, label and value, the top bar and the LED text. Do not move, resize, add or remove anything. Repaint it as an ultra-realistic photograph-quality product render, matching image 2's realism and warmth: real wood figure and finish depth, real chrome with soft studio reflections, nickel strings, believable contact shadows and ambient occlusion where the legs and pedals meet the floor, gentle depth of field on the floor edges, warm cinematic light. The control deck and top bar stay crisp, matte and legible, cream print on black, no orange. Make the steel CONTRAST clearly with the floor under it. Floor: a rich Persian rug in deep red, navy and cream (like image 2), the walnut steel reading clearly against it. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "r_maple",
+  "images": [
+   "final/skin_maple.png",
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is a 3D render of our pedal steel plugin UI (Northern Valley Audio). LOCKED: camera, framing, layout, the steel's exact size, position, proportions and angle (horizontal, front-on, seen from above), every control, knob, pedal block, lever paddle, label and value, the top bar and the LED text. Do not move, resize, add or remove anything. Repaint it as an ultra-realistic photograph-quality product render, matching image 2's realism and warmth: real wood figure and finish depth, real chrome with soft studio reflections, nickel strings, believable contact shadows and ambient occlusion where the legs and pedals meet the floor, gentle depth of field on the floor edges, warm cinematic light. The control deck and top bar stay crisp, matte and legible, cream print on black, no orange. Make the steel CONTRAST clearly with the floor under it. Floor: a DARK floor so the pale birdseye maple steel pops: a deep navy and charcoal antique rug on dark oak boards, cool soft morning window light. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "r_redsparkle",
+  "images": [
+   "final/skin_redsparkle.png",
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is a 3D render of our pedal steel plugin UI (Northern Valley Audio). LOCKED: camera, framing, layout, the steel's exact size, position, proportions and angle (horizontal, front-on, seen from above), every control, knob, pedal block, lever paddle, label and value, the top bar and the LED text. Do not move, resize, add or remove anything. Repaint it as an ultra-realistic photograph-quality product render, matching image 2's realism and warmth: real wood figure and finish depth, real chrome with soft studio reflections, nickel strings, believable contact shadows and ambient occlusion where the legs and pedals meet the floor, gentle depth of field on the floor edges, warm cinematic light. The control deck and top bar stay crisp, matte and legible, cream print on black, no orange. Make the steel CONTRAST clearly with the floor under it. Floor: a dark charcoal-and-cream patterned rug on dark wood, NOT red, so the oxblood metal-flake steel stands out; warm tungsten honky-tonk light. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "r_koa",
+  "images": [
+   "final/skin_koa.png",
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is a 3D render of our pedal steel plugin UI (Northern Valley Audio). LOCKED: camera, framing, layout, the steel's exact size, position, proportions and angle (horizontal, front-on, seen from above), every control, knob, pedal block, lever paddle, label and value, the top bar and the LED text. Do not move, resize, add or remove anything. Repaint it as an ultra-realistic photograph-quality product render, matching image 2's realism and warmth: real wood figure and finish depth, real chrome with soft studio reflections, nickel strings, believable contact shadows and ambient occlusion where the legs and pedals meet the floor, gentle depth of field on the floor edges, warm cinematic light. The control deck and top bar stay crisp, matte and legible, cream print on black, no orange. Make the steel CONTRAST clearly with the floor under it. Floor: a deep forest green and navy rug on dark wood so the golden koa steel glows; golden late-afternoon light. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "r_pearloid",
+  "images": [
+   "final/skin_pearloid.png",
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is a 3D render of our pedal steel plugin UI (Northern Valley Audio). LOCKED: camera, framing, layout, the steel's exact size, position, proportions and angle (horizontal, front-on, seen from above), every control, knob, pedal block, lever paddle, label and value, the top bar and the LED text. Do not move, resize, add or remove anything. Repaint it as an ultra-realistic photograph-quality product render, matching image 2's realism and warmth: real wood figure and finish depth, real chrome with soft studio reflections, nickel strings, believable contact shadows and ambient occlusion where the legs and pedals meet the floor, gentle depth of field on the floor edges, warm cinematic light. The control deck and top bar stay crisp, matte and legible, cream print on black, no orange. Make the steel CONTRAST clearly with the floor under it. Floor: a deep burgundy and dark brown 1970s rug so the white pearloid steel stands out; warm faded home-studio light. 1600x1000. Generate 2 images."
+ }
+]

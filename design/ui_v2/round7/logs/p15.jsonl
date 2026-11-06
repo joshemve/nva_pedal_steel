@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b29e-466a-7491-bfa9-621d8b7f0ad2"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two variations with the graphite outer frame, correct pedal steel anatomy, and bold backlit controls.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Graphite frame with amber readouts, machined aluminium knobs, and a blue-lit black steel hero.\nImage 2: Expanded instrument view with oversized backlit pedal and lever keys, bold white values, and A/B engaged."}}
+{"type":"turn.completed","usage":{"input_tokens":256496,"cached_input_tokens":238336,"cache_write_input_tokens":0,"output_tokens":1485,"reasoning_output_tokens":65}}

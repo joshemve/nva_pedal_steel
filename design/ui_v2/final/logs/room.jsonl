@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b2cd-53df-7881-b524-ec4712a340c4"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one softly blurred studio background using Image 1’s warm lighting and vintage atmosphere."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Warm, softly blurred 16:10 studio background with dark wood walls, vintage amps, road cases, glowing lamps, and an empty rug-covered center."}}
+{"type":"turn.completed","usage":{"input_tokens":50307,"cached_input_tokens":44416,"cache_write_input_tokens":0,"output_tokens":311,"reasoning_output_tokens":0}}

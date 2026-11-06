@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b2b1-4a22-7ec0-8f8b-147626ff4430"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two variations with an 85%-width hero instrument, a slimmer cream control deck, black knurled knobs, and amber-lit cream pedal keys."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Warm cream stage, walnut instrument in three-quarter perspective, black knurled knobs, and amber pedal indicators.\n\nImage 2: Softer ivory lighting with a slimmer instrument silhouette and restrained cream control deck."}}
+{"type":"turn.completed","usage":{"input_tokens":268485,"cached_input_tokens":239616,"cache_write_input_tokens":0,"output_tokens":1307,"reasoning_output_tokens":60}}

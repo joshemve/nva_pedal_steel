@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b2cd-5789-72d2-bc30-69ee085ef1b8"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless rug texture with worn wool detail and flat, even lighting."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Worn Persian rug albedo texture in deep red, rust, and navy, with cream-and-gold floral medallions and fine wool detail."}}
+{"type":"turn.completed","usage":{"input_tokens":46366,"cached_input_tokens":42240,"cache_write_input_tokens":0,"output_tokens":239,"reasoning_output_tokens":0}}
