@@ -215,6 +215,10 @@ private:
         double shimPhasor = 0.0;
         double subPhasor = 0.0;
 
+        // 4-stage Analog JFET Optical All-Pass Phaser state (Mode 3: Dark Side Phase Steel)
+        std::array<float, 4> phaserStateL{}, phaserStateR{};
+        float phaserFbL = 0.0f, phaserFbR = 0.0f;
+
         // 4-stage Dispersive Accutronics 3-Spring Tank Allpass Chirp Network
         std::array<std::vector<float>, 4> springApL, springApR;
         std::array<int, 4> springApPos{};

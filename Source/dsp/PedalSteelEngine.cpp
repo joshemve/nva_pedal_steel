@@ -440,6 +440,10 @@ void PedalSteelEngine::ModernCharacterProcessor::reset() {
     shimPhasor = 0.0;
     subPhasor = 0.0;
     cassetteSagEnv = 0.0f;
+    phaserStateL.fill(0.0f);
+    phaserStateR.fill(0.0f);
+    phaserFbL = 0.0f;
+    phaserFbR = 0.0f;
     charFilter1.reset();
     charFilter2.reset();
     charFilter3.reset();
@@ -454,6 +458,10 @@ void PedalSteelEngine::ModernCharacterProcessor::updateCoeffs(double sr, int mod
         charFilter3.reset();
         dimHpFilter.reset();
         subLpFilter.reset();
+        phaserStateL.fill(0.0f);
+        phaserStateR.fill(0.0f);
+        phaserFbL = 0.0f;
+        phaserFbR = 0.0f;
         lastMode = mode;
     }
     if (mode <= 0) return;
@@ -465,18 +473,19 @@ void PedalSteelEngine::ModernCharacterProcessor::updateCoeffs(double sr, int mod
         subLpFilter.setLowpass(sr, 3650.0f, 0.66f);
         charFilter3.setPeak(sr, 880.0f, 0.82f, 2.2f);
     } else if (mode == 2) {
-        // 14: Pure Phase-Coherent Studio Silk Ensemble (220 Hz Wet HPF + Vocal Pocket + 6.2 kHz & 10.2 kHz Condenser Sparkle)
+        // 14: Coles 4038 Ribbon + Teletronix LA-2A Opto Velvet (Plush 215 Hz Chest + Vocal Dip + 5.15 kHz Ribbon Silk — Zero Tin/Comb!)
         dimHpFilter.setHighpass(sr, 220.0f, 0.707f);
-        charFilter1.setPeak(sr, 2450.0f, 0.90f, -2.2f);
-        charFilter2.setPeak(sr, 6200.0f, 0.68f, 3.6f);
-        charFilter3.setPeak(sr, 10200.0f, 0.70f, 1.8f);
+        subLpFilter.setLowpass(sr, 3600.0f, 0.707f);
+        charFilter1.setPeak(sr, 215.0f, 0.72f, 2.8f);
+        charFilter2.setPeak(sr, 2850.0f, 0.90f, -2.5f);
+        charFilter3.setLowpass(sr, 5150.0f, 0.71f);
     } else if (mode == 3) {
-        // 15: Eno / Lanois Apollo Deep Space (340 Hz -12st Sub-Cello + 4-Pole 1.48 kHz Dark Velvet +12st Choir Halo — Zero Screech!)
-        dimHpFilter.setHighpass(sr, 240.0f, 0.707f);
-        subLpFilter.setLowpass(sr, 340.0f, 0.72f);
-        charFilter1.setPeak(sr, 220.0f, 0.74f, 2.2f);
-        charFilter2.setLowpass(sr, 1480.0f, 0.82f);
-        charFilter3.setLowpass(sr, 1620.0f, 0.66f);
+        // 15: 4-Stage Script Phase 90 / Uni-Vibe Analog JFET Optical Phaser + Hiwatt DR103 Class-A Tube Warmth
+        dimHpFilter.setHighpass(sr, 145.0f, 0.707f);
+        subLpFilter.setLowpass(sr, 3200.0f, 0.707f);
+        charFilter1.setPeak(sr, 165.0f, 0.74f, 2.4f);
+        charFilter2.setPeak(sr, 2650.0f, 0.90f, -1.8f);
+        charFilter3.setLowpass(sr, 4650.0f, 0.72f);
     } else if (mode == 4) {
         // 16: Accutronics 3-Spring Tank Drip + Deep Fender Vibrolux Roach Optical Bias Tremolo
         dimHpFilter.setHighpass(sr, 195.0f, 0.707f);
@@ -543,90 +552,68 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         ioL = wL;
         ioR = wR;
     } else if (mode == 2) {
-        // 14: Pure Phase-Coherent Dual-Tap Sine Studio Silk Chorus (zero triangle corners, zero out-of-phase ear pressure!)
-        lfoPhase1 += 0.37 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        lfoPhase2 += 0.53 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        // 14: Coles 4038 Ribbon + Teletronix LA-2A Opto Velvet (0% dry comb-filtering; modulated pre-delay feeds ONLY Hall Reverb!)
+        lfoPhase1 += 0.34 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
 
+        const float pk = std::max(std::abs(ioL), std::abs(ioR));
+        const float optoAlpha = (pk > cassetteSagEnv) ? 0.0032f : 0.000085f;
+        cassetteSagEnv += optoAlpha * (pk - cassetteSagEnv);
+        const float la2aGain = 1.28f / (1.0f + 0.58f * cassetteSagEnv);
+
+        const float xL = juce::jlimit(-2.6f, 2.6f, ioL * la2aGain);
+        const float xR = juce::jlimit(-2.6f, 2.6f, ioR * la2aGain);
+        float vL = (fastTanh(xL + 0.11f * xL * xL) - 0.020f * xL * xL) * 0.90f;
+        float vR = (fastTanh(xR + 0.11f * xR * xR) - 0.020f * xR * xR) * 0.90f;
+
+        ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(vL)));
+        ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(vR)));
+
+        // Wide stereo Lexicon 480L velvet pre-delay (28 ms L / 41 ms R) sent strictly to Reverb (zero dry comb-filtering!)
         const float s1 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
         const float c1 = static_cast<float>(std::cos(kTwoPi * lfoPhase1));
-        const float s2 = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
-        const float c2 = static_cast<float>(std::cos(kTwoPi * lfoPhase2));
-
-        const float dL1 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.4f + 1.10f * s1) * srMs);
-        const float dR1 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (8.1f + 1.10f * c1) * srMs);
-        const float dL2 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (12.8f + 0.80f * s2) * srMs);
-        const float dR2 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (13.5f - 0.80f * c2) * srMs);
-
-        const float tapL = 0.62f * readFloatBufHermite(modBufL, modWritePos, dL1)
-                         + 0.38f * readFloatBufHermite(modBufL, modWritePos, dL2);
-        const float tapR = 0.62f * readFloatBufHermite(modBufR, modWritePos, dR1)
-                         + 0.38f * readFloatBufHermite(modBufR, modWritePos, dR2);
-
-        const float wetL = dimHpFilter.processL(tapL);
-        const float wetR = dimHpFilter.processR(tapR);
-
-        float mL = ioL * 0.82f + wetL * 0.36f;
-        float mR = ioR * 0.82f + wetR * 0.36f;
-        ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(mL)));
-        ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(mR)));
+        const float dRevL = juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), (28.0f + 1.35f * s1) * srMs);
+        const float dRevR = juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), (41.0f + 1.35f * c1) * srMs);
+        outExtraRevL = subLpFilter.processL(dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dRevL))) * 0.48f;
+        outExtraRevR = subLpFilter.processR(dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dRevR))) * 0.48f;
     } else if (mode == 3) {
-        // 15: Eno / Lanois Apollo Deep Space (-12st Bowed Cello Sub-Octave + 1.48 kHz 4-Pole Dark Velvet +12st Shimmer)
-        const float grainSamples = juce::jlimit(512.0f, static_cast<float>(shimMaxLen - 640), 92.0f * srMs);
-        lfoPhase1 += 0.31 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        // 15: 4-Stage Script Phase 90 / Uni-Vibe Analog JFET Phaser (0.24 Hz Breathe Sweep + Hiwatt DR103 Tube Stage)
+        lfoPhase1 += 0.24 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
 
-        // A) -12st Sub-Octave Cello Foundation (0.5x read speed => delay increases by +0.5 samples/sample)
-        subPhasor += 0.5 / static_cast<double>(grainSamples);
-        if (subPhasor >= 1.0) subPhasor -= 1.0;
-        const double subPA = subPhasor;
-        const double subPB = (subPA >= 0.5) ? (subPA - 0.5) : (subPA + 0.5);
-        const float subSA = static_cast<float>(std::sin(kPi * subPA));
-        const float subSB = static_cast<float>(std::sin(kPi * subPB));
-        const float subWA = subSA * subSA;
-        const float subWB = subSB * subSB;
+        const float modL = 0.5f + 0.5f * static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float modR = 0.5f + 0.5f * static_cast<float>(std::sin(kTwoPi * lfoPhase1 + 0.52));
 
-        const float delSubA = 64.0f + static_cast<float>(subPA) * grainSamples;
-        const float delSubB = 64.0f + static_cast<float>(subPB) * grainSamples;
-        float subL = readFloatBufHermite(shimBufL, shimWritePos, delSubA) * subWA
-                   + readFloatBufHermite(shimBufL, shimWritePos, delSubB) * subWB;
-        float subR = readFloatBufHermite(shimBufR, shimWritePos, delSubA) * subWA
-                   + readFloatBufHermite(shimBufR, shimWritePos, delSubB) * subWB;
-        subL = subLpFilter.processL(subL);
-        subR = subLpFilter.processR(subR);
+        const float fcL = 260.0f * std::pow(4.9f, modL); // 260..1274 Hz twin-notch optical sweep
+        const float fcR = 260.0f * std::pow(4.9f, modR);
+        const float gL  = std::tan(static_cast<float>(kPi) * fcL / static_cast<float>(sr));
+        const float gR  = std::tan(static_cast<float>(kPi) * fcR / static_cast<float>(sr));
+        const float a1L = (gL - 1.0f) / (gL + 1.0f);
+        const float a1R = (gR - 1.0f) / (gR + 1.0f);
 
-        // B) +12st Dark Velvet Choir Halo (2.0x read speed + organic stereo drift + 4-pole 1.48 kHz silk LP)
-        shimPhasor += 1.0 / static_cast<double>(grainSamples);
-        if (shimPhasor >= 1.0) shimPhasor -= 1.0;
-        const double pA = shimPhasor;
-        const double pB = (pA >= 0.5) ? (pA - 0.5) : (pA + 0.5);
-        const float sA = static_cast<float>(std::sin(kPi * pA));
-        const float sB = static_cast<float>(std::sin(kPi * pB));
-        const float wA = sA * sA;
-        const float wB = sB * sB;
+        float phL = juce::jlimit(-2.5f, 2.5f, dimHpFilter.processL(ioL) - 0.18f * fastTanh(phaserFbL));
+        float phR = juce::jlimit(-2.5f, 2.5f, dimHpFilter.processR(ioR) - 0.18f * fastTanh(phaserFbR));
 
-        const float driftL = (1.8f + 1.1f * static_cast<float>(std::sin(kTwoPi * lfoPhase1))) * srMs;
-        const float driftR = (9.5f + 1.1f * static_cast<float>(std::cos(kTwoPi * lfoPhase1))) * srMs;
-        const float delAL = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftL + static_cast<float>(1.0 - pA) * grainSamples);
-        const float delBL = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftL + static_cast<float>(1.0 - pB) * grainSamples);
-        const float delAR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftR + static_cast<float>(1.0 - pA) * grainSamples);
-        const float delBR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), 64.0f + driftR + static_cast<float>(1.0 - pB) * grainSamples);
+        for (size_t st = 0; st < 4; ++st) {
+            const float yL = a1L * phL + phaserStateL[st];
+            phaserStateL[st] = phL - a1L * yL;
+            phL = yL;
 
-        float octL = readFloatBufHermite(shimBufL, shimWritePos, delAL) * wA
-                   + readFloatBufHermite(shimBufL, shimWritePos, delBL) * wB;
-        float octR = readFloatBufHermite(shimBufR, shimWritePos, delAR) * wA
-                   + readFloatBufHermite(shimBufR, shimWritePos, delBR) * wB;
+            const float yR = a1R * phR + phaserStateR[st];
+            phaserStateR[st] = phR - a1R * yR;
+            phR = yR;
+        }
+        phaserFbL = phL;
+        phaserFbR = phR;
 
-        octL = charFilter3.processL(charFilter2.processL(dimHpFilter.processL(octL)));
-        octR = charFilter3.processR(charFilter2.processR(dimHpFilter.processR(octR)));
+        // Mix dry steel + 4-stage allpass phaser (creates 2 deep velvety optical notches while keeping <145 Hz bass solid!)
+        const float uL = juce::jlimit(-2.6f, 2.6f, (ioL * 0.68f + phL * 0.52f) * 1.18f);
+        const float uR = juce::jlimit(-2.6f, 2.6f, (ioR * 0.68f + phR * 0.52f) * 1.18f);
+        const float hiwattL = (fastTanh(uL + 0.10f * uL * uL) - 0.018f * uL * uL) * 0.92f;
+        const float hiwattR = (fastTanh(uR + 0.10f * uR * uR) - 0.018f * uR * uR) * 0.92f;
 
-        // Subtle velvet regeneration (0.08f prevents +24st screech buildup while sustaining soft choir air)
-        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.2f, 2.2f, ioL + octR * 0.08f));
-        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.2f, 2.2f, ioR + octL * 0.08f));
-        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
-
-        ioL = charFilter1.processL(ioL) * 0.86f + subL * 0.48f;
-        ioR = charFilter1.processR(ioR) * 0.86f + subR * 0.48f;
-        outExtraRevL = octL * 0.62f + subL * 0.20f;
-        outExtraRevR = octR * 0.62f + subR * 0.20f;
+        ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(hiwattL)));
+        ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(hiwattR)));
+        outExtraRevL = subLpFilter.processL(phL) * 0.34f;
+        outExtraRevR = subLpFilter.processR(phR) * 0.34f;
     } else if (mode == 4) {
         // 16: Desert Mirage Spring + Deep Fender Optical Roach Bias Tremolo
         const float dwellL = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 39.0f * srMs));
@@ -2067,7 +2054,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         float revL = 0.0f, revR = 0.0f;
         reverb.processSample(revSendL, revSendR, params.reverbDecay, params.stereoWidth, revL, revR);
 
-        const float dryExtraGain = (params.fxCharacter == 3) ? 0.0f : 0.22f;
+        const float dryExtraGain = (params.fxCharacter == 2 || params.fxCharacter == 3) ? 0.0f : 0.22f;
         float finalL = (dryCombinedL + extraRevL * dryExtraGain + dlyL + revL * 1.25f) * outGain;
         float finalR = (dryCombinedR + extraRevR * dryExtraGain + dlyL + revR * 1.25f) * outGain;
 

@@ -176,7 +176,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::fxCharacter, 1 }, "Analog Character",
-        juce::StringArray{ "Studio Standard", "4-Track Cassette", "Dimension Chorus", "Apollo Shimmer", "Spring + Bias Trem", "Underwater R&B", "Vintage Warble" }, 0));
+        juce::StringArray{ "Studio Standard", "4-Track Cassette", "Ribbon Opto Velvet", "Analog Phaser", "Spring + Bias Trem", "Underwater R&B", "Vintage Warble" }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::outputLevel, 1 }, "Output Level",

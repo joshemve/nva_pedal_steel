@@ -474,74 +474,74 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "14 - Golden Hour Velvet",
             "Modern Pop-Folk",
-            "Sparkling hi-fi Nashville/LA studio condenser steel with phase-pure dual-sine silk ensemble chorus, crisp fingerpick chime, and airy 6.2 kHz sheen.",
+            "Warm Coles 4038 figure-8 ribbon mic & Teletronix LA-2A opto-tube velvet: plush 215 Hz body, silky 5.15 kHz ribbon roll-off, and floating Lexicon 480L cloud.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 2;
+                p.presetStyle   = 0;
                 p.playMode      = 0;
-                p.fxCharacter   = 2; // Dimension Chorus (Phase-Pure Sine Silk)
+                p.fxCharacter   = 2; // Ribbon Opto Velvet (0% dry comb-filtering!)
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.46f;
-                p.pedalSpeed    = 155.0f;
-                p.barGlide      = 150.0f;
+                p.scoopDepth    = 0.48f;
+                p.pedalSpeed    = 165.0f;
+                p.barGlide      = 160.0f;
                 p.barSlideNoise = 0.24f;
-                p.vibratoDepth  = 0.32f;
-                p.vibratoRate   = 4.95f;
-                p.autoSwell     = 0.06f;
-                p.swellTime     = 75.0f;
-                p.sampleBlend   = 0.86f;
-                p.pickSnap      = 0.58f;
-                p.pickupPos     = 2.15f;
-                p.coilPeakFreq  = 2520.0f;
-                p.coilResonance = 0.74f;
-                p.sustainTime   = 8.2f;
-                p.cabinetDrop   = 0.36f;
-                p.stereoWidth   = 1.12f;
-                p.ampDrive      = 0.12f;
-                p.toneWarmth    = 0.34f;
-                p.delayMix      = 0.15f;
+                p.vibratoDepth  = 0.36f;
+                p.vibratoRate   = 4.90f;
+                p.autoSwell     = 0.18f;
+                p.swellTime     = 110.0f;
+                p.sampleBlend   = 0.92f;
+                p.pickSnap      = 0.42f;
+                p.pickupPos     = 2.45f;
+                p.coilPeakFreq  = 1960.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 8.6f;
+                p.cabinetDrop   = 0.38f;
+                p.stereoWidth   = 1.16f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.64f;
+                p.delayMix      = 0.14f;
                 p.delayTime     = 500.0f; // 1/8D synced
                 p.tempoSync     = true;
-                p.reverbMix     = 0.38f;
-                p.reverbDecay   = 0.68f;
-                p.outputLevel   = -0.2f;
+                p.reverbMix     = 0.44f;
+                p.reverbDecay   = 0.76f;
+                p.outputLevel   = -0.4f;
                 return p;
             }()
         },
         {
-            "15 - Apollo Deep Space",
-            "Cinematic Ambient",
-            "Weightless 480 ms bowed volume swells anchored by a -12st bowed cello sub-octave and a dark 1.48 kHz velvet +12st choir halo inside an infinite cathedral.",
+            "15 - Dark Side Phase Steel",
+            "Psych-Rock / Space",
+            "Liquid 0.24 Hz 4-stage Script Phase 90 / Uni-Vibe analog optical phaser into warm Hiwatt Class-A tubes and synced 1/4-note Echoplex tape echo.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 3;
-                p.playMode      = 2; // Lush Swell Pad
-                p.fxCharacter   = 3; // Apollo Shimmer (-12st Sub-Cello + Velvet +12st Halo)
-                p.volumePedal   = 0.95f;
-                p.scoopDepth    = 0.74f;
-                p.pedalSpeed    = 310.0f;
-                p.barGlide      = 240.0f;
-                p.barSlideNoise = 0.10f;
-                p.vibratoDepth  = 0.38f;
-                p.vibratoRate   = 4.45f;
-                p.autoSwell     = 0.96f;
-                p.swellTime     = 480.0f;
-                p.sampleBlend   = 0.84f;
-                p.pickSnap      = 0.04f;
-                p.pickupPos     = 2.90f;
-                p.coilPeakFreq  = 1680.0f;
-                p.coilResonance = 0.54f;
-                p.sustainTime   = 12.0f;
-                p.cabinetDrop   = 0.48f;
-                p.stereoWidth   = 1.38f;
-                p.ampDrive      = 0.24f;
-                p.toneWarmth    = 0.76f;
-                p.delayMix      = 0.32f;
-                p.delayTime     = 520.0f; // 1/8D synced
+                p.presetStyle   = 0;
+                p.playMode      = 1; // Crying Lead Gliss (floating Gilmour Breathe glides!)
+                p.fxCharacter   = 3; // Analog Phaser (4-Stage JFET Optical Phaser + Hiwatt Tubes)
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.28f;
+                p.pedalSpeed    = 165.0f;
+                p.barGlide      = 180.0f;
+                p.barSlideNoise = 0.28f;
+                p.vibratoDepth  = 0.30f;
+                p.vibratoRate   = 4.75f;
+                p.autoSwell     = 0.16f;
+                p.swellTime     = 105.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.46f;
+                p.pickupPos     = 2.42f;
+                p.coilPeakFreq  = 2000.0f;
+                p.coilResonance = 0.66f;
+                p.sustainTime   = 9.8f;
+                p.cabinetDrop   = 0.40f;
+                p.stereoWidth   = 1.24f;
+                p.ampDrive      = 0.30f;
+                p.toneWarmth    = 0.60f;
+                p.delayMix      = 0.26f;
+                p.delayTime     = 620.0f; // 1/4 synced Echoplex echo!
                 p.tempoSync     = true;
-                p.reverbMix     = 0.68f;
-                p.reverbDecay   = 0.94f;
-                p.outputLevel   = -0.8f;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.82f;
+                p.outputLevel   = -0.3f;
                 return p;
             }()
         },
