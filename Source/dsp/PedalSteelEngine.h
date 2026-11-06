@@ -211,6 +211,7 @@ private:
     int selectedLickSlot = 0;      // 0..3 selected studio lick slot
     int uiAuditionLickCycle = 0;   // Cycles licks 0..3 when clicking UI "PLAY LICK"
     std::array<float, 5> keyswitchPedals{}; // A, B, C, LKL, LKR
+    std::array<float, 5> ccPedals{};        // Continuous CC 65..69: A, B, C, LKL, LKR
     std::array<float, 5> uiPedals{};        // A, B, C, LKL, LKR
 
     // Smoothed master pedal states

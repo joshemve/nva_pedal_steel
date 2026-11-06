@@ -9,6 +9,7 @@ out/
 
 # Intermediate WAV files, local dist binaries, and design mockups
 renders/*.wav
+renders/preset_audition_board.html
 references/*.wav
 dist/
 concepts/

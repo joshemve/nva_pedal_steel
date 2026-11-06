@@ -423,6 +423,7 @@ void PedalSteelEngine::reset() {
     modWheelNorm = 0.0f;
     expressionNorm = 1.0f;
     keyswitchPedals.fill(0.0f);
+    ccPedals.fill(0.0f);
     smoothPedalA = smoothPedalB = smoothPedalC = smoothLKL = smoothLKR = 0.0f;
     smoothVolPedal = params.volumePedal;
     smoothPitchWheel = 0.0f;
@@ -470,6 +471,7 @@ void PedalSteelEngine::allNotesOff() {
         v.releaseAgeSec = 0.0;
     }
     keyswitchPedals.fill(0.0f);
+    ccPedals.fill(0.0f);
     sustainPedalDown = false;
 }
 
@@ -1015,6 +1017,8 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
                     }
                 }
             }
+        } else if (cc >= 65 && cc <= 69) {
+            ccPedals[static_cast<size_t>(cc - 65)] = val;
         } else if (cc == 120 || cc == 123) {
             allNotesOff();
         }
@@ -1164,11 +1168,11 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
     float maxAftertouch = 0.0f;
     for (float p : mpeChannelPressure) maxAftertouch = std::max(maxAftertouch, p);
 
-    const float targetA   = juce::jlimit(0.0f, 1.0f, std::max({ params.pedalA, uiPedals[0], keyswitchPedals[0], modWheelNorm }));
-    const float targetB   = juce::jlimit(0.0f, 1.0f, std::max({ params.pedalB, uiPedals[1], keyswitchPedals[1], juce::jlimit(0.0f, 1.0f, (modWheelNorm - 0.12f) * 1.14f) }));
-    const float targetC   = juce::jlimit(0.0f, 1.0f, std::max({ params.pedalC, uiPedals[2], keyswitchPedals[2] }));
-    const float targetLKL = juce::jlimit(0.0f, 1.0f, std::max({ params.leverLKL, uiPedals[3], keyswitchPedals[3] }));
-    const float targetLKR = juce::jlimit(0.0f, 1.0f, std::max({ params.leverLKR, uiPedals[4], keyswitchPedals[4] }));
+    const float targetA   = juce::jlimit(0.0f, 1.0f, std::max({ params.pedalA, uiPedals[0], keyswitchPedals[0], ccPedals[0], modWheelNorm }));
+    const float targetB   = juce::jlimit(0.0f, 1.0f, std::max({ params.pedalB, uiPedals[1], keyswitchPedals[1], ccPedals[1], juce::jlimit(0.0f, 1.0f, (modWheelNorm - 0.12f) * 1.14f) }));
+    const float targetC   = juce::jlimit(0.0f, 1.0f, std::max({ params.pedalC, uiPedals[2], keyswitchPedals[2], ccPedals[2] }));
+    const float targetLKL = juce::jlimit(0.0f, 1.0f, std::max({ params.leverLKL, uiPedals[3], keyswitchPedals[3], ccPedals[3] }));
+    const float targetLKR = juce::jlimit(0.0f, 1.0f, std::max({ params.leverLKR, uiPedals[4], keyswitchPedals[4], ccPedals[4] }));
     const float targetVol = juce::jlimit(0.0f, 1.0f, params.volumePedal * expressionNorm + 0.15f * maxAftertouch);
 
     const float pedalTimeSec = std::max(0.045f, params.pedalSpeed * 0.001f);
@@ -1241,7 +1245,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             if (v.isPhraseSlice) {
                 if (!v.held && !v.sustainedByPedal) {
                     v.releaseAgeSec += dt;
-                    v.ampEnv -= v.ampEnv * static_cast<float>(1.0 - std::exp(-dt / 0.055));
+                    v.ampEnv -= v.ampEnv * static_cast<float>(1.0 - std::exp(-dt / 0.18));
                     if (v.ampEnv < 0.0002f) {
                         v.active = false;
                         v.ampEnv = 0.0f;
