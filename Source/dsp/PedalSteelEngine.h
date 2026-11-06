@@ -234,6 +234,7 @@ private:
     Biquad dcBlockerPhys;
 
     // Delta-Calibrated Studio Sample & Phrase Bus Filters (0.0 dB transparent at preset baseline!)
+    Biquad studioMidClarifierFilter;
     Biquad studioDeltaCoilFilter;
     Biquad studioDeltaWarmthFilter;
     Biquad studioDeltaTrebleFilter;

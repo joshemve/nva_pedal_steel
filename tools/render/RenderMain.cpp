@@ -115,12 +115,54 @@ int main() {
         renderSequenceToWav(0, 11.5, 83.0, ev, presetsDir.getChildFile("01_sweet_georgia_e9.wav"));
     }
     {
-        std::vector<ScheduledMidiEvent> ev = {
+        // Raw phrase reference render
+        std::vector<ScheduledMidiEvent> evRef = {
             { 0.00, juce::MidiMessage::noteOn(1, 43, 0.96f) },
-            { 11.45, juce::MidiMessage::noteOff(1, 43) }
+            { 10.60, juce::MidiMessage::noteOff(1, 43) }
         };
-        renderSequenceToWav(1, 11.5, 90.0, ev, outDir.getChildFile("02_hedonist_bootgaze_GMaj.wav"));
-        renderSequenceToWav(1, 11.5, 90.0, ev, presetsDir.getChildFile("02_hedonist_bootgaze.wav"));
+        renderSequenceToWav(1, 11.2, 90.0, evRef, outDir.getChildFile("02_hedonist_bootgaze_GMaj.wav"));
+
+        // Preset 02 Audition Showcase: Pure live Indie Americana / Bootgaze performance in G Major (90 BPM):
+        // Raked G Major E9th chord -> oblique A+B pedal swell to Cmaj9 -> soaring crying high-bar lead (D5 -> G5 -> F#5 -> D5 -> B4) -> glowing Em9 -> G6/9 resolution!
+        std::vector<ScheduledMidiEvent> evShow;
+        // 1. Shimmering raked G Major open shell (G3, D4, G4, B4) -> A+B pedal pull into Cadd9/G!
+        evShow.push_back({ 0.08, juce::MidiMessage::noteOn(1, 55, 0.82f) }); // G3
+        evShow.push_back({ 0.11, juce::MidiMessage::noteOn(1, 62, 0.85f) }); // D4
+        evShow.push_back({ 0.14, juce::MidiMessage::noteOn(1, 67, 0.88f) }); // G4
+        evShow.push_back({ 0.17, juce::MidiMessage::noteOn(1, 71, 0.91f) }); // B4
+        evShow.push_back({ 0.85, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Oblique A+B lift -> C/G!
+        evShow.push_back({ 2.15, juce::MidiMessage::noteOff(1, 28) });       // Melt back to G Major
+        evShow.push_back({ 3.35, juce::MidiMessage::noteOff(1, 55) });
+        evShow.push_back({ 3.35, juce::MidiMessage::noteOff(1, 62) });
+        evShow.push_back({ 3.35, juce::MidiMessage::noteOff(1, 67) });
+        evShow.push_back({ 3.35, juce::MidiMessage::noteOff(1, 71) });
+
+        // 2. Soaring high-bar Bootgaze crying melody (A4 -> B4 -> D5 -> G5 -> weeping bar slide -> F#5 -> D5)
+        evShow.push_back({ 3.55, juce::MidiMessage::noteOn(1, 69, 0.88f) }); // A4
+        evShow.push_back({ 4.15, juce::MidiMessage::noteOff(1, 69) });
+        evShow.push_back({ 4.16, juce::MidiMessage::noteOn(1, 71, 0.91f) }); // Legato bar glide A4 -> B4
+        evShow.push_back({ 4.88, juce::MidiMessage::noteOff(1, 71) });
+        evShow.push_back({ 4.89, juce::MidiMessage::noteOn(1, 74, 0.93f) }); // Legato bar glide B4 -> D5
+        evShow.push_back({ 5.65, juce::MidiMessage::noteOff(1, 74) });
+        evShow.push_back({ 5.66, juce::MidiMessage::noteOn(1, 79, 0.95f) }); // Soar up to high G5!
+        addPitchWheelRamp(evShow, 1, 6.25, 6.75, 0.0f, -1.0f / 7.0f);        // Crying bar slide G5 -> F#5
+        addPitchWheelRamp(evShow, 1, 7.15, 7.60, -1.0f / 7.0f, -5.0f / 7.0f);// Weeping glide down to D5!
+        evShow.push_back({ 7.85, juce::MidiMessage::noteOff(1, 79) });
+        evShow.push_back({ 7.88, juce::MidiMessage::pitchWheel(1, 8192) });
+
+        // 3. Final glowing Gmaj7 / G6 open Americana chord with gentle B-pedal suspension resolving home
+        evShow.push_back({ 7.95, juce::MidiMessage::noteOn(1, 26, 1.00f) }); // Pre-hold B-pedal (Gsus4)
+        evShow.push_back({ 7.98, juce::MidiMessage::noteOn(1, 55, 0.80f) }); // G3
+        evShow.push_back({ 8.01, juce::MidiMessage::noteOn(1, 62, 0.84f) }); // D4
+        evShow.push_back({ 8.04, juce::MidiMessage::noteOn(1, 71, 0.88f) }); // B4 (-> C5 sus4 -> B4!)
+        evShow.push_back({ 8.07, juce::MidiMessage::noteOn(1, 78, 0.90f) }); // F#5 maj7 shimmer!
+        evShow.push_back({ 8.70, juce::MidiMessage::noteOff(1, 26) });       // Resolve Gsus4 -> Gmaj7!
+        evShow.push_back({ 10.60, juce::MidiMessage::noteOff(1, 55) });
+        evShow.push_back({ 10.60, juce::MidiMessage::noteOff(1, 62) });
+        evShow.push_back({ 10.60, juce::MidiMessage::noteOff(1, 71) });
+        evShow.push_back({ 10.60, juce::MidiMessage::noteOff(1, 78) });
+
+        renderSequenceToWav(1, 12.0, 90.0, evShow, presetsDir.getChildFile("02_hedonist_bootgaze.wav"));
     }
     {
         std::vector<ScheduledMidiEvent> ev = {

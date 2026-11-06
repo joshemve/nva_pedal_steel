@@ -41,35 +41,35 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "02 - Hedonist Bootgaze (Indie Americana)",
             "Reference Match",
-            "Dreamy, octave-blooming indie Americana pedal steel matched to Bootgaze Hedonist (90 BPM, G Maj). Metallic steel-string bite, pushed 12AX7 tube harmonic drive, fluid tonebar glides, and wide atmospheric reverb.",
+            "Dreamy, octave-blooming indie Americana pedal steel (90 BPM, G Maj). De-honked 2.42 kHz Emmons single-coil metallic bite, crisp fingerpick snap, pushed 12AX7 tube harmonic air, synced 1/8D Echoplex tape halo, and wide figure-8 plate.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 1;
                 p.playMode      = 0; // Smart Auto-Pedal E9
-                p.volumePedal   = 0.95f;
-                p.scoopDepth    = 0.55f;
-                p.pedalSpeed    = 220.0f;
-                p.barGlide      = 210.0f;
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.54f;
+                p.pedalSpeed    = 175.0f;
+                p.barGlide      = 155.0f;
                 p.barSlideNoise = 0.36f;
-                p.vibratoDepth  = 0.54f;
+                p.vibratoDepth  = 0.46f;
                 p.vibratoRate   = 5.10f;
-                p.autoSwell     = 0.22f;
-                p.swellTime     = 115.0f;
-                p.sampleBlend   = 0.94f;
-                p.pickSnap      = 0.82f;
-                p.pickupPos     = 2.05f;
-                p.coilPeakFreq  = 2320.0f;
-                p.coilResonance = 0.78f;
-                p.sustainTime   = 7.8f;
-                p.cabinetDrop   = 0.42f;
-                p.stereoWidth   = 1.05f;
-                p.ampDrive      = 0.62f;
-                p.toneWarmth    = 0.36f;
-                p.delayMix      = 0.00f;
-                p.delayTime     = 500.0f;
-                p.tempoSync     = false;
-                p.reverbMix     = 0.46f;
-                p.reverbDecay   = 0.72f;
+                p.autoSwell     = 0.16f;
+                p.swellTime     = 110.0f;
+                p.sampleBlend   = 0.82f;
+                p.pickSnap      = 0.84f;
+                p.pickupPos     = 1.95f;
+                p.coilPeakFreq  = 2420.0f;
+                p.coilResonance = 0.84f;
+                p.sustainTime   = 8.2f;
+                p.cabinetDrop   = 0.40f;
+                p.stereoWidth   = 1.18f;
+                p.ampDrive      = 0.68f;
+                p.toneWarmth    = 0.34f;
+                p.delayMix      = 0.20f;
+                p.delayTime     = 500.0f; // 1/8D analog tape halo when synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.74f;
                 p.outputLevel   = 0.0f;
                 return p;
             }()

@@ -18,10 +18,10 @@ namespace {
     }
 
     // Studio baseline values per style (0..3) so default preset positions apply 0.0 dB extra coloration to studio samples
-    constexpr float kBaseCoilRes[4]  = { 0.74f, 0.78f, 0.72f, 0.52f };
-    constexpr float kBaseWarmth[4]   = { 0.38f, 0.36f, 0.56f, 0.84f };
-    constexpr float kBaseDrive[4]    = { 0.24f, 0.62f, 0.56f, 0.16f };
-    constexpr float kBaseRevMix[4]   = { 0.30f, 0.46f, 0.42f, 0.48f };
+    constexpr float kBaseCoilRes[4]  = { 0.74f, 0.52f, 0.72f, 0.52f };
+    constexpr float kBaseWarmth[4]   = { 0.38f, 0.42f, 0.56f, 0.84f };
+    constexpr float kBaseDrive[4]    = { 0.24f, 0.42f, 0.56f, 0.16f };
+    constexpr float kBaseRevMix[4]   = { 0.30f, 0.40f, 0.42f, 0.48f };
 
     inline float readFloatBufHermite(const std::vector<float>& buf, int writePos, float delaySamples) {
         const int maxLen = static_cast<int>(buf.size());
@@ -437,6 +437,7 @@ void PedalSteelEngine::reset() {
     speakerPresenceFilter.reset();
     dcBlockerPhys.reset();
 
+    studioMidClarifierFilter.reset();
     studioDeltaCoilFilter.reset();
     studioDeltaWarmthFilter.reset();
     studioDeltaTrebleFilter.reset();
@@ -505,14 +506,17 @@ void PedalSteelEngine::updateFilterCoeffs() {
     }
     speakerBodyFilter.setPeak(sampleRate, bodyFreq, 0.78f, bodyGain);
 
-    // Delta-calibrated filters for the 44.1 kHz Stereo Studio Bus (0.0 dB transparent at preset baseline!)
+    // Delta-calibrated filters for the 44.1 kHz Stereo Studio Bus
+    // Style 1 (Bootgaze) gently scoops -3.2 dB of 740 Hz nasal mid-honk so nickel-wound steel harmonics sing clearly!
+    const float midClarifyDb  = (st == 1) ? -3.2f : 0.0f;
     const float deltaCoilDb   = juce::jlimit(-6.0f, 6.0f, (params.coilResonance - kBaseCoilRes[st]) * 10.0f);
     const float deltaWarmthDb = juce::jlimit(-6.5f, 6.5f, (params.toneWarmth - kBaseWarmth[st]) * 9.5f);
-    const float deltaDriveAir = juce::jlimit(-3.5f, 4.5f, (params.ampDrive - kBaseDrive[st]) * 4.5f);
+    const float deltaDriveAir = juce::jlimit(-3.5f, 5.0f, (params.ampDrive - kBaseDrive[st]) * 5.2f);
 
+    studioMidClarifierFilter.setPeak(sampleRate, 740.0f, 1.05f, midClarifyDb);
     studioDeltaCoilFilter.setPeak(sampleRate, coilFreq, 1.05f, deltaCoilDb);
     studioDeltaWarmthFilter.setPeak(sampleRate, 255.0f, 0.75f, deltaWarmthDb);
-    studioDeltaTrebleFilter.setPeak(sampleRate, 3100.0f, 0.80f, -0.65f * deltaWarmthDb + deltaDriveAir);
+    studioDeltaTrebleFilter.setPeak(sampleRate, 3650.0f, 0.78f, -0.65f * deltaWarmthDb + deltaDriveAir);
 }
 
 float PedalSteelEngine::nextRandomSigned() {
@@ -526,15 +530,22 @@ int PedalSteelEngine::selectBestMultiSample(int midiNote, int style, float veloc
     int bestIdx = 0;
     float bestScore = 1e9f;
     const bool wantAccent = (velocity >= 0.93f);
+    // Style 1 (Bootgaze / Indie Americana) uses the pristine, long-sustain close-miked E9th studio strings (Styles 0 & 2)
+    // feeding into the pushed 12AX7 tube stage, tape echo & wide plate—avoiding pre-fuzzed reed buildup on chords!
+    const int targetCleanStyle = (style == 1) ? 0 : style;
     for (int i = 0; i < PedalSteelMultiSamples::kNumMultiSamples; ++i) {
         const auto& ms = PedalSteelMultiSamples::kMultiSamples[i];
         float d = static_cast<float>(std::abs(midiNote - ms.midiNote));
         float stylePenalty = 0.0f;
-        if (ms.style != style) {
-            if (style == 3 || ms.style == 3) {
-                stylePenalty = 26.0f; // Never mix bowed/swell pad zones with fingerpicked styles
+        if (ms.style != targetCleanStyle) {
+            if (targetCleanStyle == 3 || ms.style == 3) {
+                stylePenalty = 26.0f; // Never mix Goodrich swell pad zones with fingerpicked styles
+            } else if (style == 1 && ms.style == 2 && midiNote >= 73) {
+                stylePenalty = 0.5f;  // High Bootgaze leads (D5..A5) love Style-2 high-bar steel ring!
+            } else if (ms.style == 1) {
+                stylePenalty = 9.0f;  // Deprioritize short pre-overdriven loops in favor of clean long E9th studio strings
             } else {
-                stylePenalty = 5.5f;  // Allow clean plucked styles to share extreme bass/treble zones (>5 semis away)
+                stylePenalty = 4.0f;
             }
         }
         float velPenalty = (ms.velLayer == 1 && !wantAccent) ? 1.2f : ((ms.velLayer == 1 && wantAccent) ? -0.6f : 0.0f);
@@ -1540,8 +1551,10 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         float stuPhraseL = phraseBusL * volGain;
         float stuPhraseR = phraseBusR * volGain;
 
-        float stuTotalL = studioDeltaCoilFilter.processL(stuSingleL + stuPhraseL);
-        float stuTotalR = studioDeltaCoilFilter.processR(stuSingleR + stuPhraseR);
+        float stuTotalL = studioMidClarifierFilter.processL(stuSingleL + stuPhraseL);
+        float stuTotalR = studioMidClarifierFilter.processR(stuSingleR + stuPhraseR);
+        stuTotalL = studioDeltaCoilFilter.processL(stuTotalL);
+        stuTotalR = studioDeltaCoilFilter.processR(stuTotalR);
         stuTotalL = studioDeltaWarmthFilter.processL(stuTotalL);
         stuTotalR = studioDeltaWarmthFilter.processR(stuTotalR);
         stuTotalL = studioDeltaTrebleFilter.processL(stuTotalL);
