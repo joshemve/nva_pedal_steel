@@ -230,21 +230,16 @@ def knob(px, py, rpx, ang, style):
     root = bpy.data.objects.new("Knob", None); ui.objects.link(root); root.parent = cam
     def body(name, me, mat, z=0.0):
         o = bpy.data.objects.new(name, me); ui.objects.link(o); me.materials.append(mat); o.parent = root; o.location.z = z; return o
-    if style == "cream":      # cream bakelite: knurled dark skirt, domed body, nickel cap with engraved pointer
-        body("Skirt", knob_mesh("skirt", R * 1.2, R * 0.26, flutes=48, depth=0.035, sharp=1.0), M["knob_skirt"])
-        body("KnobBody", knob_mesh("cream", R * 0.98, R * 0.72, flutes=18, depth=0.05, sharp=3.0), M["cream_knob"], R * 0.22)
-        cap = S.cyl("Cap", R * 0.55, R * 0.06, (0, 0, 0), (0, 0, 0), M["capmetal"], ui, verts=64, bevel=R * 0.025); cap.parent = root; cap.location.z = R * 0.97
-        pm = M["ptr_dark"]; top = R * 1.035; plen, pw = 0.5, 0.08; pc = 0.27
-    elif style == "fluted":   # big fluted cream with a dished top and pointer groove
-        body("Skirt", knob_mesh("skirt2", R * 1.08, R * 0.2, flutes=60, depth=0.03, sharp=1.0), M["knob_skirt"])
-        body("KnobBody", knob_mesh("fluted", R, R * 0.85, flutes=8, depth=0.16, sharp=2.2), M["cream_knob"], R * 0.16)
-        pm = M["ptr_dark"]; top = R * 1.03; plen, pw = 0.62, 0.12; pc = 0.95 - 0.31
-    else:                     # black knurled with a satin chrome top ring
-        body("KnobBody", knob_mesh("knurl", R, R * 0.78, flutes=44, depth=0.045, sharp=1.0), M["black_knob"])
-        bpy.ops.mesh.primitive_torus_add(major_radius=R * 0.7, minor_radius=R * 0.025, major_segments=96, minor_segments=8); ring = bpy.context.active_object; ring.name = "TopRing"
-        for c_ in ring.users_collection: c_.objects.unlink(ring)
-        ui.objects.link(ring); ring.data.materials.append(M["capmetal"]); ring.parent = root; ring.location = (0, 0, R * 0.8)
-        pm = M["ptr_light"]; top = R * 0.84; plen, pw = 0.55, 0.1; pc = 0.95 - 0.275
+    if style == "cream":      # classic (as in #353): plain cream bakelite dome on a dark skirt
+        sk = S.cyl("Skirt", R * 1.18, R * 0.22, (0, 0, R * 0.11), (0, 0, 0), M["knob_skirt"], ui, verts=96, bevel=R * 0.06); sk.parent = root
+        body("KnobBody", knob_mesh("cream", R, R * 0.75), M["cream_knob"], R * 0.2)
+        pm = M["ptr_dark"]; top = R * 0.2 + R * 0.77; plen, pw = 0.55, 0.11; pc = 0.45
+    elif style == "fluted":   # classic big fluted cream
+        body("KnobBody", knob_mesh("fluted", R, R * 0.8, flutes=7, depth=0.13, sharp=2.0), M["cream_knob"])
+        pm = M["ptr_dark"]; top = R * 0.82; plen, pw = 0.55, 0.11; pc = 0.45
+    else:                     # classic black knurled
+        body("KnobBody", knob_mesh("knurl", R, R * 0.75, flutes=40, depth=0.04, sharp=1.0), M["black_knob"])
+        pm = M["ptr_light"]; top = R * 0.77; plen, pw = 0.55, 0.11; pc = 0.45
     t = math.radians(ang)
     p_ = S.box("Pointer", (R * pw, R * plen, R * 0.03), (0, 0, 0), pm, ui); p_.parent = root
     p_.location = (-math.sin(t) * R * pc, math.cos(t) * R * pc, top); p_.rotation_euler = (0, 0, t)

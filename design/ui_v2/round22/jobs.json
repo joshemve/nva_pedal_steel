@@ -1,0 +1,86 @@
+[
+ {
+  "name": "chicken",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: black Bakelite chicken-head pointer knobs (the classic amp and radio style) with a white engraved pointer line, sitting on round cream dial plates printed 0 to 10. Generate 1 image."
+ },
+ {
+  "name": "witchhat",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: black witch-hat amp knobs with a silver skirt engraved 1 to 10 around the edge, like a 1960s British amp. Generate 1 image."
+ },
+ {
+  "name": "fendercream",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: cream / aged ivory 'Fender-style' skirted knobs with black numbers 1 to 10 printed on the skirt, like a vintage tweed or blackface amp. Generate 1 image."
+ },
+ {
+  "name": "radio",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: 1950s Bakelite radio knobs in warm ivory with a fluted rim and a polished brass centre insert carrying the pointer. Generate 1 image."
+ },
+ {
+  "name": "davies",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: Davies 1900-style studio knobs: black knurled body with a raised pointer skirt (a thin tapered pointer fin on the skirt), like classic studio console gear. Generate 1 image."
+ },
+ {
+  "name": "neve",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: vintage studio console knobs with coloured caps (cream for VOICE, warm grey for FEEL, muted blue-grey for SPACE), grey ribbed bodies and a white line pointer, like a classic recording console. Generate 1 image."
+ },
+ {
+  "name": "goldcap",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: black knobs with a brushed gold top cap and an engraved pointer, like a classic British stack amp. Generate 1 image."
+ },
+ {
+  "name": "alu",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: solid machined aluminium knobs with fine knurled sides, a brushed flat top and an engraved black pointer line, like boutique studio gear. Generate 1 image."
+ },
+ {
+  "name": "bigdial",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: large flat black dial knobs with a skirted silver numbered scale ring 0 to 10 that turns with the knob, like a 1960s tube test instrument. Generate 1 image."
+ },
+ {
+  "name": "jewel",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: black knurled knobs with a small amber jewel lamp at the top centre glowing softly, the pointer a slim cream line. Generate 1 image."
+ },
+ {
+  "name": "speed",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: gold 'top hat' speed knobs with numbers 0 to 10 on the skirt, like a vintage guitar's control knobs, scaled up. Generate 1 image."
+ },
+ {
+  "name": "walnut",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: turned walnut wood knobs with a polished nickel pointer insert and a thin nickel ring, matching the walnut trim. Generate 1 image."
+ }
+]
