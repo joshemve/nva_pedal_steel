@@ -221,71 +221,71 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "07 - Cosmic Bootgaze Dotted-8th",
             "Indie / Shoegaze",
-            "Tempo-synced 1/8D Echoplex stereo tape delay into pushed 12AX7 tube saturation and wide Dattorro figure-8 plate.",
+            "Interlocking E9th sixths, harp chimes & soaring bar cries locked to tempo-synced 1/8D Echoplex stereo tape delay, pushed 12AX7 harmonic sparkle, and wide figure-8 plate.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 1;
                 p.playMode      = 0;
-                p.volumePedal   = 0.95f;
-                p.scoopDepth    = 0.62f;
-                p.pedalSpeed    = 200.0f;
-                p.barGlide      = 175.0f;
-                p.barSlideNoise = 0.40f;
-                p.vibratoDepth  = 0.52f;
-                p.vibratoRate   = 5.05f;
-                p.autoSwell     = 0.34f;
-                p.swellTime     = 180.0f;
-                p.sampleBlend   = 0.90f;
-                p.pickSnap      = 0.72f;
-                p.pickupPos     = 2.10f;
-                p.coilPeakFreq  = 2300.0f;
-                p.coilResonance = 0.80f;
-                p.sustainTime   = 8.5f;
-                p.cabinetDrop   = 0.44f;
+                p.volumePedal   = 0.97f;
+                p.scoopDepth    = 0.54f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 125.0f;
+                p.barSlideNoise = 0.36f;
+                p.vibratoDepth  = 0.46f;
+                p.vibratoRate   = 5.15f;
+                p.autoSwell     = 0.14f;
+                p.swellTime     = 95.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.78f;
+                p.pickupPos     = 1.96f;
+                p.coilPeakFreq  = 2420.0f;
+                p.coilResonance = 0.84f;
+                p.sustainTime   = 8.4f;
+                p.cabinetDrop   = 0.40f;
                 p.stereoWidth   = 1.28f;
-                p.ampDrive      = 0.68f;
-                p.toneWarmth    = 0.38f;
-                p.delayMix      = 0.38f;
+                p.ampDrive      = 0.60f;
+                p.toneWarmth    = 0.34f;
+                p.delayMix      = 0.46f;
                 p.delayTime     = 500.0f; // 1/8D synced
                 p.tempoSync     = true;
-                p.reverbMix     = 0.54f;
-                p.reverbDecay   = 0.82f;
-                p.outputLevel   = 0.0f;
+                p.reverbMix     = 0.46f;
+                p.reverbDecay   = 0.78f;
+                p.outputLevel   = 0.6f;
                 return p;
             }()
         },
         {
             "08 - Slow-Gear Dream Steel (Ambient)",
             "Indie / Ambient",
-            "Hands-free Goodrich optical volume-pedal swells with tempo-synced stereo tape echoes and infinite cathedral plate shimmer.",
+            "Goodrich optical volume-pedal swells with automatic oblique B-pedal third-string harmonic blooms, shimmering 2.32 kHz steel overtones, synced tape halo, and cathedral plate.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 3;
                 p.playMode      = 2;
-                p.volumePedal   = 0.94f;
-                p.scoopDepth    = 0.72f;
-                p.pedalSpeed    = 230.0f;
-                p.barGlide      = 190.0f;
-                p.barSlideNoise = 0.18f;
-                p.vibratoDepth  = 0.46f;
-                p.vibratoRate   = 4.70f;
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.84f;
+                p.pedalSpeed    = 285.0f;
+                p.barGlide      = 195.0f;
+                p.barSlideNoise = 0.22f;
+                p.vibratoDepth  = 0.48f;
+                p.vibratoRate   = 4.75f;
                 p.autoSwell     = 0.92f;
-                p.swellTime     = 420.0f;
-                p.sampleBlend   = 0.90f;
-                p.pickSnap      = 0.16f;
-                p.pickupPos     = 2.75f;
-                p.coilPeakFreq  = 1820.0f;
-                p.coilResonance = 0.58f;
-                p.sustainTime   = 10.5f;
-                p.cabinetDrop   = 0.52f;
-                p.stereoWidth   = 1.35f;
-                p.ampDrive      = 0.20f;
-                p.toneWarmth    = 0.80f;
-                p.delayMix      = 0.34f;
+                p.swellTime     = 335.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.20f;
+                p.pickupPos     = 2.25f;
+                p.coilPeakFreq  = 2320.0f;
+                p.coilResonance = 0.78f;
+                p.sustainTime   = 10.2f;
+                p.cabinetDrop   = 0.48f;
+                p.stereoWidth   = 1.32f;
+                p.ampDrive      = 0.24f;
+                p.toneWarmth    = 0.52f;
+                p.delayMix      = 0.28f;
                 p.delayTime     = 520.0f; // 1/8D synced
                 p.tempoSync     = true;
-                p.reverbMix     = 0.62f;
-                p.reverbDecay   = 0.88f;
+                p.reverbMix     = 0.56f;
+                p.reverbDecay   = 0.86f;
                 p.outputLevel   = 0.5f;
                 return p;
             }()
@@ -329,36 +329,36 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "10 - Hot Tweed Roadhouse Grit",
             "Roots / Southern Rock",
-            "Overdriven 1957 Fender Tweed Deluxe breakup with aggressive metal fingerpick bite, sympathetic cabinet growl, and tight room slap.",
+            "Jumped-channel '57 Fender 5E3 Tweed Deluxe 6V6 breakup with 1.38 kHz midrange bark, dynamic cathode sag, 4.95 kHz Jensen P12R Alnico speaker edge, and tight 118 ms slapback.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 2;
-                p.playMode      = 0;
+                p.playMode      = 1; // Crying Lead Gliss (authentic chrome-bar slides!)
                 p.volumePedal   = 0.98f;
-                p.scoopDepth    = 0.58f;
+                p.scoopDepth    = 0.72f;
                 p.pedalSpeed    = 120.0f;
-                p.barGlide      = 105.0f;
-                p.barSlideNoise = 0.50f;
-                p.vibratoDepth  = 0.44f;
-                p.vibratoRate   = 5.40f;
-                p.autoSwell     = 0.08f;
-                p.swellTime     = 90.0f;
-                p.sampleBlend   = 0.86f;
-                p.pickSnap      = 0.88f;
-                p.pickupPos     = 1.90f;
-                p.coilPeakFreq  = 2360.0f;
-                p.coilResonance = 0.80f;
-                p.sustainTime   = 7.5f;
-                p.cabinetDrop   = 0.42f;
-                p.stereoWidth   = 1.02f;
-                p.ampDrive      = 0.84f;
-                p.toneWarmth    = 0.48f;
-                p.delayMix      = 0.18f;
-                p.delayTime     = 135.0f;
+                p.barGlide      = 135.0f;
+                p.barSlideNoise = 0.44f;
+                p.vibratoDepth  = 0.50f;
+                p.vibratoRate   = 5.30f;
+                p.autoSwell     = 0.14f;
+                p.swellTime     = 95.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.78f;
+                p.pickupPos     = 2.10f;
+                p.coilPeakFreq  = 2260.0f;
+                p.coilResonance = 0.84f;
+                p.sustainTime   = 8.2f;
+                p.cabinetDrop   = 0.44f;
+                p.stereoWidth   = 1.06f;
+                p.ampDrive      = 0.88f;
+                p.toneWarmth    = 0.58f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 118.0f;
                 p.tempoSync     = false;
-                p.reverbMix     = 0.32f;
-                p.reverbDecay   = 0.55f;
-                p.outputLevel   = -0.5f;
+                p.reverbMix     = 0.30f;
+                p.reverbDecay   = 0.56f;
+                p.outputLevel   = 1.0f;
                 return p;
             }()
         },

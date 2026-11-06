@@ -119,7 +119,9 @@ private:
 
         // Swell & Amp Envelope
         float ampEnv = 0.0f;
+        float phraseTargetAmp = 1.0f;
         float swellEnv = 1.0f;
+        float chokeFade = 0.0f;
         float vibratoEnv = 0.0f;
         double vibratoPhase = 0.0;
 
@@ -194,10 +196,14 @@ private:
         float process(float input, float amount);
     };
 
+    static constexpr int kNumChokeTails = 16;
+
     double sampleRate = 44100.0;
     PedalSteelParams params;
 
     std::array<StringVoice, kNumStrings> voices{};
+    std::array<StringVoice, kNumChokeTails> chokeTails{};
+    int nextChokeSlot = 0;
     uint64_t noteCounter = 0;
     uint32_t rngState = 0x9E3779B9u;
 
@@ -233,12 +239,15 @@ private:
     Biquad speakerPresenceFilter;
     Biquad dcBlockerPhys;
 
-    // Delta-Calibrated Studio Sample & Phrase Bus Filters (0.0 dB transparent at preset baseline!)
+    // Delta-Calibrated Studio Sample & Phrase Bus Filters
     Biquad studioMidClarifierFilter;
     Biquad studioDeltaCoilFilter;
     Biquad studioDeltaWarmthFilter;
     Biquad studioDeltaTrebleFilter;
+    Biquad studioTweedBarkFilter;
+    Biquad studioTweedCabFilter;
     Biquad dcBlockerStudio;
+    float tweedSagEnv = 0.0f;
 
     SympatheticBank sympathetic;
     StudioTapeDelay tapeDelay;
@@ -248,6 +257,7 @@ private:
     float nextRandomSigned();
     void updateFilterCoeffs();
     void reassignChordRoles();
+    void pushVoiceToChokeTail(const StringVoice& v, int strIdx);
     int chooseBestStringForNote(int midiNote, float velocity, bool& outIsLegatoTransfer, float& outPrevBarMidi);
     int selectBestMultiSample(int midiNote, int style, float velocity) const;
     int selectPhraseSliceBySlot(int slotIndex, int style) const;

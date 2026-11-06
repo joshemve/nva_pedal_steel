@@ -278,67 +278,90 @@ int main() {
     }
 
     // =========================================================================
-    // Preset 07: Cosmic Bootgaze Dotted-8th (96 BPM, G Major)
+    // Preset 07: Cosmic Bootgaze Dotted-8th (104 BPM, G Major)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Dreamy soaring bar glides + open Americana chords cascading into 1/8D Echoplex echoes
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 67, 0.88f) }); // G4
-        ev.push_back({ 0.68, juce::MidiMessage::noteOff(1, 67) });
-        ev.push_back({ 0.69, juce::MidiMessage::noteOn(1, 71, 0.90f) }); // Glide G4 -> B4
-        ev.push_back({ 1.45, juce::MidiMessage::noteOff(1, 71) });
-        ev.push_back({ 1.46, juce::MidiMessage::noteOn(1, 74, 0.92f) }); // Glide B4 -> D5
-        ev.push_back({ 2.25, juce::MidiMessage::noteOff(1, 74) });
-        ev.push_back({ 2.26, juce::MidiMessage::noteOn(1, 78, 0.91f) }); // Glide D5 -> F#5
-        ev.push_back({ 3.35, juce::MidiMessage::noteOff(1, 78) });
+        const double beat = 60.0 / 104.0; // 0.5769s (1/8D = 432.7ms Echoplex waterfall!)
 
-        // Open Em9 voicing (E3, B3, F#4, G4, D5) blooming into dotted-8th echoes
-        ev.push_back({ 3.65, juce::MidiMessage::noteOn(1, 59, 0.82f) });
-        ev.push_back({ 3.68, juce::MidiMessage::noteOn(1, 66, 0.85f) });
-        ev.push_back({ 3.71, juce::MidiMessage::noteOn(1, 71, 0.88f) });
-        ev.push_back({ 3.74, juce::MidiMessage::noteOn(1, 74, 0.90f) });
-        ev.push_back({ 5.60, juce::MidiMessage::noteOff(1, 59) });
-        ev.push_back({ 5.60, juce::MidiMessage::noteOff(1, 66) });
-        ev.push_back({ 5.60, juce::MidiMessage::noteOff(1, 71) });
-        ev.push_back({ 5.60, juce::MidiMessage::noteOff(1, 74) });
+        // Phrase 1: Shimmering Bootgaze E9th bell-harp cascade (G3 anchor + staggered D4 -> B4 -> F#5 -> G5 bells)
+        // Spaced on quarter beats so every high bell note spawns 3 interlocking 1/8D stereo Echoplex repeats!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 55, 0.82f) });                  // G3 warm bass string
+        ev.push_back({ 0.10 + 0.5 * beat, juce::MidiMessage::noteOn(1, 62, 0.85f) });     // D4
+        ev.push_back({ 0.10 + 1.0 * beat, juce::MidiMessage::noteOn(1, 71, 0.89f) });     // B4 bell
+        ev.push_back({ 0.10 + 2.0 * beat, juce::MidiMessage::noteOn(1, 78, 0.92f) });     // F#5 maj7 chime!
+        ev.push_back({ 0.10 + 2.75 * beat, juce::MidiMessage::noteOff(1, 78) });
+        ev.push_back({ 0.10 + 3.0 * beat, juce::MidiMessage::noteOn(1, 79, 0.94f) });     // G5 high shimmer!
+        ev.push_back({ 0.10 + 3.65 * beat, juce::MidiMessage::noteOn(1, 28, 1.00f) });    // Oblique A+B -> Cadd9/G bloom!
+        ev.push_back({ 0.10 + 4.85 * beat, juce::MidiMessage::noteOff(1, 28) });
+        for (int n : { 55, 62, 71, 79 }) ev.push_back({ 0.10 + 5.20 * beat, juce::MidiMessage::noteOff(1, n) });
 
-        // Cmaj7 -> G6/9 pedal bloom
-        ev.push_back({ 5.95, juce::MidiMessage::noteOn(1, 60, 0.83f) });
-        ev.push_back({ 5.98, juce::MidiMessage::noteOn(1, 67, 0.86f) });
-        ev.push_back({ 6.01, juce::MidiMessage::noteOn(1, 71, 0.89f) });
-        ev.push_back({ 6.04, juce::MidiMessage::noteOn(1, 76, 0.91f) });
-        ev.push_back({ 7.10, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Oblique pedal lift
-        ev.push_back({ 8.55, juce::MidiMessage::noteOff(1, 28) });
-        ev.push_back({ 8.80, juce::MidiMessage::noteOff(1, 60) });
-        ev.push_back({ 8.80, juce::MidiMessage::noteOff(1, 67) });
-        ev.push_back({ 8.80, juce::MidiMessage::noteOff(1, 71) });
-        ev.push_back({ 8.80, juce::MidiMessage::noteOff(1, 76) });
+        // Phrase 2: Dreamy Em9 asynchronous string plucks (E4 -> B4 -> F#5) weeping down 2 frets (F#5 -> E5) into 1/8D space!
+        const double t2 = 0.10 + 6.0 * beat; // ~3.56s
+        ev.push_back({ t2, juce::MidiMessage::noteOn(1, 64, 0.83f) });                    // E4
+        ev.push_back({ t2 + 0.5 * beat, juce::MidiMessage::noteOn(1, 71, 0.87f) });       // B4
+        ev.push_back({ t2 + 1.0 * beat, juce::MidiMessage::noteOn(1, 78, 0.93f) });       // F#5 singing high string!
+        addPitchWheelRamp(ev, 1, t2 + 1.8 * beat, t2 + 2.6 * beat, 0.0f, -2.0f / 7.0f);   // Liquid 2-fret bar cry (F#5->E5, B4->A4, E4->D4 = Dadd9/G6!)
+        for (int n : { 64, 71, 78 }) ev.push_back({ t2 + 3.6 * beat, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ t2 + 3.65 * beat, juce::MidiMessage::pitchWheel(1, 8192) });       // Reset 0.85s BEFORE Phrase 3 (100% settled!)
 
-        renderSequenceToWav(6, 10.8, 96.0, ev, presetsDir.getChildFile("07_cosmic_bootgaze_dotted_8th.wav"));
+        // Phrase 3: Radiant 100%-in-key Gsus4 -> Gmaj7 harp roll + final crystalline high D5->G5 cosmic echo tail!
+        const double t3 = t2 + 5.0 * beat; // ~6.45s
+        ev.push_back({ t3 - 0.04, juce::MidiMessage::noteOn(1, 26, 1.00f) });             // Pre-hold Pedal B (C5 sus4)
+        ev.push_back({ t3 + 0.00, juce::MidiMessage::noteOn(1, 55, 0.83f) });             // G3
+        ev.push_back({ t3 + 0.04, juce::MidiMessage::noteOn(1, 62, 0.86f) });             // D4
+        ev.push_back({ t3 + 0.08, juce::MidiMessage::noteOn(1, 71, 0.90f) });             // B4 (starts at C5!)
+        ev.push_back({ t3 + 0.12, juce::MidiMessage::noteOn(1, 78, 0.92f) });             // F#5 maj7 (stationary!)
+        ev.push_back({ t3 + 1.15 * beat, juce::MidiMessage::noteOff(1, 26) });            // Melt C5 -> B4 into pure Gmaj7!
+        ev.push_back({ t3 + 2.00 * beat, juce::MidiMessage::noteOn(1, 74, 0.91f) });      // Final D5 bell...
+        ev.push_back({ t3 + 2.50 * beat, juce::MidiMessage::noteOn(1, 79, 0.93f) });      // ...into high G5 echoing into the 1/8D horizon!
+        ev.push_back({ t3 + 3.30 * beat, juce::MidiMessage::noteOff(1, 74) });
+        ev.push_back({ t3 + 3.30 * beat, juce::MidiMessage::noteOff(1, 79) });
+        for (int n : { 55, 62, 71, 78 }) ev.push_back({ t3 + 4.30 * beat, juce::MidiMessage::noteOff(1, n) });
+
+        renderSequenceToWav(6, 11.2, 104.0, ev, presetsDir.getChildFile("07_cosmic_bootgaze_dotted_8th.wav"));
     }
 
     // =========================================================================
-    // Preset 08: Slow-Gear Dream Steel (Ambient, 80 BPM, D Major)
+    // Preset 08: Slow-Gear Dream Steel (Ambient, 82 BPM, D Major)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Lanois / Eno cathedral auto-swells: Dmaj7 -> Gmaj9 -> Bm7 -> Aadd9 -> Dmaj9
-        auto addSwellChord = [&](double t, double dur, std::initializer_list<int> notes) {
-            double k = 0.0;
-            for (int n : notes) {
-                ev.push_back({ t + k, juce::MidiMessage::noteOn(1, n, 0.86f) });
-                ev.push_back({ t + dur, juce::MidiMessage::noteOff(1, n) });
-                k += 0.02;
-            }
-        };
-        addSwellChord(0.10, 2.75, { 50, 57, 66, 73 }); // Dmaj7 (D3, A3, F#4, C#5)
-        addSwellChord(3.05, 2.75, { 55, 62, 66, 71 }); // Gmaj7 (G3, D4, F#4, B4)
-        addSwellChord(6.00, 2.55, { 59, 66, 69, 74 }); // Bm7   (B3, F#4, A4, D5)
-        addSwellChord(8.75, 2.85, { 50, 62, 66, 69 }); // D Major warm resolution
-        ev.push_back({ 9.55, juce::MidiMessage::noteOn(1, 28, 1.00f) });  // Gentle G/D cathedral bloom
-        ev.push_back({ 10.65, juce::MidiMessage::noteOff(1, 28) });
+        // Luminous E9th Goodrich volume-pedal swells with oblique B-pedal blooms AND gentle tonebar movement inside each swell!
+        // Swell 1: Dadd9 (A3, D4, F#4, E5) -> oblique third scoop blooms into A+B G6/D suspension!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 57, 0.84f) });
+        ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 62, 0.86f) });
+        ev.push_back({ 0.14, juce::MidiMessage::noteOn(1, 66, 0.89f) });
+        ev.push_back({ 0.16, juce::MidiMessage::noteOn(1, 76, 0.91f) });
+        ev.push_back({ 1.15, juce::MidiMessage::noteOn(1, 28, 1.00f) });  // Crest of volume swell -> oblique A+B lift!
+        ev.push_back({ 2.15, juce::MidiMessage::noteOff(1, 28) });        // Melt back to Dadd9
+        for (int n : { 57, 62, 66, 76 }) ev.push_back({ 2.95, juce::MidiMessage::noteOff(1, n) });
 
-        renderSequenceToWav(7, 12.4, 80.0, ev, presetsDir.getChildFile("08_slow_gear_dream_steel.wav"));
+        // Swell 2: Em7 (E4, G4, B4, D5) -> liquid 2-fret chrome-bar glide up into F#m7 (100% diatonic D Major!)
+        ev.push_back({ 3.20, juce::MidiMessage::noteOn(1, 64, 0.85f) });
+        ev.push_back({ 3.22, juce::MidiMessage::noteOn(1, 67, 0.88f) });
+        ev.push_back({ 3.24, juce::MidiMessage::noteOn(1, 71, 0.90f) });
+        ev.push_back({ 3.26, juce::MidiMessage::noteOn(1, 74, 0.92f) });
+        addPitchWheelRamp(ev, 1, 4.35, 5.05, 0.0f, +2.0f / 7.0f);         // Liquid bar glide up 2 frets Em7 -> F#m7!
+        for (int n : { 64, 67, 71, 74 }) ev.push_back({ 6.00, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 6.12, juce::MidiMessage::pitchWheel(1, 8192) });
+
+        // Swell 3: Gmaj7 (G3, D4, B4, F#5) -> gentle Gsus4 B-pedal shimmer -> glowing Dadd9 cathedral finale!
+        ev.push_back({ 6.20, juce::MidiMessage::noteOn(1, 55, 0.84f) });
+        ev.push_back({ 6.22, juce::MidiMessage::noteOn(1, 62, 0.86f) });
+        ev.push_back({ 6.24, juce::MidiMessage::noteOn(1, 71, 0.89f) });
+        ev.push_back({ 6.26, juce::MidiMessage::noteOn(1, 78, 0.91f) });
+        ev.push_back({ 7.25, juce::MidiMessage::noteOn(1, 26, 1.00f) });  // Gentle B-pedal B4->C5 Lydian/Gsus4 shimmer
+        ev.push_back({ 8.05, juce::MidiMessage::noteOff(1, 26) });
+        for (int n : { 55, 62, 71, 78 }) ev.push_back({ 8.65, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 8.85, juce::MidiMessage::noteOn(1, 57, 0.84f) });
+        ev.push_back({ 8.87, juce::MidiMessage::noteOn(1, 62, 0.87f) });
+        ev.push_back({ 8.89, juce::MidiMessage::noteOn(1, 66, 0.90f) });
+        ev.push_back({ 8.91, juce::MidiMessage::noteOn(1, 74, 0.92f) });
+        for (int n : { 57, 62, 66, 74 }) ev.push_back({ 10.95, juce::MidiMessage::noteOff(1, n) });
+
+        renderSequenceToWav(7, 12.4, 82.0, ev, presetsDir.getChildFile("08_slow_gear_dream_steel.wav"));
     }
 
     // =========================================================================
@@ -372,46 +395,41 @@ int main() {
     }
 
     // =========================================================================
-    // Preset 10: Hot Tweed Roadhouse Grit (112 BPM, D Major)
+    // Preset 10: Hot Tweed Roadhouse Grit (114 BPM, A Mixolydian / Southern Rock)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
-        // Overdriven '57 Tweed Deluxe double-stop bends & gritty Southern-rock lead in D
-        // Bluesy slide from C5+E5 into D5+F#5!
-        ev.push_back({ 0.08, juce::MidiMessage::pitchWheel(1, static_cast<int>(8192 - (2.0 / 7.0) * 8191)) });
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 62, 0.95f) }); // D4 root anchor
-        ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 74, 0.97f) }); // D5
-        ev.push_back({ 0.14, juce::MidiMessage::noteOn(1, 78, 0.98f) }); // F#5
-        addPitchWheelRamp(ev, 1, 0.16, 0.48, -2.0f / 7.0f, 0.0f);        // Aggressive bar slide into D Major!
-        ev.push_back({ 1.55, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Grit slant to G Major!
-        ev.push_back({ 2.35, juce::MidiMessage::noteOff(1, 28) });
-        ev.push_back({ 3.10, juce::MidiMessage::noteOff(1, 62) });
-        ev.push_back({ 3.10, juce::MidiMessage::noteOff(1, 74) });
-        ev.push_back({ 3.10, juce::MidiMessage::noteOff(1, 78) });
+        // Authentic human E9th roadhouse phrasing (modeled after real studio steel: asynchronous string plucks
+        // ringing into biting 6V6 Tweed double-stops, weeping downward on the chrome bar with breathing room!)
 
-        // High Tweed lead lick: A5 -> F#5 -> D5 -> B4 -> D5+A5 power dyad howl
-        ev.push_back({ 3.30, juce::MidiMessage::noteOn(1, 81, 0.98f) }); // A5 grit!
-        ev.push_back({ 4.05, juce::MidiMessage::noteOff(1, 81) });
-        ev.push_back({ 4.06, juce::MidiMessage::noteOn(1, 78, 0.95f) }); // F#5
-        ev.push_back({ 4.60, juce::MidiMessage::noteOff(1, 78) });
-        ev.push_back({ 4.61, juce::MidiMessage::noteOn(1, 74, 0.94f) }); // D5
-        ev.push_back({ 5.15, juce::MidiMessage::noteOff(1, 74) });
-        ev.push_back({ 5.20, juce::MidiMessage::noteOn(1, 71, 0.92f) }); // B4
-        ev.push_back({ 5.65, juce::MidiMessage::noteOff(1, 71) });
+        // Phrase 1 (0.10s - 3.65s): Pluck high A5 (GV_A5_Grit!), add E5 half-beat later so both strings snarl together,
+        // then weep the chrome bar down 2 frets (E5+A5 -> D5+G5 Mixolydian b7 cry) and curl back into C#5+A5 sixth!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 81, 0.96f) }); // High A5 (real GV_A5_Grit zone!)
+        ev.push_back({ 0.56, juce::MidiMessage::noteOn(1, 76, 0.94f) }); // Add E5 while A5 rings -> biting Tweed 4th!
+        addPitchWheelRamp(ev, 1, 0.95, 1.48, 0.0f, -2.0f / 7.0f);        // Weeping 2-fret bar cry down to D5+G5!
+        ev.push_back({ 2.25, juce::MidiMessage::noteOff(1, 81) });
+        ev.push_back({ 2.25, juce::MidiMessage::noteOff(1, 76) });
+        ev.push_back({ 2.30, juce::MidiMessage::pitchWheel(1, 8192) });  // Clean reset in the breathing gap!
 
-        // Final pushed D5 open-fifth + third chord (D4, A4, D5, F#5) with B-pedal curl
-        ev.push_back({ 5.72, juce::MidiMessage::noteOn(1, 26, 1.00f) });
-        ev.push_back({ 5.75, juce::MidiMessage::noteOn(1, 62, 0.94f) });
-        ev.push_back({ 5.77, juce::MidiMessage::noteOn(1, 69, 0.95f) });
-        ev.push_back({ 5.79, juce::MidiMessage::noteOn(1, 74, 0.96f) });
-        ev.push_back({ 5.81, juce::MidiMessage::noteOn(1, 78, 0.97f) });
-        ev.push_back({ 6.20, juce::MidiMessage::noteOff(1, 26) });
-        ev.push_back({ 8.10, juce::MidiMessage::noteOff(1, 62) });
-        ev.push_back({ 8.10, juce::MidiMessage::noteOff(1, 69) });
-        ev.push_back({ 8.10, juce::MidiMessage::noteOff(1, 74) });
-        ev.push_back({ 8.10, juce::MidiMessage::noteOff(1, 78) });
+        // Phrase 2 (3.35s - 6.65s): Pluck F#5 (GV_FS5_Accent!), add C#5 -> slide up 2 frets into G#5/E5 -> weep down to E4+C#5!
+        ev.push_back({ 3.35, juce::MidiMessage::noteOn(1, 78, 0.96f) }); // F#5 (real GV_FS5_Accent zone!)
+        ev.push_back({ 3.78, juce::MidiMessage::noteOn(1, 73, 0.93f) }); // Add C#5 -> rich 6V6 harmonic intermodulation!
+        addPitchWheelRamp(ev, 1, 4.15, 4.68, 0.0f, -2.0f / 7.0f);        // Greasy whole-step bar cry down to B4+E5!
+        addPitchWheelRamp(ev, 1, 4.95, 5.30, -2.0f / 7.0f, -1.0f / 7.0f);// Bluesy curl into C5/C#5!
+        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 78) });
+        ev.push_back({ 5.95, juce::MidiMessage::noteOff(1, 73) });
+        ev.push_back({ 6.00, juce::MidiMessage::pitchWheel(1, 8192) });
 
-        renderSequenceToWav(9, 9.4, 112.0, ev, presetsDir.getChildFile("10_hot_tweed_roadhouse_grit.wav"));
+        // Phrase 3 (6.80s - 10.6s): Throaty raked A Major roadhouse grip (A3, E4, C#5, E5) whipping A+B -> D/A -> A Major!
+        ev.push_back({ 6.80, juce::MidiMessage::noteOn(1, 57, 0.91f) }); // A3 woody pine-cab root
+        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 64, 0.93f) }); // E4 fifth
+        ev.push_back({ 6.86, juce::MidiMessage::noteOn(1, 73, 0.95f) }); // C#5 major third
+        ev.push_back({ 6.89, juce::MidiMessage::noteOn(1, 81, 0.96f) }); // A5 octave bark
+        ev.push_back({ 7.55, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Roadhouse A+B slant -> D/A!
+        ev.push_back({ 8.35, juce::MidiMessage::noteOff(1, 28) });       // Melt home into singing Tweed A Major!
+        for (int n : { 57, 64, 73, 81 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
+
+        renderSequenceToWav(9, 11.0, 114.0, ev, presetsDir.getChildFile("10_hot_tweed_roadhouse_grit.wav"));
     }
 
     // =========================================================================
