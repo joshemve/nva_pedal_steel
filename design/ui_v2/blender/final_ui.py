@@ -18,7 +18,7 @@ SKINS = {
  "koa": dict(led="18 SUNSET SLACK-KEY", key=(1, 0.78, 0.5), rug=(0.55, 0.47, 0.38), hw=(1.0, 0.82, 0.55)),
  "pearloid": dict(led="13 4-TRACK CASSETTE", key=(1, 0.88, 0.74), rug=(0.55, 0.47, 0.4), hw=None)}
 SK = SKINS[SKIN]
-CREAM_EMIT = tuple(float(v) for v in os.environ.get("CREAM", "0.98,0.70,0.47").split(",")) + (1.0,)
+CREAM_EMIT = tuple(float(v) for v in os.environ.get("CREAM", "2.9,1.55,0.66").split(",")) + (1.0,)
 RUG = {"walnut": ("final/carpet_1.png", (2.4, 1.8)), "maple": ("textures/rooms/woolrug_1.png", (2.0, 1.5)), "redsparkle": ("textures/rooms/honkytonk_1.png", (2.4, 1.8)), "koa": ("textures/rooms/lauhala_1.png", (3.2, 2.4)), "pearloid": ("textures/rooms/shag_1.png", (2.4, 1.8))}[SKIN]
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, "..")
 W_PX, H_PX = 1600, 1000
@@ -63,6 +63,7 @@ M["meter_off"] = S.mat("MeterOff", base=(0.06, 0.04, 0.03), rough=0.4)
 _ledp = os.path.join(ROOT, "textures", "led_%s.png" % SKIN)   # pre-built by make_led.py (Blender has no PIL)
 M["screen"] = U.image_emission_mat("LEDScreen", _ledp, 3.0)
 M["track"] = S.mat("Track", base=(0.75, 0.70, 0.6), rough=0.5)
+M["capmetal"] = S.mat("CapMetal", base=(0.92, 0.9, 0.86), metal=1.0, rough=0.38)
 
 # ---------------- steel on legs (front-on) ----------------
 inst = bpy.data.collections.new("Steel"); coll.children.link(inst)
@@ -206,48 +207,87 @@ def knob_mesh(name, R, Hh, flutes=0, depth=0.0, sharp=4.0):
     me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
     for p in me.polygons: p.use_smooth = True
     return me
+PANEL_Z = 12.4   # px: front face of the deck panel
+def shadow_mat(name):
+    m = bpy.data.materials.get(name)
+    if m: return m
+    m = bpy.data.materials.new(name); m.use_nodes = True; nt = m.node_tree; nt.nodes.clear()
+    o = nt.nodes.new("ShaderNodeOutputMaterial"); bs = nt.nodes.new("ShaderNodeBsdfPrincipled")
+    bs.inputs["Base Color"].default_value = (0, 0, 0, 1); bs.inputs["Roughness"].default_value = 1.0
+    ti = nt.nodes.new("ShaderNodeTexImage"); ti.image = bpy.data.images.load(os.path.join(ROOT, "textures", name + ".png"))
+    mul = nt.nodes.new("ShaderNodeMath"); mul.operation = "MULTIPLY"; mul.inputs[1].default_value = 0.85
+    nt.links.new(ti.outputs["Alpha"], mul.inputs[0]); nt.links.new(mul.outputs[0], bs.inputs["Alpha"])
+    nt.links.new(bs.outputs[0], o.inputs[0]); return m
+def drop(px, py, wpx, hpx, kind="round", dx=6, dy=10, z=PANEL_Z + 0.1):
+    # texture has a 20% margin on each side, so scale the plane by 1/0.6
+    o = plane(px + dx - wpx / 0.6 / 2, py + dy - hpx / 0.6 / 2, px + dx + wpx / 0.6 / 2, py + dy + hpx / 0.6 / 2, shadow_mat("shadow_" + kind), z=z)
+    return o
+
 def knob(px, py, rpx, ang, style):
     c, k = cpx(px, py, 0)
-    root = bpy.data.objects.new("Knob", None); ui.objects.link(root); root.parent = cam; root.location = c
     R = rpx * k
-    if style == "cream":      # small cream bakelite with dark skirt
-        sk = S.cyl("Skirt", R * 1.18, R * 0.22, (0, 0, R * 0.11), (0, 0, 0), M["knob_skirt"], ui, verts=96, bevel=R * 0.06); sk.parent = root
-        me = knob_mesh("cream", R, R * 0.75); o = bpy.data.objects.new("KnobBody", me); ui.objects.link(o); me.materials.append(M["cream_knob"]); o.parent = root; o.location.z = R * 0.2
-        pm = M["ptr_dark"]; top = R * 0.2 + R * 0.77
-    elif style == "fluted":   # big fluted cream
-        me = knob_mesh("fluted", R, R * 0.8, flutes=7, depth=0.13, sharp=2.0); o = bpy.data.objects.new("KnobBody", me); ui.objects.link(o); me.materials.append(M["cream_knob"]); o.parent = root
-        pm = M["ptr_dark"]; top = R * 0.82
-    else:                     # black knurled
-        me = knob_mesh("knurl", R, R * 0.75, flutes=40, depth=0.04, sharp=1.0); o = bpy.data.objects.new("KnobBody", me); ui.objects.link(o); me.materials.append(M["black_knob"]); o.parent = root
-        pm = M["ptr_light"]; top = R * 0.77
+    drop(px, py, rpx * 2.5, rpx * 2.5, "round", dx=rpx * 0.18, dy=rpx * 0.32)
+    root = bpy.data.objects.new("Knob", None); ui.objects.link(root); root.parent = cam
+    def body(name, me, mat, z=0.0):
+        o = bpy.data.objects.new(name, me); ui.objects.link(o); me.materials.append(mat); o.parent = root; o.location.z = z; return o
+    if style == "cream":      # cream bakelite: knurled dark skirt, domed body, nickel cap with engraved pointer
+        body("Skirt", knob_mesh("skirt", R * 1.2, R * 0.26, flutes=48, depth=0.035, sharp=1.0), M["knob_skirt"])
+        body("KnobBody", knob_mesh("cream", R * 0.98, R * 0.72, flutes=18, depth=0.05, sharp=3.0), M["cream_knob"], R * 0.22)
+        cap = S.cyl("Cap", R * 0.55, R * 0.06, (0, 0, 0), (0, 0, 0), M["capmetal"], ui, verts=64, bevel=R * 0.025); cap.parent = root; cap.location.z = R * 0.97
+        pm = M["ptr_dark"]; top = R * 1.035; plen, pw = 0.5, 0.08; pc = 0.27
+    elif style == "fluted":   # big fluted cream with a dished top and pointer groove
+        body("Skirt", knob_mesh("skirt2", R * 1.08, R * 0.2, flutes=60, depth=0.03, sharp=1.0), M["knob_skirt"])
+        body("KnobBody", knob_mesh("fluted", R, R * 0.85, flutes=8, depth=0.16, sharp=2.2), M["cream_knob"], R * 0.16)
+        pm = M["ptr_dark"]; top = R * 1.03; plen, pw = 0.62, 0.12; pc = 0.95 - 0.31
+    else:                     # black knurled with a satin chrome top ring
+        body("KnobBody", knob_mesh("knurl", R, R * 0.78, flutes=44, depth=0.045, sharp=1.0), M["black_knob"])
+        bpy.ops.mesh.primitive_torus_add(major_radius=R * 0.7, minor_radius=R * 0.025, major_segments=96, minor_segments=8); ring = bpy.context.active_object; ring.name = "TopRing"
+        for c_ in ring.users_collection: c_.objects.unlink(ring)
+        ui.objects.link(ring); ring.data.materials.append(M["capmetal"]); ring.parent = root; ring.location = (0, 0, R * 0.8)
+        pm = M["ptr_light"]; top = R * 0.84; plen, pw = 0.55, 0.1; pc = 0.95 - 0.275
     t = math.radians(ang)
-    p = S.box("Pointer", (R * 0.11, R * 0.55, R * 0.03), (0, 0, 0), pm, ui); p.parent = root
-    p.location = (-math.sin(t) * R * 0.45, math.cos(t) * R * 0.45, top); p.rotation_euler = (0, 0, t)
-    # tick scale on the panel
-    for i in range(11):
-        tt = math.radians(-135 + 27 * i); r0, r1 = R * 1.32, R * (1.55 if i in (0, 5, 10) else 1.45)
-        tk = S.box("Tick", (R * 0.045, r1 - r0, 0.5 * k), (0, 0, 0), M["print_cream"], ui); tk.parent = root
-        tk.location = (-math.sin(tt) * (r0 + r1) / 2, math.cos(tt) * (r0 + r1) / 2, -R * 0.0); tk.rotation_euler = (0, 0, tt)
-    root.location = c + Vector((0, 0, 3 * k))
+    p_ = S.box("Pointer", (R * pw, R * plen, R * 0.03), (0, 0, 0), pm, ui); p_.parent = root
+    p_.location = (-math.sin(t) * R * pc, math.cos(t) * R * pc, top); p_.rotation_euler = (0, 0, t)
+    for i in range(11):       # printed tick scale on the panel face
+        tt = math.radians(-135 + 27 * i); r0, r1 = R * 1.36, R * (1.62 if i in (0, 5, 10) else 1.5)
+        tk = S.box("Tick", (R * 0.05, r1 - r0, 0.4 * k), (0, 0, 0), M["print_cream"], ui); tk.parent = root
+        tk.location = (-math.sin(tt) * (r0 + r1) / 2, math.cos(tt) * (r0 + r1) / 2, 0.3 * k); tk.rotation_euler = (0, 0, tt)
+    root.location = c + Vector((0, 0, PANEL_Z * K))
     return root
 
 def pedal_block(cx, py0, py1, w, on):
-    box(cx - w / 2, py0, cx + w / 2, py1, M["chrome"], depth=14, bevel=6, z=2)
-    pad = box(cx - w / 2 + 7, py0 + 12, cx + w / 2 - 7, py1 - 8, M["rubber_rib"], depth=16, bevel=3, z=2)
-    if on: box(cx - w / 2 + 8, py0 + 4, cx + w / 2 - 8, py0 + 11, M["glow"], depth=15, bevel=2, z=2)
+    drop(cx, (py0 + py1) / 2, w, py1 - py0, "rect", dx=5, dy=11)
+    box(cx - w / 2, py0, cx + w / 2, py1, M["chrome"], depth=10, bevel=6, z=PANEL_Z)
+    box(cx - w / 2 + 7, py0 + 12, cx + w / 2 - 7, py1 - 8, M["rubber_rib"], depth=12, bevel=3, z=PANEL_Z)
+    if on: box(cx - w / 2 + 8, py0 + 4, cx + w / 2 - 8, py0 + 11, M["glow"], depth=11, bevel=2, z=PANEL_Z)
+
 def lever(cx, py):
-    c, k = cpx(cx + 12, py, 0)
-    ring = S.cyl("Pivot", 11 * k, 8 * k, (0, 0, 0), (0, 0, 0), M["chrome"], ui, verts=48, bevel=3 * k); link(ring); ring.location = c + Vector((0, 0, 6 * k))
-    hole = S.cyl("PivotHole", 5 * k, 9 * k, (0, 0, 0), (0, 0, 0), M["print_dark"], ui, verts=32); link(hole); hole.location = c + Vector((0, 0, 7 * k))
-    a0 = c + Vector((0, 0, 8 * k)); a1, _ = cpx(cx - 22, py + 62, 8 * K)
-    d = a1 - a0; arm = S.cyl("Arm", 4.5 * k, d.length, (0, 0, 0), (0, 0, 0), M["chrome"], ui, verts=24); link(arm)
-    arm.location = (a0 + a1) / 2; arm.rotation_mode = "QUATERNION"; arm.rotation_quaternion = Vector((0, 0, 1)).rotation_difference(d.normalized())
-    box(cx - 58, py + 55, cx + 8, py + 108, M["chrome"], depth=12, bevel=6, z=2)
-    box(cx - 52, py + 64, cx + 2, py + 102, M["rubber_rib"], depth=14, bevel=3, z=2)
+    """Knee lever like the reference: chrome mounting bracket and pivot, a bent chrome arm angling down-left,
+    and a chrome-framed ribbed rubber paddle, all standing off the panel with a soft cast shadow."""
+    Z = PANEL_Z * K
+    pivx, pivy = cx + 14, py + 6
+    padx0, pady0, padx1, pady1 = cx - 52, py + 62, cx + 10, py + 112
+    drop((padx0 + padx1) / 2, (pady0 + pady1) / 2, padx1 - padx0, pady1 - pady0, "rect", dx=7, dy=12)
+    drop(pivx - 12, pivy + 30, 26, 70, "rect", dx=7, dy=10)
+    c, k = cpx(pivx, pivy, 0)
+    br = S.box("Bracket", (30 * k, 24 * k, 6 * k), (0, 0, 0), M["chrome"], ui, bevel=4 * k); link(br); br.location = c + Vector((0, 0, Z + 3 * k))
+    for sx in (-10, 10):
+        sc_ = S.cyl("BracketScrew", 2.6 * k, 1.5 * k, (0, 0, 0), (0, 0, 0), M["print_dark"], ui, verts=16); link(sc_); sc_.location = c + Vector((sx * k, 0, Z + 6.6 * k))
+    ring = S.cyl("Pivot", 9 * k, 10 * k, (0, 0, 0), (0, 0, 0), M["chrome"], ui, verts=48, bevel=2.5 * k); link(ring); ring.location = c + Vector((0, 0, Z + 9 * k))
+    cu = bpy.data.curves.new("arm", "CURVE"); cu.dimensions = "3D"; cu.bevel_depth = 4.6 * k; cu.bevel_resolution = 6
+    sp = cu.splines.new("BEZIER")
+    a0 = cpx(pivx, pivy, Z + 12 * k)[0]; a1 = cpx(cx - 4, py + 34, Z + 18 * k)[0]; a2 = cpx(cx - 18, py + 66, Z + 14 * k)[0]
+    sp.bezier_points.add(2)
+    for bp, pt in zip(sp.bezier_points, (a0, a1, a2)):
+        bp.co = pt; bp.handle_left_type = bp.handle_right_type = "AUTO"
+    arm = bpy.data.objects.new("Arm", cu); ui.objects.link(arm); cu.materials.append(M["chrome"]); arm.parent = cam
+    box(padx0, pady0, padx1, pady1, M["chrome"], depth=12, bevel=6, z=PANEL_Z + 4)
+    box(padx0 + 6, pady0 + 7, padx1 - 6, pady1 - 6, M["rubber_rib"], depth=14, bevel=3, z=PANEL_Z + 4)
+
 def led(px, py, on):
     c, k = cpx(px, py, 0)
-    b = S.cyl("LEDBezel", 8 * k, 3 * k, (0, 0, 0), (0, 0, 0), M["chrome"], ui, bevel=1.2 * k); link(b); b.location = c + Vector((0, 0, 14 * k))
-    l = S.cyl("LED", 5.5 * k, 4 * k, (0, 0, 0), (0, 0, 0), M["led_on"] if on else M["led_off"], ui, verts=32, bevel=2 * k); link(l); l.location = c + Vector((0, 0, 16 * k))
+    b = S.cyl("LEDBezel", 8 * k, 3 * k, (0, 0, 0), (0, 0, 0), M["chrome"], ui, bevel=1.2 * k); link(b); b.location = c + Vector((0, 0, (PANEL_Z + 1.5) * k))
+    l = S.cyl("LED", 5.5 * k, 4 * k, (0, 0, 0), (0, 0, 0), M["led_on"] if on else M["led_off"], ui, verts=32, bevel=2 * k); link(l); l.location = c + Vector((0, 0, (PANEL_Z + 3.5) * k))
 
 # ---------------- top bar (no SAVE) ----------------
 box(0, 0, 1600, 97, M["cream_face"], depth=6, bevel=0)
