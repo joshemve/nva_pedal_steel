@@ -399,6 +399,275 @@ void PedalSteelEngine::StudioReverb::processSample(float inL, float inR, float d
 }
 
 //==============================================================================
+void PedalSteelEngine::ModernCharacterProcessor::prepare(double sr) {
+    modMaxLen = std::max(512, static_cast<int>(sr * 0.068) + 32);
+    modBufL.assign(static_cast<size_t>(modMaxLen), 0.0f);
+    modBufR.assign(static_cast<size_t>(modMaxLen), 0.0f);
+
+    shimMaxLen = std::max(2048, static_cast<int>(sr * 0.115) + 64);
+    shimBufL.assign(static_cast<size_t>(shimMaxLen), 0.0f);
+    shimBufR.assign(static_cast<size_t>(shimMaxLen), 0.0f);
+
+    static constexpr int kBaseAp[4] = { 113, 179, 251, 347 };
+    const double scale = sr / 44100.0;
+    for (int i = 0; i < 4; ++i) {
+        const int lenL = std::max(16, static_cast<int>(std::round(kBaseAp[i] * scale)));
+        const int lenR = std::max(16, static_cast<int>(std::round((kBaseAp[i] + 11) * scale)));
+        springApL[static_cast<size_t>(i)].assign(static_cast<size_t>(lenL), 0.0f);
+        springApR[static_cast<size_t>(i)].assign(static_cast<size_t>(lenR), 0.0f);
+        springApPos[static_cast<size_t>(i)] = 0;
+    }
+    lastMode = -1;
+    reset();
+}
+
+void PedalSteelEngine::ModernCharacterProcessor::reset() {
+    std::fill(modBufL.begin(), modBufL.end(), 0.0f);
+    std::fill(modBufR.begin(), modBufR.end(), 0.0f);
+    std::fill(shimBufL.begin(), shimBufL.end(), 0.0f);
+    std::fill(shimBufR.begin(), shimBufR.end(), 0.0f);
+    for (int i = 0; i < 4; ++i) {
+        std::fill(springApL[static_cast<size_t>(i)].begin(), springApL[static_cast<size_t>(i)].end(), 0.0f);
+        std::fill(springApR[static_cast<size_t>(i)].begin(), springApR[static_cast<size_t>(i)].end(), 0.0f);
+        springApPos[static_cast<size_t>(i)] = 0;
+    }
+    modWritePos = 0;
+    shimWritePos = 0;
+    lfoPhase1 = 0.0;
+    lfoPhase2 = 0.27;
+    tremPhase = 0.0;
+    shimPhasor = 0.0;
+    cassetteSagEnv = 0.0f;
+    charFilter1.reset();
+    charFilter2.reset();
+    charFilter3.reset();
+    dimHpFilter.reset();
+}
+
+void PedalSteelEngine::ModernCharacterProcessor::updateCoeffs(double sr, int mode) {
+    if (mode != lastMode) {
+        charFilter1.reset();
+        charFilter2.reset();
+        charFilter3.reset();
+        dimHpFilter.reset();
+        lastMode = mode;
+    }
+    if (mode <= 0) return;
+
+    if (mode == 1) {
+        // 13: Tascam 424 4-Track Portastudio (Type-II Chrome Head Bump + Intimate Mid + 4.55 kHz Tape Roll-Off)
+        charFilter1.setPeak(sr, 145.0f, 0.76f, 2.8f);
+        charFilter2.setLowpass(sr, 4550.0f, 0.74f);
+        charFilter3.setPeak(sr, 960.0f, 0.82f, 1.5f);
+    } else if (mode == 2) {
+        // 14: Roland SDD-320 Dimension D Velvet Chorus (210 Hz Wet HPF + Vocal-Pocket Velvet Dip + 5.8 kHz Condenser Silk)
+        dimHpFilter.setHighpass(sr, 210.0f, 0.707f);
+        charFilter1.setPeak(sr, 2380.0f, 0.92f, -2.4f);
+        charFilter2.setPeak(sr, 5800.0f, 0.72f, 2.0f);
+    } else if (mode == 3) {
+        // 15: Eno / Lanois Apollo Shimmer (+12st Hann Octave Halo -> 300 Hz HPF + 3.05 kHz Warm Lexicon BBD Lowpass)
+        dimHpFilter.setHighpass(sr, 300.0f, 0.707f);
+        charFilter1.setPeak(sr, 255.0f, 0.75f, 1.8f);
+        charFilter2.setLowpass(sr, 3050.0f, 0.72f);
+    } else if (mode == 4) {
+        // 16: Accutronics 3-Spring Tank Drip + Fender Vibrolux Roach Optical Bias Tremolo
+        dimHpFilter.setHighpass(sr, 195.0f, 0.707f);
+        charFilter2.setPeak(sr, 2550.0f, 1.30f, 3.8f);
+        charFilter3.setLowpass(sr, 4350.0f, 0.76f);
+    } else if (mode == 5) {
+        // 17: Nocturnal Alt-R&B Resampled Sample Bed (Warm 215 Hz Chest + True 24 dB/oct 4-Pole 1.88 kHz Ladder Lowpass)
+        dimHpFilter.setHighpass(sr, 185.0f, 0.707f);
+        charFilter1.setPeak(sr, 215.0f, 0.76f, 2.8f);
+        charFilter2.setLowpass(sr, 1880.0f, 0.80f);
+        charFilter3.setLowpass(sr, 1940.0f, 0.64f);
+    } else if (mode == 6) {
+        // 18: 1950s Valco / Oahu Slack-Key Lounge (Hollow Body Scoop + Woody 1.42 kHz Magnet Mid + 4.15 kHz Paper Cone)
+        charFilter1.setPeak(sr, 185.0f, 0.85f, -2.2f);
+        charFilter2.setPeak(sr, 1420.0f, 0.88f, 2.6f);
+        charFilter3.setLowpass(sr, 4150.0f, 0.74f);
+    }
+}
+
+void PedalSteelEngine::ModernCharacterProcessor::processSample(
+    double sr, int mode, double hostBpm, bool tempoSync,
+    float& ioL, float& ioR, float& outExtraRevL, float& outExtraRevR)
+{
+    outExtraRevL = 0.0f;
+    outExtraRevR = 0.0f;
+    if (mode <= 0 || modMaxLen < 32) return;
+
+    const float srMs = static_cast<float>(sr * 0.001);
+    const double dt  = 1.0 / sr;
+
+    modBufL[static_cast<size_t>(modWritePos)] = ioL;
+    modBufR[static_cast<size_t>(modWritePos)] = ioR;
+
+    if (mode == 1) {
+        // 13: 4-Track Cassette (Dual-capstan wow/flutter + level-reactive Tascam 424 preamp sag & chrome tape roll-off)
+        lfoPhase1 += 0.56 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 1.29 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+
+        const float wowL = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float wowR = static_cast<float>(std::sin(kTwoPi * lfoPhase1 + 0.32));
+        const float drfL = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float drfR = static_cast<float>(std::cos(kTwoPi * lfoPhase2));
+        const float flt  = static_cast<float>(std::sin(kTwoPi * lfoPhase1 * 9.0));
+
+        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (3.4f + 0.34f * wowL + 0.11f * drfL + 0.022f * flt) * srMs);
+        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (3.65f + 0.34f * wowR + 0.11f * drfR - 0.022f * flt) * srMs);
+
+        float wL = readFloatBufHermite(modBufL, modWritePos, dL);
+        float wR = readFloatBufHermite(modBufR, modWritePos, dR);
+
+        const float pk = std::max(std::abs(wL), std::abs(wR));
+        const float sagAlpha = (pk > cassetteSagEnv) ? 0.008f : 0.00025f;
+        cassetteSagEnv += sagAlpha * (pk - cassetteSagEnv);
+        const float drv = 1.52f / (1.0f + 0.50f * cassetteSagEnv);
+
+        const float xL = juce::jlimit(-2.8f, 2.8f, wL * drv);
+        const float xR = juce::jlimit(-2.8f, 2.8f, wR * drv);
+        wL = (fastTanh(xL + 0.20f * xL * xL) - 0.036f * xL * xL) * 0.72f;
+        wR = (fastTanh(xR + 0.20f * xR * xR) - 0.036f * xR * xR) * 0.72f;
+
+        wL = charFilter3.processL(charFilter2.processL(charFilter1.processL(wL)));
+        wR = charFilter3.processR(charFilter2.processR(charFilter1.processR(wR)));
+        ioL = wL;
+        ioR = wR;
+    } else if (mode == 2) {
+        // 14: Roland Dimension D SDD-320 Stereo BBD Chorus (anti-phase triangle LFOs + HPF wet cross-matrix)
+        lfoPhase1 += 0.42 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.51 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+
+        auto tri = [](double ph) -> float {
+            double u = ph - std::floor(ph);
+            return static_cast<float>(u < 0.5 ? (u * 4.0 - 1.0) : (3.0 - u * 4.0));
+        };
+        const float t1 = tri(lfoPhase1);
+        const float t2 = tri(lfoPhase2);
+
+        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.8f + 1.45f * t1) * srMs);
+        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.2f - 1.45f * t2) * srMs);
+
+        const float wetL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dL));
+        const float wetR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dR));
+
+        float mL = ioL * 0.84f + wetL * 0.42f - wetR * 0.15f;
+        float mR = ioR * 0.84f + wetR * 0.42f - wetL * 0.15f;
+        ioL = charFilter2.processL(charFilter1.processL(mL));
+        ioR = charFilter2.processR(charFilter1.processR(mR));
+    } else if (mode == 3) {
+        // 15: Eno / Lanois Apollo Deep Space (Dual-Grain C1 Hann-Windowed +12st Octave Shimmer + Shimmer Feedback)
+        const float grainSamples = juce::jlimit(512.0f, static_cast<float>(shimMaxLen - 160), 82.0f * srMs);
+        shimPhasor += 1.0 / static_cast<double>(grainSamples);
+        if (shimPhasor >= 1.0) shimPhasor -= 1.0;
+
+        const double pA = shimPhasor;
+        const double pB = (pA >= 0.5) ? (pA - 0.5) : (pA + 0.5);
+        const float sA = static_cast<float>(std::sin(kPi * pA));
+        const float sB = static_cast<float>(std::sin(kPi * pB));
+        const float wA = sA * sA;
+        const float wB = sB * sB; // wA + wB == 1.000000 everywhere with zero slope at wrap!
+
+        const float delAL = 64.0f + static_cast<float>(1.0 - pA) * grainSamples;
+        const float delBL = 64.0f + static_cast<float>(1.0 - pB) * grainSamples;
+        const float delAR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), delAL + 11.5f * srMs);
+        const float delBR = juce::jlimit(64.0f, static_cast<float>(shimMaxLen - 8), delBL + 11.5f * srMs);
+
+        float octL = readFloatBufHermite(shimBufL, shimWritePos, delAL) * wA
+                   + readFloatBufHermite(shimBufL, shimWritePos, delBL) * wB;
+        float octR = readFloatBufHermite(shimBufR, shimWritePos, delAR) * wA
+                   + readFloatBufHermite(shimBufR, shimWritePos, delBR) * wB;
+
+        octL = charFilter2.processL(dimHpFilter.processL(octL));
+        octR = charFilter2.processR(dimHpFilter.processR(octR));
+
+        // Gentle cross-coupled +24st celestial regeneration inside warm 3.05 kHz BBD loop
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.5f, 2.5f, ioL + octR * 0.24f));
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(juce::jlimit(-2.5f, 2.5f, ioR + octL * 0.24f));
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        ioL = charFilter1.processL(ioL) * 0.92f;
+        ioR = charFilter1.processR(ioR) * 0.92f;
+        outExtraRevL = octL * 0.56f;
+        outExtraRevR = octR * 0.56f;
+    } else if (mode == 4) {
+        // 16: Desert Mirage Spring + Fender Optical Roach Bias Tremolo
+        const float dwellL = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 38.5f * srMs));
+        const float dwellR = readFloatBufHermite(modBufR, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 42.0f * srMs));
+        float spL = dimHpFilter.processL(ioL * 0.70f + dwellR * 0.42f);
+        float spR = dimHpFilter.processR(ioR * 0.70f + dwellL * 0.42f);
+
+        for (size_t i = 0; i < 4; ++i) {
+            auto& bL = springApL[i];
+            auto& bR = springApR[i];
+            int idxL = springApPos[i] % static_cast<int>(bL.size());
+            int idxR = springApPos[i] % static_cast<int>(bR.size());
+            const float dL = bL[static_cast<size_t>(idxL)];
+            const float dR = bR[static_cast<size_t>(idxR)];
+            const float g = 0.62f;
+            const float inApL = spL + dL * g;
+            const float inApR = spR + dR * g;
+            bL[static_cast<size_t>(idxL)] = inApL;
+            bR[static_cast<size_t>(idxR)] = inApR;
+            spL = dL - inApL * g;
+            spR = dR - inApR * g;
+            springApPos[i]++;
+        }
+        spL = charFilter3.processL(charFilter2.processL(spL));
+        spR = charFilter3.processR(charFilter2.processR(spR));
+
+        const double tremHz = tempoSync
+            ? juce::jlimit(1.5, 8.0, (juce::jlimit(50.0, 220.0, hostBpm) / 60.0) * 2.0)
+            : 3.75;
+        tremPhase += tremHz * dt;
+        if (tremPhase >= 1.0) tremPhase -= 1.0;
+
+        // Smooth asymmetric optical roach cell wave (warm tube bias throb, subtle stereo offset)
+        const float sL = 0.5f + 0.5f * static_cast<float>(std::sin(kTwoPi * tremPhase));
+        const float sR = 0.5f + 0.5f * static_cast<float>(std::sin(kTwoPi * tremPhase + 0.38));
+        const float modL = 0.48f + 0.52f * (sL * sL * (3.0f - 2.0f * sL));
+        const float modR = 0.48f + 0.52f * (sR * sR * (3.0f - 2.0f * sR));
+
+        ioL = (ioL * 0.90f + spL * 0.26f) * modL * 1.18f;
+        ioR = (ioR * 0.90f + spR * 0.26f) * modR * 1.18f;
+        outExtraRevL = spL * 0.44f * modL;
+        outExtraRevR = spR * 0.44f * modR;
+    } else if (mode == 5) {
+        // 17: Late-Night R&B Sample Bed (33-RPM resampled vinyl drift + stereo velvet + 24 dB/oct 1.88 kHz ladder LP)
+        lfoPhase1 += 0.36 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.44 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+
+        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.8f + 0.32f * static_cast<float>(std::sin(kTwoPi * lfoPhase1))) * srMs);
+        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (5.9f + 0.32f * static_cast<float>(std::cos(kTwoPi * lfoPhase2))) * srMs);
+
+        const float chorL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dL));
+        const float chorR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dR));
+
+        float lpL = ioL * 0.82f + chorL * 0.32f;
+        float lpR = ioR * 0.82f + chorR * 0.32f;
+        lpL = charFilter3.processL(charFilter2.processL(charFilter1.processL(lpL))) * 1.24f;
+        lpR = charFilter3.processR(charFilter2.processR(charFilter1.processR(lpR))) * 1.24f;
+        ioL = lpL;
+        ioR = lpR;
+    } else if (mode == 6) {
+        // 18: Sunset Slack-Key Lounge (Lazy 2.35 Hz pitch warble + hollow 1950s Valco lap-steel magnet body)
+        lfoPhase1 += 2.32 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        const float vibL = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float vibR = static_cast<float>(std::sin(kTwoPi * lfoPhase1 + 0.55));
+
+        const float dL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (3.9f + 0.27f * vibL) * srMs);
+        const float dR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.2f + 0.27f * vibR) * srMs);
+
+        float vL = readFloatBufHermite(modBufL, modWritePos, dL);
+        float vR = readFloatBufHermite(modBufR, modWritePos, dR);
+        ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(vL))) * 1.18f;
+        ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(vR))) * 1.18f;
+    }
+
+    if (++modWritePos >= modMaxLen) modWritePos = 0;
+}
+
+//==============================================================================
 PedalSteelEngine::PedalSteelEngine() {
     for (int i = 0; i < kNumStrings; ++i) {
         voices[i].stringIndex = i;
@@ -409,6 +678,7 @@ PedalSteelEngine::PedalSteelEngine() {
 void PedalSteelEngine::prepare(double sr, int /*maxBlockSize*/) {
     sampleRate = std::max(8000.0, sr);
     sympathetic.prepare(sampleRate);
+    modernChar.prepare(sampleRate);
     tapeDelay.prepare(sampleRate);
     reverb.prepare(sampleRate);
     dcBlockerPhys.setHighpass(sampleRate, 32.0f, 0.707f);
@@ -455,6 +725,7 @@ void PedalSteelEngine::reset() {
     tweedSagEnv = 0.0f;
 
     sympathetic.reset();
+    modernChar.reset();
     tapeDelay.reset();
     reverb.reset();
 }
@@ -532,6 +803,7 @@ void PedalSteelEngine::updateFilterCoeffs() {
     const float extraDrive = std::max(0.0f, params.ampDrive - kBaseDrive[st]);
     studioTweedBarkFilter.setPeak(sampleRate, 940.0f, 0.78f, juce::jlimit(0.0f, 3.6f, extraDrive * 10.5f));
     studioTweedCabFilter.setLowpass(sampleRate, 4550.0f, 0.82f);
+    modernChar.updateCoeffs(sampleRate, params.fxCharacter);
 }
 
 float PedalSteelEngine::nextRandomSigned() {
@@ -729,6 +1001,7 @@ void PedalSteelEngine::startPhraseVoice(int phraseIdx, int midiNote, int channel
     v.pedalVel = 0.0f;
     v.mpePitchSemis = 0.0f;
     v.mpePitchVel = 0.0f;
+    v.activePitchWheel = smoothPitchWheel;
     v.scoopOffsetSemis = 0.0f;
     v.scoopVel = 0.0f;
     v.phraseTargetAmp = juce::jlimit(0.35f, 1.0f, 0.30f + 0.70f * vel);
@@ -946,6 +1219,7 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
         v.channel = ch;
         v.velocity = vel;
         v.releaseAgeSec = 0.0;
+        v.activePitchWheel = smoothPitchWheel;
         v.triggerOrder = ++noteCounter;
 
         if (isLegatoTransfer) {
@@ -1140,6 +1414,7 @@ void PedalSteelEngine::triggerFretboardNote(int stringIndex, float fret) {
     v.pedalVel = 0.0f;
     v.mpePitchSemis = 0.0f;
     v.mpePitchVel = 0.0f;
+    v.activePitchWheel = smoothPitchWheel;
     v.scoopOffsetSemis = 0.0f;
     v.scoopVel = 0.0f;
     v.ampEnv = 0.0f;
@@ -1323,7 +1598,10 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 v.pedalVel += pedalAccel * static_cast<float>(dt);
                 v.pedalCurrentSemis += v.pedalVel * static_cast<float>(dt);
 
-                const float liveBendSemis = v.phraseTransposeSemis + v.pedalCurrentSemis + smoothPitchWheel * 7.0f;
+                if (v.held || v.sustainedByPedal) {
+                    v.activePitchWheel = smoothPitchWheel;
+                }
+                const float liveBendSemis = v.phraseTransposeSemis + v.pedalCurrentSemis + v.activePitchWheel * 7.0f;
                 const double pitchRatio = std::pow(2.0, static_cast<double>(liveBendSemis) / 12.0);
                 float sliceL = 0.0f, sliceR = 0.0f;
                 readStereoPhraseSliceHermite(v.phraseSliceIdx, v.samplePos, sliceL, sliceR);
@@ -1410,8 +1688,11 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             const float vibAmt = juce::jlimit(0.0f, 1.25f, params.vibratoDepth + 0.40f * chPress);
             const float vibratoSemis = barVibratoSin * (0.072f * vibAmt * v.vibratoEnv);
 
+            if (v.held || v.sustainedByPedal) {
+                v.activePitchWheel = smoothPitchWheel;
+            }
             const float cabDrop = (std::abs(roleTargetSemis) < 0.05f) ? cabinetDropSemis : 0.0f;
-            const float pitchWheelSemis = smoothPitchWheel * 7.0f;
+            const float pitchWheelSemis = v.activePitchWheel * 7.0f;
             const float instMidi = v.barCurrentMidi + v.pedalCurrentSemis + v.mpePitchSemis + v.scoopOffsetSemis + vibratoSemis + cabDrop + pitchWheelSemis;
             const float instFreqHz = juce::jlimit(40.0f, 4000.0f, midiToHz(instMidi));
 
@@ -1562,7 +1843,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 const auto& ps = PedalSteelMultiSamples::kPhraseSlices[juce::jlimit(0, PedalSteelMultiSamples::kNumPhraseSlices - 1, ct.phraseSliceIdx)];
                 const double sliceLen = static_cast<double>(std::max(1, ps.endFrame - ps.startFrame));
                 if (ct.samplePos < sliceLen) {
-                    const float liveBendSemis = ct.phraseTransposeSemis + ct.pedalCurrentSemis + smoothPitchWheel * 7.0f;
+                    const float liveBendSemis = ct.phraseTransposeSemis + ct.pedalCurrentSemis + ct.activePitchWheel * 7.0f;
                     const double pitchRatio = std::pow(2.0, static_cast<double>(liveBendSemis) / 12.0);
                     float sliceL = 0.0f, sliceR = 0.0f;
                     readStereoPhraseSliceHermite(ct.phraseSliceIdx, ct.samplePos, sliceL, sliceR);
@@ -1571,7 +1852,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                     phraseBusR += sliceR * ct.ampEnv * chokeGain;
                 }
             } else {
-                const float pitchWheelSemis = smoothPitchWheel * 7.0f;
+                const float pitchWheelSemis = ct.activePitchWheel * 7.0f;
                 const float instMidi = ct.barCurrentMidi + ct.pedalCurrentSemis + ct.mpePitchSemis + ct.scoopOffsetSemis + pitchWheelSemis;
                 const float instFreqHz = juce::jlimit(40.0f, 4000.0f, midiToHz(instMidi));
 
@@ -1697,27 +1978,39 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         stuTotalR = dcBlockerStudio.processR(stuTotalR);
 
         //======================================================================
-        // Master Stereo Tape / BBD Delay + Dattorro Figure-8 Plate Reverb
+        // Master Character Circuit + Stereo Tape Delay + Dattorro Figure-8 Plate
         //======================================================================
-        const float dryCombinedL = physL + stuTotalL;
-        const float dryCombinedR = physR + stuTotalR;
+        float dryCombinedL = physL + stuTotalL;
+        float dryCombinedR = physR + stuTotalR;
+        float extraRevL = 0.0f, extraRevR = 0.0f;
+        if (params.fxCharacter > 0) {
+            modernChar.processSample(sampleRate, params.fxCharacter, params.hostBpm, params.tempoSync,
+                                     dryCombinedL, dryCombinedR, extraRevL, extraRevR);
+        }
 
         float dlyL = 0.0f, dlyR = 0.0f;
-        tapeDelay.processSample(sampleRate, dryCombinedL, dryCombinedR, effectiveDelayMs, params.delayMix, maxSlideSpeed, dlyL, dlyR);
+        tapeDelay.processSample(sampleRate, dryCombinedL + extraRevL * 0.42f, dryCombinedR + extraRevR * 0.42f,
+                                effectiveDelayMs, params.delayMix, maxSlideSpeed, dlyL, dlyR);
 
         // Chromatic single-note releases & physical strings feed full plate reverb; full studio phrases only add delta reverb above baseline!
         const float singleWet = juce::jlimit(0.0f, 1.0f, params.reverbMix);
         const float phraseExtraWet = juce::jlimit(0.0f, 1.0f, std::max(0.0f, params.reverbMix - kBaseRevMix[stStyle]) * 1.4f);
         const float slideReverbDuck = 1.0f / (1.0f + 0.05f * maxSlideSpeed);
 
-        const float revSendL = ((physL + stuSingleL * 0.72f) * singleWet + stuPhraseL * phraseExtraWet + dlyL * 0.42f * singleWet) * slideReverbDuck;
-        const float revSendR = ((physR + stuSingleR * 0.72f) * singleWet + stuPhraseR * phraseExtraWet + dlyR * 0.42f * singleWet) * slideReverbDuck;
+        float revSendL = 0.0f, revSendR = 0.0f;
+        if (params.fxCharacter > 0) {
+            revSendL = (dryCombinedL * 0.76f * singleWet + extraRevL + dlyL * 0.44f * singleWet) * slideReverbDuck;
+            revSendR = (dryCombinedR * 0.76f * singleWet + extraRevR + dlyR * 0.44f * singleWet) * slideReverbDuck;
+        } else {
+            revSendL = ((physL + stuSingleL * 0.72f) * singleWet + stuPhraseL * phraseExtraWet + dlyL * 0.42f * singleWet) * slideReverbDuck;
+            revSendR = ((physR + stuSingleR * 0.72f) * singleWet + stuPhraseR * phraseExtraWet + dlyR * 0.42f * singleWet) * slideReverbDuck;
+        }
 
         float revL = 0.0f, revR = 0.0f;
         reverb.processSample(revSendL, revSendR, params.reverbDecay, params.stereoWidth, revL, revR);
 
-        float finalL = (dryCombinedL + dlyL + revL * 1.25f) * outGain;
-        float finalR = (dryCombinedR + dlyR + revR * 1.25f) * outGain;
+        float finalL = (dryCombinedL + extraRevL * 0.22f + dlyL + revL * 1.25f) * outGain;
+        float finalR = (dryCombinedR + extraRevR * 0.22f + dlyR + revR * 1.25f) * outGain;
 
         // Mid/Side Stereo Panorama Width Control (1.0 = natural studio stereo, 0.0 = mono, 1.5 = wide)
         const float mid  = 0.5f * (finalL + finalR);

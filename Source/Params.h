@@ -33,12 +33,14 @@ namespace ParamIDs {
     inline constexpr const char* tempoSync     = "tempoSync";
     inline constexpr const char* reverbMix     = "reverbMix";
     inline constexpr const char* reverbDecay   = "reverbDecay";
+    inline constexpr const char* fxCharacter   = "fxCharacter";
     inline constexpr const char* outputLevel   = "outputLevel";
 }
 
 struct PedalSteelParams {
     int presetStyle     = 0;     // 0: Sweet Georgia E9, 1: Hedonist Bootgaze, 2: Mikey's Grit Tweed, 3: Montana Swell
     int playMode        = 0;     // 0: Smart Auto-Pedal E9, 1: Crying Lead Gliss, 2: Lush Swell Pad, 3: Manual Copedent, 4: Studio Phrase Licks
+    int fxCharacter     = 0;     // 0: Studio Standard, 1: 4-Track Cassette, 2: Dimension Chorus, 3: Apollo Shimmer, 4: Spring + Bias Trem, 5: Underwater R&B, 6: Vintage Warble
     float pedalA        = 0.0f;  // 0..1 (+2 semitones on strings 5 & 10)
     float pedalB        = 0.0f;  // 0..1 (+1 semitone on strings 3 & 6)
     float pedalC        = 0.0f;  // 0..1 (+2 semitones on strings 4 & 5)

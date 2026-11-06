@@ -104,6 +104,7 @@ private:
     std::atomic<float>* pTempoSync     = nullptr;
     std::atomic<float>* pReverbMix     = nullptr;
     std::atomic<float>* pReverbDecay   = nullptr;
+    std::atomic<float>* pFxCharacter   = nullptr;
     std::atomic<float>* pOutputLevel   = nullptr;
 
     PedalSteelParams readParamsFromAtomics() const;

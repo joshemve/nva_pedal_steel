@@ -116,6 +116,7 @@ private:
         float pedalVel = 0.0f;
         float mpePitchSemis = 0.0f;
         float mpePitchVel = 0.0f;
+        float activePitchWheel = 0.0f;
 
         // Swell & Amp Envelope
         float ampEnv = 0.0f;
@@ -196,6 +197,39 @@ private:
         float process(float input, float amount);
     };
 
+    // First-Principles Modern Producer Analog Character Circuits (Modes 1..6; Mode 0 = bit-transparent bypass)
+    struct ModernCharacterProcessor {
+        std::vector<float> modBufL, modBufR;
+        int modWritePos = 0;
+        int modMaxLen = 1;
+        double lfoPhase1 = 0.0;
+        double lfoPhase2 = 0.27;
+        double tremPhase = 0.0;
+        float cassetteSagEnv = 0.0f;
+
+        // Sample-rate-adaptive dual-grain C1 Hann-windowed +12st Octave Shimmer Pitch Shifter
+        std::vector<float> shimBufL, shimBufR;
+        int shimWritePos = 0;
+        int shimMaxLen = 1;
+        double shimPhasor = 0.0;
+
+        // 4-stage Dispersive Accutronics 3-Spring Tank Allpass Chirp Network
+        std::array<std::vector<float>, 4> springApL, springApR;
+        std::array<int, 4> springApPos{};
+
+        int lastMode = -1;
+        Biquad charFilter1;
+        Biquad charFilter2;
+        Biquad charFilter3;
+        Biquad dimHpFilter;
+
+        void prepare(double sr);
+        void reset();
+        void updateCoeffs(double sr, int mode);
+        void processSample(double sr, int mode, double hostBpm, bool tempoSync,
+                           float& ioL, float& ioR, float& outExtraRevL, float& outExtraRevR);
+    };
+
     static constexpr int kNumChokeTails = 16;
 
     double sampleRate = 44100.0;
@@ -250,6 +284,7 @@ private:
     float tweedSagEnv = 0.0f;
 
     SympatheticBank sympathetic;
+    ModernCharacterProcessor modernChar;
     StudioTapeDelay tapeDelay;
     StudioReverb reverb;
 

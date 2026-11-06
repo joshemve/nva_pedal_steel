@@ -38,6 +38,7 @@ PedalSteelAudioProcessor::PedalSteelAudioProcessor()
     pTempoSync     = apvts.getRawParameterValue(ParamIDs::tempoSync);
     pReverbMix     = apvts.getRawParameterValue(ParamIDs::reverbMix);
     pReverbDecay   = apvts.getRawParameterValue(ParamIDs::reverbDecay);
+    pFxCharacter   = apvts.getRawParameterValue(ParamIDs::fxCharacter);
     pOutputLevel   = apvts.getRawParameterValue(ParamIDs::outputLevel);
 
     loadPreset(0);
@@ -173,6 +174,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
         juce::ParameterID{ ParamIDs::reverbDecay, 1 }, "Reverb Decay",
         juce::NormalisableRange<float>(0.1f, 1.0f, 0.001f), 0.54f));
 
+    layout.push_back(std::make_unique<juce::AudioParameterChoice>(
+        juce::ParameterID{ ParamIDs::fxCharacter, 1 }, "Analog Character",
+        juce::StringArray{ "Studio Standard", "4-Track Cassette", "Dimension Chorus", "Apollo Shimmer", "Spring + Bias Trem", "Underwater R&B", "Vintage Warble" }, 0));
+
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::outputLevel, 1 }, "Output Level",
         juce::NormalisableRange<float>(-24.0f, 12.0f, 0.1f), 0.0f, withUnit("dB")));
@@ -184,6 +189,7 @@ PedalSteelParams PedalSteelAudioProcessor::readParamsFromAtomics() const {
     PedalSteelParams p;
     p.presetStyle   = static_cast<int>(pPresetStyle->load());
     p.playMode      = static_cast<int>(pPlayMode->load());
+    p.fxCharacter   = static_cast<int>(pFxCharacter->load());
     p.pedalA        = pPedalA->load();
     p.pedalB        = pPedalB->load();
     p.pedalC        = pPedalC->load();
@@ -350,6 +356,7 @@ void PedalSteelAudioProcessor::loadPreset(int index) {
 
     setParam(ParamIDs::presetStyle,   static_cast<float>(p.presetStyle));
     setParam(ParamIDs::playMode,      static_cast<float>(p.playMode));
+    setParam(ParamIDs::fxCharacter,   static_cast<float>(p.fxCharacter));
     setParam(ParamIDs::pedalA,        p.pedalA);
     setParam(ParamIDs::pedalB,        p.pedalB);
     setParam(ParamIDs::pedalC,        p.pedalC);

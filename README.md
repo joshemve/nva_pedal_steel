@@ -19,9 +19,11 @@
   5. **Studio Phrase Licks**: Chromatically maps and transposes real recorded Nashville, Bootgaze, Tweed, and Montana pedal-steel licks across the entire MIDI keyboard.
 - **DAW Host Tempo-Synced Analog Tape / BBD Delay & Dattorro Figure-8 Plate Reverb**:
   - Quadrature-modulated Echoplex tape echo (`SYNC` locks to DAW `AudioPlayHead` BPM across `1/16`, `1/8T`, `1/8`, `1/8D`, `1/4`, `1/4D`) with dynamic phrase & pedal-slant harmonic ducking, feeding a wide figure-8 stereo plate reverb.
+- **6 Modern Producer Analog Character Circuits**:
+  - Dedicated first-principles hardware modeling for modern Indie, R&B, Film-Score, and Psych-Soul production alongside classic studio steel: **Tascam 424 4-Track Cassette** (dual-capstan wow/flutter + dynamic preamp sag), **1979 Roland Dimension D Stereo BBD Chorus**, **Eno/Lanois *Apollo* Dual-Grain $C^1$ Hann-Windowed `+12st/+24st` Octave Shimmer**, **Accutronics 3-Spring Tank Drip + Fender Vibrolux Optical Bias Tremolo**, **24 dB/oct `1.88 kHz` Resampled Alt-R&B Ladder Low-Pass**, and **1950s Valco/Oahu Slack-Key Pitch Warble**.
 - **Full Studio QOL & Interactive UI**:
   - **Interactive 10-String Fretboard**: Click any string to pluck and drag horizontally across frets `0–24` to slide the solid chrome bar in real time.
-  - **12 Factory Presets** with `<`/`>` quick-steppers, `PLAY LICK` & `E / G / D / C` chord audition buttons, live stereo `L/R` peak meter, resizable vector UI (`1020×660` to `1560×980`), hover tooltips, and full DAW state persistence.
+  - **18 Factory Presets** with `<`/`>` quick-steppers, `PLAY LICK` & `E / G / D / C` chord audition buttons, live stereo `L/R` peak meter, resizable vector UI (`1020×660` to `1560×980`), hover tooltips, and full DAW state persistence.
 
 ## MIDI, Keyswitch & MPE Reference
 

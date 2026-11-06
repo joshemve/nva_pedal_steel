@@ -433,6 +433,228 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.outputLevel   = 0.0f;
                 return p;
             }()
+        },
+        {
+            "13 - 4-Track Cassette Steel",
+            "Lo-Fi / Indie R&B",
+            "Dusty Tascam 424 Portastudio 4-track preamp saturation & dynamic sag, dual-capstan tape wow/flutter, thumb-softened mute, and intimate bedroom booth.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0;
+                p.fxCharacter   = 1; // 4-Track Cassette
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.52f;
+                p.pedalSpeed    = 160.0f;
+                p.barGlide      = 155.0f;
+                p.barSlideNoise = 0.26f;
+                p.vibratoDepth  = 0.34f;
+                p.vibratoRate   = 4.85f;
+                p.autoSwell     = 0.28f;
+                p.swellTime     = 115.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.28f;
+                p.pickupPos     = 2.68f;
+                p.coilPeakFreq  = 1860.0f;
+                p.coilResonance = 0.62f;
+                p.sustainTime   = 7.2f;
+                p.cabinetDrop   = 0.44f;
+                p.stereoWidth   = 0.96f;
+                p.ampDrive      = 0.34f;
+                p.toneWarmth    = 0.68f;
+                p.delayMix      = 0.08f;
+                p.delayTime     = 92.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.22f;
+                p.reverbDecay   = 0.38f;
+                p.outputLevel   = -0.6f;
+                return p;
+            }()
+        },
+        {
+            "14 - Golden Hour Velvet",
+            "Modern Pop-Folk",
+            "Vocal-friendly modern Nashville/LA pop-folk steel through a 1979 Roland Dimension D stereo BBD chorus, feather-soft Goodrich entry, and silky condenser air.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0;
+                p.fxCharacter   = 2; // Dimension Chorus
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.50f;
+                p.pedalSpeed    = 170.0f;
+                p.barGlide      = 165.0f;
+                p.barSlideNoise = 0.24f;
+                p.vibratoDepth  = 0.38f;
+                p.vibratoRate   = 4.95f;
+                p.autoSwell     = 0.46f;
+                p.swellTime     = 145.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.34f;
+                p.pickupPos     = 2.45f;
+                p.coilPeakFreq  = 2040.0f;
+                p.coilResonance = 0.66f;
+                p.sustainTime   = 8.4f;
+                p.cabinetDrop   = 0.38f;
+                p.stereoWidth   = 1.32f;
+                p.ampDrive      = 0.20f;
+                p.toneWarmth    = 0.54f;
+                p.delayMix      = 0.16f;
+                p.delayTime     = 500.0f; // 1/8D synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.44f;
+                p.reverbDecay   = 0.74f;
+                p.outputLevel   = 0.5f;
+                return p;
+            }()
+        },
+        {
+            "15 - Apollo Deep Space",
+            "Cinematic Ambient",
+            "Inspired by Brian Eno & Daniel Lanois's Apollo: weightless 420 ms Goodrich swells feeding a dual-grain Hann-windowed +12st octave shimmer and infinite cathedral plate.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3;
+                p.playMode      = 2; // Lush Swell Pad
+                p.fxCharacter   = 3; // Apollo Shimmer
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.78f;
+                p.pedalSpeed    = 295.0f;
+                p.barGlide      = 220.0f;
+                p.barSlideNoise = 0.16f;
+                p.vibratoDepth  = 0.44f;
+                p.vibratoRate   = 4.55f;
+                p.autoSwell     = 0.94f;
+                p.swellTime     = 420.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.12f;
+                p.pickupPos     = 2.60f;
+                p.coilPeakFreq  = 1980.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 11.5f;
+                p.cabinetDrop   = 0.50f;
+                p.stereoWidth   = 1.42f;
+                p.ampDrive      = 0.32f;
+                p.toneWarmth    = 0.66f;
+                p.delayMix      = 0.34f;
+                p.delayTime     = 520.0f; // 1/8D synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.64f;
+                p.reverbDecay   = 0.92f;
+                p.outputLevel   = 0.2f;
+                return p;
+            }()
+        },
+        {
+            "16 - Desert Mirage Spring",
+            "Psych-Soul / Noir",
+            "Sultry minor-key desert steel with dispersive 3-spring tank drip, synced Fender Vibrolux optical roach bias tremolo, and smoky 1/8 tape echo.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 1; // Crying Lead Gliss (pure minor sixths & triads!)
+                p.fxCharacter   = 4; // Spring + Bias Trem
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.62f;
+                p.pedalSpeed    = 140.0f;
+                p.barGlide      = 140.0f;
+                p.barSlideNoise = 0.42f;
+                p.vibratoDepth  = 0.44f;
+                p.vibratoRate   = 5.10f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.72f;
+                p.pickupPos     = 2.08f;
+                p.coilPeakFreq  = 2240.0f;
+                p.coilResonance = 0.76f;
+                p.sustainTime   = 7.8f;
+                p.cabinetDrop   = 0.40f;
+                p.stereoWidth   = 1.14f;
+                p.ampDrive      = 0.30f;
+                p.toneWarmth    = 0.48f;
+                p.delayMix      = 0.18f;
+                p.delayTime     = 360.0f; // 1/8 synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.68f;
+                p.outputLevel   = 0.3f;
+                return p;
+            }()
+        },
+        {
+            "17 - Late-Night R&B Sample Bed",
+            "Alt-R&B / Soul",
+            "Dark, underwater 24 dB/oct 1.88 kHz low-passed chords with 33-RPM resampled vinyl drift and warm 215 Hz chest — ready to drop straight over 808s and R&B vocals.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3;
+                p.playMode      = 1; // Crying Lead Gliss (pure min9/maj9 voicings + liquid portamento!)
+                p.fxCharacter   = 5; // Underwater R&B
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.68f;
+                p.pedalSpeed    = 190.0f;
+                p.barGlide      = 185.0f;
+                p.barSlideNoise = 0.18f;
+                p.vibratoDepth  = 0.40f;
+                p.vibratoRate   = 4.65f;
+                p.autoSwell     = 0.62f;
+                p.swellTime     = 220.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.18f;
+                p.pickupPos     = 2.85f;
+                p.coilPeakFreq  = 1720.0f;
+                p.coilResonance = 0.56f;
+                p.sustainTime   = 9.5f;
+                p.cabinetDrop   = 0.48f;
+                p.stereoWidth   = 1.24f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.82f;
+                p.delayMix      = 0.16f;
+                p.delayTime     = 620.0f; // 1/4 synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.46f;
+                p.reverbDecay   = 0.78f;
+                p.outputLevel   = -1.4f;
+                return p;
+            }()
+        },
+        {
+            "18 - Sunset Slack-Key Lounge",
+            "Indie Slacker / Lounge",
+            "Hollow 1950s Valco/Oahu lap-steel pickup midrange, lazy 2.32 Hz pitch warble, and sunny dry living-room slapback for indie-slacker & Hawaiian C6-style sixths.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0;
+                p.fxCharacter   = 6; // Vintage Warble
+                p.volumePedal   = 0.95f;
+                p.scoopDepth    = 0.58f;
+                p.pedalSpeed    = 150.0f;
+                p.barGlide      = 160.0f;
+                p.barSlideNoise = 0.32f;
+                p.vibratoDepth  = 0.30f;
+                p.vibratoRate   = 4.80f;
+                p.autoSwell     = 0.12f;
+                p.swellTime     = 85.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.54f;
+                p.pickupPos     = 2.52f;
+                p.coilPeakFreq  = 1820.0f;
+                p.coilResonance = 0.68f;
+                p.sustainTime   = 6.2f;
+                p.cabinetDrop   = 0.42f;
+                p.stereoWidth   = 0.94f;
+                p.ampDrive      = 0.28f;
+                p.toneWarmth    = 0.62f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 84.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.22f;
+                p.reverbDecay   = 0.38f;
+                p.outputLevel   = 0.8f;
+                return p;
+            }()
         }
     };
     return kPresets;
