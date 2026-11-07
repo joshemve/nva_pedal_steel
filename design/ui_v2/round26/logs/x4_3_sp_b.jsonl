@@ -1,0 +1,4 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b3bb-bc12-7021-b3e3-e6981cd60b75"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two versions with only the ECHO and REVERB knobs cleaned up, preserving the rest of the interface."}}

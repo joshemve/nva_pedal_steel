@@ -1,0 +1,30 @@
+[
+ {
+  "name": "x6_1_eb_a",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB, which currently look glitchy. Redraw them, same size and position, seen perfectly straight-on, in the style of classic studio echo-unit knobs: a glossy black domed cap with a soft highlight, a bold crisp white pointer line running from the centre out to the edge (ECHO at about 18 percent, REVERB at about 28 percent), sitting on a slightly wider black skirt with fine, clean, evenly spaced ridges, and a bright cream tick-mark ring printed around each on the panel. Clean and sharp, no noise or moire, same soft drop shadow and lighting as the knobs beside them. Exactly as described. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x6_1_eb_b",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB, which currently look glitchy. Redraw them, same size and position, seen perfectly straight-on, in the style of classic studio echo-unit knobs: a glossy black domed cap with a soft highlight, a bold crisp white pointer line running from the centre out to the edge (ECHO at about 18 percent, REVERB at about 28 percent), sitting on a slightly wider black skirt with fine, clean, evenly spaced ridges, and a bright cream tick-mark ring printed around each on the panel. Clean and sharp, no noise or moire, same soft drop shadow and lighting as the knobs beside them. Also give all six knobs the same bold white or dark pointer line running from centre to edge, keeping the cream knobs cream. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x4_3_eb_a",
+  "images": [
+   "round17/x4_3.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB, which currently look glitchy. Redraw them, same size and position, seen perfectly straight-on, in the style of classic studio echo-unit knobs: a glossy black domed cap with a soft highlight, a bold crisp white pointer line running from the centre out to the edge (ECHO at about 18 percent, REVERB at about 28 percent), sitting on a slightly wider black skirt with fine, clean, evenly spaced ridges, and a bright cream tick-mark ring printed around each on the panel. Clean and sharp, no noise or moire, same soft drop shadow and lighting as the knobs beside them. Exactly as described. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x4_3_eb_b",
+  "images": [
+   "round17/x4_3.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB, which currently look glitchy. Redraw them, same size and position, seen perfectly straight-on, in the style of classic studio echo-unit knobs: a glossy black domed cap with a soft highlight, a bold crisp white pointer line running from the centre out to the edge (ECHO at about 18 percent, REVERB at about 28 percent), sitting on a slightly wider black skirt with fine, clean, evenly spaced ridges, and a bright cream tick-mark ring printed around each on the panel. Clean and sharp, no noise or moire, same soft drop shadow and lighting as the knobs beside them. Also give all six knobs the same bold white or dark pointer line running from centre to edge, keeping the cream knobs cream. 1600x1000. Generate 2 images."
+ }
+]

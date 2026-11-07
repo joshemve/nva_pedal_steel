@@ -1,0 +1,44 @@
+[
+ {
+  "name": "x6_1_sp_a",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB. They currently look glitchy (noisy, broken knurling). Redraw them as clean, solid, premium black knobs of the same size and position, seen straight-on like the other knobs: a smooth satin black top with a crisp cream pointer line (ECHO pointing to about 18 percent, REVERB to about 28 percent), and a neat, evenly spaced, low-contrast grip around the edge (or fine regular vertical ribs), with the same soft drop shadow and lighting as the cream knobs beside them. They must look like the same family as the TONE/PICK/GLIDE/SWELL knobs, just in black. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x6_1_sp_b",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB. They currently look glitchy (noisy, broken knurling). Redraw them as clean, solid, premium black knobs of the same size and position, seen straight-on like the other knobs: a smooth satin black top with a crisp cream pointer line (ECHO pointing to about 18 percent, REVERB to about 28 percent), and a neat, evenly spaced, low-contrast grip around the edge (or a smooth skirt with no knurling), with the same soft drop shadow and lighting as the cream knobs beside them. They must look like the same family as the TONE/PICK/GLIDE/SWELL knobs, just in black. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x6_1_sp_c",
+  "images": [
+   "round17/x6_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB. They currently look glitchy (noisy, broken knurling). Redraw them as clean, solid, premium black knobs of the same size and position, seen straight-on like the other knobs: a smooth satin black top with a crisp cream pointer line (ECHO pointing to about 18 percent, REVERB to about 28 percent), and a neat, evenly spaced, low-contrast grip around the edge (or a scalloped edge matching the GLIDE and SWELL knobs, in black), with the same soft drop shadow and lighting as the cream knobs beside them. They must look like the same family as the TONE/PICK/GLIDE/SWELL knobs, just in black. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x4_3_sp_a",
+  "images": [
+   "round17/x4_3.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB. They currently look glitchy (noisy, broken knurling). Redraw them as clean, solid, premium black knobs of the same size and position, seen straight-on like the other knobs: a smooth satin black top with a crisp cream pointer line (ECHO pointing to about 18 percent, REVERB to about 28 percent), and a neat, evenly spaced, low-contrast grip around the edge (or fine regular vertical ribs), with the same soft drop shadow and lighting as the cream knobs beside them. They must look like the same family as the TONE/PICK/GLIDE/SWELL knobs, just in black. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x4_3_sp_b",
+  "images": [
+   "round17/x4_3.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB. They currently look glitchy (noisy, broken knurling). Redraw them as clean, solid, premium black knobs of the same size and position, seen straight-on like the other knobs: a smooth satin black top with a crisp cream pointer line (ECHO pointing to about 18 percent, REVERB to about 28 percent), and a neat, evenly spaced, low-contrast grip around the edge (or a smooth skirt with no knurling), with the same soft drop shadow and lighting as the cream knobs beside them. They must look like the same family as the TONE/PICK/GLIDE/SWELL knobs, just in black. 1600x1000. Generate 2 images."
+ },
+ {
+  "name": "x4_3_sp_c",
+  "images": [
+   "round17/x4_3.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin. Keep EVERYTHING exactly as it is, including the TONE, PICK, GLIDE and SWELL knobs, and change ONLY the two SPACE knobs, ECHO and REVERB. They currently look glitchy (noisy, broken knurling). Redraw them as clean, solid, premium black knobs of the same size and position, seen straight-on like the other knobs: a smooth satin black top with a crisp cream pointer line (ECHO pointing to about 18 percent, REVERB to about 28 percent), and a neat, evenly spaced, low-contrast grip around the edge (or a scalloped edge matching the GLIDE and SWELL knobs, in black), with the same soft drop shadow and lighting as the cream knobs beside them. They must look like the same family as the TONE/PICK/GLIDE/SWELL knobs, just in black. 1600x1000. Generate 2 images."
+ }
+]
