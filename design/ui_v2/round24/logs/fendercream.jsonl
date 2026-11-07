@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b3b4-cc5c-7880-8c9d-c55909a53a07"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one image with the aged ivory skirted knobs and the layout you specified.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"“Pedal Steel” plugin concept with aged ivory knobs, walnut and chrome detailing, amber LEDs, and a warm studio setting."}}
+{"type":"turn.completed","usage":{"input_tokens":48734,"cached_input_tokens":37248,"cache_write_input_tokens":0,"output_tokens":981,"reasoning_output_tokens":0}}

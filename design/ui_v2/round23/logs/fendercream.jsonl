@@ -1,0 +1,4 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1b3b4-2944-7900-bafb-9a30c184b1fc"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two versions with face-on aged-ivory numbered knobs, preserving the rest of the screen.\n"}}

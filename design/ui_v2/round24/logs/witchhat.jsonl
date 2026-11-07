@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b3b4-cbe2-7472-a1ae-22df678505a0"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one image with the specified layout and witch-hat knobs.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"“Pedal Steel” in a warm vintage studio, with parchment branding, walnut framing, amber LEDs, and silver-skirted black witch-hat knobs."}}
+{"type":"turn.completed","usage":{"input_tokens":48659,"cached_input_tokens":37120,"cache_write_input_tokens":0,"output_tokens":906,"reasoning_output_tokens":0}}

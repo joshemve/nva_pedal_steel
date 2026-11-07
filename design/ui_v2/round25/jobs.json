@@ -1,0 +1,86 @@
+[
+ {
+  "name": "chicken",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: black Bakelite chicken-head pointer knobs with a white pointer line, on round cream dial plates printed 0 to 10. Generate 1 image."
+ },
+ {
+  "name": "radio",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: 1950s ivory Bakelite radio knobs with a finely fluted rim and a polished brass centre insert carrying the pointer. Generate 1 image."
+ },
+ {
+  "name": "fendercream",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: aged ivory skirted amp knobs: a round ridged top with a black pointer line inside a wider numbered skirt ring (1 to 10). Generate 1 image."
+ },
+ {
+  "name": "witchhat",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: black witch-hat amp knobs: a black fluted top with a white pointer inside a silver skirt ring engraved 1 to 10. Generate 1 image."
+ },
+ {
+  "name": "speed",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: gold top-hat speed knobs: a gold ridged top with a pointer inside a gold skirt ring printed 0 to 10. Generate 1 image."
+ },
+ {
+  "name": "neve",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: recording console knobs with coloured caps (cream for VOICE, warm grey for FEEL, muted blue-grey for SPACE), grey ribbed bodies, white line pointer. Generate 1 image."
+ },
+ {
+  "name": "walnut",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: turned walnut wood knobs with a polished nickel pointer insert and a thin nickel ring. Generate 1 image."
+ },
+ {
+  "name": "alu",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: machined aluminium knobs with knurled edges, a brushed top with concentric machining marks and an engraved black pointer. Generate 1 image."
+ },
+ {
+  "name": "bigdial",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: large flat black dial knobs inside a silver numbered scale ring 0 to 10. Generate 1 image."
+ },
+ {
+  "name": "goldcap",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: black knobs with a brushed gold top cap and an engraved black pointer. Generate 1 image."
+ },
+ {
+  "name": "davies",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: black studio console knobs with a knurled grip and a raised tapered pointer fin. Generate 1 image."
+ },
+ {
+  "name": "jewel",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes, text) and design NEW knobs for the six deck controls TONE, PICK, GLIDE, SWELL, ECHO, REVERB in the style below, at the same positions and roughly the same size. VIEWING ANGLE IS CRITICAL: the deck is a flat panel seen perfectly straight-on. Draw every knob from exactly that viewpoint, looking straight down its axis: the top face is a circle facing the viewer, any skirt or dial is a flat concentric ring around it, numbers upright and readable around the circle, no side view and no perspective tilt, consistent with the A B C pedal blocks on the same panel. Each knob has a printed cream tick scale on the panel, a soft realistic drop shadow, and its pointer clearly showing the value. Real, believable hardware photographed under the same light as the rest of the panel; no orange. 1600x1000. Knob style: black knurled knobs with a small amber jewel lamp at the top centre and a slim cream pointer line. Generate 1 image."
+ }
+]

@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1b3b4-ce7d-7271-af94-343eb2d825c9"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one image with the brushed-gold knob caps and the exact layout you described.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"“Pedal Steel” plugin concept with brushed-gold knob caps, warm walnut, amber LEDs, and a vintage studio setting."}}
+{"type":"turn.completed","usage":{"input_tokens":48619,"cached_input_tokens":37120,"cache_write_input_tokens":0,"output_tokens":893,"reasoning_output_tokens":0}}

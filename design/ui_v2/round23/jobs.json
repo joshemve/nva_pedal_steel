@@ -1,0 +1,23 @@
+[
+ {
+  "name": "witchhat",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: black witch-hat amp knobs with a silver skirt engraved 1 to 10 around the edge, like a 1960s British amp. VIEWING ANGLE IS CRITICAL: the deck is seen perfectly straight-on, face-on, like a flat front panel photographed from directly in front. Every knob must be drawn from exactly that same straight-on viewpoint: you look straight down the knob's axis, so its top face is a circle facing you and the numbered skirt appears as a flat concentric ring around it with all numbers readable upright around the circle. No side view, no perspective tilt, no visible knob sides, matching the A B C pedals and other controls on the same panel. Generate 2 images."
+ },
+ {
+  "name": "fendercream",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: cream / aged ivory 'Fender-style' skirted knobs with black numbers 1 to 10 printed on the skirt, like a vintage tweed or blackface amp. VIEWING ANGLE IS CRITICAL: the deck is seen perfectly straight-on, face-on, like a flat front panel photographed from directly in front. Every knob must be drawn from exactly that same straight-on viewpoint: you look straight down the knob's axis, so its top face is a circle facing you and the numbered skirt appears as a flat concentric ring around it with all numbers readable upright around the circle. No side view, no perspective tilt, no visible knob sides, matching the A B C pedals and other controls on the same panel. Generate 2 images."
+ },
+ {
+  "name": "speed",
+  "images": [
+   "comp/r_walnut_1.png"
+  ],
+  "prompt": "Image 1 is our pedal steel plugin main screen. Keep EVERYTHING identical (camera, steel, rug, top bar, deck layout, walnut trim, pedals, knee levers, labels, value boxes and text) EXCEPT the six knobs TONE, PICK, GLIDE, SWELL, ECHO, REVERB on the control deck: replace them with the knob style below, same positions and roughly the same size, each knob with a printed tick scale on the black panel, a soft realistic drop shadow, and the pointer clearly showing its value. Real, photographic, believable hardware that looks like it came off real vintage or studio gear; no orange. 1600x1000. Knob style: gold 'top hat' speed knobs with numbers 0 to 10 on the skirt, like a vintage guitar's control knobs, scaled up. VIEWING ANGLE IS CRITICAL: the deck is seen perfectly straight-on, face-on, like a flat front panel photographed from directly in front. Every knob must be drawn from exactly that same straight-on viewpoint: you look straight down the knob's axis, so its top face is a circle facing you and the numbered skirt appears as a flat concentric ring around it with all numbers readable upright around the circle. No side view, no perspective tilt, no visible knob sides, matching the A B C pedals and other controls on the same panel. Generate 2 images."
+ }
+]
