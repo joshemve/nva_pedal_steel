@@ -1,0 +1,101 @@
+{
+ "dome": {
+  "frames": 128,
+  "frame_px": [
+   154,
+   154
+  ],
+  "scale": 2.0,
+  "frame_ui_px": 77.0,
+  "angle_range_deg": [
+   -135,
+   135
+  ],
+  "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
+  "instances": [
+   {
+    "cx": 132.65,
+    "cy": 777,
+    "r": 29.0
+   },
+   {
+    "cx": 270.41,
+    "cy": 777,
+    "r": 29.0
+   }
+  ]
+ },
+ "scallop": {
+  "frames": 128,
+  "frame_px": [
+   236,
+   236
+  ],
+  "scale": 2.0,
+  "frame_ui_px": 118.0,
+  "angle_range_deg": [
+   -135,
+   135
+  ],
+  "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
+  "instances": [
+   {
+    "cx": 441.84,
+    "cy": 777,
+    "r": 44.4
+   },
+   {
+    "cx": 583.67,
+    "cy": 777,
+    "r": 44.4
+   }
+  ]
+ },
+ "space": {
+  "frames": 128,
+  "frame_px": [
+   202,
+   202
+  ],
+  "scale": 2.0,
+  "frame_ui_px": 101.0,
+  "angle_range_deg": [
+   -135,
+   135
+  ],
+  "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
+  "instances": [
+   {
+    "cx": 747.96,
+    "cy": 777,
+    "r": 38
+   },
+   {
+    "cx": 877.55,
+    "cy": 777,
+    "r": 38
+   }
+  ]
+ },
+ "trim": {
+  "frames": 128,
+  "frame_px": [
+   96,
+   96
+  ],
+  "scale": 2.0,
+  "frame_ui_px": 48.0,
+  "angle_range_deg": [
+   -135,
+   135
+  ],
+  "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
+  "instances": [
+   {
+    "cx": 1486.73,
+    "cy": 60,
+    "r": 18
+   }
+  ]
+ }
+}

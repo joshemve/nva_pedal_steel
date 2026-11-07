@@ -27,3 +27,9 @@ images/
 # OS files
 .DS_Store
 Thumbs.db
+# UI v2 knob work: regenerable renders (scripts in design/ui_v2/final rebuild them)
+design/ui_v2/final/knobs/iter/
+design/ui_v2/final/knobs/*.blend
+design/ui_v2/final/strips/frames/
+design/ui_v2/final/strips/frames_fixed/
+design/ui_v2/**/__pycache__/

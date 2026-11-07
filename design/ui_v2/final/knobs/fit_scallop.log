@@ -1,0 +1,46 @@
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0, "rscale": 1.0}      IoU=0.938 lum=16.7 score=8.71
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0, "rscale": 0.97}     IoU=0.909 lum=17.3 score=11.70
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0, "rscale": 0.985}    IoU=0.928 lum=16.9 score=9.73
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0, "rscale": 1.015}    IoU=0.941 lum=16.5 score=8.38
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0, "rscale": 1.03}     IoU=0.939 lum=16.4 score=8.56
+round 0 after rscale: best {"rscale": 1.015, "phase": 0, "lobes": 9, "depth": 0.13, "hr": 0.8} score 8.38
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0.125, "rscale": 1.015} IoU=0.938 lum=15.6 score=8.54
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0.25, "rscale": 1.015} IoU=0.941 lum=15.0 score=8.15
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0.375, "rscale": 1.015} IoU=0.946 lum=15.5 score=7.72
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0.5, "rscale": 1.015}  IoU=0.949 lum=16.8 score=7.62
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0.625, "rscale": 1.015} IoU=0.954 lum=17.9 score=7.29
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.956 lum=18.3 score=7.14
+  {"depth": 0.13, "hr": 0.8, "lobes": 9, "phase": 0.875, "rscale": 1.015} IoU=0.947 lum=17.7 score=7.96
+round 0 after phase: best {"rscale": 1.015, "phase": 0.75, "lobes": 9, "depth": 0.13, "hr": 0.8} score 7.14
+  {"depth": 0.13, "hr": 0.8, "lobes": 8, "phase": 0.75, "rscale": 1.015} IoU=0.942 lum=16.9 score=8.34
+  {"depth": 0.13, "hr": 0.8, "lobes": 10, "phase": 0.75, "rscale": 1.015} IoU=0.943 lum=17.4 score=8.31
+round 0 after lobes: best {"rscale": 1.015, "phase": 0.75, "lobes": 9, "depth": 0.13, "hr": 0.8} score 7.14
+  {"depth": 0.09, "hr": 0.8, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.959 lum=17.0 score=6.65
+  {"depth": 0.11, "hr": 0.8, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.958 lum=17.6 score=6.84
+  {"depth": 0.15, "hr": 0.8, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.951 lum=19.1 score=7.76
+  {"depth": 0.17, "hr": 0.8, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.944 lum=19.7 score=8.55
+round 0 after depth: best {"rscale": 1.015, "phase": 0.75, "lobes": 9, "depth": 0.09, "hr": 0.8} score 6.65
+  {"depth": 0.09, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.962 lum=16.8 score=6.32
+  {"depth": 0.09, "hr": 0.72, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.960 lum=16.8 score=6.52
+  {"depth": 0.09, "hr": 0.9, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.957 lum=17.3 score=6.89
+round 0 after hr: best {"rscale": 1.015, "phase": 0.75, "lobes": 9, "depth": 0.09, "hr": 0.65} score 6.32
+  {"depth": 0.09, "hr": 0.45, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.960 lum=17.5 score=6.62
+  {"depth": 0.09, "hr": 0.5, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.960 lum=17.2 score=6.58
+  {"depth": 0.09, "hr": 0.55, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.961 lum=17.0 score=6.45
+  {"depth": 0.09, "hr": 0.6, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.961 lum=16.8 score=6.42
+round 0 after hr: best {"rscale": 1.015, "phase": 0.75, "lobes": 9, "depth": 0.09, "hr": 0.65} score 6.32
+  {"depth": 0.05, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.950 lum=16.1 score=7.42
+  {"depth": 0.06, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.954 lum=16.2 score=7.03
+  {"depth": 0.07, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.958 lum=16.4 score=6.66
+  {"depth": 0.08, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.960 lum=16.5 score=6.47
+  {"depth": 0.1, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.015} IoU=0.961 lum=17.0 score=6.45
+round 0 after depth: best {"rscale": 1.015, "phase": 0.75, "lobes": 9, "depth": 0.09, "hr": 0.65} score 6.32
+  {"depth": 0.09, "hr": 0.65, "lobes": 9, "phase": 0.6875, "rscale": 1.015} IoU=0.960 lum=16.9 score=6.54
+  {"depth": 0.09, "hr": 0.65, "lobes": 9, "phase": 0.8125, "rscale": 1.015} IoU=0.958 lum=16.5 score=6.67
+round 0 after phase: best {"rscale": 1.015, "phase": 0.75, "lobes": 9, "depth": 0.09, "hr": 0.65} score 6.32
+  {"depth": 0.09, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.0}  IoU=0.968 lum=16.9 score=5.74
+  {"depth": 0.09, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.0075} IoU=0.965 lum=16.8 score=6.02
+  {"depth": 0.09, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.0225} IoU=0.952 lum=16.9 score=7.33
+  {"depth": 0.09, "hr": 0.65, "lobes": 9, "phase": 0.75, "rscale": 1.03} IoU=0.942 lum=16.9 score=8.34
+round 0 after rscale: best {"rscale": 1.0, "phase": 0.75, "lobes": 9, "depth": 0.09, "hr": 0.65} score 5.74
+BEST {"rscale": 1.0, "phase": 0.75, "lobes": 9, "depth": 0.09, "hr": 0.65} 5.735

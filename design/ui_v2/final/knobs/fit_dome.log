@@ -1,0 +1,26 @@
+  {"hr": 0.8, "rscale": 1.0}                                             IoU=0.960 lum=14.2 score=6.13
+  {"hr": 0.8, "rscale": 0.97}                                            IoU=0.963 lum=15.7 score=6.05
+  {"hr": 0.8, "rscale": 0.985}                                           IoU=0.967 lum=14.8 score=5.52
+  {"hr": 0.8, "rscale": 1.015}                                           IoU=0.932 lum=14.8 score=9.02
+  {"hr": 0.8, "rscale": 1.03}                                            IoU=0.906 lum=15.1 score=11.66
+round 0 after rscale: best {"rscale": 0.985, "hr": 0.8} score 5.52
+  {"hr": 0.65, "rscale": 0.985}                                          IoU=0.976 lum=14.3 score=4.54
+  {"hr": 0.72, "rscale": 0.985}                                          IoU=0.974 lum=15.5 score=4.92
+  {"hr": 0.9, "rscale": 0.985}                                           IoU=0.973 lum=15.9 score=5.08
+round 0 after hr: best {"rscale": 0.985, "hr": 0.65} score 4.54
+  {"hr": 0.65, "rscale": 0.97}                                           IoU=0.972 lum=15.0 score=5.05
+  {"hr": 0.65, "rscale": 1.0}                                            IoU=0.960 lum=14.9 score=6.24
+  {"hr": 0.65, "rscale": 1.015}                                          IoU=0.935 lum=15.2 score=8.78
+  {"hr": 0.65, "rscale": 1.03}                                           IoU=0.911 lum=15.3 score=11.20
+round 1 after rscale: best {"rscale": 0.985, "hr": 0.65} score 4.54
+round 1 after hr: best {"rscale": 0.985, "hr": 0.65} score 4.54
+BEST {"rscale": 0.985, "hr": 0.65} 4.545
+  {"hr": 0.65, "rscale": 0.975}                                          IoU=0.975 lum=14.7 score=4.71
+  {"hr": 0.65, "rscale": 0.995}                                          IoU=0.964 lum=14.6 score=5.79
+round 0 after rscale: best {"rscale": 0.985, "hr": 0.65} score 4.54
+  {"hr": 0.45, "rscale": 0.985}                                          IoU=0.967 lum=13.0 score=5.25
+  {"hr": 0.5, "rscale": 0.985}                                           IoU=0.967 lum=13.0 score=5.25
+  {"hr": 0.55, "rscale": 0.985}                                          IoU=0.972 lum=13.3 score=4.79
+  {"hr": 0.6, "rscale": 0.985}                                           IoU=0.976 lum=13.7 score=4.46
+round 0 after hr: best {"rscale": 0.985, "hr": 0.6} score 4.46
+BEST {"rscale": 0.985, "hr": 0.6} 4.455

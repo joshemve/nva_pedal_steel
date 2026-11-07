@@ -4,7 +4,7 @@ Steel: true proportions, horizontal, front-on, camera above looking down. Room: 
 background plate. Frame (top bar + control deck) is camera-space UI geometry in pixel units (1600x1000)."""
 import bpy, bmesh, sys, os, math
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import steel_lib as S, ui_lib as U
+import steel_lib as S, ui_lib as U, knob_lib as KL
 from mathutils import Vector
 
 a = sys.argv[sys.argv.index("--") + 1:]
@@ -38,11 +38,7 @@ if SKIN == "koa": M["walnut"] = S.mat("Koa", tex="skins/koa_1.png", rough=0.3, c
 if SKIN == "redsparkle": M["walnut"] = S.mat("RedSparkle", tex="skins/redsparkle_1.png", metal=0.55, rough=0.32, coat=1.0, coat_rough=0.04, bump=0.3)
 if SKIN == "pearloid": M["walnut"] = S.mat("Pearloid", tex="skins/pearloid_1.png", rough=0.25, coat=1.0, coat_rough=0.05, bump=0.05)
 if SK["hw"]: M["chrome"] = S.mat("Brass", base=SK["hw"], metal=1.0, rough=0.12)
-M["cream_knob"] = S.mat("CreamKnob", tex="cream_bakelite_1.png", rough=0.3, coat=0.5, coat_rough=0.15, sat=1.0, tint=(0.86, 0.76, 0.6))
-M["black_knob"] = S.mat("BlackKnob", base=(0.025, 0.024, 0.024), rough=0.3, metal=0.0)
-M["knob_skirt"] = S.mat("KnobSkirt", base=(0.03, 0.028, 0.027), rough=0.35)
-M["ptr_dark"] = S.mat("PtrDark", base=(0.02, 0.015, 0.012), rough=0.5)
-M["ptr_light"] = S.mat("PtrLight", base=(0.9, 0.86, 0.78), rough=0.5)
+KL.materials(S, M)
 M["panel"] = S.mat("BlackPanel", tex="black_panel_1.png", rough=0.6, metal=0.2)
 M["cream_face"] = S.mat("CreamFace", tex="../brand/cream_powdercoat_1.png", rough=0.65, sat=1.0, tint=(1.0, 0.86, 0.66))
 _cf = M["cream_face"].node_tree; _b = [n for n in _cf.nodes if n.type == "BSDF_PRINCIPLED"][0]
@@ -186,27 +182,6 @@ def screw(px, py):
     o = S.cyl("Screw", 5 * k, 2 * k, c, (0, 0, 0), M["chrome"], ui, verts=24, bevel=1.2 * k); link(o); o.location = c
     s = S.box("Slot", (7 * k, 1.2 * k, 1 * k), c + Vector((0, 0, 1.2 * k)), M["print_dark"], ui); link(s); s.location = c + Vector((0, 0, 1.2 * k)); s.rotation_euler = (0, 0, 0.6)
 
-def knob_mesh(name, R, Hh, flutes=0, depth=0.0, sharp=4.0):
-    n = max(96, flutes * 10)
-    bm = bmesh.new()
-    rings = [(0.0, 1.0, 1.0), (0.80, 1.0, 1.0), (0.90, 0.97, 0.8), (0.96, 0.9, 0.5), (1.0, 0.78, 0.2), (1.02, 0.55, 0.0)]
-    rv = []
-    for z, sc_, fl in rings:
-        ring = []
-        for i in range(n):
-            t = 2 * math.pi * i / n
-            r = R * sc_
-            if flutes: r -= R * depth * fl * max(0.0, math.cos(flutes * t)) ** sharp
-            ring.append(bm.verts.new((r * math.cos(t), r * math.sin(t), z * Hh)))
-        rv.append(ring)
-    for a_, b_ in zip(rv, rv[1:]):
-        for i in range(n):
-            bm.faces.new((a_[i], a_[(i + 1) % n], b_[(i + 1) % n], b_[i]))
-    c = bm.verts.new((0, 0, 1.03 * Hh))
-    for i in range(n): bm.faces.new((rv[-1][i], rv[-1][(i + 1) % n], c))
-    me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
-    for p in me.polygons: p.use_smooth = True
-    return me
 PANEL_Z = 12.4   # px: front face of the deck panel
 def shadow_mat(name):
     m = bpy.data.materials.get(name)
@@ -223,31 +198,28 @@ def drop(px, py, wpx, hpx, kind="round", dx=6, dy=10, z=PANEL_Z + 0.1):
     o = plane(px + dx - wpx / 0.6 / 2, py + dy - hpx / 0.6 / 2, px + dx + wpx / 0.6 / 2, py + dy + hpx / 0.6 / 2, shadow_mat("shadow_" + kind), z=z)
     return o
 
+KNOBS = []    # (style, px, py, rpx, root, drop) for STRIP / NO_KNOBS modes
 def knob(px, py, rpx, ang, style):
+    """ang = degrees clockwise from 12 o'clock. style: dome | scallop | space (knob_lib) or 'trim'."""
+    rpx *= float(os.environ.get("KNOB_RSCALE_" + style.upper(), "1"))   # fitting hook
     c, k = cpx(px, py, 0)
     R = rpx * k
-    drop(px, py, rpx * 2.5, rpx * 2.5, "round", dx=rpx * 0.18, dy=rpx * 0.32)
-    root = bpy.data.objects.new("Knob", None); ui.objects.link(root); root.parent = cam
-    def body(name, me, mat, z=0.0):
-        o = bpy.data.objects.new(name, me); ui.objects.link(o); me.materials.append(mat); o.parent = root; o.location.z = z; return o
-    if style == "cream":      # classic (as in #353): plain cream bakelite dome on a dark skirt
-        sk = S.cyl("Skirt", R * 1.18, R * 0.22, (0, 0, R * 0.11), (0, 0, 0), M["knob_skirt"], ui, verts=96, bevel=R * 0.06); sk.parent = root
-        body("KnobBody", knob_mesh("cream", R, R * 0.75), M["cream_knob"], R * 0.2)
-        pm = M["ptr_dark"]; top = R * 0.2 + R * 0.77; plen, pw = 0.55, 0.11; pc = 0.45
-    elif style == "fluted":   # classic big fluted cream
-        body("KnobBody", knob_mesh("fluted", R, R * 0.8, flutes=7, depth=0.13, sharp=2.0), M["cream_knob"])
-        pm = M["ptr_dark"]; top = R * 0.82; plen, pw = 0.55, 0.11; pc = 0.45
-    else:                     # classic black knurled
-        body("KnobBody", knob_mesh("knurl", R, R * 0.75, flutes=40, depth=0.04, sharp=1.0), M["black_knob"])
-        pm = M["ptr_light"]; top = R * 0.77; plen, pw = 0.55, 0.11; pc = 0.45
-    t = math.radians(ang)
-    p_ = S.box("Pointer", (R * pw, R * plen, R * 0.03), (0, 0, 0), pm, ui); p_.parent = root
-    p_.location = (-math.sin(t) * R * pc, math.cos(t) * R * pc, top); p_.rotation_euler = (0, 0, t)
-    for i in range(11):       # printed tick scale on the panel face
-        tt = math.radians(-135 + 27 * i); r0, r1 = R * 1.36, R * (1.62 if i in (0, 5, 10) else 1.5)
-        tk = S.box("Tick", (R * 0.05, r1 - r0, 0.4 * k), (0, 0, 0), M["print_cream"], ui); tk.parent = root
-        tk.location = (-math.sin(tt) * (r0 + r1) / 2, math.cos(tt) * (r0 + r1) / 2, 0.3 * k); tk.rotation_euler = (0, 0, tt)
-    root.location = c + Vector((0, 0, PANEL_Z * K))
+    z = 6.0 if style == "trim" else PANEL_Z      # trim sits on the cream top bar (front face at 6 px)
+    d = drop(px, py, rpx * 2.5, rpx * 2.5, "round", dx=rpx * 0.18, dy=rpx * 0.32, z=z + 0.1)
+    root = KL.build(ui, M, R, "space" if style == "trim" else style, parent=cam); KL.spin(root, ang)
+    KNOBS.append((style, px, py, rpx, root, d))
+    tick_root = bpy.data.objects.new("TickRoot", None); ui.objects.link(tick_root); tick_root.parent = cam
+    tick_root.location = c + Vector((0, 0, z * K))   # printed on the flat panel: never tilted with the knob
+    if style != "trim":
+        for i in range(11):   # printed tick scale on the panel face
+            tt = math.radians(-135 + 27 * i); r0 = R * 1.1 + 5 * k; r1 = r0 + (9 if i == 5 else 7) * k
+            tk = S.box("Tick", (2.2 * k, r1 - r0, 0.4 * k), (0, 0, 0), M["print_cream"], ui); tk.parent = tick_root
+            tk.location = (-math.sin(tt) * (r0 + r1) / 2, math.cos(tt) * (r0 + r1) / 2, 0.3 * k); tk.rotation_euler = (0, 0, tt)
+    # head-on: put the knob on its own sight line and aim its axis at the camera, so no knob shows a side wall
+    # from perspective parallax and each projects centred on its layout position (and on its printed ticks)
+    dpt = OD - z * K
+    root.location = Vector((c.x * dpt / OD, c.y * dpt / OD, -dpt))
+    root.rotation_mode = "QUATERNION"; root.rotation_quaternion = Vector((0, 0, 1)).rotation_difference((-root.location).normalized())
     return root
 
 def pedal_block(cx, py0, py1, w, on):
@@ -285,7 +257,7 @@ def led(px, py, on):
     l = S.cyl("LED", 5.5 * k, 4 * k, (0, 0, 0), (0, 0, 0), M["led_on"] if on else M["led_off"], ui, verts=32, bevel=2 * k); link(l); l.location = c + Vector((0, 0, (PANEL_Z + 3.5) * k))
 
 # ---------------- top bar (no SAVE) ----------------
-box(0, 0, 1600, 97, M["cream_face"], depth=6, bevel=0)
+TOPBAR = box(0, 0, 1600, 97, M["cream_face"], depth=6, bevel=0)
 hline(0, 1600, 97.5, M["rule_dark"], w=1.6, z=7)
 text("NORTHERN VALLEY AUDIO", X(785), 19, 16, M["print_dark"], track=0.75)
 text("Pedal Steel", X(40), 47, 58, M["print_dark"], track=-0.02, align="LEFT", font=r"C:\Windows\Fonts\georgia.ttf")
@@ -299,29 +271,29 @@ for i in range(14):
     x0 = X(1238) + i * 10.4; box(x0, 45, x0 + 7.6, 61, M["meter_on"] if i < 10 else M["meter_off"], depth=2, bevel=1, z=7)
 vline(X(1410), 26, 80, M["rule_dark"], z=7)
 text("TRIM", X(1457), 18, 15, M["print_dark"], track=0.3)
-knob(X(1457), 60, 18, 0, "knurl")
+knob(X(1457), 60, 18, 0, "trim")
 text("0.0 dB", X(1523), 53, 18, M["print_dark"], track=0.05)
 
 # ---------------- control deck ----------------
 box(X(10), 672, X(1558), 985, M["ui_walnut"], depth=10, bevel=16, z=0)
-box(X(22), 684, X(1546), 973, M["panel"], depth=12, bevel=10, z=0)
+PANEL = box(X(22), 684, X(1546), 973, M["panel"], depth=12, bevel=10, z=0)
 for sx, sy in ((X(40), 698), (X(1528), 698), (X(40), 946), (X(1528), 946)): screw(sx, sy)
 for name, cx, rl in (("VOICE", X(198), 120), ("FEEL", X(502), 125), ("SPACE", X(795), 117)):
-    text(name, cx, 705, 21, M["print_cream"], track=0.3)
-    hline(cx - rl, cx - 44, 705, M["print_cream"], w=1.2, z=14); hline(cx + 44, cx + rl, 705, M["print_cream"], w=1.2, z=14)
+    text(name, cx, 705, 27, M["print_cream"], track=0.22)
+    hline(cx - rl, cx - 52, 705, M["print_cream"], w=1.2, z=14); hline(cx + 52, cx + rl, 705, M["print_cream"], w=1.2, z=14)
 for x in (X(350), X(655), X(945), X(1235)): vline(x, 700, 876, M["print_cream"], w=1.2, z=14)
-for name, cx, val, r, ang, st in (("TONE", X(130), "65 %", 30, 60, "cream"), ("PICK", X(265), "40 %", 30, -35, "cream"),
-                                  ("GLIDE", X(433), "145 ms", 40, 35, "fluted"), ("SWELL", X(572), "35 %", 40, 25, "fluted"),
-                                  ("ECHO", X(733), "18 %", 34, -105, "knurl"), ("REVERB", X(860), "28 %", 34, -75, "knurl")):
+for name, cx, val, r, ang, st in (("TONE", X(130), "65 %", 29.0, 35, "dome"), ("PICK", X(265), "40 %", 29.0, -50, "dome"),
+                                  ("GLIDE", X(433), "145 ms", 44.4, 30, "scallop"), ("SWELL", X(572), "35 %", 44.4, 25, "scallop"),
+                                  ("ECHO", X(733), "18 %", 38, -100, "space"), ("REVERB", X(860), "28 %", 38, -68, "space")):
     knob(cx, 777, r, ang, st)
-    text(name, cx, 835, 19, M["print_cream"], track=0.15, z=14)
-    pill(cx, 863, 72 if "ms" in val else 64, 25, M["print_cream"], line=1.3, z=14)
-    text(val, cx, 863, 18, M["print_cream"], track=0.02, z=14)
+    text(name, cx, 835, 25, M["print_cream"], track=0.1, z=14)
+    pill(cx, 864, 84 if "ms" in val else 72, 29, M["print_cream"], line=1.4, z=14)
+    text(val, cx, 864, 22, M["print_cream"], track=0.02, z=14)
 for lab, cx, on in (("A", X(1005), True), ("B", X(1092), True), ("C", X(1178), False)):
-    text(lab, cx, 705, 22, M["print_cream"], track=0, z=14); led(cx, 735, on)
+    text(lab, cx, 705, 27, M["print_cream"], track=0, z=14); led(cx, 735, on)
     pedal_block(cx, 757, 866, 64, on)
 for lab, cx in (("LKL", X(1328), ), ("LKR", X(1453), )) if False else (("LKL", X(1328)), ("LKR", X(1453))):
-    text(lab, cx, 705, 22, M["print_cream"], track=0.05, z=14); lever(cx, 742)
+    text(lab, cx, 705, 27, M["print_cream"], track=0.05, z=14); lever(cx, 742)
 hline(X(55), X(1515), 893, M["print_cream"], w=1.0, z=14)
 text("MODE", X(127), 930, 18, M["print_cream"], track=0.3, z=14)
 box(X(186), 913, X(460), 948, M["keycap"], depth=4, bevel=5, z=13); pill(X(323), 930.5, X(460) - X(186), 35, M["print_cream"], line=1.2, z=16)
@@ -349,6 +321,34 @@ area((0.0, 1.6, 2.0), 260, 1.4, (0, 0, 0.6), (1, 0.8, 0.6))    # rim on chrome
 lu = bpy.data.lights.new("UI", "AREA"); lu.energy = 0.32; lu.size = 0.7; lu.color = (1, 0.9, 0.78)
 lo = bpy.data.objects.new("UILight", lu); coll.objects.link(lo); lo.parent = cam; lo.location = (0.0, 0.1, -0.1)
 lo.rotation_euler = (Vector((0, 0, -OD)) - Vector(lo.location)).to_track_quat("-Z", "Y").to_euler()
+# Deck knobs: lit from above like the approved screen (bright face, darker lower rim) by a knob-only key light
+# (Cycles light linking); the flat UI light is excluded from them so they don't read flat.
+KB = bpy.data.collections.new("KnobBodiesIn"); KBX = bpy.data.collections.new("KnobBodiesEx")
+for st_, px_, py_, rpx_, root_, d_ in KNOBS:
+    if st_ == "trim": continue
+    for o in root_.children_recursive:
+        if o.type == "MESH" and not o.name.startswith("Tick"): KB.objects.link(o); KBX.objects.link(o)
+for co in KBX.collection_objects: co.light_linking.link_state = "EXCLUDE"
+for o in list(coll.objects):      # room lights + flat UI light: not on the deck knobs
+    if o.type == "LIGHT": o.light_linking.receiver_collection = KBX
+KEY_E = float(os.environ.get("KNOB_KEY", "0.05")); KEY_EL = float(os.environ.get("KNOB_KEY_EL", "18"))
+FILL_E = float(os.environ.get("KNOB_FILL", "0.003"))
+def knob_light(name, energy, el, d_px, sx, sy, col, ax=500, ay=777, recv=None):
+    l = bpy.data.lights.new(name, "AREA"); l.shape = "RECTANGLE"; l.size = sx * K; l.size_y = sy * K; l.energy = energy; l.color = col
+    o = bpy.data.objects.new(name, l); coll.objects.link(o); o.parent = cam
+    aim = cpx(ax, ay, PANEL_Z * K)[0]; e_ = math.radians(el); d = d_px * K
+    o.location = aim + Vector((0, math.cos(e_) * d, math.sin(e_) * d))
+    o.rotation_euler = (aim - o.location).to_track_quat("-Z", "X").to_euler()
+    o.light_linking.receiver_collection = recv or KB; return o
+for st_, px_, py_, rpx_, root_, d_ in KNOBS:     # identical soft top strip centred on each deck knob, linked to it alone
+    if st_ == "trim": continue
+    own = bpy.data.collections.new("KnobOwn")
+    for o in root_.children_recursive:
+        if o.type == "MESH" and not o.name.startswith("Tick"): own.objects.link(o)
+    el_ = float(os.environ.get("KNOB_KEY_EL_" + st_.upper(), {"dome": 30}.get(st_, KEY_EL)))
+    e_ = float(os.environ.get("KNOB_KEY_" + st_.upper(), {"dome": 0.038, "space": 0.018}.get(st_, KEY_E)))
+    knob_light("KnobKey", e_, el_, 260, 1000, 90, (1, 0.93, 0.84), px_, py_, own)
+knob_light("KnobFill", FILL_E, 88, 400, 1200, 400, (1, 0.95, 0.9))         # weak frontal fill
 w = bpy.data.worlds.new("W"); sc.world = w; w.use_nodes = True; nt = w.node_tree
 env = nt.nodes.new("ShaderNodeTexEnvironment"); env.image = bpy.data.images.load(r"C:/Users/Joshua/Documents/farwilder/experiments/character_lab/downloads/hdri/studio_small_09_4k.hdr")
 nt.links.new(env.outputs[0], nt.nodes["Background"].inputs[0]); nt.nodes["Background"].inputs[1].default_value = 0.25
@@ -358,5 +358,36 @@ p = bpy.context.preferences.addons["cycles"].preferences; p.compute_device_type 
 for dv in p.devices: dv.use = dv.type == "OPTIX"
 sc.view_settings.view_transform = "AgX"; sc.view_settings.look = "AgX - Medium High Contrast"; sc.view_settings.exposure = -0.7
 sc.render.filepath = OUT
+def spin_objs(root): return [o for o in root.children_recursive if o.type == "MESH" and not o.name.startswith("Tick")]
+if os.environ.get("NO_KNOBS"):   # plugin background plate: ticks and knob shadows stay, knob bodies come from strips
+    for st, px, py, rpx, root, d in KNOBS:
+        for o in spin_objs(root): o.visible_camera = False   # still casts its shadow and lights the panel
+STRIP = os.environ.get("STRIP")   # "style:frames": filmstrip of the first knob of that style, knob only (shadow is in the plate)
+if STRIP:
+    st, nfr = STRIP.split(":")[0], int(STRIP.split(":")[1])
+    st_, px, py, rpx, root, d = [kk for kk in KNOBS if kk[0] == st][0]
+    keep = set(spin_objs(root))
+    for o in sc.objects:
+        if o.type in ("MESH", "CURVE", "FONT") and o not in keep: o.visible_camera = False   # still seen in reflections
+    sc.render.film_transparent = True; sc.render.image_settings.color_mode = "RGBA"
+    # integer-pixel border (at render scale) so every frame is the same even size, centred on the knob
+    hw = math.ceil(rpx * 1.32 * RES); cx_, cy_ = round(px * RES), round(py * RES)
+    os.environ["BORDER"] = "%f,%f,%f,%f" % ((cx_ - hw) / RES, (cy_ - hw) / RES, (cx_ + hw) / RES, (cy_ + hw) / RES)
+    import json
+    json.dump(dict(style=st, frames=nfr, frame_px=2 * hw, scale=RES, origin_px=[(cx_ - hw) / RES, (cy_ - hw) / RES],
+                   centre_px=[cx_ / RES, cy_ / RES]), open(OUT + ".json", "w"))
+    spin = [c for c in root.children_recursive if c.name.startswith("Spin")][0]
+    sc.frame_start, sc.frame_end = 0, nfr - 1
+    for f in range(nfr):      # key every frame so the angle is exactly linear whatever the interpolation
+        a_ = float(os.environ["STRIP_ANGLE"]) if os.environ.get("STRIP_ANGLE") else -135 + 270 * f / max(1, nfr - 1)
+        KL.spin(root, a_); spin.keyframe_insert("rotation_euler", index=2, frame=f)
+if os.environ.get("BORDER"):   # px box "x0,y0,x1,y1" in 1600x1000 space: render only that region, cropped
+    x0, y0, x1, y1 = (float(v) for v in os.environ["BORDER"].split(","))
+    sc.render.use_border = True; sc.render.use_crop_to_border = True
+    sc.render.border_min_x, sc.render.border_max_x = x0 / W_PX, x1 / W_PX
+    sc.render.border_min_y, sc.render.border_max_y = 1 - y1 / H_PX, 1 - y0 / H_PX
+if STRIP:
+    sc.render.filepath = OUT + "_####"
+    bpy.ops.render.render(animation=True); raise SystemExit
 bpy.ops.render.render(write_still=True)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.splitext(OUT)[0] + ".blend")
