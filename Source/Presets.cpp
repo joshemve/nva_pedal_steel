@@ -655,6 +655,228 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.outputLevel   = 0.4f;
                 return p;
             }()
+        },
+        {
+            "19 - Apollo Ascent Shimmer",
+            "Ambient / Space",
+            "Daniel Lanois & Brian Eno '83 homage: velvet Goodrich volume-pedal chord swells into a dual-grain +12st Eventide octave regenerator and 2.35 kHz-damped Lexicon cathedral hall.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3; // Montana Lush Swell
+                p.playMode      = 2; // Lush Swell Pad
+                p.fxCharacter   = 7; // Apollo Shimmer (+12st Dual-Grain Octave Halo)
+                p.volumePedal   = 0.94f;
+                p.scoopDepth    = 0.72f;
+                p.pedalSpeed    = 255.0f;
+                p.barGlide      = 210.0f;
+                p.barSlideNoise = 0.14f;
+                p.vibratoDepth  = 0.36f;
+                p.vibratoRate   = 4.55f;
+                p.autoSwell     = 0.90f;
+                p.swellTime     = 360.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.08f;
+                p.pickupPos     = 2.75f;
+                p.coilPeakFreq  = 1880.0f;
+                p.coilResonance = 0.56f;
+                p.sustainTime   = 11.0f;
+                p.cabinetDrop   = 0.48f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.18f;
+                p.toneWarmth    = 0.74f;
+                p.delayMix      = 0.22f;
+                p.delayTime     = 640.0f; // 1/4 synced halo
+                p.tempoSync     = true;
+                p.reverbMix     = 0.62f;
+                p.reverbDecay   = 0.90f;
+                p.outputLevel   = 0.4f;
+                return p;
+            }()
+        },
+        {
+            "20 - Starlight Palm Chimes",
+            "Bell Harmonics",
+            "Authentic 12th-fret right-palm damped steel harmonics (Buddy Emmons / Space Cowboy): soft flesh-thumb attack, crystalline octave bell overtones that bend through Pedals A & B, and 1/8D tape halo.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 5; // Palm Chime Harmonics
+                p.fxCharacter   = 0;
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.36f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 135.0f;
+                p.barSlideNoise = 0.18f;
+                p.vibratoDepth  = 0.30f;
+                p.vibratoRate   = 4.95f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 85.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.44f;
+                p.pickupPos     = 2.38f;
+                p.coilPeakFreq  = 1780.0f;
+                p.coilResonance = 0.48f;
+                p.sustainTime   = 9.8f;
+                p.cabinetDrop   = 0.36f;
+                p.stereoWidth   = 1.26f;
+                p.ampDrive      = 0.14f;
+                p.toneWarmth    = 0.68f;
+                p.delayMix      = 0.24f;
+                p.delayTime     = 500.0f; // 1/8D synced
+                p.tempoSync     = true;
+                p.reverbMix     = 0.50f;
+                p.reverbDecay   = 0.80f;
+                p.outputLevel   = 0.8f;
+                return p;
+            }()
+        },
+        {
+            "21 - Sacred Gospel Leslie",
+            "Soul / Sacred Steel",
+            "Joyous Robert Randolph & Abbey Road rotary steel: pushed 6550 tube preamp into an 800 Hz crossover spinning a 3D Doppler phenolic horn & opposing wooden bass drum.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 2; // Mikey's Grit Tweed
+                p.playMode      = 1; // Crying Lead Gliss
+                p.fxCharacter   = 8; // Leslie 147 Rotary
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.68f;
+                p.pedalSpeed    = 115.0f;
+                p.barGlide      = 115.0f;
+                p.barSlideNoise = 0.36f;
+                p.vibratoDepth  = 0.24f;
+                p.vibratoRate   = 5.10f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 80.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.76f;
+                p.pickupPos     = 2.12f;
+                p.coilPeakFreq  = 2160.0f;
+                p.coilResonance = 0.72f;
+                p.sustainTime   = 8.4f;
+                p.cabinetDrop   = 0.42f;
+                p.stereoWidth   = 1.22f;
+                p.ampDrive      = 0.62f;
+                p.toneWarmth    = 0.54f;
+                p.delayMix      = 0.00f;
+                p.delayTime     = 340.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.30f;
+                p.reverbDecay   = 0.56f;
+                p.outputLevel   = -0.6f;
+                return p;
+            }()
+        },
+        {
+            "22 - Blown Console Reverb-X",
+            "Alt-Indie / Textural",
+            "Intimate Bon Iver & Mk.gee studio steel: upfront FET dry string ducks a dense live room that swells up through warm silicon-diode console saturation and gates on silence.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 1; // Crying Lead Gliss
+                p.fxCharacter   = 9; // Gated Diode Bloom
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.58f;
+                p.pedalSpeed    = 145.0f;
+                p.barGlide      = 150.0f;
+                p.barSlideNoise = 0.38f;
+                p.vibratoDepth  = 0.34f;
+                p.vibratoRate   = 4.85f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.70f;
+                p.pickupPos     = 2.30f;
+                p.coilPeakFreq  = 1980.0f;
+                p.coilResonance = 0.66f;
+                p.sustainTime   = 6.2f;
+                p.cabinetDrop   = 0.42f;
+                p.stereoWidth   = 1.20f;
+                p.ampDrive      = 0.38f;
+                p.toneWarmth    = 0.66f;
+                p.delayMix      = 0.06f;
+                p.delayTime     = 112.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.22f;
+                p.reverbDecay   = 0.48f;
+                p.outputLevel   = -1.0f;
+                return p;
+            }()
+        },
+        {
+            "23 - Western Swing C6th Lounge",
+            "Vintage Swing / Jazz",
+            "Back-neck D-10 C6th copedent (Speedy West / Buddy Emmons): smoky 6/9-to-dominant-9th pedal pulls, woody 325 Hz octal-tube Tweed Pro punch, and bouncy jazz swing.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 4; // Western Swing C6th Back-Neck
+                p.playMode      = 0;
+                p.fxCharacter   = 0;
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.34f;
+                p.pedalSpeed    = 105.0f;
+                p.barGlide      = 85.0f;
+                p.barSlideNoise = 0.24f;
+                p.vibratoDepth  = 0.30f;
+                p.vibratoRate   = 5.35f;
+                p.autoSwell     = 0.04f;
+                p.swellTime     = 65.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.78f;
+                p.pickupPos     = 2.42f;
+                p.coilPeakFreq  = 1720.0f;
+                p.coilResonance = 0.58f;
+                p.sustainTime   = 4.4f;
+                p.cabinetDrop   = 0.38f;
+                p.stereoWidth   = 0.88f;
+                p.ampDrive      = 0.38f;
+                p.toneWarmth    = 0.72f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 96.0f; // Tight Texas swing room slap
+                p.tempoSync     = false;
+                p.reverbMix     = 0.20f;
+                p.reverbDecay   = 0.38f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "24 - Paris Texas Baritone",
+            "Cinematic Score",
+            "Lonely Mojave desert baritone steel (Ry Cooder / Santaolalla): 26.75-inch heavy wound scale, -12st acoustic resonator body gravity, rich bar-winding scrape, and vast canyon echo.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 5; // Baritone Canyon B6
+                p.playMode      = 1; // Crying Lead Gliss
+                p.fxCharacter   = 0;
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.54f;
+                p.pedalSpeed    = 175.0f;
+                p.barGlide      = 195.0f;
+                p.barSlideNoise = 0.58f;
+                p.vibratoDepth  = 0.46f;
+                p.vibratoRate   = 4.65f;
+                p.autoSwell     = 0.10f;
+                p.swellTime     = 95.0f;
+                p.sampleBlend   = 0.82f;
+                p.pickSnap      = 0.68f;
+                p.pickupPos     = 2.52f;
+                p.coilPeakFreq  = 1680.0f;
+                p.coilResonance = 0.58f;
+                p.sustainTime   = 9.6f;
+                p.cabinetDrop   = 0.50f;
+                p.stereoWidth   = 1.28f;
+                p.ampDrive      = 0.38f;
+                p.toneWarmth    = 0.74f;
+                p.delayMix      = 0.26f;
+                p.delayTime     = 440.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.52f;
+                p.reverbDecay   = 0.84f;
+                p.outputLevel   = -0.4f;
+                return p;
+            }()
         }
     };
     return kPresets;

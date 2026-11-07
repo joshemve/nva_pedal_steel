@@ -49,11 +49,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::presetStyle, 1 }, "Steel Voice Style",
-        juce::StringArray{ "Sweet Georgia E9", "Hedonist Bootgaze", "Mikey's Grit Tweed", "Montana Lush Swell" }, 0));
+        juce::StringArray{ "Sweet Georgia E9", "Hedonist Bootgaze", "Mikey's Grit Tweed", "Montana Lush Swell", "Western Swing C6th", "Baritone Canyon B6" }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::playMode, 1 }, "Performance Mode",
-        juce::StringArray{ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent", "Studio Phrase Licks" }, 0));
+        juce::StringArray{ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent", "Studio Phrase Licks", "Palm Chime Harmonics" }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::pedalA, 1 }, "Pedal A (B->C# +2)",
@@ -176,7 +176,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::fxCharacter, 1 }, "Analog Character",
-        juce::StringArray{ "Studio Standard", "4-Track Cassette", "Ribbon Opto Velvet", "Analog Phaser", "Spring + Bias Trem", "Underwater R&B", "Vintage Warble" }, 0));
+        juce::StringArray{
+            "Studio Standard",
+            "4-Track Cassette",
+            "Ribbon Opto Velvet",
+            "Analog Phaser",
+            "Spring + Bias Trem",
+            "Underwater R&B",
+            "Vintage Warble",
+            "Apollo Shimmer",
+            "Leslie 147 Rotary",
+            "Gated Diode Bloom"
+        }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::outputLevel, 1 }, "Output Level",
@@ -446,7 +457,7 @@ bool PedalSteelAudioProcessor::saveUserPreset(const juce::File& file) {
     if (xml == nullptr) return false;
 
     const juce::String cleanName = file.getFileNameWithoutExtension().trim();
-    xml->setAttribute("pluginVersion", "1.1.0");
+    xml->setAttribute("pluginVersion", "1.2.0");
     xml->setAttribute("presetName", cleanName);
     xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
 

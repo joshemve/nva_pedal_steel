@@ -38,9 +38,9 @@ namespace ParamIDs {
 }
 
 struct PedalSteelParams {
-    int presetStyle     = 0;     // 0: Sweet Georgia E9, 1: Hedonist Bootgaze, 2: Mikey's Grit Tweed, 3: Montana Swell
-    int playMode        = 0;     // 0: Smart Auto-Pedal E9, 1: Crying Lead Gliss, 2: Lush Swell Pad, 3: Manual Copedent, 4: Studio Phrase Licks
-    int fxCharacter     = 0;     // 0: Studio Standard, 1: 4-Track Cassette, 2: Ribbon Opto Velvet, 3: Analog Phaser, 4: Spring + Bias Trem, 5: Underwater R&B, 6: Vintage Warble
+    int presetStyle     = 0;     // 0: Sweet Georgia E9, 1: Hedonist Bootgaze, 2: Mikey's Grit Tweed, 3: Montana Swell, 4: Western Swing C6th, 5: Baritone Canyon B6
+    int playMode        = 0;     // 0: Smart Auto-Pedal E9, 1: Crying Lead Gliss, 2: Lush Swell Pad, 3: Manual Copedent, 4: Studio Phrase Licks, 5: Palm Chime Harmonics
+    int fxCharacter     = 0;     // 0: Studio Standard, 1..6: Cassette/Velvet/Phaser/Spring/R&B/Warble, 7: Apollo Shimmer, 8: Leslie 147 Rotary, 9: Gated Diode Bloom
     float pedalA        = 0.0f;  // 0..1 (+2 semitones on strings 5 & 10)
     float pedalB        = 0.0f;  // 0..1 (+1 semitone on strings 3 & 6)
     float pedalC        = 0.0f;  // 0..1 (+2 semitones on strings 4 & 5)

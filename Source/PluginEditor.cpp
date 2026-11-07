@@ -291,10 +291,20 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
     g.setGradientFill(chromeGrad);
     g.fillRoundedRectangle(changerRect, 3.0f);
 
-    static const char* kStringNames[10] = {
+    static const char* kStringNamesE9[10] = {
         "1 F#4", "2 D#4", "3 G#4 (B)", "4 E4 (C/LK)", "5 B3 (A)",
         "6 G#3 (B)", "7 F#3", "8 E3 (LK)", "9 D3", "10 B2 (A)"
     };
+    static const char* kStringNamesC6[10] = {
+        "1 G4", "2 E4 (P6)", "3 C4 (P5)", "4 A3 (P7)", "5 G3 (P6)",
+        "6 E3 (P6)", "7 C3 (P5)", "8 A2 (P7)", "9 F2", "10 C2"
+    };
+    static const char* kStringNamesB6[10] = {
+        "1 C#4", "2 A#3", "3 D#4 (B)", "4 B3 (C/LK)", "5 F#3 (A)",
+        "6 D#3 (B)", "7 C#3", "8 B2 (LK)", "9 A2", "10 F#2 (A)"
+    };
+    const char* const* kStringNames = (status.presetStyle == 4) ? kStringNamesC6
+                                    : ((status.presetStyle == 5) ? kStringNamesB6 : kStringNamesE9);
     const float strTop = neckArea.getY() + 18.0f;
     const float strBot = neckArea.getBottom() - 20.0f;
     const float strStep = (strBot - strTop) / 9.0f;
@@ -341,8 +351,8 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
         g.drawRoundedRectangle(barRect, 6.0f, 1.5f);
     }
 
-    // Interactive Floor Pedals & Knee Levers Strip
-    static const char* kPedalTitles[6] = {
+    // Interactive Floor Pedals & Knee Levers Strip (adapts labels when Back-Neck C6th is selected!)
+    static const char* kPedalTitlesE9[6] = {
         "PEDAL A (+2 B->C#)",
         "A + B SLANT (I->IV)",
         "PEDAL B (+1 G#->A)",
@@ -350,6 +360,15 @@ void FretboardVisualizer::paint(juce::Graphics& g) {
         "LKL (+1 E->F)",
         "LKR (-1 E->D#)"
     };
+    static const char* kPedalTitlesC6[6] = {
+        "PEDAL 5 (+2 C->D)",
+        "P5 + P7 (C6->C9)",
+        "PEDAL 7 (+1 A->Bb)",
+        "PEDAL 6 (-1 E->Eb)",
+        "LKL (+1 C->C#)",
+        "LKR (-1 C->B)"
+    };
+    const char* const* kPedalTitles = (status.presetStyle == 4) ? kPedalTitlesC6 : kPedalTitlesE9;
     const float pedalValues[6] = {
         status.pedalA,
         std::min(status.pedalA, status.pedalB),
@@ -448,14 +467,28 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     addAndMakeVisible(presetBox);
 
     // Voice Style, Performance Mode & Analog Character ComboBoxes
-    styleBox.addItemList({ "Sweet Georgia E9", "Hedonist Bootgaze", "Mikey's Grit Tweed", "Montana Lush Swell" }, 1);
-    styleBox.setTooltip("Selects 44.1 kHz Stereo Studio Pedal-Steel DNA & Amp Voicing");
+    styleBox.addItemList({
+        "Sweet Georgia E9",
+        "Hedonist Bootgaze",
+        "Mikey's Grit Tweed",
+        "Montana Lush Swell",
+        "Western Swing C6th",
+        "Baritone Canyon B6"
+    }, 1);
+    styleBox.setTooltip("Selects 10-String Neck Voicing & Studio Pedal-Steel DNA (E9th Front-Neck, Back-Neck C6th Swing, or Baritone Canyon B6)");
     addAndMakeVisible(styleBox);
     styleAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::presetStyle, styleBox);
 
-    modeBox.addItemList({ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent", "Studio Phrase Licks" }, 1);
-    modeBox.setTooltip("Performance Mode (Choose 'Studio Phrase Licks' to transpose real studio licks across the keyboard, or trigger licks anytime on C1-G1)");
+    modeBox.addItemList({
+        "Smart Auto-Pedal E9",
+        "Crying Lead Gliss",
+        "Lush Swell Pad",
+        "Manual Copedent",
+        "Studio Phrase Licks",
+        "Palm Chime Harmonics"
+    }, 1);
+    modeBox.setTooltip("Performance Mode (including 12th-Fret 'Palm Chime Harmonics' & Chromatic 'Studio Phrase Licks')");
     addAndMakeVisible(modeBox);
     modeAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::playMode, modeBox);
@@ -467,9 +500,12 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
         "Analog Phaser",
         "Spring + Bias Trem",
         "Underwater R&B",
-        "Vintage Warble"
+        "Vintage Warble",
+        "Apollo Shimmer",
+        "Leslie 147 Rotary",
+        "Gated Diode Bloom"
     }, 1);
-    charBox.setTooltip("Analog Character Circuit: Mix & match Tascam 4-Track Cassette, Coles Ribbon + LA-2A, 4-Stage Phase 90, Spring + Bias Trem, Underwater R&B, or VB-2 Vintage Warble onto any preset!");
+    charBox.setTooltip("Analog Character Circuit: Cassette, Ribbon+LA-2A, Phase 90, Spring+Trem, Underwater R&B, VB-2 Warble, Apollo +12st Shimmer, Leslie 147, or Gated Diode Bloom!");
     addAndMakeVisible(charBox);
     charAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::fxCharacter, charBox);
@@ -611,9 +647,9 @@ void PedalSteelAudioProcessorEditor::refreshVisualizer() {
 void PedalSteelAudioProcessorEditor::rebuildPresetMenu() {
     presetBox.clear(juce::dontSendNotification);
     auto* menu = presetBox.getRootMenu();
-    menu->addSectionHeader("Factory Presets (18)");
-
     const auto& presets = getPedalSteelPresets();
+    menu->addSectionHeader("Factory Presets (" + juce::String(presets.size()) + ")");
+
     for (int i = 0; i < static_cast<int>(presets.size()); ++i) {
         menu->addItem(i + 1, presets[static_cast<size_t>(i)].name);
     }
