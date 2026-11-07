@@ -503,9 +503,10 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
         "Vintage Warble",
         "Apollo Shimmer",
         "Leslie 147 Rotary",
-        "Gated Diode Bloom"
+        "Gated Diode Bloom",
+        "Standel 807 Chamber"
     }, 1);
-    charBox.setTooltip("Analog Character Circuit: Cassette, Ribbon+LA-2A, Phase 90, Spring+Trem, Underwater R&B, VB-2 Warble, Apollo +12st Shimmer, Leslie 147, or Gated Diode Bloom!");
+    charBox.setTooltip("Analog Character Circuit: Cassette, Ribbon+LA-2A, Phase 90, Spring+Trem, Underwater R&B, VB-2 Warble, Apollo Shimmer, Leslie 147, Diode Bloom, or Standel 807 Chamber!");
     addAndMakeVisible(charBox);
     charAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::fxCharacter, charBox);

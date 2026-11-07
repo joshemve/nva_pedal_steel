@@ -212,7 +212,7 @@ private:
         float process(float input, float amount);
     };
 
-    // First-Principles Modern Producer Analog Character Circuits (Modes 1..6; Mode 0 = bit-transparent bypass)
+    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..10; Mode 0 = bit-transparent bypass)
     struct ModernCharacterProcessor {
         std::vector<float> modBufL, modBufR;
         int modWritePos = 0;
@@ -231,6 +231,15 @@ private:
         double subPhasor = 0.0;
         float shimLpL = 0.0f, shimLpR = 0.0f;
         float gateEnv = 0.0f;
+
+        // 1965 Leslie 147 Dual-Motor Inertia, LR2 800 Hz Crossover & 3D Horn/Drum Beaming state
+        double hornRateHz = 0.78;
+        double drumRateHz = 0.66;
+        float xoverLp1L = 0.0f, xoverLp1R = 0.0f;
+        float xoverLp2L = 0.0f, xoverLp2R = 0.0f;
+        float hornBeamLpL = 0.0f, hornBeamLpR = 0.0f;
+        float drumBeamLpL = 0.0f, drumBeamLpR = 0.0f;
+        float leslieDcL = 0.0f, leslieDcR = 0.0f;
 
         // 4-stage Analog JFET Optical All-Pass Phaser state (Mode 3: Dark Side Phase Steel)
         std::array<float, 4> phaserStateL{}, phaserStateR{};
@@ -258,7 +267,7 @@ private:
         void applyModeCoeffs(double sr, int mode);
         int getCurrentMode() const { return currentMode; }
         float getWetMix() const { return (currentMode > 0) ? wetGain : 0.0f; }
-        void processSample(double sr, int desiredMode, double hostBpm, bool tempoSync,
+        void processSample(double sr, int desiredMode, double hostBpm, bool tempoSync, float pedalActivity,
                            float& ioL, float& ioR, float& outExtraRevL, float& outExtraRevR);
     };
 

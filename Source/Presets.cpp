@@ -733,37 +733,37 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "21 - Sacred Gospel Leslie",
             "Soul / Sacred Steel",
-            "Joyous Robert Randolph & Abbey Road rotary steel: pushed 6550 tube preamp into an 800 Hz crossover spinning a 3D Doppler phenolic horn & opposing wooden bass drum.",
+            "Authentic 1965 Leslie 147 Sacred Steel: dynamic 6550 push-pull tube amp, phase-coherent 800 Hz dividing network, Chorale-to-Tremolo dual-motor inertia, and directional horn beaming.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 2; // Mikey's Grit Tweed
+                p.presetStyle   = 0; // Full-range Studio E9th feeding the 6550 Leslie 147 amp cleanly!
                 p.playMode      = 1; // Crying Lead Gliss
-                p.fxCharacter   = 8; // Leslie 147 Rotary
+                p.fxCharacter   = 8; // Leslie 147 Rotary (Dual-Motor Chorale <-> Tremolo + Horn Beaming)
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.68f;
-                p.pedalSpeed    = 115.0f;
+                p.scoopDepth    = 0.62f;
+                p.pedalSpeed    = 120.0f;
                 p.barGlide      = 115.0f;
-                p.barSlideNoise = 0.36f;
-                p.vibratoDepth  = 0.24f;
-                p.vibratoRate   = 5.10f;
-                p.autoSwell     = 0.08f;
-                p.swellTime     = 80.0f;
-                p.sampleBlend   = 0.86f;
-                p.pickSnap      = 0.76f;
-                p.pickupPos     = 2.12f;
-                p.coilPeakFreq  = 2160.0f;
-                p.coilResonance = 0.72f;
-                p.sustainTime   = 8.4f;
-                p.cabinetDrop   = 0.42f;
-                p.stereoWidth   = 1.22f;
-                p.ampDrive      = 0.62f;
-                p.toneWarmth    = 0.54f;
+                p.barSlideNoise = 0.32f;
+                p.vibratoDepth  = 0.08f;
+                p.vibratoRate   = 4.85f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.72f;
+                p.pickupPos     = 2.25f;
+                p.coilPeakFreq  = 2040.0f;
+                p.coilResonance = 0.58f;
+                p.sustainTime   = 8.8f;
+                p.cabinetDrop   = 0.40f;
+                p.stereoWidth   = 1.28f;
+                p.ampDrive      = 0.30f;
+                p.toneWarmth    = 0.60f;
                 p.delayMix      = 0.00f;
                 p.delayTime     = 340.0f;
                 p.tempoSync     = false;
-                p.reverbMix     = 0.30f;
-                p.reverbDecay   = 0.56f;
-                p.outputLevel   = -0.6f;
+                p.reverbMix     = 0.28f;
+                p.reverbDecay   = 0.54f;
+                p.outputLevel   = 0.2f;
                 return p;
             }()
         },
@@ -807,37 +807,37 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "23 - Western Swing C6th Lounge",
             "Vintage Swing / Jazz",
-            "Back-neck D-10 C6th copedent (Speedy West / Buddy Emmons): smoky 6/9-to-dominant-9th pedal pulls, woody 325 Hz octal-tube Tweed Pro punch, and bouncy jazz swing.",
+            "Smoky 1956 Standel 25L15 (807 tubes + 15\" JBL D130F) & Capitol tile chamber C6th jazz steel (Buddy Emmons / Night Life): velvety 6/9-to-13th pedal slants and zero boxy honk.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 4; // Western Swing C6th Back-Neck
+                p.presetStyle   = 4;  // Western Swing C6th Back-Neck
                 p.playMode      = 0;
-                p.fxCharacter   = 0;
+                p.fxCharacter   = 10; // Standel 807 Chamber (807 Beam-Tetrode + 15" D130F + Capitol Tile Chamber)
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.34f;
-                p.pedalSpeed    = 105.0f;
-                p.barGlide      = 85.0f;
-                p.barSlideNoise = 0.24f;
-                p.vibratoDepth  = 0.30f;
-                p.vibratoRate   = 5.35f;
-                p.autoSwell     = 0.04f;
-                p.swellTime     = 65.0f;
-                p.sampleBlend   = 0.84f;
-                p.pickSnap      = 0.78f;
-                p.pickupPos     = 2.42f;
-                p.coilPeakFreq  = 1720.0f;
-                p.coilResonance = 0.58f;
-                p.sustainTime   = 4.4f;
+                p.scoopDepth    = 0.24f;
+                p.pedalSpeed    = 135.0f;
+                p.barGlide      = 120.0f;
+                p.barSlideNoise = 0.22f;
+                p.vibratoDepth  = 0.25f;
+                p.vibratoRate   = 4.85f;
+                p.autoSwell     = 0.05f;
+                p.swellTime     = 70.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.52f;
+                p.pickupPos     = 2.62f;
+                p.coilPeakFreq  = 1880.0f;
+                p.coilResonance = 0.50f;
+                p.sustainTime   = 7.4f;
                 p.cabinetDrop   = 0.38f;
-                p.stereoWidth   = 0.88f;
-                p.ampDrive      = 0.38f;
-                p.toneWarmth    = 0.72f;
-                p.delayMix      = 0.12f;
-                p.delayTime     = 96.0f; // Tight Texas swing room slap
+                p.stereoWidth   = 1.20f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.64f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 118.0f;
                 p.tempoSync     = false;
-                p.reverbMix     = 0.20f;
-                p.reverbDecay   = 0.38f;
-                p.outputLevel   = 0.0f;
+                p.reverbMix     = 0.38f;
+                p.reverbDecay   = 0.64f;
+                p.outputLevel   = 0.2f;
                 return p;
             }()
         },

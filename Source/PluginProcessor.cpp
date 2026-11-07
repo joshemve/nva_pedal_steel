@@ -186,7 +186,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
             "Vintage Warble",
             "Apollo Shimmer",
             "Leslie 147 Rotary",
-            "Gated Diode Bloom"
+            "Gated Diode Bloom",
+            "Standel 807 Chamber"
         }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
