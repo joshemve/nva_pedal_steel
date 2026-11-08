@@ -43,6 +43,14 @@ for k in range(n):
     Br = broad(r, ra)
     ratio = np.clip(B0 / np.maximum(Br, 1.0), 0.4, 2.5)
     lit = np.clip(r * ratio, 0, 255)
+    # the warm reflection along the real knob's lower rim belongs to the screen, not the knob: in a thin band inside
+    # the outline keep brightness but use the body's own average tint, so it doesn't ride round to the top
+    inside = (ra > 0.5).astype(np.uint8)
+    dist = cv2.distanceTransform(inside, cv2.DIST_L2, 5)
+    band = np.clip((14.0 - dist) / 6.0, 0, 1) * (ra > 0.5) * np.clip((80.0 - lit.mean(2)) / 20.0, 0, 1)   # not the pointer
+    Lp = lit.mean(2, keepdims=True); core = (dist > 12) & (lit.mean(2) < 70)
+    tint = (lit[core].mean(0) / max(lit[core].mean(), 1.0)) if core.sum() > 50 else np.ones(3)
+    lit = lit * (1 - band[..., None]) + (Lp * tint) * band[..., None]
     frames.append(np.dstack([lit, ra * 255]))
 out = np.concatenate(frames, 0)
 Image.fromarray(out.astype(np.uint8), "RGBA").save("strips/knob_space_orig.png")
