@@ -1,0 +1,16 @@
+[
+ {
+  "name": "keyhead_pearloid_b1",
+  "images": [
+   "final/parts/crops/steelbody_now_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece at the LEFT end of the pearloid steel) a clearly visible but modest, real Fender Stringmaster-style keyhead: a narrow chrome-edged pearloid end block across the left end, with ten small chrome tuning keys with ivory butterbean buttons in one neat vertical row along the end, sized in proportion to the instrument (about as wide as two fret spaces), not bulky. The ten strings run to it. Everything else stays exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_pearloid_b2",
+  "images": [
+   "final/parts/crops/steelbody_now_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece at the LEFT end of the pearloid steel) a clearly visible but modest, real Fender Stringmaster-style keyhead: a narrow chrome-edged pearloid end block across the left end, with ten small chrome tuning keys with ivory butterbean buttons in one neat vertical row along the end, sized in proportion to the instrument (about as wide as two fret spaces), not bulky. The ten strings run to it. Everything else stays exactly the same. Everything outside that change must stay identical to the input."
+ }
+]

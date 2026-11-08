@@ -50,7 +50,7 @@ for sk, job in CHOICE.items():
             a[sy0:sy1, sx0:sx1] = np.maximum(a[sy0:sy1, sx0:sx1], ff[..., 0])
         comp = full * a[..., None] + hd * (1 - a[..., None])
     # the smaller, understated keyhead for this instrument (keyhead_<name>_<take>)
-    KH = {"maple": "keyhead_maple_2", "redsparkle": "keyhead_redsparkle_1", "pearloid": "keyhead_pearloid_2", "koa": "keyhead_koa_2"}
+    KH = {"maple": "keyhead_maple_2", "redsparkle": "keyhead_redsparkle_1", "pearloid": "keyhead_pearloid_b1", "koa": "keyhead_koa_2"}
     kj = KH.get(sk)
     if kj and os.path.exists("aligned/%s.png" % kj):
         km = json.load(open("aligned/%s.json" % kj)); kx0, ky0, _, _ = km["canvas_box"]
