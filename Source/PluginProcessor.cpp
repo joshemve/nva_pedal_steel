@@ -187,7 +187,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
             "Apollo Shimmer",
             "Leslie 147 Rotary",
             "Gated Diode Bloom",
-            "Standel 807 Chamber"
+            "Standel 807 Chamber",
+            "Bosstone Violin Fuzz",
+            "Talk-Box Vowel",
+            "1937 Bakelite Lap",
+            "Abbey Road Tape ADT",
+            "Dimension D Chorus",
+            "Poly-Octave Organ"
         }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(

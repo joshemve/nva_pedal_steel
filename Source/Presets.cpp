@@ -877,6 +877,228 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.outputLevel   = -0.4f;
                 return p;
             }()
+        },
+        {
+            "25 - Country-Gaze Violin Fuzz",
+            "Indie Shoegaze",
+            "1969 Jordan Bosstone BJT/diode sustainer + Big Muff violin mid-throat into a 15-inch JBL speaker (Wednesday / MJ Lenderman / Sneaky Pete Kleinow): infinite singing fuzz sustain and shoegaze pedal bloom.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 1; // Hedonist Bootgaze
+                p.playMode      = 1; // Crying Lead Gliss
+                p.fxCharacter   = 11; // Bosstone Violin Fuzz
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.58f;
+                p.pedalSpeed    = 145.0f;
+                p.barGlide      = 155.0f;
+                p.barSlideNoise = 0.38f;
+                p.vibratoDepth  = 0.30f;
+                p.vibratoRate   = 4.90f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 85.0f;
+                p.sampleBlend   = 0.82f;
+                p.pickSnap      = 0.66f;
+                p.pickupPos     = 2.18f;
+                p.coilPeakFreq  = 2120.0f;
+                p.coilResonance = 0.68f;
+                p.sustainTime   = 10.6f;
+                p.cabinetDrop   = 0.36f;
+                p.stereoWidth   = 1.24f;
+                p.ampDrive      = 0.42f;
+                p.toneWarmth    = 0.62f;
+                p.delayMix      = 0.28f;
+                p.delayTime     = 500.0f; // 1/8D
+                p.tempoSync     = true;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.78f;
+                p.outputLevel   = -0.4f;
+                return p;
+            }()
+        },
+        {
+            "26 - Talking Opto-Vowel Steel",
+            "70s Funk / Talk-Box",
+            "1964 Pete Drake horn-driver mouth-tube + Mu-Tron III CdS vactrol dual-formant (F1+F2) vocal tract (Pete Drake 'Forever' / Steely Dan / Robert Randolph): chords and glides literally form human /u/->/o/->/a/->/ae/ vowels.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0; // Nashville Gold
+                p.playMode      = 1; // Crying Lead Gliss
+                p.fxCharacter   = 12; // Talk-Box Vowel
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.62f;
+                p.pedalSpeed    = 125.0f;
+                p.barGlide      = 130.0f;
+                p.barSlideNoise = 0.26f;
+                p.vibratoDepth  = 0.26f;
+                p.vibratoRate   = 5.05f;
+                p.autoSwell     = 0.22f;
+                p.swellTime     = 110.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.72f;
+                p.pickupPos     = 2.18f;
+                p.coilPeakFreq  = 2180.0f;
+                p.coilResonance = 0.72f;
+                p.sustainTime   = 8.6f;
+                p.cabinetDrop   = 0.34f;
+                p.stereoWidth   = 1.18f;
+                p.ampDrive      = 0.28f;
+                p.toneWarmth    = 0.52f;
+                p.delayMix      = 0.16f;
+                p.delayTime     = 360.0f; // 1/8
+                p.tempoSync     = true;
+                p.reverbMix     = 0.30f;
+                p.reverbDecay   = 0.56f;
+                p.outputLevel   = 0.4f;
+                return p;
+            }()
+        },
+        {
+            "27 - Waikiki Bakelite Lap",
+            "Vintage Hawaiian",
+            "1937 Rickenbacker B6 Bakelite C6th lap steel + 1.5-inch wrap-around Horseshoe Magnet + octal 6L6 Gibson EH-150 amp & RCA 44 ribbon room (Jerry Byrd / Sol Ho'opi'i / Jeremy Wakefield): sun-soaked shimmering island sixths.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 4; // Western Swing C6th (C-E-G-A-C-E-G-A-F-C!)
+                p.playMode      = 1; // Crying Lead Gliss
+                p.fxCharacter   = 13; // 1937 Bakelite Lap
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.34f;
+                p.pedalSpeed    = 115.0f;
+                p.barGlide      = 145.0f;
+                p.barSlideNoise = 0.28f;
+                p.vibratoDepth  = 0.28f;
+                p.vibratoRate   = 5.55f; // Sweet singing Hawaiian bar shimmer (zero siren wobble!)
+                p.autoSwell     = 0.04f;
+                p.swellTime     = 60.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.60f;
+                p.pickupPos     = 2.55f;
+                p.coilPeakFreq  = 1620.0f;
+                p.coilResonance = 0.62f;
+                p.sustainTime   = 8.0f;
+                p.cabinetDrop   = 0.10f; // Non-pedal Bakelite lap body stability
+                p.stereoWidth   = 1.04f;
+                p.ampDrive      = 0.24f;
+                p.toneWarmth    = 0.66f;
+                p.delayMix      = 0.08f;
+                p.delayTime     = 105.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.26f;
+                p.reverbDecay   = 0.48f;
+                p.outputLevel   = 0.2f;
+                return p;
+            }()
+        },
+        {
+            "28 - Abbey Road ADT Twin-Slide",
+            "70s Pop-Rock Slide",
+            "Fairchild 670 / EMI TG12345 Zener limiter + Ken Townsend 33.5 ms Studer J37 varispeed Artificial Double Tracking (George Harrison 'My Sweet Lord' / B.J. Cole 'Tiny Dancer'): creamy double-tracked weeping twin-slide.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0; // Nashville Gold
+                p.playMode      = 1; // Crying Lead Gliss
+                p.fxCharacter   = 14; // Abbey Road Tape ADT
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.50f;
+                p.pedalSpeed    = 140.0f;
+                p.barGlide      = 150.0f;
+                p.barSlideNoise = 0.24f;
+                p.vibratoDepth  = 0.22f;
+                p.vibratoRate   = 4.85f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.58f;
+                p.pickupPos     = 2.32f;
+                p.coilPeakFreq  = 2080.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 9.4f;
+                p.cabinetDrop   = 0.34f;
+                p.stereoWidth   = 1.26f;
+                p.ampDrive      = 0.26f;
+                p.toneWarmth    = 0.58f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 135.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.32f;
+                p.reverbDecay   = 0.58f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "29 - 80s Rack Dimension Clean",
+            "80s Studio Pop",
+            "SSL 4000 VCA compression + Roland SDD-320 Dimension D Mode IV motionless-pitch cross-coupled BBD spatializer (Paul Franklin w/ Dire Straits / Prefab Sprout): ultra-glossy wide-screen 1985 studio clean.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0; // Nashville Gold
+                p.playMode      = 0; // Expressive Poly
+                p.fxCharacter   = 15; // Dimension D Chorus
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.48f;
+                p.pedalSpeed    = 145.0f;
+                p.barGlide      = 135.0f;
+                p.barSlideNoise = 0.22f;
+                p.vibratoDepth  = 0.20f;
+                p.vibratoRate   = 4.85f;
+                p.autoSwell     = 0.12f;
+                p.swellTime     = 95.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.62f;
+                p.pickupPos     = 2.22f;
+                p.coilPeakFreq  = 2280.0f;
+                p.coilResonance = 0.58f;
+                p.sustainTime   = 8.8f;
+                p.cabinetDrop   = 0.36f;
+                p.stereoWidth   = 1.32f;
+                p.ampDrive      = 0.14f;
+                p.toneWarmth    = 0.46f;
+                p.delayMix      = 0.20f;
+                p.delayTime     = 500.0f; // 1/8D
+                p.tempoSync     = true;
+                p.reverbMix     = 0.42f;
+                p.reverbDecay   = 0.72f;
+                p.outputLevel   = 0.2f;
+                return p;
+            }()
+        },
+        {
+            "30 - Poly-Octave Messina Choir",
+            "Cathedral / Organ",
+            "Direct polyphonic dual-grain -12st 16' Bourdon Sub + Dry 8' + +12st 4' Choir + celeste reed rank & harmonium tube warmth (Bon Iver Messina / Chuck Johnson 'Balsams'): turns raked steel chords into a breathing pipe organ.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3; // Montana Swell
+                p.playMode      = 0; // Expressive Poly
+                p.fxCharacter   = 16; // Poly-Octave Organ
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.56f;
+                p.pedalSpeed    = 185.0f;
+                p.barGlide      = 175.0f;
+                p.barSlideNoise = 0.16f;
+                p.vibratoDepth  = 0.18f;
+                p.vibratoRate   = 4.65f;
+                p.autoSwell     = 0.55f;
+                p.swellTime     = 210.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.24f;
+                p.pickupPos     = 2.68f;
+                p.coilPeakFreq  = 1860.0f;
+                p.coilResonance = 0.54f;
+                p.sustainTime   = 10.6f;
+                p.cabinetDrop   = 0.36f;
+                p.stereoWidth   = 1.34f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.70f;
+                p.delayMix      = 0.18f;
+                p.delayTime     = 620.0f; // 1/4
+                p.tempoSync     = true;
+                p.reverbMix     = 0.52f;
+                p.reverbDecay   = 0.84f;
+                p.outputLevel   = -0.2f;
+                return p;
+            }()
         }
     };
     return kPresets;

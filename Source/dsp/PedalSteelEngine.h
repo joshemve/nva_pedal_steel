@@ -212,7 +212,7 @@ private:
         float process(float input, float amount);
     };
 
-    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..10; Mode 0 = bit-transparent bypass)
+    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..16; Mode 0 = bit-transparent bypass)
     struct ModernCharacterProcessor {
         std::vector<float> modBufL, modBufR;
         int modWritePos = 0;
@@ -223,7 +223,7 @@ private:
         double tremPhase = 0.0;
         float cassetteSagEnv = 0.0f;
 
-        // Sample-rate-adaptive dual-grain C1 Hann-windowed +12st Shimmer, Leslie 147 & Gated Diode Room Tank
+        // Sample-rate-adaptive dual-grain C1 Hann-windowed +12st/-12st Shimmer/Organ, Leslie 147 & Gated Diode Room Tank
         std::vector<float> shimBufL, shimBufR;
         int shimWritePos = 0;
         int shimMaxLen = 1;
@@ -240,6 +240,10 @@ private:
         float hornBeamLpL = 0.0f, hornBeamLpR = 0.0f;
         float drumBeamLpL = 0.0f, drumBeamLpR = 0.0f;
         float leslieDcL = 0.0f, leslieDcR = 0.0f;
+
+        // Trapezoidal ZDF Dual-Formant Vocal Tract SVF state (Mode 12: Talk-Box Vowel)
+        float svf1Ic1L = 0.0f, svf1Ic2L = 0.0f, svf1Ic1R = 0.0f, svf1Ic2R = 0.0f;
+        float svf2Ic1L = 0.0f, svf2Ic2L = 0.0f, svf2Ic1R = 0.0f, svf2Ic2R = 0.0f;
 
         // 4-stage Analog JFET Optical All-Pass Phaser state (Mode 3: Dark Side Phase Steel)
         std::array<float, 4> phaserStateL{}, phaserStateR{};
