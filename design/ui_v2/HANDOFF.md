@@ -158,6 +158,15 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   drags, clicks, pedal toggles, typed values, resets, mode picks; wheel turns and arrow nudges coalesce into one step.
   Kept in the editor on purpose: host automation and MIDI CC moves are never undone. User preset notes show on their
   browser card on hover.
+- Texture fixes (Joshua: patchy spotting around knobs, leftover light at the pedal lamps). Principle: use the
+  reference's real pixels wherever an identical part exists; ChatGPT redraws never match the panel grain.
+  - unlit, raised pedals A/B = the reference's own pedal C column moved onto A/B (`build_ui.py`).
+  - SPACE knobs = the reference ECHO knob rotated per frame with its broad lighting (per channel) held still
+    (`final/space_from_ref.py`; the Blender strip is kept as `strips/knob_space_blender.png`).
+  - knob contact shadow: `final/fix_knob_halo.py` replaces the strips' baked rim with a smooth shadow measured from the
+    reference (by distance from the outline and direction).
+  - remaining ChatGPT panel patches (value boxes, knob areas): `parts/retexture.py` refills them with the surrounding
+    real panel colour and grain matched to the leatherette (pedal area excluded: it is real now).
 - Accessibility: `Source/AccessibleControls.h` puts a click-through screen-reader element over every control
   (sliders with the panel's value text, toggles for pedals/levers/MIDI LEARN, buttons for preset/mode); values are
   announced on change.

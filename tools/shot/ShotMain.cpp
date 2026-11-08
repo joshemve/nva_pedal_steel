@@ -120,6 +120,18 @@ int main(int argc, char* argv[]) {
         f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
         fe->dismissHint();
     }
+    {   // editor open cost: construct + first full paint at 1280x800 (what a DAW does when you open the plugin window)
+        for (int rep = 0; rep < 3; ++rep) {
+            juce::ImageCache::releaseUnusedImages();
+            const double t0 = juce::Time::getMillisecondCounterHiRes();
+            std::unique_ptr<juce::AudioProcessorEditor> probe(processor.createEditor());
+            const double t1 = juce::Time::getMillisecondCounterHiRes();
+            juce::Image fb(juce::Image::ARGB, probe->getWidth(), probe->getHeight(), true);
+            { juce::Graphics g(fb); probe->paintEntireComponent(g, false); }
+            const double t2 = juce::Time::getMillisecondCounterHiRes();
+            std::cout << "  editor open: construct " << (t1 - t0) << " ms, first paint " << (t2 - t1) << " ms" << std::endl;
+        }
+    }
     std::unique_ptr<juce::AudioProcessorEditor> editor(processor.createEditor());
     editor->setSize(1600, 1000);
 
