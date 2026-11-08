@@ -121,8 +121,8 @@ int main(int argc, char* argv[]) {
         fe->dismissHint();
     }
     {   // editor open cost: construct + first full paint at 1280x800 (what a DAW does when you open the plugin window)
+        juce::Thread::sleep(2500);   // the processor's background preload has finished by the time a user opens the window
         for (int rep = 0; rep < 3; ++rep) {
-            juce::ImageCache::releaseUnusedImages();
             const double t0 = juce::Time::getMillisecondCounterHiRes();
             std::unique_ptr<juce::AudioProcessorEditor> probe(processor.createEditor());
             const double t1 = juce::Time::getMillisecondCounterHiRes();

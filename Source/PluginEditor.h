@@ -109,6 +109,7 @@ private:
     juce::String cachedUserName; int cachedUserSkin = 0;
 public:
     int skinForCurrentPreset();
+    void ensureSkinLoaded(int k);
     int getSkin() const { return skin; }
 private:
     bool compact() const { return getWidth() < 1100; }   // small window: small_1's bolder labels and values

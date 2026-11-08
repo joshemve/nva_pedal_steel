@@ -8,7 +8,7 @@
 class PedalSteelAudioProcessor : public juce::AudioProcessor {
 public:
     PedalSteelAudioProcessor();
-    ~PedalSteelAudioProcessor() override = default;
+    ~PedalSteelAudioProcessor() override;
 
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;

@@ -122,11 +122,7 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     setTxtS(7, poppinsMedium, txtRef_mode, txtS_mode, txtSColour_mode, true);
     setTxtS(8, poppinsSemi, txtRef_db, txtS_db, txtSColour_db);
     spSmallDeck = loadImage(BinaryData::sp_small_deck_png, BinaryData::sp_small_deck_pngSize);
-    skinImg[1] = loadImage(BinaryData::skin_maple_jpg, BinaryData::skin_maple_jpgSize);
-    skinImg[2] = loadImage(BinaryData::skin_redsparkle_jpg, BinaryData::skin_redsparkle_jpgSize);
-    skinImg[3] = loadImage(BinaryData::skin_pearloid_jpg, BinaryData::skin_pearloid_jpgSize);
-    skinImg[4] = loadImage(BinaryData::skin_koa_jpg, BinaryData::skin_koa_jpgSize);
-    skin = skinForCurrentPreset();
+    skin = skinForCurrentPreset();   // instrument layers load on demand (only the one showing)
     spSmallTop = loadImage(BinaryData::sp_small_top_png, BinaryData::sp_small_top_pngSize);
 
     menuLnf.setFaces(poppinsMedium, poppinsSemi);
@@ -244,7 +240,19 @@ void PedalSteelAudioProcessorEditor::resized() {
     rebuildScaledBackground();
 }
 
+void PedalSteelAudioProcessorEditor::ensureSkinLoaded(int k) {
+    if (k <= 0 || k > 4 || skinImg[k].isValid()) return;
+    switch (k) {
+        case 1: skinImg[1] = loadImage(BinaryData::skin_maple_jpg, BinaryData::skin_maple_jpgSize); break;
+        case 2: skinImg[2] = loadImage(BinaryData::skin_redsparkle_jpg, BinaryData::skin_redsparkle_jpgSize); break;
+        case 3: skinImg[3] = loadImage(BinaryData::skin_pearloid_jpg, BinaryData::skin_pearloid_jpgSize); break;
+        case 4: skinImg[4] = loadImage(BinaryData::skin_koa_jpg, BinaryData::skin_koa_jpgSize); break;
+        default: break;
+    }
+}
+
 void PedalSteelAudioProcessorEditor::rebuildScaledBackground() {
+    ensureSkinLoaded(skin);
     // the 2x background resampled once per size (at the screen's pixel density), so frames only blit it
     const float ps = juce::jmax(1.0f, (float) juce::Component::getApproximateScaleFactorForComponent(this));
     const int w = juce::roundToInt(getWidth() * ps), h = juce::roundToInt(getHeight() * ps);

@@ -167,6 +167,9 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
     reference (by distance from the outline and direction).
   - remaining ChatGPT panel patches (value boxes, knob areas): `parts/retexture.py` refills them with the surrounding
     real panel colour and grain matched to the leatherette (pedal area excluded: it is real now).
+- Editor open time: ~700 ms of PNG/JPEG decoding moved off the click. `Source/UiPreload.h` decodes every UI bitmap on a
+  low-priority thread when a plugin instance is created (shared by all instances, freed with the last one); the
+  editor's ImageCache lookups then hit, so the window opens in ~15 ms. Instrument layers load on demand.
 - Accessibility: `Source/AccessibleControls.h` puts a click-through screen-reader element over every control
   (sliders with the panel's value text, toggles for pedals/levers/MIDI LEARN, buttons for preset/mode); values are
   announced on change.

@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "UiPreload.h"
 
 PedalSteelAudioProcessor::PedalSteelAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true)),
@@ -8,6 +9,7 @@ PedalSteelAudioProcessor::PedalSteelAudioProcessor()
                          ParamIDs::reverbMix, ParamIDs::outputLevel, ParamIDs::volumePedal, ParamIDs::pedalA, ParamIDs::pedalB,
                          ParamIDs::pedalC, ParamIDs::leverLKL, ParamIDs::leverLKR, ParamIDs::playMode })
 {
+    UiPreload::acquire();   // decode the editor's bitmaps in the background so the window opens quickly
     pendingUiCmds.reserve(64);
 
     pPresetStyle   = apvts.getRawParameterValue(ParamIDs::presetStyle);
@@ -605,6 +607,8 @@ void PedalSteelAudioProcessor::setStateInformation(const void* data, int sizeInB
         presetRevision.fetch_add(1, std::memory_order_relaxed);
     }
 }
+
+PedalSteelAudioProcessor::~PedalSteelAudioProcessor() { UiPreload::release(); }
 
 juce::AudioProcessorEditor* PedalSteelAudioProcessor::createEditor() {
     return new PedalSteelAudioProcessorEditor(*this);
