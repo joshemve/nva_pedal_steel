@@ -14,7 +14,7 @@ blender = np.asarray(Image.open("strips/knob_space_blender.png" if os.path.exist
                                 else "strips/knob_space_orig.png").convert("RGBA"), np.float32)
 if not os.path.exists("strips/knob_space_blender.png"):
     Image.fromarray(blender.astype(np.uint8), "RGBA").save("strips/knob_space_blender.png")
-inst = m["instances"][0]; A_REF = -101.5                      # ECHO as designed
+inst = m["instances"][0]; A_REF = -88.1                       # ECHO as designed: its pointer's true angle (measured)
 k0 = int(round((A_REF + 135) / 270 * (n - 1)))
 alpha = blender[k0 * fs:(k0 + 1) * fs, :, 3] / 255.0
 alpha = cv2.GaussianBlur(cv2.erode(alpha, np.ones((3, 3), np.uint8)), (0, 0), 0.6)   # stay inside the real outline
@@ -42,7 +42,7 @@ def rot(img, deg, interp=cv2.INTER_CUBIC, border=cv2.BORDER_REFLECT):
     M = cv2.getRotationMatrix2D(c, -deg, 1.0)                     # clockwise on screen
     return cv2.warpAffine(img, M, (fs, fs), flags=interp, borderMode=border)
 SOURCES = [(src, A_REF, alpha)]
-for job, ang in (("echo_ptr12_1", -101.5 + 88.85), ("echo_ptr3_2", -101.5 + 162.65)):   # measured pointer offsets from the reference
+for job, ang in (("echo_ptr12_1", A_REF + 88.85), ("echo_ptr3_2", A_REF + 162.65)):   # measured pointer offsets from the reference
     if os.path.exists("parts/aligned/%s.png" % job):
         SOURCES.append((crop_of(job), ang, rot(alpha, ang - A_REF, cv2.INTER_LINEAR, cv2.BORDER_CONSTANT)))
 SOURCES.sort(key=lambda t: t[1])

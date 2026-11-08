@@ -10,7 +10,7 @@ from PIL import Image
 H = os.path.dirname(os.path.abspath(__file__)); os.chdir(H)
 hd = np.asarray(Image.open("parts/bg_hd.png"), np.float32); Lref = hd.mean(2)
 S = json.load(open("strips/strips.json"))
-REF_ANGLE = {"scallop": (34.8, 33.8), "space": (-101.5, -68.9)}   # the design's pointer angles (PluginEditor anchors)
+REF_ANGLE = {"scallop": (34.8, 33.8), "space": (-88.1, -55.5)}   # the design's pointer angles (PluginEditor anchors)
 DMAX, NB = 30, 36
 blur = lambda a, s: cv2.GaussianBlur(a, (0, 0), s)
 

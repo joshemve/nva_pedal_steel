@@ -31,7 +31,7 @@ float unanchored(float v, Anchor a, float lo = -135.0f, float hi = 135.0f) {   /
 // dome strips are labelled so the design's pointer is frame "35 deg" etc.; FEEL/SPACE frames are true pointer angles
 // (measured on the design by matcap_strips.py)
 constexpr Anchor kTone{ 0.65f, 35.0f }, kPick{ 0.40f, -50.0f }, kGlide{ (145.0f - 10.0f) / 490.0f, 34.8f },
-                 kSwell{ 0.35f, 33.8f }, kEcho{ 0.18f, -101.5f }, kReverb{ 0.28f, -68.9f };
+                 kSwell{ 0.35f, 33.8f }, kEcho{ 0.18f, -88.1f }, kReverb{ 0.28f, -55.5f };   // SPACE: true pointer angles of the real knob frames
 constexpr Anchor kVolume{ 0.72f, sliderThumbCx };
 
 // knob angle (deg clockwise from 12 o'clock, -135..135) -> filmstrip frame
