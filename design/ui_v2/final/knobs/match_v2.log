@@ -1,0 +1,28 @@
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\final_ui.py:101: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m = bpy.data.materials.new(name); m.use_nodes = True; nt = m.node_tree; nt.nodes.clear()
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\final_ui.py:189: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m = bpy.data.materials.new(name); m.use_nodes = True; nt = m.node_tree; nt.nodes.clear()
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\final_ui.py:353: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("W"); sc.world = w; w.use_nodes = True; nt = w.node_tree
+00:16.219  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\match_v2.png'
+UniV: Skipping registration in background mode
+[INFO ] services.locationservice ...............: Not adding link to MakeHuman user data, since neither explicit path nor auto-discovery is set in preferences.
+[INFO ] mpfb.init ..............................: Build info 20260722
+[INFO ] mpfb.init ..............................: Online access preference is not enabled. Not checking if MakeHuman is online.
+[INFO ] mpfb.init ..............................: MPFB initialization has finished.
+Failed to remove: (<built-in function unlink>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy.libs\\msvcp140-a4c2229bdc2a2a630acdc095b4d86008.dll', (<class 'PermissionError'>, PermissionError(13, 'Access is denied'), <traceback object at 0x0000028573E78F40>))
+Failed to remove: (<built-in function rmdir>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy.libs', (<class 'OSError'>, OSError(41, 'The directory is not empty'), <traceback object at 0x0000028573E78F40>))
+Failed to remove: (<built-in function unlink>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy\\mmg2d.dll', (<class 'PermissionError'>, PermissionError(13, 'Access is denied'), <traceback object at 0x0000028571FFB1C0>))
+Failed to remove: (<built-in function unlink>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy\\mmg3d.dll', (<class 'PermissionError'>, PermissionError(13, 'Access is denied'), <traceback object at 0x0000028571FFB1C0>))
+Failed to remove: (<built-in function unlink>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy\\mmgs.dll', (<class 'PermissionError'>, PermissionError(13, 'Access is denied'), <traceback object at 0x0000028571FFB1C0>))
+Failed to remove: (<built-in function unlink>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy\\_mmgpy.cp311-win_amd64.pyd', (<class 'PermissionError'>, PermissionError(13, 'Access is denied'), <traceback object at 0x0000028571FFB1C0>))
+Failed to remove: (<built-in function rmdir>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy', (<class 'OSError'>, OSError(41, 'The directory is not empty'), <traceback object at 0x0000028571FFB1C0>))
+Failed to remove: (<built-in function unlink>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy.libs\\msvcp140-a4c2229bdc2a2a630acdc095b4d86008.dll', (<class 'PermissionError'>, PermissionError(13, 'Access is denied'), <traceback object at 0x00000285739AFF40>))
+Failed to remove: (<built-in function rmdir>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\mmgpy.libs', (<class 'OSError'>, OSError(41, 'The directory is not empty'), <traceback object at 0x00000285739AFF40>))
+Failed to remove: (<built-in function unlink>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\vtracer\\vtracer.cp311-win_amd64.pyd', (<class 'PermissionError'>, PermissionError(13, 'Access is denied'), <traceback object at 0x0000028573AABE40>))
+Failed to remove: (<built-in function rmdir>, 'C:\\Users\\Joshua\\AppData\\Roaming\\Blender Foundation\\Blender\\5.0\\extensions\\.local\\lib\\python3.11\\site-packages\\vtracer', (<class 'OSError'>, OSError(41, 'The directory is not empty'), <traceback object at 0x0000028573AABE40>))
+FIT 2.575 steel ndc [0.082, 0.918, 0.351, 0.872]
+Info: Saved as "match_v2.blend"
+Blender 5.0.1 (hash a3db93c5b259 built 2025-12-16 01:32:30)
+
+Blender quit

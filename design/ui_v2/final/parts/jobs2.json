@@ -1,0 +1,156 @@
+[
+ {
+  "name": "hd_tile_00",
+  "images": [
+   "final/parts/crops/tile_00.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_01",
+  "images": [
+   "final/parts/crops/tile_01.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_02",
+  "images": [
+   "final/parts/crops/tile_02.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_03",
+  "images": [
+   "final/parts/crops/tile_03.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_10",
+  "images": [
+   "final/parts/crops/tile_10.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_11",
+  "images": [
+   "final/parts/crops/tile_11.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_12",
+  "images": [
+   "final/parts/crops/tile_12.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_13",
+  "images": [
+   "final/parts/crops/tile_13.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_20",
+  "images": [
+   "final/parts/crops/tile_20.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_21",
+  "images": [
+   "final/parts/crops/tile_21.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_22",
+  "images": [
+   "final/parts/crops/tile_22.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_23",
+  "images": [
+   "final/parts/crops/tile_23.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_30",
+  "images": [
+   "final/parts/crops/tile_30.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_31",
+  "images": [
+   "final/parts/crops/tile_31.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_32",
+  "images": [
+   "final/parts/crops/tile_32.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_33",
+  "images": [
+   "final/parts/crops/tile_33.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_TONE",
+  "images": [
+   "final/parts/crops/pill_TONE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_PICK",
+  "images": [
+   "final/parts/crops/pill_PICK.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_GLIDE",
+  "images": [
+   "final/parts/crops/pill_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_SWELL",
+  "images": [
+   "final/parts/crops/pill_SWELL.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_ECHO",
+  "images": [
+   "final/parts/crops/pill_ECHO.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_REVERB",
+  "images": [
+   "final/parts/crops/pill_REVERB.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ }
+]

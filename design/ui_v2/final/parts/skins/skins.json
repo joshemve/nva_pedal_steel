@@ -1,0 +1,38 @@
+{
+ "maple": {
+  "box": [
+   182,
+   193,
+   3063,
+   1346
+  ],
+  "job": "skin_maple_1"
+ },
+ "redsparkle": {
+  "box": [
+   182,
+   193,
+   3063,
+   1346
+  ],
+  "job": "skin_redsparkle_1"
+ },
+ "pearloid": {
+  "box": [
+   182,
+   193,
+   3063,
+   1346
+  ],
+  "job": "skin_pearloid_1"
+ },
+ "koa": {
+  "box": [
+   182,
+   193,
+   3063,
+   1346
+  ],
+  "job": "skin_koa_1"
+ }
+}

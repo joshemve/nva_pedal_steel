@@ -1,0 +1,23 @@
+[
+ {
+  "name": "noptr_TONE",
+  "images": [
+   "final/parts/crops/knob_TONE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: erase ONLY the short straight pointer line (indicator stripe) painted on the top of the cream knob in the centre, so the cream domed top is plain and smooth there, with the same shading and highlights it has around the line. The knob, its black knurled skirt, the tick marks and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "noptr_PICK",
+  "images": [
+   "final/parts/crops/knob_PICK.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: erase ONLY the short straight pointer line (indicator stripe) painted on the top of the cream knob in the centre, so the cream domed top is plain and smooth there, with the same shading and highlights it has around the line. The knob, its black knurled skirt, the tick marks and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "noptr_TRIM",
+  "images": [
+   "final/parts/crops/trim.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: erase ONLY the short straight pointer line (indicator stripe) painted on the top of the cream knob in the centre, so the cream domed top is plain and smooth there, with the same shading and highlights it has around the line. The knob, its black knurled skirt, the tick marks and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ }
+]

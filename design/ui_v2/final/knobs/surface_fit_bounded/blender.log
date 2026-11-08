@@ -1,0 +1,15 @@
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\reference_surface_knob.py:39: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat=bpy.data.materials.new(name); mat.use_nodes=True; nt=mat.node_tree; nt.nodes.clear()
+00:01.203  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\reference_pose.png'
+00:01.797  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_00.png'
+00:02.453  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_01.png'
+00:03.015  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_02.png'
+00:03.547  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_03.png'
+00:04.062  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_04.png'
+00:04.594  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_05.png'
+00:05.125  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_06.png'
+00:05.640  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\surface_fit_bounded\blender\angle_07.png'
+Info: Saved as "fitted_knob.blend"
+Blender 5.0.1 (hash a3db93c5b259 built 2025-12-16 01:32:30)
+
+Blender quit

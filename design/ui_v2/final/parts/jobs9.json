@@ -1,0 +1,58 @@
+[
+ {
+  "name": "small_pills_empty_1",
+  "images": [
+   "final/parts/crops/small_pills.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text inside every outlined value box (65 %, 40 %, 145 ms, 35 %, 18 %, 28 %): the outlined boxes stay, empty, with the same black panel inside. The labels TONE, PICK, GLIDE, SWELL, ECHO, REVERB stay exactly. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "small_pills_empty_2",
+  "images": [
+   "final/parts/crops/small_pills.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text inside every outlined value box (65 %, 40 %, 145 ms, 35 %, 18 %, 28 %): the outlined boxes stay, empty, with the same black panel inside. The labels TONE, PICK, GLIDE, SWELL, ECHO, REVERB stay exactly. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "small_modebox_empty_1",
+  "images": [
+   "final/parts/crops/small_modebox.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text 'Smart Auto-Pedal E9' inside the MODE dropdown box; keep the box outline and the down-arrow triangle. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "small_modebox_empty_2",
+  "images": [
+   "final/parts/crops/small_modebox.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text 'Smart Auto-Pedal E9' inside the MODE dropdown box; keep the box outline and the down-arrow triangle. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "small_pctbox_empty_1",
+  "images": [
+   "final/parts/crops/small_pctbox.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text '72 %' inside the small outlined box next to the slider; keep the box. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "small_pctbox_empty_2",
+  "images": [
+   "final/parts/crops/small_pctbox.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text '72 %' inside the small outlined box next to the slider; keep the box. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "small_trim_empty_1",
+  "images": [
+   "final/parts/crops/small_trim.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove only the '0.0 dB' text right of the TRIM knob (plain cream bar where it was); the knob, the TRIM label and everything else stay. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "small_trim_empty_2",
+  "images": [
+   "final/parts/crops/small_trim.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove only the '0.0 dB' text right of the TRIM knob (plain cream bar where it was); the knob, the TRIM label and everything else stay. Everything outside that change must stay identical to the input."
+ }
+]

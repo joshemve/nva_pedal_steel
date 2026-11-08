@@ -3,6 +3,7 @@
 #include "Params.h"
 #include "Presets.h"
 #include "dsp/PedalSteelEngine.h"
+#include "MidiLearn.h"
 
 class PedalSteelAudioProcessor : public juce::AudioProcessor {
 public:
@@ -34,6 +35,8 @@ public:
 
     juce::AudioProcessorValueTreeState apvts;
     juce::MidiKeyboardState keyboardState;
+    MidiLearn midiLearn;   // CC -> parameter (the editor's MIDI LEARN button)
+    int editorWidth = 1280;   // the window size the user last chose (kept while the plugin instance lives, and in its state)
 
     void loadPreset(int index);
     void stepPreset(int delta);
@@ -53,10 +56,12 @@ public:
     juce::String getActiveUserPresetName() const;
     uint32_t getPresetRevision() const { return presetRevision.load(std::memory_order_relaxed); }
     float getBaselineParamValue(const juce::String& paramId) const;
+    void captureCurrentAsBaseline();   // the current values become "the preset" (the display's * marker clears)
 
     CopedentStatus getLiveStatus() const;
     float getOutputPeakL() const { return outputPeakL.load(std::memory_order_relaxed); }
     float getOutputPeakR() const { return outputPeakR.load(std::memory_order_relaxed); }
+    juce::uint32 getBlocksProcessed() const { return blocksProcessed.load(std::memory_order_relaxed); }
     double getHostBpm() const    { return currentHostBpm.load(std::memory_order_relaxed); }
 
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
@@ -85,8 +90,8 @@ private:
     std::atomic<float> outputPeakL{ 0.0f };
     std::atomic<float> outputPeakR{ 0.0f };
     std::atomic<double> currentHostBpm{ 120.0 };
+    std::atomic<juce::uint32> blocksProcessed{ 0 };
 
-    void captureCurrentAsBaseline();
 
     // Cached atomic parameter pointers
     std::atomic<float>* pPresetStyle   = nullptr;

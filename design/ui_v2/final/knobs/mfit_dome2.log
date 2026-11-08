@@ -1,0 +1,23 @@
+dome     ref shift (-4, 1)  pointer 41.9  ao gamma [0.0, 3.0, 1.65]  fit px [208, 10191, 1332]
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.65}         6.63
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.8}          7.72
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.72}         6.93
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.6}          6.82
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.88}         8.74
+round 0 after z0: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0, "tilt": 18.0}
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.65}         6.59
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.3, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.65}         6.71
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.6, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.65}         6.67
+round 0 after pw: best 6.59 {"z0": 0.65, "pw": 1.8, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0, "tilt": 18.0}
+  {"depth": 0.0, "hr": 0.5, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.65}         7.35
+  {"depth": 0.0, "hr": 0.85, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.65}        8.89
+  {"depth": 0.0, "hr": 0.7, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.985, "tilt": 18.0, "z0": 0.65}         7.16
+round 0 after hr: best 6.59 {"z0": 0.65, "pw": 1.8, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0, "tilt": 18.0}
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.97, "tilt": 18.0, "z0": 0.65}          8.13
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 1.0, "tilt": 18.0, "z0": 0.65}           6.84
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 1.015, "tilt": 18.0, "z0": 0.65}         7.34
+round 0 after rscale: best 6.59 {"z0": 0.65, "pw": 1.8, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0, "tilt": 18.0}
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.985, "tilt": 8.0, "z0": 0.65}          9.78
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.985, "tilt": 0.0, "z0": 0.65}          15.09
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 1.8, "rf": 0.0, "rscale": 0.985, "tilt": 25.0, "z0": 0.65}         7.55
+round 0 after tilt: best 6.59 {"z0": 0.65, "pw": 1.8, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0, "tilt": 18.0}

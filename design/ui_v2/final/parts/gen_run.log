@@ -1,0 +1,23 @@
+pedals_unlit: thread=01a1b95b-b974-7961-af66-50268cf2c39b 38s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pedals_unlit_1.png']
+pedals_lit: thread=01a1b95b-ba9e-7590-87a7-c3f816e50fdb 40s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pedals_lit_1.png']
+display_empty: thread=01a1b95b-bab5-7b00-830a-ba085ef083ea 48s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\display_empty_1.png']
+meter_off: thread=01a1b95b-bacb-77d1-933f-83b97ef4f6cb 32s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\meter_off_1.png']
+meter_on: thread=01a1b95b-bac4-7633-800e-9591ae85233f 30s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\meter_on_1.png']
+trim_clean: thread=01a1b95b-bb03-7403-bf42-f74bfbabaac2 31s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\trim_clean_1.png']
+slider_empty: thread=01a1b95b-baac-7730-873d-96eb4f1dc98e 47s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\slider_empty_1.png']
+slider_thumb: thread=01a1b95b-bb3c-7953-a379-73071226fa37 36s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\slider_thumb_1.png']
+pills_empty: thread=01a1b95b-baa8-7f30-ab48-7a9f0e6130b1 50s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pills_empty_1.png']
+modebox_empty: thread=01a1b95b-bac5-7223-a7df-f9a36fedaed1 41s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\modebox_empty_1.png']
+pctbox_empty: thread=01a1b95b-bacf-7cd2-9a75-5279e96aa3a0 31s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pctbox_empty_1.png']
+knobclean_TONE: thread=01a1b95b-bb44-7ad0-b3b0-508f80b79072 34s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\knobclean_TONE_1.png']
+knobclean_PICK: thread=01a1b95b-ba16-7dc3-8f27-98d6aaa7f111 33s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\knobclean_PICK_1.png']
+knobclean_GLIDE: thread=01a1b95b-bac4-7523-93a0-345eed393c16 40s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\knobclean_GLIDE_1.png']
+knobclean_SWELL: thread=01a1b95b-ba9f-70e2-b582-bed18c359b43 37s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\knobclean_SWELL_1.png']
+knobclean_ECHO: thread=01a1b95b-bb1e-7611-b364-a3d14210a3f7 34s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\knobclean_ECHO_1.png']
+knobclean_REVERB: thread=01a1b95b-baac-7b93-aa35-338c4e8483dc 32s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\knobclean_REVERB_1.png']
+steel_hd_l: thread=01a1b95b-baaf-7ad3-9d87-510ad24aaa56 40s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\steel_hd_l_1.png']
+steel_hd_r: thread=01a1b95b-ba2c-7241-86d5-cc7aa8bb37cc 52s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\steel_hd_r_1.png']
+
+real	0m51.969s
+user	0m0.000s
+sys	0m0.015s

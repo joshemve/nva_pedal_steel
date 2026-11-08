@@ -1,0 +1,2 @@
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\knob_studio.py:28: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  sc.world.use_nodes = True

@@ -1,0 +1,52 @@
+space    ref shift (-1, 5)  pointer -101.8  ao gamma [0.0, 0.0, 0.0]  fit px [454, 14984, 0]
+round 0 after z0: best 4.96 {"z0": 0.2, "pw": 2.5, "rf": 0.5, "depth": 0.065, "hr": 0.8, "rscale": 1.0, "sharp": 1.8, "phase": 0.0, "fw": 0.15, "lobes": 8}
+round 0 after pw: best 4.95 {"z0": 0.2, "pw": 2.0, "rf": 0.5, "depth": 0.065, "hr": 0.8, "rscale": 1.0, "sharp": 1.8, "phase": 0.0, "fw": 0.15, "lobes": 8}
+round 0 after rf: best 3.76 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.065, "hr": 0.8, "rscale": 1.0, "sharp": 1.8, "phase": 0.0, "fw": 0.15, "lobes": 8}
+round 0 after depth: best 3.60 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.0, "sharp": 1.8, "phase": 0.0, "fw": 0.15, "lobes": 8}
+round 0 after hr: best 3.60 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.0, "sharp": 1.8, "phase": 0.0, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.0, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.8, "z0": 0.2} 3.47
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.0, "pw": 2.0, "rf": 0.85, "rscale": 1.03, "sharp": 1.8, "z0": 0.2} 3.53
+round 0 after rscale: best 3.47 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.8, "phase": 0.0, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.0, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 3.0, "z0": 0.2} 3.48
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.0, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.46
+round 0 after sharp: best 3.46 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.0, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.19
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.75, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.70
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.5, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.55
+round 0 after phase: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.06, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.45
+  {"depth": 0.04, "fw": 0.3, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.41
+round 0 after fw: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.5} 3.98
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.65} 4.15
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.35} 3.54
+round 1 after z0: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 3.2, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.62
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.5, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.22
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 1.6, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.51
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 4.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 4.21
+round 1 after pw: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.5, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.83
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.3, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 4.04
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.7, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.50
+round 1 after rf: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.08, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.63
+  {"depth": 0.065, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.43
+  {"depth": 0.055, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.29
+  {"depth": 0.1, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.91
+round 1 after depth: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 1.0, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.37
+  {"depth": 0.04, "fw": 0.15, "hr": 0.65, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.27
+  {"depth": 0.04, "fw": 0.15, "hr": 0.5, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "z0": 0.2} 3.49
+round 1 after hr: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 0.97, "sharp": 1.0, "z0": 0.2} 4.54
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 0.985, "sharp": 1.0, "z0": 0.2} 4.07
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "z0": 0.2} 3.53
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.03, "sharp": 1.0, "z0": 0.2} 3.41
+round 1 after rscale: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 3.0, "z0": 0.2} 3.29
+  {"depth": 0.04, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.8, "z0": 0.2} 3.23
+round 1 after sharp: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+round 1 after phase: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+round 1 after fw: best 3.19 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}
+BEST 3.1901341287087868 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "depth": 0.04, "hr": 0.8, "rscale": 1.015, "sharp": 1.0, "phase": 0.25, "fw": 0.15, "lobes": 8}

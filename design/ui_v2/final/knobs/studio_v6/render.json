@@ -1,0 +1,85 @@
+{
+  "config": {
+    "samples": 128,
+    "scale": 3,
+    "angles": [],
+    "key": {
+      "power": 5
+    },
+    "fill": {
+      "power": 0.8,
+      "specular": 0
+    },
+    "materials": {
+      "cream_knob": {
+        "Base Color": [
+          0.8,
+          0.27,
+          0.035,
+          1
+        ]
+      },
+      "ptr_light": {
+        "Base Color": [
+          0.95,
+          0.78,
+          0.52,
+          1
+        ],
+        "Emission Strength": 0
+      }
+    },
+    "dome": {
+      "rscale": 1.05,
+      "geometry": {
+        "prof": "VOICE_STUDIO",
+        "tilt": 15
+      }
+    },
+    "scallop": {
+      "geometry": {
+        "prof": "FEEL_STUDIO",
+        "hr": 0.65,
+        "depth": 0.08
+      },
+      "key": {
+        "power": 4.2
+      },
+      "fill": {
+        "power": 2
+      }
+    },
+    "space": {
+      "geometry": {
+        "prof": "SPACE_STUDIO",
+        "depth": 0.07
+      },
+      "key": {
+        "power": 4
+      },
+      "fill": {
+        "power": 0.15
+      }
+    }
+  },
+  "angles": [],
+  "width": 480,
+  "height": 144,
+  "scale": 3,
+  "centres": [
+    80,
+    240,
+    400
+  ],
+  "centre_y": 72,
+  "styles": [
+    "dome",
+    "scallop",
+    "space"
+  ],
+  "anchor_angles": [
+    35,
+    30,
+    -100
+  ]
+}

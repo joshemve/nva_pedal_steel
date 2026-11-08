@@ -1,0 +1,9 @@
+[
+ {
+  "name": "trimdb_empty",
+  "images": [
+   "final/parts/crops/trimdb.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text '0.0 dB' to the right of the TRIM knob, leaving the plain cream top-bar surface there. Everything outside that change must stay identical to the input."
+ }
+]

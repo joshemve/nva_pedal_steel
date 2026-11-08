@@ -3,7 +3,10 @@
 
 PedalSteelAudioProcessor::PedalSteelAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true)),
-      apvts(*this, nullptr, "Parameters", createParameterLayout())
+      apvts(*this, nullptr, "Parameters", createParameterLayout()),
+      midiLearn(apvts, { ParamIDs::toneWarmth, ParamIDs::pickSnap, ParamIDs::barGlide, ParamIDs::autoSwell, ParamIDs::delayMix,
+                         ParamIDs::reverbMix, ParamIDs::outputLevel, ParamIDs::volumePedal, ParamIDs::pedalA, ParamIDs::pedalB,
+                         ParamIDs::pedalC, ParamIDs::leverLKL, ParamIDs::leverLKR, ParamIDs::playMode })
 {
     pendingUiCmds.reserve(64);
 
@@ -49,11 +52,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::presetStyle, 1 }, "Steel Voice Style",
-        juce::StringArray{ "Sweet Georgia E9", "Hedonist Bootgaze", "Mikey's Grit Tweed", "Montana Lush Swell" }, 0));
+        juce::StringArray{ "Sweet Georgia E9", "Hedonist Bootgaze", "Mikey's Grit Tweed", "Montana Lush Swell", "Western Swing C6th", "Baritone Canyon B6" }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::playMode, 1 }, "Performance Mode",
-        juce::StringArray{ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent", "Studio Phrase Licks" }, 0));
+        juce::StringArray{ "Smart Auto-Pedal E9", "Crying Lead Gliss", "Lush Swell Pad", "Manual Copedent", "Studio Phrase Licks", "Palm Chime Harmonics" }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::pedalA, 1 }, "Pedal A (B->C# +2)",
@@ -176,7 +179,19 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 
     layout.push_back(std::make_unique<juce::AudioParameterChoice>(
         juce::ParameterID{ ParamIDs::fxCharacter, 1 }, "Analog Character",
-        juce::StringArray{ "Studio Standard", "4-Track Cassette", "Ribbon Opto Velvet", "Analog Phaser", "Spring + Bias Trem", "Underwater R&B", "Vintage Warble" }, 0));
+        juce::StringArray{
+            "Studio Standard",
+            "4-Track Cassette",
+            "Ribbon Opto Velvet",
+            "Analog Phaser",
+            "Spring + Bias Trem",
+            "Underwater R&B",
+            "Vintage Warble",
+            "Apollo Shimmer",
+            "Leslie 147 Rotary",
+            "Gated Diode Bloom",
+            "Standel 807 Chamber"
+        }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::outputLevel, 1 }, "Output Level",
@@ -276,6 +291,7 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
         }
     }
 
+    midiLearn.handleMidi(midiMessages);
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
     engine.setParams(readParamsFromAtomics());
 
@@ -305,6 +321,8 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
         outputPeakL.store(std::max(blkL, prevL * decay), std::memory_order_relaxed);
         outputPeakR.store(std::max(blkR, prevR * decay), std::memory_order_relaxed);
     }
+
+    blocksProcessed.fetch_add(1, std::memory_order_relaxed);
 
     // Publish live copedent status snapshot for UI visualizer
     {
@@ -446,7 +464,7 @@ bool PedalSteelAudioProcessor::saveUserPreset(const juce::File& file) {
     if (xml == nullptr) return false;
 
     const juce::String cleanName = file.getFileNameWithoutExtension().trim();
-    xml->setAttribute("pluginVersion", "1.1.0");
+    xml->setAttribute("pluginVersion", "1.2.0");
     xml->setAttribute("presetName", cleanName);
     xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
 
@@ -552,6 +570,8 @@ void PedalSteelAudioProcessor::getStateInformation(juce::MemoryBlock& destData) 
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
     if (xml != nullptr) {
         xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
+        xml->setAttribute("midiMap", midiLearn.toString());
+        xml->setAttribute("editorWidth", editorWidth);
         const juce::String userName = getActiveUserPresetName();
         if (userName.isNotEmpty()) {
             xml->setAttribute("userPresetName", userName);
@@ -569,7 +589,18 @@ void PedalSteelAudioProcessor::setStateInformation(const void* data, int sizeInB
             const juce::ScopedLock sl(presetMetaLock);
             activeUserPresetName = xmlState->getStringAttribute("userPresetName", "");
         }
+        midiLearn.fromString(xmlState->getStringAttribute("midiMap", ""));
+        xmlState->removeAttribute("midiMap");
+        editorWidth = juce::jlimit(800, 2400, xmlState->getIntAttribute("editorWidth", editorWidth));
+        xmlState->removeAttribute("editorWidth");
         apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+        // switches and choices hold whatever raw value a host last sent (e.g. 0.3 for "off"); replaceState leaves those
+        // alone when the meaning doesn't change, so snap them to their legal value, and hosts read back what they saved
+        for (auto* p : getParameters())
+            if (auto* rp = dynamic_cast<juce::RangedAudioParameter*>(p)) {
+                const float raw = rp->getValue(), legal = rp->convertTo0to1(rp->convertFrom0to1(raw));
+                if (std::abs(raw - legal) > 1e-6f) rp->setValueNotifyingHost(legal);
+            }
         captureCurrentAsBaseline();
         presetRevision.fetch_add(1, std::memory_order_relaxed);
     }

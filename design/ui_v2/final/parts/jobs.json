@@ -1,0 +1,479 @@
+[
+ {
+  "name": "pedals_unlit",
+  "images": [
+   "final/parts/crops/pedals.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: turn every amber light OFF. The round LED indicators above A and B become unlit dark grey glass exactly like the unlit one above C, and the warm amber glow under the top edge of the A and B pedal blocks disappears, and A and B come back up to the raised, un-pressed position, so all three pedal blocks look exactly like pedal C (same height, same chrome, no glow). Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pedals_lit",
+  "images": [
+   "final/parts/crops/pedals.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: turn pedal C ON exactly like A and B: its round LED indicator glows amber like A's and B's, and its pedal block is pressed down exactly like A and B (same shorter, tilted look) with the same warm amber glow showing under its top edge. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "display_empty",
+  "images": [
+   "final/parts/crops/display.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove all the amber text characters from the LED dot-matrix display. The display window stays, with its dark glass and only very faint unlit dots; bezel, arrows and bar unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "meter_off",
+  "images": [
+   "final/parts/crops/meter.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the OUTPUT level meter shows NO level: every segment is unlit (dark, like the rightmost unlit segments now). Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "meter_on",
+  "images": [
+   "final/parts/crops/meter.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the OUTPUT level meter is fully lit: every segment glows amber like the lit ones on the left. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "trim_clean",
+  "images": [
+   "final/parts/crops/trim.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the small TRIM knob entirely; show the cream top-bar surface where it sat, with its printed tick mark above it still there, the TRIM label and 0.0 dB text unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "slider_empty",
+  "images": [
+   "final/parts/crops/slider.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the cream slider handle (thumb) of the VOLUME PEDAL slider; the slider groove/track continues straight through where the handle was, and the tick marks below are unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "slider_thumb",
+  "images": [
+   "final/parts/crops/slider.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: keep ONLY the cream slider handle (thumb) of the VOLUME PEDAL slider, at the same size and position, and replace everything else with flat pure magenta #FF00FF (no shadow on the magenta). Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pills_empty",
+  "images": [
+   "final/parts/crops/pills.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text inside every outlined value box (65 %, 40 %, 145 ms, 35 %, 18 %, 28 %): the outlined boxes stay, empty, with the same black panel inside. Labels TONE, PICK etc. unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "modebox_empty",
+  "images": [
+   "final/parts/crops/modebox.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text 'Smart Auto-Pedal E9' inside the MODE dropdown box; keep the box outline and the down-arrow triangle. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pctbox_empty",
+  "images": [
+   "final/parts/crops/pctbox.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text '72 %' inside the small outlined box next to the slider; keep the box. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "knobclean_TONE",
+  "images": [
+   "final/parts/crops/knob_TONE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the knob in the centre completely (body, skirt and pointer), leaving the flat matte black panel where it sat, with the ring of short printed cream tick marks around it unchanged and only a very soft, faint round shadow on the panel where the knob stood. Neighbouring knobs untouched. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "knobclean_PICK",
+  "images": [
+   "final/parts/crops/knob_PICK.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the knob in the centre completely (body, skirt and pointer), leaving the flat matte black panel where it sat, with the ring of short printed cream tick marks around it unchanged and only a very soft, faint round shadow on the panel where the knob stood. Neighbouring knobs untouched. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "knobclean_GLIDE",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the knob in the centre completely (body, skirt and pointer), leaving the flat matte black panel where it sat, with the ring of short printed cream tick marks around it unchanged and only a very soft, faint round shadow on the panel where the knob stood. Neighbouring knobs untouched. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "knobclean_SWELL",
+  "images": [
+   "final/parts/crops/knob_SWELL.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the knob in the centre completely (body, skirt and pointer), leaving the flat matte black panel where it sat, with the ring of short printed cream tick marks around it unchanged and only a very soft, faint round shadow on the panel where the knob stood. Neighbouring knobs untouched. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "knobclean_ECHO",
+  "images": [
+   "final/parts/crops/knob_ECHO.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the knob in the centre completely (body, skirt and pointer), leaving the flat matte black panel where it sat, with the ring of short printed cream tick marks around it unchanged and only a very soft, faint round shadow on the panel where the knob stood. Neighbouring knobs untouched. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "knobclean_REVERB",
+  "images": [
+   "final/parts/crops/knob_REVERB.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the knob in the centre completely (body, skirt and pointer), leaving the flat matte black panel where it sat, with the ring of short printed cream tick marks around it unchanged and only a very soft, faint round shadow on the panel where the knob stood. Neighbouring knobs untouched. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "steel_hd_l",
+  "images": [
+   "final/parts/crops/steel_l.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version (crisper strings, frets, chrome reflections and wood grain), same glare and highlights in the same places. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "steel_hd_r",
+  "images": [
+   "final/parts/crops/steel_r.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version (crisper strings, frets, chrome reflections and wood grain), same glare and highlights in the same places. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_00",
+  "images": [
+   "final/parts/crops/tile_00.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_01",
+  "images": [
+   "final/parts/crops/tile_01.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_02",
+  "images": [
+   "final/parts/crops/tile_02.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_03",
+  "images": [
+   "final/parts/crops/tile_03.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_10",
+  "images": [
+   "final/parts/crops/tile_10.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_11",
+  "images": [
+   "final/parts/crops/tile_11.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_12",
+  "images": [
+   "final/parts/crops/tile_12.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_13",
+  "images": [
+   "final/parts/crops/tile_13.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_20",
+  "images": [
+   "final/parts/crops/tile_20.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_21",
+  "images": [
+   "final/parts/crops/tile_21.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_22",
+  "images": [
+   "final/parts/crops/tile_22.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_23",
+  "images": [
+   "final/parts/crops/tile_23.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_30",
+  "images": [
+   "final/parts/crops/tile_30.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_31",
+  "images": [
+   "final/parts/crops/tile_31.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_32",
+  "images": [
+   "final/parts/crops/tile_32.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "hd_tile_33",
+  "images": [
+   "final/parts/crops/tile_33.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: nothing: reproduce it as a sharper, higher-detail version of exactly the same picture (crisper edges, text, strings, frets, chrome reflections, wood grain, rug weave and panel texture), with every glare, highlight, shadow, letter and object in exactly the same place, shape and colour. Do not add, remove or restyle anything. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_TONE",
+  "images": [
+   "final/parts/crops/pill_TONE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_PICK",
+  "images": [
+   "final/parts/crops/pill_PICK.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_GLIDE",
+  "images": [
+   "final/parts/crops/pill_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_SWELL",
+  "images": [
+   "final/parts/crops/pill_SWELL.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_ECHO",
+  "images": [
+   "final/parts/crops/pill_ECHO.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pillempty_REVERB",
+  "images": [
+   "final/parts/crops/pill_REVERB.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the value text (the number and unit) inside the outlined value box in the centre, leaving the outlined box empty with the same black panel inside it. The label above it stays. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "trimdb_empty",
+  "images": [
+   "final/parts/crops/trimdb.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the text '0.0 dB' to the right of the TRIM knob, leaving the plain cream top-bar surface there. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "noptr_TONE",
+  "images": [
+   "final/parts/crops/knob_TONE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: erase ONLY the short straight pointer line (indicator stripe) painted on the top of the cream knob in the centre, so the cream domed top is plain and smooth there, with the same shading and highlights it has around the line. The knob, its black knurled skirt, the tick marks and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "noptr_PICK",
+  "images": [
+   "final/parts/crops/knob_PICK.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: erase ONLY the short straight pointer line (indicator stripe) painted on the top of the cream knob in the centre, so the cream domed top is plain and smooth there, with the same shading and highlights it has around the line. The knob, its black knurled skirt, the tick marks and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "noptr_TRIM",
+  "images": [
+   "final/parts/crops/trim.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: erase ONLY the short straight pointer line (indicator stripe) painted on the top of the cream knob in the centre, so the cream domed top is plain and smooth there, with the same shading and highlights it has around the line. The knob, its black knurled skirt, the tick marks and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "groove_empty",
+  "images": [
+   "final/parts/crops/slider.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the cream slider handle AND the warm cream/brass fill inside the VOLUME PEDAL slider groove, so the whole groove from its left end to its right end is empty and dark exactly like its unfilled right-hand part. Tick marks below and the groove outline stay the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "groove_full",
+  "images": [
+   "final/parts/crops/slider.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the cream slider handle and make the warm cream/brass fill inside the VOLUME PEDAL slider groove run evenly along the WHOLE groove from its left end to its right end (fully filled, same colour and sheen as its left part). Tick marks below and the groove outline stay the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "levers_on_1",
+  "images": [
+   "final/parts/crops/levers.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: engage BOTH knee levers (LKL and LKR): each lever's black ribbed pad is pressed in and down, sitting a little lower, with its chrome stalk tilted a little further, and a warm amber glow showing under the top edge of each pad, exactly the glow the pressed, lit A and B foot pedals have in this plugin. Pivot rings, labels LKL/LKR and the panel stay the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "midi_on_1",
+  "images": [
+   "final/parts/crops/midibtn.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the MIDI LEARN button is switched ON: its thin outline and the words MIDI LEARN glow warm amber (the same amber as lit LED segments), with a very soft amber glow just around the outline on the black panel. Same font, size, position and box shape. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "levers_on_2",
+  "images": [
+   "final/parts/crops/levers.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: engage BOTH knee levers (LKL and LKR): each lever's black ribbed pad is pressed in and down, sitting a little lower, with its chrome stalk tilted a little further, and a warm amber glow showing under the top edge of each pad, exactly the glow the pressed, lit A and B foot pedals have in this plugin. Pivot rings, labels LKL/LKR and the panel stay the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "midi_on_2",
+  "images": [
+   "final/parts/crops/midibtn.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the MIDI LEARN button is switched ON: its thin outline and the words MIDI LEARN glow warm amber (the same amber as lit LED segments), with a very soft amber glow just around the outline on the black panel. Same font, size, position and box shape. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "bar_removed_1",
+  "images": [
+   "final/parts/crops/bar.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the chrome cylindrical tone bar (the slide bar lying across the strings in the middle of the black fretboard) and its reflection/shadow completely. The strings, fret lines, fret dots/diamonds, printed fret numbers and wood continue naturally and evenly through where the bar was. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "bar_removed_2",
+  "images": [
+   "final/parts/crops/bar.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the chrome cylindrical tone bar (the slide bar lying across the strings in the middle of the black fretboard) and its reflection/shadow completely. The strings, fret lines, fret dots/diamonds, printed fret numbers and wood continue naturally and evenly through where the bar was. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "floor_pressed_1",
+  "images": [
+   "final/parts/crops/floorpedals.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the three black foot pedals (rubber-topped pedal blocks on the chrome cross bar under the steel) are all pressed DOWN: each pedal's top is tilted forward and sits lower, showing less of its front face, and its thin vertical pull rod above is pulled a little further down. Cross bar, legs, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "floor_pressed_2",
+  "images": [
+   "final/parts/crops/floorpedals.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the three black foot pedals (rubber-topped pedal blocks on the chrome cross bar under the steel) are all pressed DOWN: each pedal's top is tilted forward and sits lower, showing less of its front face, and its thin vertical pull rod above is pulled a little further down. Cross bar, legs, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_left_pushed_1",
+  "images": [
+   "final/parts/crops/kl_left.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the LEFT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the left (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_left_pushed_2",
+  "images": [
+   "final/parts/crops/kl_left.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the LEFT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the left (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_right_pushed_1",
+  "images": [
+   "final/parts/crops/kl_right.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the RIGHT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the right (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_right_pushed_2",
+  "images": [
+   "final/parts/crops/kl_right.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the RIGHT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the right (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "skin_maple_1",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i04_2.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: figured birdseye maple (warm natural blond, matte satin lacquer), with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "skin_maple_2",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i04_2.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: figured birdseye maple (warm natural blond, matte satin lacquer), with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "skin_redsparkle_1",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i06_1.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: deep red metal-flake sparkle finish with polished chrome trim rails along the front, with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "skin_redsparkle_2",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i06_1.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: deep red metal-flake sparkle finish with polished chrome trim rails along the front, with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "skin_pearloid_1",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i13_2.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: white mother-of-pearl pearloid covering with chrome trim, with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "skin_pearloid_2",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i13_2.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: white mother-of-pearl pearloid covering with chrome trim, with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "skin_koa_1",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i18_1.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: highly figured Hawaiian koa wood (golden-brown curl), with brass-toned changer and keyhead hardware, with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "skin_koa_2",
+  "images": [
+   "final/parts/crops/steelbody.png",
+   "round21/i18_1.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: highly figured Hawaiian koa wood (golden-brown curl), with brass-toned changer and keyhead hardware, with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ }
+]

@@ -1,0 +1,137 @@
+{
+ "val_TONE": {
+  "font": "Poppins-Medium",
+  "text": "65 %",
+  "size_canvas": 33.012332439678275,
+  "ink_left": 236.0,
+  "ink_cy": 1723.5,
+  "ink_cx": 274.625,
+  "ink_w": 77.25,
+  "colour": [
+   254.0,
+   253.0,
+   250.0
+  ],
+  "corr": 0.8570497632026672
+ },
+ "val_PICK": {
+  "font": "Poppins-Medium",
+  "text": "40 %",
+  "size_canvas": 33.92,
+  "ink_left": 510.0,
+  "ink_cy": 1723.0,
+  "ink_cx": 549.875,
+  "ink_w": 79.75,
+  "colour": [
+   251.60000610351562,
+   251.0,
+   245.0
+  ],
+  "corr": 0.9072265028953552
+ },
+ "val_GLIDE": {
+  "font": "Poppins-Medium",
+  "text": "145 ms",
+  "size_canvas": 34.466425992779776,
+  "ink_left": 831.0,
+  "ink_cy": 1722.5,
+  "ink_cx": 890.75,
+  "ink_w": 119.5,
+  "colour": [
+   248.0,
+   245.0,
+   242.0
+  ],
+  "corr": 0.7235884070396423
+ },
+ "val_SWELL": {
+  "font": "Poppins-Medium",
+  "text": "35 %",
+  "size_canvas": 33.735890410958916,
+  "ink_left": 1138.0,
+  "ink_cy": 1723.0,
+  "ink_cx": 1176.75,
+  "ink_w": 77.5,
+  "colour": [
+   251.0,
+   251.0,
+   249.0
+  ],
+  "corr": 0.8732091784477234
+ },
+ "val_ECHO": {
+  "font": "Poppins-Medium",
+  "text": "18 %",
+  "size_canvas": 36.321951219512194,
+  "ink_left": 1467.0,
+  "ink_cy": 1723.0,
+  "ink_cx": 1504.125,
+  "ink_w": 74.25,
+  "colour": [
+   250.0,
+   248.0,
+   245.0
+  ],
+  "corr": 0.7845106720924377
+ },
+ "val_REVERB": {
+  "font": "Poppins-Medium",
+  "text": "28 %",
+  "size_canvas": 33.828571428571436,
+  "ink_left": 1729.0,
+  "ink_cy": 1723.0,
+  "ink_cx": 1767.375,
+  "ink_w": 76.75,
+  "colour": [
+   253.0,
+   251.0,
+   248.0
+  ],
+  "corr": 0.9080811738967896
+ },
+ "mode": {
+  "font": "Inter-w500-o14",
+  "text": "Smart Auto-Pedal E9",
+  "size_canvas": 37.84199999999999,
+  "ink_left": 418.0,
+  "ink_cy": 1859.0,
+  "ink_cx": 606.25,
+  "ink_w": 376.5,
+  "colour": [
+   250.0,
+   247.0,
+   245.0
+  ],
+  "corr": 0.949139416217804
+ },
+ "vol": {
+  "font": "Poppins-Medium",
+  "text": "72 %",
+  "size_canvas": 35.657142857142844,
+  "ink_left": 2444.0,
+  "ink_cy": 1855.0,
+  "ink_cx": 2483.25,
+  "ink_w": 78.5,
+  "colour": [
+   248.0,
+   246.0,
+   242.0
+  ],
+  "corr": 0.8907667994499207
+ },
+ "db": {
+  "font": "Poppins-SemiBold",
+  "text": "0.0 dB",
+  "size_canvas": 32.60767676767677,
+  "ink_left": 3058.0,
+  "ink_cy": 107.0,
+  "ink_cx": 3108.625,
+  "ink_w": 101.25,
+  "colour": [
+   22.0,
+   14.0,
+   10.5
+  ],
+  "corr": 0.9529151916503906
+ }
+}

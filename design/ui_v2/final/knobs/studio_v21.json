@@ -1,0 +1,118 @@
+{
+  "samples": 128,
+  "scale": 3,
+  "angles": [],
+  "ambient": 0.18,
+  "key": {
+    "power": 12,
+    "size": [
+      0.42,
+      0.08
+    ],
+    "pos": [
+      0,
+      0.26,
+      0.5
+    ]
+  },
+  "fill": {
+    "power": 0
+  },
+  "bounce": {
+    "power": 0
+  },
+  "materials": {
+    "cream_knob": {
+      "Base Color": [
+        0.68,
+        0.3,
+        0.06,
+        1
+      ]
+    },
+    "black_knob": {
+      "Base Color": [
+        0.014,
+        0.011,
+        0.008,
+        1
+      ],
+      "Roughness": 0.39,
+      "Coat Weight": 0.05
+    },
+    "ptr_light": {
+      "Base Color": [
+        0.95,
+        0.78,
+        0.52,
+        1
+      ],
+      "Emission Strength": 0
+    }
+  },
+  "dome": {
+    "rscale": 1.05,
+    "geometry": {
+      "prof": "DOME",
+      "tilt": 18
+    },
+    "key": {
+      "power": 5.8,
+      "pos": [
+        0,
+        0.26,
+        0.16
+      ],
+      "size": [
+        0.42,
+        0.055
+      ]
+    },
+    "y": -0.002
+  },
+  "scallop": {
+    "y": -0.002,
+    "geometry": {
+      "prof": "MOLDED_CAP",
+      "hr": 0.6,
+      "depth": 0.09,
+      "phase": 0.5,
+      "tilt": 12,
+      "sharp": -3
+    },
+    "key": {
+      "power": 8,
+      "pos": [
+        0,
+        0.26,
+        0.35
+      ],
+      "size": [
+        0.42,
+        0.08
+      ]
+    },
+    "rim": {
+      "power": 2
+    }
+  },
+  "space": {
+    "geometry": {
+      "prof": "SPACE_STUDIO",
+      "depth": 0.07,
+      "sharp": 1.8
+    },
+    "key": {
+      "power": 4.5,
+      "pos": [
+        0,
+        0.26,
+        0.16
+      ],
+      "size": [
+        0.42,
+        0.055
+      ]
+    }
+  }
+}

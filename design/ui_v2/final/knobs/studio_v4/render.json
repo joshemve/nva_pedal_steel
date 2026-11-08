@@ -1,0 +1,61 @@
+{
+  "config": {
+    "samples": 96,
+    "scale": 3,
+    "angles": [],
+    "key": {
+      "power": 5
+    },
+    "fill": {
+      "power": 0.8,
+      "specular": 0
+    },
+    "materials": {
+      "cream_knob": {
+        "Base Color": [
+          0.8,
+          0.4,
+          0.12,
+          1
+        ]
+      }
+    },
+    "scallop": {
+      "geometry": {
+        "prof": "FLUTED",
+        "hr": 0.7,
+        "sharp": -2,
+        "depth": 0.075,
+        "LAND": 0.15
+      }
+    },
+    "space": {
+      "geometry": {
+        "depth": 0.055
+      },
+      "key": {
+        "power": 2.5
+      }
+    }
+  },
+  "angles": [],
+  "width": 480,
+  "height": 144,
+  "scale": 3,
+  "centres": [
+    80,
+    240,
+    400
+  ],
+  "centre_y": 72,
+  "styles": [
+    "dome",
+    "scallop",
+    "space"
+  ],
+  "anchor_angles": [
+    35,
+    30,
+    -100
+  ]
+}

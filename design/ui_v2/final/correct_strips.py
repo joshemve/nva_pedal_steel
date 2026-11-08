@@ -49,10 +49,11 @@ def cream_mask(a):
     return (a[..., 0] > 95) & (a[..., 0] - a[..., 2] > 25)
 
 
-def aligned_ref_cream(org, size_ui, fs, comp, sc, M=24):
+def aligned_ref_cream(org, size_ui, fs, comp, sc, M=24, own=None):
     """Cream knobs: shift so the cream bakelite centroids coincide (robust to skirt/tick differences)."""
     big = ref_patch((org[0] - M / sc, org[1] - M / sc), size_ui + 2 * M / sc, fs + 2 * M)
     mo = cream_mask(comp); mb = cream_mask(big)
+    if own is not None: mo &= own   # only our knob body (cream ticks on the plate would bias the centroid)
     # keep the blob nearest the centre of the big patch (drop ticks/labels)
     h, w = mb.shape; yy, xx = np.mgrid[0:h, 0:w]; mb &= np.hypot(yy - h / 2, xx - w / 2) < fs * 0.45
     oy, ox = np.argwhere(mo).mean(0); by, bx = np.argwhere(mb).mean(0)

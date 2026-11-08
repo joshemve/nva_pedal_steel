@@ -1,0 +1,19 @@
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\knob_studio.py:27: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  sc.world.use_nodes = True
+00:06.047  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\reference_angles.png'
+00:09.266  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0000.png'
+00:12.781  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0001.png'
+00:17.078  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0002.png'
+00:19.109  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0003.png'
+00:20.563  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0004.png'
+00:22.313  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0005.png'
+00:23.875  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0006.png'
+00:25.438  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0007.png'
+00:27.000  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0008.png'
+00:28.578  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0009.png'
+00:30.438  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0010.png'
+00:32.109  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\knobs\studio_v16\rotation_0011.png'
+Info: Saved as "knob_studio.blend"
+Blender 5.0.1 (hash a3db93c5b259 built 2025-12-16 01:32:30)
+
+Blender quit

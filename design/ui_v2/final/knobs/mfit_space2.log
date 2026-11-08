@@ -1,0 +1,35 @@
+space    ref shift (0, 4)  pointer -101.5  ao gamma [0.0, 0.0, 0.0]  fit px [471, 15684, 0]
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.10
+  {"depth": 0.04, "fl": 0.09, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.46
+  {"depth": 0.04, "fl": 0.03, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.21
+  {"depth": 0.04, "fl": 0.06, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.27
+  {"depth": 0.04, "fl": 0.12, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.95
+round 0 after fl: best 7.10 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.04, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.015, "wb": 0.5, "fl": 0.0}
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 1.0, "z0": 0.2} 7.13
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 1.5, "z0": 0.2} 7.13
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.015, "sharp": 1.0, "wb": 2.0, "z0": 0.2} 7.13
+round 0 after wb: best 7.10 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.04, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.015, "wb": 0.5, "fl": 0.0}
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 0.96, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 8.23
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 0.99, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.28
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 0.975, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.78
+  {"depth": 0.04, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.03
+round 0 after rscale: best 7.03 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.04, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.0, "wb": 0.5, "fl": 0.0}
+  {"depth": 0.055, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.17
+  {"depth": 0.07, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.33
+  {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.02
+round 0 after depth: best 7.02 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.03, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.0, "wb": 0.5, "fl": 0.0}
+  {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 0.6, "wb": 0.5, "z0": 0.2} 7.06
+  {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.8, "wb": 0.5, "z0": 0.2} 7.03
+round 0 after sharp: best 7.02 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.03, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.0, "wb": 0.5, "fl": 0.0}
+FAILED {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.2, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} [Errno 2] No such file or directory: 'C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\knobs\\mfit\\space_fb2c3fb7ef_normal_0000.png'
+FAILED {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.3, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} [Errno 2] No such file or directory: 'C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\knobs\\mfit\\space_ee2ff1a5b1_normal_0000.png'
+round 0 after phase: best 7.02 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.03, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.0, "wb": 0.5, "fl": 0.0}
+  {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.3} 7.12
+  {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.1} 7.09
+round 0 after z0: best 7.02 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.03, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.0, "wb": 0.5, "fl": 0.0}
+  {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 1.0, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.12
+  {"depth": 0.03, "fl": 0.0, "fw": 0.15, "hr": 0.65, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.04
+round 0 after hr: best 7.02 {"z0": 0.2, "pw": 2.0, "rf": 0.85, "fw": 0.15, "depth": 0.03, "hr": 0.8, "phase": 0.25, "sharp": 1.0, "lobes": 8, "rscale": 1.0, "wb": 0.5, "fl": 0.0}
+  {"depth": 0.03, "fl": 0.06, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.28
+  {"depth": 0.03, "fl": 0.09, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.56
+  {"depth": 0.03, "fl": 0.03, "fw": 0.15, "hr": 0.8, "lobes": 8, "phase": 0.25, "pw": 2.0, "rf": 0.85, "rscale": 1.0, "sharp": 1.0, "wb": 0.5, "z0": 0.2} 7.09

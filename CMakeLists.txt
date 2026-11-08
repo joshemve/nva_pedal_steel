@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(PedalSteel VERSION 1.1.0 LANGUAGES C CXX)
+project(PedalSteel VERSION 1.2.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -62,6 +62,10 @@ set(PEDALSTEEL_SOURCES
     Source/dsp/PedalSteelStudioBank.cpp
 )
 
+# UI v2 bitmaps/fonts fitted to design/ui_v2/APPROVED_main.png (exported by design/ui_v2/final/parts/gen_layout.py)
+file(GLOB PEDALSTEEL_UI_ASSETS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Source/ui_assets/*")
+juce_add_binary_data(PedalSteelUiData SOURCES ${PEDALSTEEL_UI_ASSETS})
+
 target_sources(PedalSteel PRIVATE ${PEDALSTEEL_SOURCES})
 target_include_directories(PedalSteel PRIVATE Source Source/dsp)
 
@@ -73,6 +77,7 @@ target_compile_definitions(PedalSteel PUBLIC
 )
 
 target_link_libraries(PedalSteel PRIVATE
+    PedalSteelUiData
     juce::juce_audio_utils
     juce::juce_dsp
 PUBLIC
@@ -96,8 +101,10 @@ target_compile_definitions(PedalSteelShot PRIVATE
     JUCE_DISPLAY_SPLASH_SCREEN=0
     JucePlugin_Name="NVA Pedal Steel"
     JucePlugin_Build_Standalone=0
+    JUCE_MODAL_LOOPS_PERMITTED=1
 )
 target_link_libraries(PedalSteelShot PRIVATE
+    PedalSteelUiData
     juce::juce_audio_utils
     juce::juce_dsp
 PUBLIC
@@ -132,6 +139,18 @@ PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_warning_flags
 )
+
+# ---------------------------------------------------------------------------
+# VST3 host test: loads the built VST3 like a DAW and checks it (tools/hosttest)
+# ---------------------------------------------------------------------------
+juce_add_console_app(PedalSteelHostTest PRODUCT_NAME "PedalSteelHostTest")
+juce_generate_juce_header(PedalSteelHostTest)
+target_sources(PedalSteelHostTest PRIVATE tools/hosttest/HostMain.cpp)
+target_compile_definitions(PedalSteelHostTest PRIVATE
+    JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_PLUGINHOST_VST3=1 JUCE_MODAL_LOOPS_PERMITTED=1)
+target_link_libraries(PedalSteelHostTest PRIVATE juce::juce_audio_utils
+PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_warning_flags)
 
 if(MSVC)
     target_compile_options(PedalSteel PRIVATE /utf-8 /O2)

@@ -1,0 +1,8 @@
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\knob_studio.py:29: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  sc.world.use_nodes = True
+Timeout (0:00:45)!
+Thread 0x0000a4d0 (most recent call first):
+  File "C:\Program Files\Blender Foundation\Blender 5.0\5.0\scripts\addons_core\cycles\engine.py", line 92 in render
+  File "C:\Program Files\Blender Foundation\Blender 5.0\5.0\scripts\addons_core\cycles\__init__.py", line 72 in render
+  File "C:\Program Files\Blender Foundation\Blender 5.0\5.0\scripts\modules\bpy\ops.py", line 109 in __call__
+  File "C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\knob_studio.py", line 88 in <module>

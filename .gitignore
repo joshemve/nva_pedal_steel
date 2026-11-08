@@ -33,3 +33,21 @@ design/ui_v2/final/knobs/*.blend
 design/ui_v2/final/strips/frames/
 design/ui_v2/final/strips/frames_fixed/
 design/ui_v2/**/__pycache__/
+design/ui_v2/fit_env/
+# regenerable working files of the UI parts pipeline (align_parts.py / make_jobs*.py / the shot tool rebuild them)
+design/ui_v2/final/parts/aligned/
+design/ui_v2/final/parts/_check/
+design/ui_v2/final/parts/crops/
+design/ui_v2/final/parts/_v_*
+design/ui_v2/final/parts/gen/logs/
+design/ui_v2/final/browser/in/
+design/ui_v2/final/browser/gen/logs/
+renders/ui_screenshot_*.png
+renders/_*.png
+renders/_*.txt
+renders/_*.bin
+renders/standalone_window.png
+# regenerable knob-fit caches (large)
+design/ui_v2/final/knobs/**/surface*.json
+design/ui_v2/final/knobs/*.npy
+design/ui_v2/final/**/*.npy

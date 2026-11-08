@@ -25,7 +25,7 @@ STYLES = {
     #          profile  H/R   lobes depth sharp  body mat      ptr mat      ptr r0..r1  ptr w  skirt  tilt
     "dome":    (DOME,    0.60, 0,    0.0,  1.0,  "cream_knob", "ptr_dark",  0.24, 0.88, 0.13, True,  18.0),
     "scallop": (FLUTED,  0.65, 9,    0.09, 1.0,  "cream_knob", "ptr_dark",  0.34, 0.86, 0.14, False, 6.0),
-    "space":   (SCALLOP, 0.80, 8,    0.065, 1.8, "black_knob", "ptr_light", 0.06, 0.92, 0.11, False, 6.0),
+    "space":   (SCALLOP, 0.80, 8,    0.065, 1.8, "black_knob", "ptr_light", 0.06, 0.92, 0.13, False, 6.0),
 }
 LAND = 0.10   # fraction of each flute pitch left as a flat ridge land (crisp but not spiky)
 PHASE = {"scallop": 0.75}   # flute phase (fraction of a flute pitch) fitted to the reference
@@ -33,10 +33,52 @@ CREASE = {}   # degrees: edges sharper than this render as hard creases
 KEYS = ("prof", "hr", "lobes", "depth", "sharp", "body", "ptr", "r0", "r1", "pw", "skirt", "tilt")
 
 
+def sprofile(z0, pw, rf, wb=0.5, fw=0.12, fl=0.0, **_):
+    """Superellipse lathe profile fitted to the reference (final/fit_matcap.py): z = z0 + (1-z0)(1-r^pw)^(1/pw);
+    flute weight wb at the base, 1 on the wall, fading to 0 at r = rf over fw."""
+    pts = [(1.0, 0.0, wb)]
+    for r in (1.0, 0.9995, 0.998, 0.995, 0.99, 0.98, 0.965, 0.945, 0.92, 0.89, 0.85, 0.8, 0.74, 0.67, 0.58, 0.47, 0.34, 0.2, 0.0):
+        z = z0 + (1 - z0) * max(0.0, 1 - r ** pw) ** (1 / pw)
+        t = min(1.0, max(0.0, (r - rf) / max(fw, 1e-3))); w = t * t * (3 - 2 * t)
+        if r == 1.0: z = z0 * 0.5; pts.append((1.0 + fl * 0.4, round(z, 5), round(w, 4))); continue
+        pts.append((r, round(z, 5), round(w, 4)))
+    if fl: pts[0] = (1.0 + fl, 0.0, wb)                       # flared base: the wall leans out toward the panel
+    return pts
+
+
+def profile2(rface, crown, e, z0, rf, fw=0.12, wb=0.5, **_):
+    """Cap + shoulder lathe: a domed top face out to rface (crown = its rise), then a shoulder
+    z = z0 + (zs - z0)(1 - u)^e down to the base (u = 0 at the cap edge, 1 at R). Lobes (flute weight) start at rf."""
+    zs = 1 - crown; pts = [(1.0, 0.0, wb)]
+    rs = [1.0, 0.9995, 0.998, 0.995, 0.99] + [rface + (0.985 - rface) * (1 - i / 11) for i in range(12)] +          [rface * (1 - i / 9) for i in range(1, 10)]
+    for r in sorted(set(round(x, 5) for x in rs), reverse=True):
+        if r >= rface: u = (r - rface) / (1 - rface); z = z0 + (zs - z0) * max(0.0, 1 - u) ** e
+        else: z = zs + crown * (1 - (r / rface) ** 2)
+        if r == 1.0: z = z0 * 0.5
+        t = min(1.0, max(0.0, (r - rf) / max(fw, 1e-3))); w = t * t * (3 - 2 * t)
+        pts.append((r, round(z, 5), round(w, 4)))
+    return pts
+
+
+RSCALE = {"dome": 0.985, "scallop": 0.985, "space": 0.95}   # style -> fitted size scale (final/fit_matcap.py)
+PROFKEYS = ("z0", "pw", "rf", "fw", "wb", "fl", "rface", "crown", "e")
+SUPER = {   # style -> sprofile kwargs + geometry, fitted through the reference lit sphere (final/fit_matcap.py, 2026-11-07)
+    "scallop": dict(z0=0.05, pw=2.2, rf=0.9, fw=0.25, wb=0.4, depth=0.06, hr=0.65, phase=0.0, sharp=-2, lobes=9, tilt=10.0),
+    "dome": dict(z0=0.65, pw=1.8, rf=0.0, hr=0.6, tilt=18.0),
+    "space": dict(z0=0.05, pw=2.2, rf=0.8, fw=0.2, wb=1.0, depth=0.11, hr=0.7, phase=0.0, sharp=1.5, lobes=9, tilt=10.0),   # the FEEL knob made narrower, 9 rounded lobes (Joshua, 2026-11-07)
+}
+
+
 def params(style):
     import os, json
     p = dict(zip(KEYS, STYLES[style])); p["crease"] = CREASE.get(style); p["phase"] = PHASE.get(style, 0.0)
+    sup = json.loads(os.environ.get("KNOB_SUPER_" + style.upper(), "null")) or SUPER.get(style)   # fitting hook
+    if sup:   # profile-only keys (pw = superellipse power here, NOT the pointer width) stay out of p
+        p.update({k: v for k, v in sup.items() if k not in PROFKEYS})
+        p["prof"] = (profile2 if "rface" in sup else sprofile)(**sup)
     p.update(json.loads(os.environ.get("KNOB_" + style.upper(), "{}")))
+    if "z0" in p and "prof" not in json.loads(os.environ.get("KNOB_" + style.upper(), "{}")):
+        p["prof"] = profile2(**p) if "rface" in p else sprofile(**p)
     if isinstance(p["prof"], str): p["prof"] = globals()[p["prof"]]
     if "LAND" in p: globals()["LAND"] = p["LAND"]
     return p
@@ -84,24 +126,36 @@ def surface_z(prof, R, H, r):
     return pts[-1][1] if r > pts[-1][0] else pts[0][1]
 
 
-def pointer_mesh(name, prof, R, H, r0, r1, w, z0, steps=24, lift=0.012, sink=0.02):
-    """Thin inlaid line along +X that follows the cap's curvature, with rounded ends."""
+def pointer_mesh(name, prof, R, H, r0, r1, w, z0, steps=40, cols=9, lift=0.012, sink=0.02):
+    """Pointer bar along +X, part of the knob: it follows the cap's curvature, has a rounded (half-round) cross-section
+    and rounded ends, so it catches the light as the knob turns instead of reading as a flat painted stripe."""
     bm = bmesh.new()
+    hw = w * R / 2; x0, x1 = R * r0, R * r1
     top, bot = [], []
-    hw = w * R / 2
-    for s in range(steps + 1):
-        x = R * (r0 + (r1 - r0) * s / steps)
-        z = z0 + surface_z(prof, R, H, x)
-        top.append((bm.verts.new((x, -hw, z + lift * R)), bm.verts.new((x, hw, z + lift * R))))
-        bot.append((bm.verts.new((x, -hw, z - sink * R)), bm.verts.new((x, hw, z - sink * R))))
-    for s in range(steps):
-        (a, b), (c, d) = top[s], top[s + 1]; bm.faces.new((a, c, d, b))
-        (a2, b2), (c2, d2) = bot[s], bot[s + 1]; bm.faces.new((a2, b2, d2, c2))
-        bm.faces.new((bot[s][0], bot[s + 1][0], top[s + 1][0], top[s][0]))
-        bm.faces.new((top[s][1], top[s + 1][1], bot[s + 1][1], bot[s][1]))
-    bm.faces.new((top[0][0], top[0][1], bot[0][1], bot[0][0]))
-    bm.faces.new((bot[-1][0], bot[-1][1], top[-1][1], top[-1][0]))
+    for s_ in range(steps + 1):
+        x = x0 + (x1 - x0) * s_ / steps
+        e = min(x - x0, x1 - x)                                       # rounded ends: semicircular taper over hw
+        hws = hw * math.sqrt(max(0.0, 1 - (max(0.0, hw - e) / hw) ** 2)) if e < hw else hw
+        hws = max(hws, hw * 0.08)
+        zs = z0 + surface_z(prof, R, H, x)
+        rt, rb = [], []
+        for j in range(cols):
+            u = -1 + 2 * j / (cols - 1); y = u * hws
+            crown = lift * R * math.sqrt(max(0.0, 1 - u * u)) * (hws / hw) ** 0.5
+            rt.append(bm.verts.new((x, y, zs + crown + 0.002 * R)))
+            rb.append(bm.verts.new((x, y, zs - sink * R)))
+        top.append(rt); bot.append(rb)
+    for s_ in range(steps):
+        for j in range(cols - 1):
+            bm.faces.new((top[s_][j], top[s_ + 1][j], top[s_ + 1][j + 1], top[s_][j + 1]))
+            bm.faces.new((bot[s_][j], bot[s_][j + 1], bot[s_ + 1][j + 1], bot[s_ + 1][j]))
+        bm.faces.new((bot[s_][0], bot[s_ + 1][0], top[s_ + 1][0], top[s_][0]))
+        bm.faces.new((top[s_][-1], top[s_ + 1][-1], bot[s_ + 1][-1], bot[s_][-1]))
+    for j in range(cols - 1):
+        bm.faces.new((top[0][j], top[0][j + 1], bot[0][j + 1], bot[0][j]))
+        bm.faces.new((bot[-1][j], bot[-1][j + 1], top[-1][j + 1], top[-1][j]))
     me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
+    for p_ in me.polygons: p_.use_smooth = True
     return me
 
 
@@ -124,7 +178,7 @@ def build(coll, M, R, style, parent=None):
              M["knob_skirt"], spin)
         z0 = R * 0.2
     _obj(coll, "KnobBody", lathe("body_" + style, prof, R, H, lobes, depth, sharp, z0=z0, crease=P.get("crease"), phase=P.get("phase", 0.0)), M[bm_], spin)
-    _obj(coll, "Pointer", pointer_mesh("ptr_" + style, prof, R, H, r0, r1, pw, z0), M[pm_], spin)
+    _obj(coll, "Pointer", pointer_mesh("ptr_" + style, prof, R, H, r0, r1, pw, z0, lift=pw / 2 * (0.8 if style == "space" else 0.45)), M[pm_], spin)
     return root
 
 

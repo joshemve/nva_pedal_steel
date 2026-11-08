@@ -1,0 +1,26 @@
+[
+ {
+  "name": "walnutB_02",
+  "images": [
+   "final/browser/gen/card_02_1.png",
+   "final/browser/in/card_01.png"
+  ],
+  "prompt": "Image 1 is a preset card photo. Redraw it with the SAME room, props, camera and lighting, but the pedal steel guitar must be exactly the instrument in image 2 (walnut body, chrome rails and legs, same keyhead, changer, pedals and knee levers). Size and place it exactly like image 2's instrument: about 75% of the image width, centred, with clear space around it (it must not be bigger than in image 2). Output ONE photoreal landscape image 1536x1024. The pedal steel guitar is a real, photographed 10-string instrument (10 tuning keys, changer on the right, real pull rods, three foot pedals, knee levers), front-on, centred, filling about 80% of the width, all of it inside the middle 60% of the image height (the top and bottom 20% are just floor and wall, they will be cropped). No text, letters, logos or brand names anywhere (amps, cases and gear stay plain). Warm, natural, slightly cinematic light; matte, believable surfaces."
+ },
+ {
+  "name": "walnutB_10",
+  "images": [
+   "final/browser/gen/card_10_1.png",
+   "final/browser/in/card_01.png"
+  ],
+  "prompt": "Image 1 is a preset card photo. Redraw it with the SAME room, props, camera and lighting, but the pedal steel guitar must be exactly the instrument in image 2 (walnut body, chrome rails and legs, same keyhead, changer, pedals and knee levers). Size and place it exactly like image 2's instrument: about 75% of the image width, centred, with clear space around it (it must not be bigger than in image 2). Output ONE photoreal landscape image 1536x1024. The pedal steel guitar is a real, photographed 10-string instrument (10 tuning keys, changer on the right, real pull rods, three foot pedals, knee levers), front-on, centred, filling about 80% of the width, all of it inside the middle 60% of the image height (the top and bottom 20% are just floor and wall, they will be cropped). No text, letters, logos or brand names anywhere (amps, cases and gear stay plain). Warm, natural, slightly cinematic light; matte, believable surfaces."
+ },
+ {
+  "name": "walnutB_15",
+  "images": [
+   "final/browser/gen/card_15_1.png",
+   "final/browser/in/card_01.png"
+  ],
+  "prompt": "Image 1 is a preset card photo. Redraw it with the SAME room, props, camera and lighting, but the pedal steel guitar must be exactly the instrument in image 2 (walnut body, chrome rails and legs, same keyhead, changer, pedals and knee levers). Size and place it exactly like image 2's instrument: about 75% of the image width, centred, with clear space around it (it must not be bigger than in image 2). Output ONE photoreal landscape image 1536x1024. The pedal steel guitar is a real, photographed 10-string instrument (10 tuning keys, changer on the right, real pull rods, three foot pedals, knee levers), front-on, centred, filling about 80% of the width, all of it inside the middle 60% of the image height (the top and bottom 20% are just floor and wall, they will be cropped). No text, letters, logos or brand names anywhere (amps, cases and gear stay plain). Warm, natural, slightly cinematic light; matte, believable surfaces."
+ }
+]

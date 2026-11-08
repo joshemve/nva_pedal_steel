@@ -1,0 +1,16 @@
+[
+ {
+  "name": "groove_empty",
+  "images": [
+   "final/parts/crops/slider.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the cream slider handle AND the warm cream/brass fill inside the VOLUME PEDAL slider groove, so the whole groove from its left end to its right end is empty and dark exactly like its unfilled right-hand part. Tick marks below and the groove outline stay the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "groove_full",
+  "images": [
+   "final/parts/crops/slider.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the cream slider handle and make the warm cream/brass fill inside the VOLUME PEDAL slider groove run evenly along the WHOLE groove from its left end to its right end (fully filled, same colour and sheen as its left part). Tick marks below and the groove outline stay the same. Everything outside that change must stay identical to the input."
+ }
+]

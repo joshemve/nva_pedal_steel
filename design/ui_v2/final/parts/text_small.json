@@ -1,0 +1,119 @@
+{
+ "val_TONE": {
+  "text": "65 %",
+  "ink_left": 225.0,
+  "ink_cx": 275.0,
+  "ink_cy": 1725.0,
+  "ink_w": 100.0,
+  "colour": [
+   223.0,
+   222.0,
+   221.0
+  ],
+  "font": "Poppins-SemiBold"
+ },
+ "val_PICK": {
+  "text": "40 %",
+  "ink_left": 501.0,
+  "ink_cx": 552.0,
+  "ink_cy": 1725.0,
+  "ink_w": 102.0,
+  "colour": [
+   225.0,
+   224.0,
+   223.0
+  ],
+  "font": "Poppins-SemiBold"
+ },
+ "val_GLIDE": {
+  "text": "145 ms",
+  "ink_left": 817.0,
+  "ink_cx": 891.0,
+  "ink_cy": 1724.5,
+  "ink_w": 148.0,
+  "colour": [
+   225.0,
+   224.5,
+   223.0
+  ],
+  "font": "Poppins-SemiBold"
+ },
+ "val_SWELL": {
+  "text": "35 %",
+  "ink_left": 1129.0,
+  "ink_cx": 1179.0,
+  "ink_cy": 1725.0,
+  "ink_w": 100.0,
+  "colour": [
+   220.0,
+   220.0,
+   218.0
+  ],
+  "font": "Poppins-SemiBold"
+ },
+ "val_ECHO": {
+  "text": "18 %",
+  "ink_left": 1455.0,
+  "ink_cx": 1504.0,
+  "ink_cy": 1724.5,
+  "ink_w": 98.0,
+  "colour": [
+   227.0,
+   226.0,
+   224.0
+  ],
+  "font": "Poppins-SemiBold"
+ },
+ "val_REVERB": {
+  "text": "28 %",
+  "ink_left": 1721.0,
+  "ink_cx": 1771.0,
+  "ink_cy": 1725.0,
+  "ink_w": 100.0,
+  "colour": [
+   226.0,
+   226.0,
+   225.0
+  ],
+  "font": "Poppins-SemiBold"
+ },
+ "mode": {
+  "text": "Smart Auto-Pedal E9",
+  "ink_left": 410.0,
+  "ink_cx": 616.0,
+  "ink_cy": 1857.0,
+  "ink_w": 412.0,
+  "colour": [
+   219.0,
+   218.0,
+   216.0
+  ],
+  "font": "Inter-w500-o14"
+ },
+ "vol": {
+  "text": "72 %",
+  "ink_left": 2439.0,
+  "ink_cx": 2488.5,
+  "ink_cy": 1854.0,
+  "ink_w": 99.0,
+  "colour": [
+   227.0,
+   226.0,
+   225.0
+  ],
+  "font": "Poppins-SemiBold"
+ },
+ "db": {
+  "text": "0.0 dB",
+  "ink_left": 3043.0,
+  "ink_cx": 3102.5,
+  "ink_cy": 109.0,
+  "ink_w": 119.0,
+  "colour": [
+   29.0,
+   23.0,
+   18.0
+  ],
+  "font": "Poppins-SemiBold"
+ }
+}

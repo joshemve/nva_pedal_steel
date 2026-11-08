@@ -1,0 +1,58 @@
+[
+ {
+  "name": "bar_removed_1",
+  "images": [
+   "final/parts/crops/bar.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the chrome cylindrical tone bar (the slide bar lying across the strings in the middle of the black fretboard) and its reflection/shadow completely. The strings, fret lines, fret dots/diamonds, printed fret numbers and wood continue naturally and evenly through where the bar was. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "bar_removed_2",
+  "images": [
+   "final/parts/crops/bar.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the chrome cylindrical tone bar (the slide bar lying across the strings in the middle of the black fretboard) and its reflection/shadow completely. The strings, fret lines, fret dots/diamonds, printed fret numbers and wood continue naturally and evenly through where the bar was. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "floor_pressed_1",
+  "images": [
+   "final/parts/crops/floorpedals.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the three black foot pedals (rubber-topped pedal blocks on the chrome cross bar under the steel) are all pressed DOWN: each pedal's top is tilted forward and sits lower, showing less of its front face, and its thin vertical pull rod above is pulled a little further down. Cross bar, legs, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "floor_pressed_2",
+  "images": [
+   "final/parts/crops/floorpedals.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the three black foot pedals (rubber-topped pedal blocks on the chrome cross bar under the steel) are all pressed DOWN: each pedal's top is tilted forward and sits lower, showing less of its front face, and its thin vertical pull rod above is pulled a little further down. Cross bar, legs, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_left_pushed_1",
+  "images": [
+   "final/parts/crops/kl_left.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the LEFT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the left (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_left_pushed_2",
+  "images": [
+   "final/parts/crops/kl_left.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the LEFT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the left (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_right_pushed_1",
+  "images": [
+   "final/parts/crops/kl_right.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the RIGHT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the right (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "kl_right_pushed_2",
+  "images": [
+   "final/parts/crops/kl_right.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the small black knee-lever block hanging on the thin chrome rod under the steel's front rail is pushed sideways to the RIGHT by the player's knee: the block and the lower end of its rod swing about 8 degrees to the right (rod pivots at the rail). Rail, carpet and lighting unchanged. Everything outside that change must stay identical to the input."
+ }
+]

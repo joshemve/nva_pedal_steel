@@ -1,0 +1,58 @@
+{
+  "config": {
+    "samples": 96,
+    "scale": 3,
+    "angles": [],
+    "key": {
+      "power": 8
+    },
+    "fill": {
+      "power": 0.08
+    },
+    "materials": {
+      "cream_knob": {
+        "Base Color": [
+          0.8,
+          0.4,
+          0.12,
+          1
+        ]
+      }
+    },
+    "scallop": {
+      "geometry": {
+        "prof": "FEEL_CAP",
+        "hr": 0.6,
+        "depth": 0.065
+      }
+    },
+    "space": {
+      "geometry": {
+        "depth": 0.045
+      },
+      "key": {
+        "power": 4
+      }
+    }
+  },
+  "angles": [],
+  "width": 480,
+  "height": 144,
+  "scale": 3,
+  "centres": [
+    80,
+    240,
+    400
+  ],
+  "centre_y": 72,
+  "styles": [
+    "dome",
+    "scallop",
+    "space"
+  ],
+  "anchor_angles": [
+    35,
+    30,
+    -100
+  ]
+}

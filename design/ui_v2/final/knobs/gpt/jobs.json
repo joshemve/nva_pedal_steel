@@ -1,0 +1,30 @@
+[
+ {
+  "name": "echo_mask",
+  "images": [
+   "final/knobs/gpt/ref_echo.png"
+  ],
+  "prompt": "This is a tight crop (upscaled) of a black scalloped synth knob with a cream pointer line, from a plugin UI render. Keep EXACTLY the same framing, size, position and outline of the knob (the output must overlay the input pixel for pixel), square 1024x1024. Output a clean binary silhouette mask of the whole knob body (including its darker lower flange/base, excluding the printed tick marks and the panel): knob = pure white, everything else = pure black. Trace the lobed outline precisely."
+ },
+ {
+  "name": "echo_normal",
+  "images": [
+   "final/knobs/gpt/ref_echo.png"
+  ],
+  "prompt": "This is a tight crop (upscaled) of a black scalloped synth knob with a cream pointer line, from a plugin UI render. Keep EXACTLY the same framing, size, position and outline of the knob (the output must overlay the input pixel for pixel), square 1024x1024. Output a camera-space surface normal map of the knob (standard normal-map colours: flat facing camera = (128,128,255) lavender, right-facing = more red, up-facing = more green), background flat lavender. Show the domed cap, the 8 rounded lobes/scallops and the pointer bar shape accurately."
+ },
+ {
+  "name": "echo_height",
+  "images": [
+   "final/knobs/gpt/ref_echo.png"
+  ],
+  "prompt": "This is a tight crop (upscaled) of a black scalloped synth knob with a cream pointer line, from a plugin UI render. Keep EXACTLY the same framing, size, position and outline of the knob (the output must overlay the input pixel for pixel), square 1024x1024. Output a grayscale height/depth map of the knob: white = highest (top of the domed cap), black = panel level. Show the lobed outline, the scallops between lobes, the shoulder curvature and the pointer bar."
+ },
+ {
+  "name": "echo_bright",
+  "images": [
+   "final/knobs/gpt/ref_echo.png"
+  ],
+  "prompt": "This is a tight crop (upscaled) of a black scalloped synth knob with a cream pointer line, from a plugin UI render. Keep EXACTLY the same framing, size, position and outline of the knob (the output must overlay the input pixel for pixel), square 1024x1024. Output the same image with the exposure raised a lot and shadows lifted, so the black knob's full 3D shape is clearly readable (lobes, scallops, flange, cap edge), without changing geometry, framing or adding anything."
+ }
+]

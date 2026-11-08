@@ -1,0 +1,6 @@
+dome     ref shift (-4, 1)  pointer 41.9  ao gamma [0.0, 3.0, 1.65]  fit px [208, 10191, 1332]
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.5, "rf": 0.0, "rscale": 0.985, "z0": 0.55}                       28.26
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.5, "rf": 0.0, "rscale": 0.985, "z0": 0.3}                        28.34
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.5, "rf": 0.0, "rscale": 0.985, "z0": 0.45}                       28.31
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.5, "rf": 0.0, "rscale": 0.985, "z0": 0.65}                       27.92
+round 0 after z0: best 27.92 {"z0": 0.65, "pw": 2.5, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}

@@ -198,21 +198,29 @@ def drop(px, py, wpx, hpx, kind="round", dx=6, dy=10, z=PANEL_Z + 0.1):
     o = plane(px + dx - wpx / 0.6 / 2, py + dy - hpx / 0.6 / 2, px + dx + wpx / 0.6 / 2, py + dy + hpx / 0.6 / 2, shadow_mat("shadow_" + kind), z=z)
     return o
 
+# tick ring radius per style, measured on APPROVED_main.png (circle fit through the printed ticks)
+TICK_SCALE = {"dome": 1.073, "scallop": 0.921, "space": 0.905}
+# knob centres = centres of the reference's tick rings (UI px), so strips land exactly where the approved screen has them
+REF_CENTRE = {"TONE": (132.8, 775.8), "PICK": (271.3, 775.8), "GLIDE": (441.4, 776.8), "SWELL": (582.9, 776.7),
+              "ECHO": (746.4, 777.0), "REVERB": (876.3, 777.1)}
 KNOBS = []    # (style, px, py, rpx, root, drop) for STRIP / NO_KNOBS modes
 def knob(px, py, rpx, ang, style):
     """ang = degrees clockwise from 12 o'clock. style: dome | scallop | space (knob_lib) or 'trim'."""
-    rpx *= float(os.environ.get("KNOB_RSCALE_" + style.upper(), "1"))   # fitting hook
+    rpx0 = rpx   # frame size for strips stays fixed whatever the fitted scale
+    rpx *= float(os.environ.get("KNOB_RSCALE_" + style.upper(), str(KL.RSCALE.get(style, 1.0))))   # fitting hook
     c, k = cpx(px, py, 0)
     R = rpx * k
     z = 6.0 if style == "trim" else PANEL_Z      # trim sits on the cream top bar (front face at 6 px)
     d = drop(px, py, rpx * 2.5, rpx * 2.5, "round", dx=rpx * 0.18, dy=rpx * 0.32, z=z + 0.1)
-    root = KL.build(ui, M, R, "space" if style == "trim" else style, parent=cam); KL.spin(root, ang)
-    KNOBS.append((style, px, py, rpx, root, d))
+    root = KL.build(ui, M, R, "dome" if style == "trim" else style, parent=cam); KL.spin(root, ang)   # TRIM: small cream dome on a knurled skirt, as in the reference
+    KNOBS.append((style, px, py, rpx0, root, d))
     tick_root = bpy.data.objects.new("TickRoot", None); ui.objects.link(tick_root); tick_root.parent = cam
-    tick_root.location = c + Vector((0, 0, z * K))   # printed on the flat panel: never tilted with the knob
+    dpt = OD - z * K   # printed on the flat panel (never tilted with the knob), on the knob's sight line so it stays concentric
+    tick_root.location = Vector((c.x * dpt / OD, c.y * dpt / OD, -dpt))
+    ts = TICK_SCALE.get(style, 1.0)
     if style != "trim":
         for i in range(11):   # printed tick scale on the panel face
-            tt = math.radians(-135 + 27 * i); r0 = R * 1.1 + 5 * k; r1 = r0 + (9 if i == 5 else 7) * k
+            tt = math.radians(-135 + 27 * i); r0 = (R * 1.1 + 5 * k) * ts; r1 = r0 + (9 if i == 5 else 7) * k
             tk = S.box("Tick", (2.2 * k, r1 - r0, 0.4 * k), (0, 0, 0), M["print_cream"], ui); tk.parent = tick_root
             tk.location = (-math.sin(tt) * (r0 + r1) / 2, math.cos(tt) * (r0 + r1) / 2, 0.3 * k); tk.rotation_euler = (0, 0, tt)
     # head-on: put the knob on its own sight line and aim its axis at the camera, so no knob shows a side wall
@@ -285,7 +293,7 @@ for x in (X(350), X(655), X(945), X(1235)): vline(x, 700, 876, M["print_cream"],
 for name, cx, val, r, ang, st in (("TONE", X(130), "65 %", 29.0, 35, "dome"), ("PICK", X(265), "40 %", 29.0, -50, "dome"),
                                   ("GLIDE", X(433), "145 ms", 44.4, 30, "scallop"), ("SWELL", X(572), "35 %", 44.4, 25, "scallop"),
                                   ("ECHO", X(733), "18 %", 38, -100, "space"), ("REVERB", X(860), "28 %", 38, -68, "space")):
-    knob(cx, 777, r, ang, st)
+    knob(*REF_CENTRE[name], r, ang, st)
     text(name, cx, 835, 25, M["print_cream"], track=0.1, z=14)
     pill(cx, 864, 84 if "ms" in val else 72, 29, M["print_cream"], line=1.4, z=14)
     text(val, cx, 864, 22, M["print_cream"], track=0.02, z=14)
@@ -376,6 +384,36 @@ if STRIP:
     import json
     json.dump(dict(style=st, frames=nfr, frame_px=2 * hw, scale=RES, origin_px=[(cx_ - hw) / RES, (cy_ - hw) / RES],
                    centre_px=[cx_ / RES, cy_ / RES]), open(OUT + ".json", "w"))
+    PASS = os.environ.get("KNOB_PASS")   # data passes for the reference-fitted shading: normal | id | ao
+    if PASS:
+        R_ = rpx * cpx(px, py, 0)[1]
+        def emit_mat(name, build_fn):
+            m = bpy.data.materials.new(name); m.use_nodes = True; nt_ = m.node_tree; nt_.nodes.clear()
+            out_ = nt_.nodes.new("ShaderNodeOutputMaterial"); em = nt_.nodes.new("ShaderNodeEmission")
+            nt_.links.new(build_fn(nt_), em.inputs["Color"]); nt_.links.new(em.outputs[0], out_.inputs[0]); return m
+        def n_fn(nt_):
+            g = nt_.nodes.new("ShaderNodeNewGeometry"); vt = nt_.nodes.new("ShaderNodeVectorTransform")
+            vt.vector_type = "NORMAL"; vt.convert_from = "WORLD"; vt.convert_to = "CAMERA"
+            nt_.links.new(g.outputs["Normal"], vt.inputs[0])
+            ma = nt_.nodes.new("ShaderNodeVectorMath"); ma.operation = "MULTIPLY_ADD"
+            ma.inputs[1].default_value = (0.5, 0.5, 0.5); ma.inputs[2].default_value = (0.5, 0.5, 0.5)
+            nt_.links.new(vt.outputs[0], ma.inputs[0]); return ma.outputs[0]
+        def ao_fn(nt_):
+            a = nt_.nodes.new("ShaderNodeAmbientOcclusion"); a.samples = 32
+            a.inputs["Distance"].default_value = R_ * float(os.environ.get("KNOB_PASS_AO", "0.35")); return a.outputs["AO"]
+        def id_fn(col):
+            def f(nt_):
+                r = nt_.nodes.new("ShaderNodeRGB"); r.outputs[0].default_value = col; return r.outputs[0]
+            return f
+        for o in keep:
+            if PASS == "normal": mat = emit_mat("PassN", n_fn)
+            elif PASS == "ao": mat = emit_mat("PassAO", ao_fn)
+            else: mat = emit_mat("PassID", id_fn((1, 0, 0, 1) if o.name.startswith("Pointer") else
+                                                  (0, 0, 1, 1) if o.name.startswith("Skirt") else (0, 1, 0, 1)))
+            o.data.materials.clear(); o.data.materials.append(mat)
+        sc.view_settings.view_transform = "Raw"; sc.view_settings.look = "None"; sc.view_settings.exposure = 0
+        sc.cycles.use_denoising = False; sc.cycles.samples = int(os.environ.get("KNOB_PASS_SAMPLES", "64"))
+        sc.render.image_settings.color_depth = "16"
     spin = [c for c in root.children_recursive if c.name.startswith("Spin")][0]
     sc.frame_start, sc.frame_end = 0, nfr - 1
     for f in range(nfr):      # key every frame so the angle is exactly linear whatever the interpolation

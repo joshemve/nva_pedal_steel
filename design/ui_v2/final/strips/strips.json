@@ -14,13 +14,13 @@
   "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
   "instances": [
    {
-    "cx": 132.65,
-    "cy": 777,
+    "cx": 131.3,
+    "cy": 776.3,
     "r": 29.0
    },
    {
-    "cx": 270.41,
-    "cy": 777,
+    "cx": 270.8,
+    "cy": 776.3,
     "r": 29.0
    }
   ]
@@ -40,13 +40,13 @@
   "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
   "instances": [
    {
-    "cx": 441.84,
-    "cy": 777,
+    "cx": 441.9,
+    "cy": 775.3,
     "r": 44.4
    },
    {
-    "cx": 583.67,
-    "cy": 777,
+    "cx": 582.9,
+    "cy": 775.7,
     "r": 44.4
    }
   ]
@@ -66,13 +66,13 @@
   "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
   "instances": [
    {
-    "cx": 747.96,
-    "cy": 777,
+    "cx": 745.9,
+    "cy": 780.0,
     "r": 38
    },
    {
-    "cx": 877.55,
-    "cy": 777,
+    "cx": 879.3,
+    "cy": 780.1,
     "r": 38
    }
   ]

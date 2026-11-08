@@ -13,6 +13,7 @@ struct CopedentStatus {
     float volumePedal = 0.92f;
     float barPositionFret = 0.0f;
     int activeVoiceCount = 0;
+    int presetStyle = 0;
     bool phrasePlaying = false;
     int activeLickSlot = 0;
     std::array<float, 10> stringEnergy{};
@@ -46,6 +47,7 @@ public:
 
     CopedentStatus getStatus() const;
 
+    static int openStringMidi(int style, int stringIdx) { return getOpenStringMidiForStyle(style, stringIdx); }   // for the UI
     static double computeSyncedDelayMs(float delayParamMs, double bpm);
     static juce::String getSyncedSubdivisionLabel(float delayParamMs);
 
@@ -53,11 +55,17 @@ private:
     static constexpr int kNumStrings = 10;
     static constexpr int kMaxHarmonics = 16;
 
-    // Standard Nashville 10-String E9th open MIDI notes (Strings 1..10):
-    // 1:F#4(66), 2:D#4(63), 3:G#4(68), 4:E4(64), 5:B3(59), 6:G#3(56), 7:F#3(54), 8:E3(52), 9:D3(50), 10:B2(47)
+    // Standard Nashville 10-String E9th, Back-Neck C6th, and Baritone B6 open MIDI notes (Strings 1..10):
     static constexpr std::array<int, kNumStrings> kOpenStringMidi = {
         66, 63, 68, 64, 59, 56, 54, 52, 50, 47
     };
+    static constexpr std::array<int, kNumStrings> kOpenStringMidiC6 = {
+        67, 64, 60, 57, 55, 52, 48, 45, 41, 36
+    };
+    static constexpr std::array<int, kNumStrings> kOpenStringMidiB6 = {
+        61, 58, 63, 59, 54, 51, 49, 47, 45, 42
+    };
+    static int getOpenStringMidiForStyle(int style, int stringIdx);
 
     enum class StringRole {
         Root,       // Responds to LKL (+1), LKR (-1), Pedal C (+2)
@@ -128,13 +136,19 @@ private:
 
         // Multi-Sample & Studio Phrase Articulation playback state
         bool isPhraseSlice = false;
+        bool isPalmHarmonic = false;
         int phraseSliceIdx = 0;
         float phraseTransposeSemis = 0.0f;
         int multiSampleIdx = 0;
         double samplePos = 0.0;
 
-        // 16-Harmonic phase accumulators
+        // 16-Harmonic phase accumulators + Baritone sub-resonator phase
         std::array<double, kMaxHarmonics> harmPhases{};
+        double subHarmPhase = 0.0;
+        float chimeHpStateL = 0.0f;
+        float chimeHpStateR = 0.0f;
+        float chimeLpStateL = 0.0f;
+        float chimeLpStateR = 0.0f;
 
         // Transient exciter state
         int transientIdx = 0;
@@ -199,7 +213,7 @@ private:
         float process(float input, float amount);
     };
 
-    // First-Principles Modern Producer Analog Character Circuits (Modes 1..6; Mode 0 = bit-transparent bypass)
+    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..10; Mode 0 = bit-transparent bypass)
     struct ModernCharacterProcessor {
         std::vector<float> modBufL, modBufR;
         int modWritePos = 0;
@@ -210,12 +224,23 @@ private:
         double tremPhase = 0.0;
         float cassetteSagEnv = 0.0f;
 
-        // Sample-rate-adaptive dual-grain C1 Hann-windowed -12st Sub-Cello & +12st Shimmer Shifter
+        // Sample-rate-adaptive dual-grain C1 Hann-windowed +12st Shimmer, Leslie 147 & Gated Diode Room Tank
         std::vector<float> shimBufL, shimBufR;
         int shimWritePos = 0;
         int shimMaxLen = 1;
         double shimPhasor = 0.0;
         double subPhasor = 0.0;
+        float shimLpL = 0.0f, shimLpR = 0.0f;
+        float gateEnv = 0.0f;
+
+        // 1965 Leslie 147 Dual-Motor Inertia, LR2 800 Hz Crossover & 3D Horn/Drum Beaming state
+        double hornRateHz = 0.78;
+        double drumRateHz = 0.66;
+        float xoverLp1L = 0.0f, xoverLp1R = 0.0f;
+        float xoverLp2L = 0.0f, xoverLp2R = 0.0f;
+        float hornBeamLpL = 0.0f, hornBeamLpR = 0.0f;
+        float drumBeamLpL = 0.0f, drumBeamLpR = 0.0f;
+        float leslieDcL = 0.0f, leslieDcR = 0.0f;
 
         // 4-stage Analog JFET Optical All-Pass Phaser state (Mode 3: Dark Side Phase Steel)
         std::array<float, 4> phaserStateL{}, phaserStateR{};
@@ -243,7 +268,7 @@ private:
         void applyModeCoeffs(double sr, int mode);
         int getCurrentMode() const { return currentMode; }
         float getWetMix() const { return (currentMode > 0) ? wetGain : 0.0f; }
-        void processSample(double sr, int desiredMode, double hostBpm, bool tempoSync,
+        void processSample(double sr, int desiredMode, double hostBpm, bool tempoSync, float pedalActivity,
                            float& ioL, float& ioR, float& outExtraRevL, float& outExtraRevR);
     };
 

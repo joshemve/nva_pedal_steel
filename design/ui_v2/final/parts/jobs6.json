@@ -1,0 +1,30 @@
+[
+ {
+  "name": "levers_on_1",
+  "images": [
+   "final/parts/crops/levers.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: engage BOTH knee levers (LKL and LKR): each lever's black ribbed pad is pressed in and down, sitting a little lower, with its chrome stalk tilted a little further, and a warm amber glow showing under the top edge of each pad, exactly the glow the pressed, lit A and B foot pedals have in this plugin. Pivot rings, labels LKL/LKR and the panel stay the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "midi_on_1",
+  "images": [
+   "final/parts/crops/midibtn.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the MIDI LEARN button is switched ON: its thin outline and the words MIDI LEARN glow warm amber (the same amber as lit LED segments), with a very soft amber glow just around the outline on the black panel. Same font, size, position and box shape. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "levers_on_2",
+  "images": [
+   "final/parts/crops/levers.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: engage BOTH knee levers (LKL and LKR): each lever's black ribbed pad is pressed in and down, sitting a little lower, with its chrome stalk tilted a little further, and a warm amber glow showing under the top edge of each pad, exactly the glow the pressed, lit A and B foot pedals have in this plugin. Pivot rings, labels LKL/LKR and the panel stay the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "midi_on_2",
+  "images": [
+   "final/parts/crops/midibtn.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: the MIDI LEARN button is switched ON: its thin outline and the words MIDI LEARN glow warm amber (the same amber as lit LED segments), with a very soft amber glow just around the outline on the black panel. Same font, size, position and box shape. Everything outside that change must stay identical to the input."
+ }
+]

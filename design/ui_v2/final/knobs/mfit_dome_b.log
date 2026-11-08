@@ -1,0 +1,14 @@
+dome     ref shift (-4, 1)  pointer 41.9  ao gamma [0.0, 3.0, 1.65]  fit px [208, 10191, 1332]
+round 0 after z0: best 6.76 {"z0": 0.65, "pw": 2.5, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+round 0 after pw: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+round 0 after hr: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 1.0, "z0": 0.65}                         6.87
+round 0 after rscale: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+SIZE {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "z0": 0.55} (152, 152, 3)
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "z0": 0.3}                        9.40
+  {"depth": 0.0, "hr": 0.6, "lobes": 0, "pw": 2.0, "rf": 0.0, "rscale": 0.985, "z0": 0.45}                       8.04
+round 1 after z0: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+round 1 after pw: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+round 1 after hr: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+round 1 after rscale: best 6.63 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}
+BEST 6.629683975474874 {"z0": 0.65, "pw": 2.0, "hr": 0.6, "rscale": 0.985, "lobes": 0, "depth": 0.0, "rf": 0.0}

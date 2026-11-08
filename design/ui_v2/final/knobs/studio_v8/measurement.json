@@ -1,0 +1,41 @@
+{
+  "dome": {
+    "reference_centre_rgb": [
+      225.97,
+      180.48,
+      133.27
+    ],
+    "render_centre_rgb": [
+      219.82,
+      173.31,
+      125.71
+    ],
+    "centre_rgb_mae": 7.69
+  },
+  "scallop": {
+    "reference_centre_rgb": [
+      226.59,
+      182.58,
+      137.86
+    ],
+    "render_centre_rgb": [
+      219.69,
+      173.06,
+      125.15
+    ],
+    "centre_rgb_mae": 9.731
+  },
+  "space": {
+    "reference_centre_rgb": [
+      48.96,
+      42.53,
+      35.53
+    ],
+    "render_centre_rgb": [
+      45.33,
+      41.06,
+      36.23
+    ],
+    "centre_rgb_mae": 21.388
+  }
+}

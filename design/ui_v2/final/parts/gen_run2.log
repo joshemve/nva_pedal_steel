@@ -1,0 +1,26 @@
+hd_tile_00: thread=01a1b95d-cd0a-7c11-97e2-b07784ff1834 38s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_00_1.png']
+hd_tile_01: thread=01a1b95d-cc0a-7032-baa7-d5f8f43d7255 52s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_01_1.png']
+hd_tile_02: thread=01a1b95d-ccc8-78a0-aa16-60aee84561ca 53s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_02_1.png']
+hd_tile_03: thread=01a1b95d-cb83-7821-9629-ac4c2ae80732 39s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_03_1.png']
+hd_tile_10: thread=01a1b95d-ccf6-7db1-9ab7-37e246f0cba6 39s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_10_1.png']
+hd_tile_11: thread=01a1b95d-cca7-74d1-bd77-2d656cf69ff6 46s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_11_1.png']
+hd_tile_12: thread=01a1b95d-cd6f-7320-b0ae-8d72a4d5cd7b 45s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_12_1.png']
+hd_tile_13: thread=01a1b95d-ccfc-7743-ae3d-eaa47e7db206 41s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_13_1.png']
+hd_tile_20: thread=01a1b95d-cd07-78b2-8ca2-e541797a8767 53s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_20_1.png']
+hd_tile_21: thread=01a1b95d-cc30-7ec1-ab93-9e6e25ea01a6 49s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_21_1.png']
+hd_tile_22: thread=01a1b95d-cc42-73b1-a6de-088bf8dce495 53s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_22_1.png']
+hd_tile_23: thread=01a1b95d-cd4d-7693-89eb-6b86c1febce8 53s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_23_1.png']
+hd_tile_30: thread=01a1b95d-cca3-7fe1-ae7f-c612f4f474ea 44s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_30_1.png']
+hd_tile_31: thread=01a1b95d-cc0b-73d3-bf5b-5ed9d766373d 49s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_31_1.png']
+hd_tile_32: thread=01a1b95d-cc41-7ec0-806f-22f889904541 44s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_32_1.png']
+hd_tile_33: thread=01a1b95d-cc3b-79a0-bf9f-3c540eea3675 51s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\hd_tile_33_1.png']
+pillempty_TONE: thread=01a1b95d-ccfc-71c3-a54d-bba26dcd1309 38s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pillempty_TONE_1.png']
+pillempty_PICK: thread=01a1b95d-ccc4-7860-81da-7ea1f89ae733 32s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pillempty_PICK_1.png']
+pillempty_GLIDE: thread=01a1b95d-cc31-7993-97f7-0ababb00f58d 44s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pillempty_GLIDE_1.png']
+pillempty_SWELL: thread=01a1b95d-cd5b-7bc1-9238-bb036a8c2206 36s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pillempty_SWELL_1.png']
+pillempty_ECHO: thread=01a1b95d-ccea-7dd0-88d6-7a6160a0087b 35s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pillempty_ECHO_1.png']
+pillempty_REVERB: thread=01a1b95d-cc59-7722-92e2-081968c9cae0 41s images=1 ['C:\\Users\\Joshua\\Documents\\pedal_steel\\design\\ui_v2\\final\\parts\\gen\\pillempty_REVERB_1.png']
+
+real	0m53.487s
+user	0m0.015s
+sys	0m0.000s
