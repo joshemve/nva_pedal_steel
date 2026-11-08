@@ -170,6 +170,11 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
 - Editor open time: ~700 ms of PNG/JPEG decoding moved off the click. `Source/UiPreload.h` decodes every UI bitmap on a
   low-priority thread when a plugin instance is created (shared by all instances, freed with the last one); the
   editor's ImageCache lookups then hit, so the window opens in ~15 ms. Instrument layers load on demand.
+- Deck background (Joshua: "one proper background without lighting, knobs sit on top"): two whole ChatGPT redraws of
+  the reference deck with every moving part removed, lamps off, pedals raised (`make_jobs14`: deckL_plate_2,
+  deckR_plate_1), used whole in `build_ui.py`; lit pedals redrawn on that plate with the reference as the look to copy
+  (deckR_lit2_2). Realistic end pieces (sculpted keyhead, rounded changer) per instrument: `ends_<name>_1`, pasted as
+  whole regions in `build_ui.py` (walnut) and `skins.py`.
 - Accessibility: `Source/AccessibleControls.h` puts a click-through screen-reader element over every control
   (sliders with the panel's value text, toggles for pedals/levers/MIDI LEARN, buttons for preset/mode); values are
   announced on change.

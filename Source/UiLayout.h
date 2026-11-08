@@ -27,7 +27,7 @@ namespace UiLayout {
     inline constexpr float sp_kl_right_pushed_brass[4] = { 857.00f, 394.00f, 87.00f, 119.50f };   // x, y, w, h
     inline constexpr int meterSegments = 15;
     inline constexpr int meterSegEnd[15] = { 28, 49, 69, 90, 109, 129, 148, 168, 189, 208, 229, 249, 269, 290, 310 };   // sprite px (2x) where each lit segment ends
-    inline constexpr float sliderX0 = 793.75f, sliderX1 = 1160.75f;   // handle centre at value 0 and 1 (UI px) = first/last tick
+    inline constexpr float sliderX0 = 793.25f, sliderX1 = 1161.25f;   // handle centre at value 0 and 1 (UI px) = first/last tick
     inline constexpr float sliderThumbCx = 1063.75f;               // handle centre as drawn in sp_slider_thumb
     inline constexpr int ptrTONEFrames = 128, ptrTONEFramePx = 134;
     inline constexpr float ptrTONEOrigin[2] = { 97.00f, 737.50f };   // UI px, top-left of each frame

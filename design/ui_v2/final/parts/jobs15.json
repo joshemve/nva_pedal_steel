@@ -1,0 +1,86 @@
+[
+ {
+  "name": "deckR_lit_1",
+  "images": [
+   "final/parts/crops/deckR_plate.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: switch pedals A, B and C ON: each round lamp glows warm amber, and each pedal block is pressed down (shorter, tilted look) with a warm amber glow showing under its top edge, exactly like a lit, pressed pedal. The black panel texture, labels, boxes, slider and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_lit_2",
+  "images": [
+   "final/parts/crops/deckR_plate.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: switch pedals A, B and C ON: each round lamp glows warm amber, and each pedal block is pressed down (shorter, tilted look) with a warm amber glow showing under its top edge, exactly like a lit, pressed pedal. The black panel texture, labels, boxes, slider and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_walnut_1",
+  "images": [
+   "final/parts/crops/steelbody.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_walnut_2",
+  "images": [
+   "final/parts/crops/steelbody.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_maple_1",
+  "images": [
+   "final/parts/crops/steelbody_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_maple_2",
+  "images": [
+   "final/parts/crops/steelbody_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_redsparkle_1",
+  "images": [
+   "final/parts/crops/steelbody_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_redsparkle_2",
+  "images": [
+   "final/parts/crops/steelbody_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_pearloid_1",
+  "images": [
+   "final/parts/crops/steelbody_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_pearloid_2",
+  "images": [
+   "final/parts/crops/steelbody_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ }
+]

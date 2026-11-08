@@ -1,0 +1,30 @@
+[
+ {
+  "name": "deckL_plate_1",
+  "images": [
+   "final/parts/crops/deckL.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the GLIDE and SWELL knobs completely (leave the flat panel and their ring of printed ticks), remove ONLY the dark pointer line from the TONE and PICK knobs (the cream domes stay, plain), remove the value text inside the boxes under the knobs (65 %, 40 %, 145 ms, 35 %) leaving the outlined boxes empty, and remove the text 'Smart Auto-Pedal E9' from the MODE box (keep its outline and arrow). The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_plate_1",
+  "images": [
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the ECHO and REVERB knobs completely (leave the flat panel and their ring of printed ticks), remove the value text inside the boxes under them (18 %, 28 %) and the '72 %' next to the slider, leaving the outlined boxes empty; switch pedals A and B OFF exactly like pedal C (unlit grey lamps, no amber light or glow anywhere, A and B raised identical to C); remove the slider handle and the cream fill so the whole slider groove is empty and dark. The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckL_plate_2",
+  "images": [
+   "final/parts/crops/deckL.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the GLIDE and SWELL knobs completely (leave the flat panel and their ring of printed ticks), remove ONLY the dark pointer line from the TONE and PICK knobs (the cream domes stay, plain), remove the value text inside the boxes under the knobs (65 %, 40 %, 145 ms, 35 %) leaving the outlined boxes empty, and remove the text 'Smart Auto-Pedal E9' from the MODE box (keep its outline and arrow). The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_plate_2",
+  "images": [
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the ECHO and REVERB knobs completely (leave the flat panel and their ring of printed ticks), remove the value text inside the boxes under them (18 %, 28 %) and the '72 %' next to the slider, leaving the outlined boxes empty; switch pedals A and B OFF exactly like pedal C (unlit grey lamps, no amber light or glow anywhere, A and B raised identical to C); remove the slider handle and the cream fill so the whole slider groove is empty and dark. The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ }
+]

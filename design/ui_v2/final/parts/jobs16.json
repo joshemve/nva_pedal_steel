@@ -1,0 +1,18 @@
+[
+ {
+  "name": "deckR_lit2_1",
+  "images": [
+   "final/parts/crops/deckR_plate.png",
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal plugin control deck with all three pedals A, B and C off. Image 2 is the same deck in its original look, where pedals A and B are ON. Output ONE image, landscape 1536x1024, that is image 1 with EXACTLY the same framing, scale, panel texture and every detail, except: pedals A, B and C are all ON exactly the way A and B look in image 2: each lamp glows bright amber with the same small halo, and each pedal block is pressed down in the same shape as image 2's A and B, with the bright amber glow showing under its TOP edge as in image 2. Nothing else changes."
+ },
+ {
+  "name": "deckR_lit2_2",
+  "images": [
+   "final/parts/crops/deckR_plate.png",
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal plugin control deck with all three pedals A, B and C off. Image 2 is the same deck in its original look, where pedals A and B are ON. Output ONE image, landscape 1536x1024, that is image 1 with EXACTLY the same framing, scale, panel texture and every detail, except: pedals A, B and C are all ON exactly the way A and B look in image 2: each lamp glows bright amber with the same small halo, and each pedal block is pressed down in the same shape as image 2's A and B, with the bright amber glow showing under its TOP edge as in image 2. Nothing else changes."
+ }
+]

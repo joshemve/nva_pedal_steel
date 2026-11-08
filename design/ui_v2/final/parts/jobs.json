@@ -517,5 +517,161 @@
    "final/parts/crops/knob_ECHO.png"
   ],
   "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the ECHO knob (the black scalloped knob in the centre) so its cream pointer line points pointing right at 3 o'clock. The knob turns as a solid object: its lobes turn with it, but the lighting stays where it is (soft highlight on top, the smooth dark wide base at the bottom, the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "glide_ptr9_1",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing left at 9 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "glide_ptr9_2",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing left at 9 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "glide_ptr3_1",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing right at 3 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "glide_ptr3_2",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing right at 3 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckL_plate_1",
+  "images": [
+   "final/parts/crops/deckL.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the GLIDE and SWELL knobs completely (leave the flat panel and their ring of printed ticks), remove ONLY the dark pointer line from the TONE and PICK knobs (the cream domes stay, plain), remove the value text inside the boxes under the knobs (65 %, 40 %, 145 ms, 35 %) leaving the outlined boxes empty, and remove the text 'Smart Auto-Pedal E9' from the MODE box (keep its outline and arrow). The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_plate_1",
+  "images": [
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the ECHO and REVERB knobs completely (leave the flat panel and their ring of printed ticks), remove the value text inside the boxes under them (18 %, 28 %) and the '72 %' next to the slider, leaving the outlined boxes empty; switch pedals A and B OFF exactly like pedal C (unlit grey lamps, no amber light or glow anywhere, A and B raised identical to C); remove the slider handle and the cream fill so the whole slider groove is empty and dark. The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckL_plate_2",
+  "images": [
+   "final/parts/crops/deckL.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the GLIDE and SWELL knobs completely (leave the flat panel and their ring of printed ticks), remove ONLY the dark pointer line from the TONE and PICK knobs (the cream domes stay, plain), remove the value text inside the boxes under the knobs (65 %, 40 %, 145 ms, 35 %) leaving the outlined boxes empty, and remove the text 'Smart Auto-Pedal E9' from the MODE box (keep its outline and arrow). The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_plate_2",
+  "images": [
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: this is the plugin's control deck, and it must become its empty background: remove the ECHO and REVERB knobs completely (leave the flat panel and their ring of printed ticks), remove the value text inside the boxes under them (18 %, 28 %) and the '72 %' next to the slider, leaving the outlined boxes empty; switch pedals A and B OFF exactly like pedal C (unlit grey lamps, no amber light or glow anywhere, A and B raised identical to C); remove the slider handle and the cream fill so the whole slider groove is empty and dark. The black leather control panel keeps exactly its texture, even and clean everywhere: no smudges, no dark or light patches, no glow. Every printed label, divider line, tick mark and outline stays exactly where it is and looks the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_lit_1",
+  "images": [
+   "final/parts/crops/deckR_plate.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: switch pedals A, B and C ON: each round lamp glows warm amber, and each pedal block is pressed down (shorter, tilted look) with a warm amber glow showing under its top edge, exactly like a lit, pressed pedal. The black panel texture, labels, boxes, slider and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_lit_2",
+  "images": [
+   "final/parts/crops/deckR_plate.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: switch pedals A, B and C ON: each round lamp glows warm amber, and each pedal block is pressed down (shorter, tilted look) with a warm amber glow showing under its top edge, exactly like a lit, pressed pedal. The black panel texture, labels, boxes, slider and everything else stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_walnut_1",
+  "images": [
+   "final/parts/crops/steelbody.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_walnut_2",
+  "images": [
+   "final/parts/crops/steelbody.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_maple_1",
+  "images": [
+   "final/parts/crops/steelbody_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_maple_2",
+  "images": [
+   "final/parts/crops/steelbody_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_redsparkle_1",
+  "images": [
+   "final/parts/crops/steelbody_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_redsparkle_2",
+  "images": [
+   "final/parts/crops/steelbody_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_pearloid_1",
+  "images": [
+   "final/parts/crops/steelbody_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_pearloid_2",
+  "images": [
+   "final/parts/crops/steelbody_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "ends_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make the two END pieces of the pedal steel look like a real, professionally made pedal steel guitar instead of flat rectangular slabs: on the LEFT, the keyhead becomes a sculpted cast-aluminium end with rounded, bevelled edges and real depth, the ten tuning keys seated in it at the same places; on the RIGHT, the changer becomes a rounded, machined aluminium end housing with soft bevels and realistic reflections, its ten changer fingers visible at the same places where the strings end. The ten strings, the fretboard, tone bar, pickup, body finish, rails, legs, pedals, camera and lighting stay exactly the same. No text or logos. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckR_lit2_1",
+  "images": [
+   "final/parts/crops/deckR_plate.png",
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal plugin control deck with all three pedals A, B and C off. Image 2 is the same deck in its original look, where pedals A and B are ON. Output ONE image, landscape 1536x1024, that is image 1 with EXACTLY the same framing, scale, panel texture and every detail, except: pedals A, B and C are all ON exactly the way A and B look in image 2: each lamp glows bright amber with the same small halo, and each pedal block is pressed down in the same shape as image 2's A and B, with the bright amber glow showing under its TOP edge as in image 2. Nothing else changes."
+ },
+ {
+  "name": "deckR_lit2_2",
+  "images": [
+   "final/parts/crops/deckR_plate.png",
+   "final/parts/crops/deckR.png"
+  ],
+  "prompt": "Image 1 is a crop of a photoreal plugin control deck with all three pedals A, B and C off. Image 2 is the same deck in its original look, where pedals A and B are ON. Output ONE image, landscape 1536x1024, that is image 1 with EXACTLY the same framing, scale, panel texture and every detail, except: pedals A, B and C are all ON exactly the way A and B look in image 2: each lamp glows bright amber with the same small halo, and each pedal block is pressed down in the same shape as image 2's A and B, with the bright amber glow showing under its TOP edge as in image 2. Nothing else changes."
  }
 ]

@@ -122,15 +122,42 @@ if __name__ == "__main__":
     RX_, RY_ = CW / 1568, CH / 1003
     def cbox(x0r, y0r, x1r, y1r): return [round(x0r * RX_), round(y0r * RY_), round(x1r * RX_), round(y1r * RY_)]
     import bar_plate; clean = bar_plate.rebuild(clean)   # no tone bar in the plate: it is drawn live
-    import retexture; clean, _ = retexture.retexture(clean, base)   # patched deck panel: real colour + real grain
+    def paste_region(job, box_ref, feather=12):   # a whole region of an aligned ChatGPT image, soft edges
+        if not os.path.exists("aligned/%s.png" % job): return False
+        a_ = A(job); gx0, gy0, _, _ = a_["canvas_box"]; g_ = img(job)
+        sx0, sy0, sx1, sy1 = [round(v * s_) for v, s_ in zip(box_ref, (CW / 1568, CH / 1003, CW / 1568, CH / 1003))]
+        sec = g_[sy0 - gy0:sy1 - gy0, sx0 - gx0:sx1 - gx0]; h_, w_ = sec.shape[:2]
+        fx = np.clip(np.minimum(np.arange(w_), w_ - 1 - np.arange(w_)) / feather, 0, 1)
+        fy = np.clip(np.minimum(np.arange(h_), h_ - 1 - np.arange(h_)) / feather, 0, 1)
+        f_ = (fx[None, :] * fy[:, None])[..., None]
+        clean[sy0:sy1, sx0:sx1] = sec * f_ + clean[sy0:sy1, sx0:sx1] * (1 - f_); return True
+    # realistic end pieces (Joshua: the keyhead and changer felt boxy): sculpted keyhead, rounded machined changer
+    paste_region("ends_walnut_1", (100, 138, 468, 318)); paste_region("ends_walnut_1", (1278, 138, 1404, 318))
+    # the deck's own background (Joshua: "one proper background without lighting, knobs sit on top"): two whole ChatGPT
+    # redraws of the reference deck with every moving part removed, lamps off, pedals raised; used whole, one texture
+    def paste_plate(job, x0r, x1r, feather_l, feather_r):
+        a_ = A(job); gx0, gy0, _, _ = a_["canvas_box"]; g_ = img(job)
+        sx0, sx1 = round(x0r * CW / 1568), round(x1r * CW / 1568); sy0, sy1 = round(670 * CH / 1003), round(992 * CH / 1003)
+        sec = g_[sy0 - gy0:sy1 - gy0, sx0 - gx0:sx1 - gx0]; h_, w_ = sec.shape[:2]
+        xs = np.arange(w_, dtype=np.float32)
+        fx = np.minimum(np.clip(xs / max(feather_l, 1), 0, 1) if feather_l else 1.0, np.clip((w_ - 1 - xs) / max(feather_r, 1), 0, 1) if feather_r else 1.0)
+        fx = np.broadcast_to(fx, (w_,)) if np.ndim(fx) else np.full(w_, fx, np.float32)
+        ys = np.arange(h_, dtype=np.float32); fy = np.clip(np.minimum(ys, h_ - 1 - ys) / 8.0, 0, 1)
+        f_ = (fx[None, :] * fy[:, None])[..., None]
+        clean[sy0:sy1, sx0:sx1] = sec * f_ + clean[sy0:sy1, sx0:sx1] * (1 - f_)
+    if os.path.exists("aligned/deckL_plate_2.png") and os.path.exists("aligned/deckR_plate_1.png"):
+        paste_plate("deckL_plate_2", 12, 642, 0, 24)        # VOICE + FEEL + MODE (seam in the panel left of the SPACE divider)
+        paste_plate("deckR_plate_1", 618, 1268, 24, 16)     # SPACE + pedals + slider + % box
+    else:
+        import retexture; clean, _ = retexture.retexture(clean, base)   # fallback: patched panel, real colour + grain
     Image.fromarray(clean.astype(np.uint8)).save("bg_clean.png")
     S = {}
     # pedals: three columns of the pedal box; lit A/B from the (HD) reference, lit C from the generated all-lit image
     x0, y0, x1, y1 = pb; cw = (x1 - x0) / 3
-    lit_all = paste_job(base, "pedals_lit")
-    for i, k in enumerate("ABC"):
+    lit_all = paste_job(clean, "deckR_lit2_2") if os.path.exists("aligned/deckR_lit2_2.png") else paste_job(base, "pedals_lit")
+    for i, k in enumerate("ABC"):   # lit + pressed, redrawn by ChatGPT on the clean deck plate (same panel texture)
         box = (round(x0 + i * cw), y0, round(x0 + (i + 1) * cw), y1)
-        S["pedal_%s_on" % k] = sprite("pedal_%s_on" % k, base if k in "AB" else lit_all, clean, box)
+        S["pedal_%s_on" % k] = sprite("pedal_%s_on" % k, lit_all, clean, box)
     mb = A("meter_on")["part_box_canvas"]; S["meter_on"] = sprite("meter_on", paste_job(base, "meter_on"), clean, mb, thr=6)
     sb = A("slider_empty")["part_box_canvas"]
     # handle only: reference vs the same slider with its fill but no handle; fill: whole groove filled vs empty groove

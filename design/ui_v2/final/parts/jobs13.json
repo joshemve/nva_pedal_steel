@@ -1,0 +1,30 @@
+[
+ {
+  "name": "glide_ptr9_1",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing left at 9 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "glide_ptr9_2",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing left at 9 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "glide_ptr3_1",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing right at 3 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "glide_ptr3_2",
+  "images": [
+   "final/parts/crops/knob_GLIDE.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: rotate ONLY the GLIDE knob (the cream scalloped knob in the centre) so its dark pointer line points pointing right at 3 o'clock. The knob turns as a solid object: its scallops turn with it, but the lighting stays where it is (same highlights, same soft shading and the same soft shadow on the panel). Same size, same position, same shape. The printed ticks, labels, panel and every other knob stay exactly the same. Everything outside that change must stay identical to the input."
+ }
+]

@@ -34,6 +34,20 @@ for sk, job in CHOICE.items():
     d |= cv2.morphologyEx(fine & under, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
     a = np.clip(blur(cv2.dilate(d, np.ones((15, 15), np.uint8)).astype(np.float32), 6) * 1.3, 0, 1) * lim
     comp = full * a[..., None] + hd * (1 - a[..., None])
+    # this instrument's realistic end pieces (ends_<name>_1: sculpted keyhead, rounded changer)
+    ej = "ends_%s_1" % sk
+    if os.path.exists("aligned/%s.png" % ej):
+        em = json.load(open("aligned/%s.json" % ej)); ex0, ey0, _, _ = em["canvas_box"]
+        eg = np.asarray(Image.open("aligned/%s.png" % ej), np.float32)
+        for bx_ in ((100, 138, 468, 318), (1278, 138, 1404, 318)):
+            sx0, sy0, sx1, sy1 = round(bx_[0] * RX), round(bx_[1] * RY), round(bx_[2] * RX), round(bx_[3] * RY)
+            sec = eg[sy0 - ey0:sy1 - ey0, sx0 - ex0:sx1 - ex0]; hh_, ww_ = sec.shape[:2]
+            fx = np.clip(np.minimum(np.arange(ww_), ww_ - 1 - np.arange(ww_)) / 12.0, 0, 1)
+            fy = np.clip(np.minimum(np.arange(hh_), hh_ - 1 - np.arange(hh_)) / 12.0, 0, 1)
+            ff = (fx[None, :] * fy[:, None])[..., None]
+            full[sy0:sy1, sx0:sx1] = sec * ff + full[sy0:sy1, sx0:sx1] * (1 - ff)
+            a[sy0:sy1, sx0:sx1] = np.maximum(a[sy0:sy1, sx0:sx1], ff[..., 0])
+        comp = full * a[..., None] + hd * (1 - a[..., None])
     comp = bar_plate.rebuild(comp)                       # the bar is drawn live, so not in the plate
     keep = np.maximum(a, 0)
     keep[bar_plate.Y0:bar_plate.Y1, bar_plate.X0 - 8:bar_plate.X1 + 8] = 1   # the rebuilt strip belongs to the layer too
