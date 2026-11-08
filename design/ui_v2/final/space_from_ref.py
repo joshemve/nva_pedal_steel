@@ -33,21 +33,48 @@ def broad(rgb, a):
     return np.stack([cv2.GaussianBlur(rgb[..., ch] * body, (0, 0), SIG) / den for ch in range(3)], 2)   # per channel: hue stays too
 
 
-B0 = broad(src, alpha)
+# the knob at three real angles: the reference (-101.5) and ChatGPT's same-lighting redraws at 12 and 3 o'clock
+def crop_of(job):
+    a = json.load(open("parts/aligned/%s.json" % job)); gx0, gy0, _, _ = a["canvas_box"]
+    g = np.asarray(Image.open("parts/aligned/%s.png" % job), np.float32)
+    return g[y0 - gy0:y0 - gy0 + fs, x0 - gx0:x0 - gx0 + fs].copy()
+def rot(img, deg, interp=cv2.INTER_CUBIC, border=cv2.BORDER_REFLECT):
+    M = cv2.getRotationMatrix2D(c, -deg, 1.0)                     # clockwise on screen
+    return cv2.warpAffine(img, M, (fs, fs), flags=interp, borderMode=border)
+SOURCES = [(src, A_REF, alpha)]
+for job, ang in (("echo_ptr12_1", -101.5 + 88.85), ("echo_ptr3_2", -101.5 + 162.65)):   # measured pointer offsets from the reference
+    if os.path.exists("parts/aligned/%s.png" % job):
+        SOURCES.append((crop_of(job), ang, rot(alpha, ang - A_REF, cv2.INTER_LINEAR, cv2.BORDER_CONSTANT)))
+SOURCES.sort(key=lambda t: t[1])
+for sx in SOURCES: print("source at %.1f deg" % sx[1])
+
+def from_source(sx, ang):
+    img, a0, al = sx
+    r = rot(img, ang - a0); ra = np.clip(rot(al, ang - a0, cv2.INTER_LINEAR, cv2.BORDER_CONSTANT), 0, 1)
+    ratio = np.clip(broad(img, al) / np.maximum(broad(r, ra), 1.0), 0.4, 2.5)
+    return np.clip(r * ratio, 0, 255), ra
+
 frames = []
 for k in range(n):
     ang = -135 + 270 * k / (n - 1)
-    M = cv2.getRotationMatrix2D(c, -(ang - A_REF), 1.0)          # clockwise on screen
-    r = cv2.warpAffine(src, M, (fs, fs), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT)
-    ra = cv2.warpAffine(alpha, M, (fs, fs), flags=cv2.INTER_LINEAR, borderValue=0)
-    Br = broad(r, ra)
-    ratio = np.clip(B0 / np.maximum(Br, 1.0), 0.4, 2.5)
-    lit = np.clip(r * ratio, 0, 255)
-    # the warm reflection along the real knob's lower rim belongs to the screen, not the knob: in a thin band inside
-    # the outline keep brightness but use the body's own average tint, so it doesn't ride round to the top
+    angs = [sx[1] for sx in SOURCES]
+    if ang <= angs[0]: parts = [(SOURCES[0], 1.0)]
+    elif ang >= angs[-1]: parts = [(SOURCES[-1], 1.0)]
+    else:
+        i = max(j for j in range(len(angs)) if angs[j] <= ang); t = (ang - angs[i]) / (angs[i + 1] - angs[i])
+        parts = [(SOURCES[i], 1 - t), (SOURCES[i + 1], t)]
+    lit = np.zeros((fs, fs, 3), np.float32); ra = np.zeros((fs, fs), np.float32)
+    rendered = [(from_source(sx, ang), w) for sx, w in parts]
+    for (l_, a_), w in rendered: lit += l_ * w; ra += a_ * w
+    if len(rendered) == 2:   # the pointer comes from the nearer source only (two slightly different pointers would ghost)
+        (l_n, _), w_n = max(rendered, key=lambda t: t[1])
+        pm = np.zeros((fs, fs), np.float32)
+        for (l_, _), _w in rendered: pm = np.maximum(pm, (l_.mean(2) > 95).astype(np.float32))
+        pm = np.clip(cv2.GaussianBlur(cv2.dilate(pm, np.ones((5, 5), np.uint8)), (0, 0), 1.2) * 1.5, 0, 1)[..., None]
+        lit = l_n * pm + lit * (1 - pm)
     inside = (ra > 0.5).astype(np.uint8)
     dist = cv2.distanceTransform(inside, cv2.DIST_L2, 5)
-    band = np.clip((14.0 - dist) / 6.0, 0, 1) * (ra > 0.5) * np.clip((80.0 - lit.mean(2)) / 20.0, 0, 1)   # not the pointer
+    band = np.clip((14.0 - dist) / 6.0, 0, 1) * (ra > 0.5) * np.clip((80.0 - lit.mean(2)) / 20.0, 0, 1)
     Lp = lit.mean(2, keepdims=True); core = (dist > 12) & (lit.mean(2) < 70)
     tint = (lit[core].mean(0) / max(lit[core].mean(), 1.0)) if core.sum() > 50 else np.ones(3)
     lit = lit * (1 - band[..., None]) + (Lp * tint) * band[..., None]
