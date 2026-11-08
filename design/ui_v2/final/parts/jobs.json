@@ -729,5 +729,75 @@
    "final/parts/crops/steelbody_ends_koa.png"
   ],
   "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1940s Hawaiian-inspired console steel: figured koa body with gently rounded, curved ends, four turned koa-wood legs with brass ferrules set close to the ends, and an ornate engraved brass keyhead plate with ten ivory-button tuners on a curved row. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "keyhead_walnut_1",
+  "images": [
+   "final/parts/crops/steelbody_now_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_walnut_2",
+  "images": [
+   "final/parts/crops/steelbody_now_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_maple_1",
+  "images": [
+   "final/parts/crops/steelbody_now_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_maple_2",
+  "images": [
+   "final/parts/crops/steelbody_now_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_redsparkle_1",
+  "images": [
+   "final/parts/crops/steelbody_now_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_redsparkle_2",
+  "images": [
+   "final/parts/crops/steelbody_now_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_pearloid_1",
+  "images": [
+   "final/parts/crops/steelbody_now_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_pearloid_2",
+  "images": [
+   "final/parts/crops/steelbody_now_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_now_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "keyhead_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_now_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: make ONLY the keyhead (the tuning-key end piece on the LEFT end of the steel) much smaller and more refined: a slim, low-profile end piece about half its current length and height, sitting close to the left end, with ten SMALL, delicate tuning keys in a neat row, matte satin finish with soft highlights, in the same material and style as now. It should be understated and not draw attention. The ten strings still run to it; the body, fretboard, tone bar, pickup, changer, legs, pedals, camera and lighting stay exactly the same. Where the old keyhead was bigger, show the instrument's own top surface. Everything outside that change must stay identical to the input."
  }
 ]

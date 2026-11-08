@@ -134,6 +134,8 @@ if __name__ == "__main__":
         clean[sy0:sy1, sx0:sx1] = sec * f_ + clean[sy0:sy1, sx0:sx1] * (1 - f_); return True
     # realistic end pieces (Joshua: the keyhead and changer felt boxy): sculpted keyhead, rounded machined changer
     paste_region("ends_walnut_1", (100, 138, 468, 318)); paste_region("ends_walnut_1", (1278, 138, 1404, 318))
+    # then a much smaller, understated keyhead (Joshua: the keyheads were big and clunky), real-steel style
+    paste_region("keyhead_walnut_1", (96, 132, 476, 322))
     # the deck's own background (Joshua: "one proper background without lighting, knobs sit on top"): two whole ChatGPT
     # redraws of the reference deck with every moving part removed, lamps off, pedals raised; used whole, one texture
     def paste_plate(job, x0r, x1r, feather_l, feather_r):

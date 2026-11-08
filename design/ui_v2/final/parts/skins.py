@@ -49,6 +49,19 @@ for sk, job in CHOICE.items():
             full[sy0:sy1, sx0:sx1] = sec * ff + full[sy0:sy1, sx0:sx1] * (1 - ff)
             a[sy0:sy1, sx0:sx1] = np.maximum(a[sy0:sy1, sx0:sx1], ff[..., 0])
         comp = full * a[..., None] + hd * (1 - a[..., None])
+    # the smaller, understated keyhead for this instrument (keyhead_<name>_<take>)
+    KH = {"maple": "keyhead_maple_2", "redsparkle": "keyhead_redsparkle_1", "pearloid": "keyhead_pearloid_2", "koa": "keyhead_koa_2"}
+    kj = KH.get(sk)
+    if kj and os.path.exists("aligned/%s.png" % kj):
+        km = json.load(open("aligned/%s.json" % kj)); kx0, ky0, _, _ = km["canvas_box"]
+        kg = np.asarray(Image.open("aligned/%s.png" % kj), np.float32)
+        sx0, sy0, sx1, sy1 = round(96 * RX), round(132 * RY), round(476 * RX), round(322 * RY)
+        sec = kg[sy0 - ky0:sy1 - ky0, sx0 - kx0:sx1 - kx0]; hh_, ww_ = sec.shape[:2]
+        fx = np.clip(np.minimum(np.arange(ww_), ww_ - 1 - np.arange(ww_)) / 14.0, 0, 1)
+        fy = np.clip(np.minimum(np.arange(hh_), hh_ - 1 - np.arange(hh_)) / 14.0, 0, 1)
+        ff = (fx[None, :] * fy[:, None])[..., None]
+        comp[sy0:sy1, sx0:sx1] = sec * ff + comp[sy0:sy1, sx0:sx1] * (1 - ff)
+        a[sy0:sy1, sx0:sx1] = np.maximum(a[sy0:sy1, sx0:sx1], ff[..., 0])
     comp = bar_plate.rebuild(comp)                       # the bar is drawn live, so not in the plate
     keep = np.maximum(a, 0)
     keep[bar_plate.Y0:bar_plate.Y1, bar_plate.X0 - 8:bar_plate.X1 + 8] = 1   # the rebuilt strip belongs to the layer too
