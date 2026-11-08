@@ -85,6 +85,38 @@ int main(int argc, char* argv[]) {
             check(reverb->getValue() > 0.99f, "restored MIDI LEARN map: CC 21 drives REVERB (" + juce::String(reverb->getValue(), 3) + ")");
         }
     }
+    // --show-editor: the hosted editor in a real on-screen window for ~7 s while notes play (captured from outside),
+    // resized by the host half way through
+    for (int a = 1; a < argc; ++a)
+        if (juce::String(argv[a]) == "--show-editor") {
+            std::unique_ptr<juce::AudioProcessorEditor> ed(inst->createEditorIfNeeded());
+            if (ed == nullptr) { check(false, "editor for on-screen test"); break; }
+            juce::DocumentWindow w("NVA Pedal Steel host window", juce::Colours::black, juce::DocumentWindow::closeButton);
+            w.setUsingNativeTitleBar(true); w.setContentNonOwned(ed.get(), true); w.setTopLeftPosition(40, 40);
+            w.setVisible(true); w.toFront(false);
+            std::cout << "WINDOW_READY" << std::endl;
+            const double t0 = juce::Time::getMillisecondCounterHiRes();
+            int block = 0; bool resized = false;
+            while (juce::Time::getMillisecondCounterHiRes() - t0 < 7000.0) {
+                juce::MidiBuffer m;
+                const int phase = (block / 120) % 4;   // a new chord every ~0.6 s, with pedal changes via CC 65/66
+                if (block % 120 == 0) {
+                    static const int chords[4][3] = { { 64, 68, 71 }, { 66, 69, 73 }, { 64, 68, 71 }, { 69, 73, 76 } };
+                    for (int n = 40; n < 90; ++n) m.addEvent(juce::MidiMessage::noteOff(1, n), 0);
+                    for (int n : chords[phase]) m.addEvent(juce::MidiMessage::noteOn(1, n, (juce::uint8) 100), 1);
+                    m.addEvent(juce::MidiMessage::controllerEvent(1, 65, phase == 1 ? 127 : 0), 2);
+                    m.addEvent(juce::MidiMessage::controllerEvent(1, 66, phase == 3 ? 127 : 0), 2);
+                }
+                buf.clear(); inst->processBlock(buf, m); ++block;
+                pump(5);
+                if (! resized && juce::Time::getMillisecondCounterHiRes() - t0 > 3500.0) {
+                    ed->setSize(1600, 1000); resized = true; std::cout << "RESIZED " << ed->getWidth() << "x" << ed->getHeight() << std::endl;
+                }
+            }
+            check(resized && ed->getWidth() == 1600, "host-driven resize of the on-screen editor");
+            w.clearContentComponent(); w.setVisible(false); inst->editorBeingDeleted(ed.get());
+        }
+
     inst->releaseResources();
     inst.reset();
     std::cout << (fails == 0 ? "VST3 host test passed" : "VST3 HOST TEST FAILED") << std::endl;

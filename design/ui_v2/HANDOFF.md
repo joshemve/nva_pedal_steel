@@ -157,6 +157,10 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
 - Accessibility: `Source/AccessibleControls.h` puts a click-through screen-reader element over every control
   (sliders with the panel's value text, toggles for pedals/levers/MIDI LEARN, buttons for preset/mode); values are
   announced on change.
+- On-screen host test: `PedalSteelHostTest <vst3> --show-editor` opens the hosted editor (VST3 wrapper, native child
+  window) on screen for 7 s while chords and CC 65/66 pedal changes play, resizing it from the host half way;
+  `tools/hosttest/capture_window.ps1 "NVA Pedal Steel host window" out.png <delayMs>` grabs the real window
+  (PrintWindow). Checked: it renders fully, the bar follows the notes, MIDI pedal changes light the pedals.
 - pluginval (Tracktion, strictness 10, in-process) passes on the built VST3: thread safety, state, fuzzing, editor.
   One random seed (0x1cefe01) exposed a real state bug: a host can leave a bool/choice at an in-between raw value
   (0.3 = off) that survived setStateInformation; the processor now snaps discrete parameters after replaceState.
