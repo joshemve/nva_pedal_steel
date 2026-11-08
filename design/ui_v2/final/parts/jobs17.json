@@ -1,0 +1,58 @@
+[
+ {
+  "name": "model_maple_1",
+  "images": [
+   "final/parts/crops/steelbody_ends_maple.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1970s Nashville-style cabinet steel: a thick, squared birdseye-maple cabinet with a darker walnut-stained apron band along the front, four straight tapered maple legs set in from the ends with a slight outward splay, and a wide wooden keyhead end carrying ten individual open-gear tuners with ivory buttons. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "model_maple_2",
+  "images": [
+   "final/parts/crops/steelbody_ends_maple.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1970s Nashville-style cabinet steel: a thick, squared birdseye-maple cabinet with a darker walnut-stained apron band along the front, four straight tapered maple legs set in from the ends with a slight outward splay, and a wide wooden keyhead end carrying ten individual open-gear tuners with ivory buttons. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "model_redsparkle_1",
+  "images": [
+   "final/parts/crops/steelbody_ends_redsparkle.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1950s Bakersfield console steel: red metal-flake body with rounded chrome 'waterfall' end caps that curve down over the ends, two chrome trim rails along the front apron, two pairs of chrome legs angled outward and joined by a chrome crossbar near the floor, and a slanted chrome keyhead panel with ten vintage chrome keys in one diagonal row. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "model_redsparkle_2",
+  "images": [
+   "final/parts/crops/steelbody_ends_redsparkle.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1950s Bakersfield console steel: red metal-flake body with rounded chrome 'waterfall' end caps that curve down over the ends, two chrome trim rails along the front apron, two pairs of chrome legs angled outward and joined by a chrome crossbar near the floor, and a slanted chrome keyhead panel with ten vintage chrome keys in one diagonal row. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "model_pearloid_1",
+  "images": [
+   "final/parts/crops/steelbody_ends_pearloid.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1960s student-model console steel: a slimmer white pearloid body with a chrome-edged rounded front, standing on one chrome T-frame stand at each end (a single vertical post with a wide foot bar) instead of four legs, and a compact pearloid-covered keyhead with ten butterbean tuners in two staggered rows. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "model_pearloid_2",
+  "images": [
+   "final/parts/crops/steelbody_ends_pearloid.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1960s student-model console steel: a slimmer white pearloid body with a chrome-edged rounded front, standing on one chrome T-frame stand at each end (a single vertical post with a wide foot bar) instead of four legs, and a compact pearloid-covered keyhead with ten butterbean tuners in two staggered rows. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "model_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_ends_koa.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1940s Hawaiian-inspired console steel: figured koa body with gently rounded, curved ends, four turned koa-wood legs with brass ferrules set close to the ends, and an ornate engraved brass keyhead plate with ten ivory-button tuners on a curved row. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ },
+ {
+  "name": "model_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_ends_koa.png"
+  ],
+  "prompt": "This is a crop of a photoreal plugin UI showing a pedal steel guitar. Output ONE image, landscape 1536x1024, where the instrument is redesigned as its own distinct model: a 1940s Hawaiian-inspired console steel: figured koa body with gently rounded, curved ends, four turned koa-wood legs with brass ferrules set close to the ends, and an ornate engraved brass keyhead plate with ten ivory-button tuners on a curved row. Keep EXACTLY the same camera, framing, scale, perspective, room, rug and lighting, and keep these parts exactly where they are and the same: the black fretboard with its fret lines, numbers and markers, the ten strings, the chrome tone bar, the pickup, the changer at the right end with its ten fingers where the strings end, the three foot pedals on their cross bar with their pull rods, the two knee levers under the front rail, and the height and line of the playing surface. It must look like a real, photographed instrument with honest wear. No text, badges or logos."
+ }
+]

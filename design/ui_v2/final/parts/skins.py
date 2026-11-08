@@ -10,7 +10,8 @@ H = os.path.dirname(os.path.abspath(__file__)); os.chdir(H)
 CW, CH = 3200, 2000; RX, RY = CW / 1568, CH / 1003
 clean = np.asarray(Image.open("bg_clean.png"), np.float32)
 hd = np.asarray(Image.open("bg_hd.png"), np.float32)
-CHOICE = {"maple": "skin_maple_1", "redsparkle": "skin_redsparkle_1", "pearloid": "skin_pearloid_1", "koa": "skin_koa_1"}
+# each instrument its own model (Joshua: "make each one feel like its own thing"): table, legs, keyhead per instrument
+CHOICE = {"maple": "model_maple_1", "redsparkle": "model_redsparkle_1", "pearloid": "model_pearloid_1", "koa": "model_koa_2"}
 for a in sys.argv[1:]: k, v = a.split("="); CHOICE[k] = v
 blur = lambda a, s: cv2.GaussianBlur(a, (0, 0), s)
 os.makedirs("skins", exist_ok=True); out = {}
@@ -36,7 +37,7 @@ for sk, job in CHOICE.items():
     comp = full * a[..., None] + hd * (1 - a[..., None])
     # this instrument's realistic end pieces (ends_<name>_1: sculpted keyhead, rounded changer)
     ej = "ends_%s_1" % sk
-    if os.path.exists("aligned/%s.png" % ej):
+    if job.startswith("skin_") and os.path.exists("aligned/%s.png" % ej):   # the model redraws carry their own ends
         em = json.load(open("aligned/%s.json" % ej)); ex0, ey0, _, _ = em["canvas_box"]
         eg = np.asarray(Image.open("aligned/%s.png" % ej), np.float32)
         for bx_ in ((100, 138, 468, 318), (1278, 138, 1404, 318)):

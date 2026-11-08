@@ -6,7 +6,7 @@
    3063,
    1346
   ],
-  "job": "skin_maple_1"
+  "job": "model_maple_1"
  },
  "redsparkle": {
   "box": [
@@ -15,7 +15,7 @@
    3063,
    1346
   ],
-  "job": "skin_redsparkle_1"
+  "job": "model_redsparkle_1"
  },
  "pearloid": {
   "box": [
@@ -24,7 +24,7 @@
    3063,
    1346
   ],
-  "job": "skin_pearloid_1"
+  "job": "model_pearloid_1"
  },
  "koa": {
   "box": [
@@ -33,6 +33,6 @@
    3063,
    1346
   ],
-  "job": "skin_koa_1"
+  "job": "model_koa_2"
  }
 }

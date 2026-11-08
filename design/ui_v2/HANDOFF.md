@@ -175,6 +175,10 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   deckR_plate_1), used whole in `build_ui.py`; lit pedals redrawn on that plate with the reference as the look to copy
   (deckR_lit2_2). Realistic end pieces (sculpted keyhead, rounded changer) per instrument: `ends_<name>_1`, pasted as
   whole regions in `build_ui.py` (walnut) and `skins.py`.
+- Distinct instrument models (Joshua: all the same table/legs/keyhead): `make_jobs17.py` (model_<name>): maple = 70s
+  Nashville cabinet, tapered splayed wooden legs, open-gear ivory tuners; red sparkle = 50s console, chrome waterfall ends,
+  angled legs on a floor crossbar; pearloid = 60s model on chrome T-frame stands, butterbean tuners; koa = 40s Hawaiian,
+  turned koa legs, engraved brass keyhead. Playable parts stay in place. `skins.py` uses these; cards 04/06/13/18 follow.
 - Accessibility: `Source/AccessibleControls.h` puts a click-through screen-reader element over every control
   (sliders with the panel's value text, toggles for pedals/levers/MIDI LEARN, buttons for preset/mode); values are
   announced on change.
