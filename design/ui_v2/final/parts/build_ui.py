@@ -122,6 +122,7 @@ if __name__ == "__main__":
     RX_, RY_ = CW / 1568, CH / 1003
     def cbox(x0r, y0r, x1r, y1r): return [round(x0r * RX_), round(y0r * RY_), round(x1r * RX_), round(y1r * RY_)]
     import bar_plate; clean = bar_plate.rebuild(clean)   # no tone bar in the plate: it is drawn live
+    RX_, RY_ = CW / 1568, CH / 1003
     def paste_region(job, box_ref, feather=12):   # a whole region of an aligned ChatGPT image, soft edges
         if not os.path.exists("aligned/%s.png" % job): return False
         a_ = A(job); gx0, gy0, _, _ = a_["canvas_box"]; g_ = img(job)
@@ -154,10 +155,22 @@ if __name__ == "__main__":
     S = {}
     # pedals: three columns of the pedal box; lit A/B from the (HD) reference, lit C from the generated all-lit image
     x0, y0, x1, y1 = pb; cw = (x1 - x0) / 3
-    lit_all = paste_job(clean, "deckR_lit2_2") if os.path.exists("aligned/deckR_lit2_2.png") else paste_job(base, "pedals_lit")
-    for i, k in enumerate("ABC"):   # lit + pressed, redrawn by ChatGPT on the clean deck plate (same panel texture)
+    # lit + pressed pedals: the reference's own A and B (real lamp glow and pressed block), and A moved onto C (the
+    # pedals are identical, lamps 2055 / 2228 / 2388 canvas px); alpha = the pressed block plus wherever it glows
+    lamps = {"A": 2055, "B": 2228, "C": 2388}
+    for i, k in enumerate("ABC"):
         box = (round(x0 + i * cw), y0, round(x0 + (i + 1) * cw), y1)
-        S["pedal_%s_on" % k] = sprite("pedal_%s_on" % k, lit_all, clean, box)
+        src_x = lamps["A" if k == "C" else k]; dx_ = lamps[k] - src_x
+        lit = clean.copy(); bx0, by0, bx1, by1 = box
+        lit[by0:by1, bx0:bx1] = base[by0:by1, bx0 - dx_:bx1 - dx_]
+        Lg = blur(lit.mean(2), 1.5) - blur(clean.mean(2), 1.5)
+        a_glow = np.clip((Lg - 6.0) / 22.0, 0, 1)
+        blk = np.zeros(a_glow.shape, np.float32); blk[1488:1752, lamps[k] - 74:lamps[k] + 74] = 1   # the pressed block
+        yy_, xx_ = np.mgrid[0:blk.shape[0], 0:blk.shape[1]]
+        blk[(xx_ - lamps[k]) ** 2 + (yy_ - 1466) ** 2 < 26 ** 2] = 1                                   # the whole lamp
+        a_ = np.clip(np.maximum(a_glow, blur(blk, 3.0)), 0, 1)[by0:by1, bx0:bx1]
+        Image.fromarray(np.dstack([lit[by0:by1, bx0:bx1], a_ * 255]).astype(np.uint8), "RGBA").save("sprites/pedal_%s_on.png" % k)
+        S["pedal_%s_on" % k] = {"box": [int(v) for v in box]}
     mb = A("meter_on")["part_box_canvas"]; S["meter_on"] = sprite("meter_on", paste_job(base, "meter_on"), clean, mb, thr=6)
     sb = A("slider_empty")["part_box_canvas"]
     # handle only: reference vs the same slider with its fill but no handle; fill: whole groove filled vs empty groove
