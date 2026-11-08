@@ -1033,31 +1033,31 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0; // Nashville Gold
-                p.playMode      = 0; // Expressive Poly
+                p.playMode      = 1; // Lead Legato (prevents raked-chord overlap stealing!)
                 p.fxCharacter   = 15; // Dimension D Chorus
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.48f;
+                p.scoopDepth    = 0.10f; // Crisp concert-locked studio chord attacks
                 p.pedalSpeed    = 145.0f;
-                p.barGlide      = 135.0f;
-                p.barSlideNoise = 0.22f;
-                p.vibratoDepth  = 0.20f;
-                p.vibratoRate   = 4.85f;
-                p.autoSwell     = 0.12f;
-                p.swellTime     = 95.0f;
+                p.barGlide      = 130.0f;
+                p.barSlideNoise = 0.20f;
+                p.vibratoDepth  = 0.12f;
+                p.vibratoRate   = 4.75f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 90.0f;
                 p.sampleBlend   = 0.90f;
                 p.pickSnap      = 0.62f;
                 p.pickupPos     = 2.22f;
                 p.coilPeakFreq  = 2280.0f;
                 p.coilResonance = 0.58f;
                 p.sustainTime   = 8.8f;
-                p.cabinetDrop   = 0.36f;
+                p.cabinetDrop   = 0.04f; // Rock-solid tuning across wide chord pulls
                 p.stereoWidth   = 1.32f;
                 p.ampDrive      = 0.14f;
-                p.toneWarmth    = 0.46f;
-                p.delayMix      = 0.20f;
+                p.toneWarmth    = 0.44f;
+                p.delayMix      = 0.14f;
                 p.delayTime     = 500.0f; // 1/8D
                 p.tempoSync     = true;
-                p.reverbMix     = 0.42f;
+                p.reverbMix     = 0.38f;
                 p.reverbDecay   = 0.72f;
                 p.outputLevel   = 0.2f;
                 return p;
@@ -1066,37 +1066,37 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "30 - Poly-Octave Messina Choir",
             "Cathedral / Organ",
-            "Direct polyphonic dual-grain -12st 16' Bourdon Sub + Dry 8' + +12st 4' Choir + celeste reed rank & harmonium tube warmth (Bon Iver Messina / Chuck Johnson 'Balsams'): turns raked steel chords into a breathing pipe organ.",
+            "Phase-locked per-string 16' Bourdon Sub + 8' Studio Steel + silk-filtered 4' Flute Octave through a Messina harmonium bellows & Voix-Celeste air (Bon Iver Messina / Chuck Johnson 'Balsams'): luminous breathing pipe-organ steel.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 3; // Montana Swell
-                p.playMode      = 0; // Expressive Poly
+                p.presetStyle   = 0; // Crisp concert-calibrated studio string core
+                p.playMode      = 1; // Clean raked chords + expressive lead glides
                 p.fxCharacter   = 16; // Poly-Octave Organ
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.56f;
-                p.pedalSpeed    = 185.0f;
-                p.barGlide      = 175.0f;
-                p.barSlideNoise = 0.16f;
-                p.vibratoDepth  = 0.18f;
-                p.vibratoRate   = 4.65f;
-                p.autoSwell     = 0.55f;
-                p.swellTime     = 210.0f;
+                p.scoopDepth    = 0.10f; // Concert-locked pipe-organ intonation
+                p.pedalSpeed    = 165.0f;
+                p.barGlide      = 155.0f;
+                p.barSlideNoise = 0.14f;
+                p.vibratoDepth  = 0.10f;
+                p.vibratoRate   = 4.60f;
+                p.autoSwell     = 0.30f; // Responsive breathing reed/pipe attack
+                p.swellTime     = 130.0f;
                 p.sampleBlend   = 0.88f;
-                p.pickSnap      = 0.24f;
-                p.pickupPos     = 2.68f;
-                p.coilPeakFreq  = 1860.0f;
-                p.coilResonance = 0.54f;
-                p.sustainTime   = 10.6f;
-                p.cabinetDrop   = 0.36f;
+                p.pickSnap      = 0.36f;
+                p.pickupPos     = 2.35f;
+                p.coilPeakFreq  = 2180.0f;
+                p.coilResonance = 0.58f;
+                p.sustainTime   = 10.8f;
+                p.cabinetDrop   = 0.0f; // Pipe organs never sag flat on pedal pulls!
                 p.stereoWidth   = 1.34f;
-                p.ampDrive      = 0.22f;
-                p.toneWarmth    = 0.70f;
-                p.delayMix      = 0.18f;
+                p.ampDrive      = 0.18f;
+                p.toneWarmth    = 0.46f; // Open, luminous upper pipe harmonics
+                p.delayMix      = 0.14f;
                 p.delayTime     = 620.0f; // 1/4
                 p.tempoSync     = true;
-                p.reverbMix     = 0.52f;
-                p.reverbDecay   = 0.84f;
-                p.outputLevel   = -0.2f;
+                p.reverbMix     = 0.45f;
+                p.reverbDecay   = 0.80f;
+                p.outputLevel   = -0.4f;
                 return p;
             }()
         }

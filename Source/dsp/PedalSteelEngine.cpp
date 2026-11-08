@@ -620,19 +620,19 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         charFilter2.setPeak(sr, 2550.0f, 0.90f, 2.2f);
         charFilter3.setLowpass(sr, 5200.0f, 0.72f);
     } else if (mode == 15) {
-        // 29: Dimension D Chorus (SSL VCA Comp + Roland SDD-320 Mode IV Cross-Coupled Anti-Phase Triangle BBD + 6.2 kHz Studio Air)
-        dimHpFilter.setHighpass(sr, 265.0f, 0.707f);
-        subLpFilter.setLowpass(sr, 6800.0f, 0.72f);
-        charFilter1.setPeak(sr, 160.0f, 0.74f, 2.2f);
-        charFilter2.setPeak(sr, 680.0f, 0.90f, -2.0f);
+        // 29: Dimension D Chorus (SSL VCA Comp + Roland SDD-320 Motionless-Pitch Cross-Coupled BBD + 6.2 kHz Studio Air)
+        dimHpFilter.setHighpass(sr, 280.0f, 0.707f);
+        subLpFilter.setLowpass(sr, 7200.0f, 0.72f);
+        charFilter1.setPeak(sr, 165.0f, 0.74f, 2.0f);
+        charFilter2.setPeak(sr, 660.0f, 0.90f, -2.0f);
         charFilter3.setPeak(sr, std::min(6200.0f, static_cast<float>(sr * 0.40)), 0.76f, 2.8f);
     } else if (mode == 16) {
-        // 30: Poly-Octave Organ (EHX POG -12st 16' Sub + Dry 8' + +12st 4' Choir + Bon Iver Messina Harmonium Reed Voicing)
-        subLpFilter.setLowpass(sr, 520.0f, 0.72f);
-        dimHpFilter.setHighpass(sr, 230.0f, 0.707f);
-        charFilter1.setPeak(sr, 175.0f, 0.74f, 2.6f);
-        charFilter2.setPeak(sr, 940.0f, 0.88f, 2.2f);
-        charFilter3.setLowpass(sr, 4250.0f, 0.72f);
+        // 30: Poly-Octave Organ (Phase-Locked Per-String 16'+8'+4' Studio Steel Choir -> Messina Bellows & Silk POG2 LPF)
+        dimHpFilter.setHighpass(sr, 195.0f, 0.707f);
+        subLpFilter.setLowpass(sr, 3150.0f, 0.72f);
+        charFilter1.setPeak(sr, 185.0f, 0.74f, 2.2f);
+        charFilter2.setPeak(sr, 920.0f, 0.85f, -1.6f);
+        charFilter3.setLowpass(sr, 3850.0f, 0.72f);
     }
 }
 
@@ -1317,105 +1317,63 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         outExtraRevL = (dirL + adtTapeL) * 0.22f;
         outExtraRevR = (dirR + adtTapeR) * 0.22f;
     } else if (mode == 15) {
-        // 29: Dimension D Chorus (SSL VCA Comp + Roland SDD-320 Mode IV Cross-Coupled Anti-Phase Triangle BBD + 6.2 kHz Air)
-        lfoPhase1 += 0.46 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        lfoPhase2 += 0.19 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        // 29: Dimension D Chorus (SSL VCA Comp + Roland SDD-320 Motionless-Pitch Cross-Coupled BBD + 6.2 kHz Air)
+        // Ultra-slow 0.24 Hz ±0.48 ms anti-phase BBD sweep (±1.2 cents max -> zero pitch wobble, 100% concert-pitch lock!)
+        lfoPhase1 += 0.24 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.11 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
 
         const float pk = std::max(std::abs(ioL), std::abs(ioR));
         const float vcaAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.005 : 0.160)));
         cassetteSagEnv += vcaAlpha * (pk - cassetteSagEnv);
-        const float vcaGain = 1.26f / (1.0f + 0.55f * cassetteSagEnv);
+        const float vcaGain = 1.24f / (1.0f + 0.52f * cassetteSagEnv);
 
         const float dryCleanL = charFilter3.processL(charFilter2.processL(charFilter1.processL(fastTanh(ioL * vcaGain) * 0.92f)));
         const float dryCleanR = charFilter3.processR(charFilter2.processR(charFilter1.processR(fastTanh(ioR * vcaGain) * 0.92f)));
 
-        // Motionless-pitch constant-slope anti-phase triangle BBD modulation (SDD-320 Mode IV)
-        const float triL = 1.0f - 4.0f * static_cast<float>(std::abs(lfoPhase1 - 0.5));
-        const float triR = -triL;
-        const float drift = 0.18f * static_cast<float>(std::sin(kTwoPi * lfoPhase2));
-        const float dDimL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.85f + 1.65f * triL + drift) * srMs);
-        const float dDimR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.25f + 1.65f * triR - drift) * srMs);
+        const float modSin = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float drift  = 0.08f * static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float dDimL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.75f + 0.48f * modSin + drift) * srMs);
+        const float dDimR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.55f - 0.48f * modSin - drift) * srMs);
 
         const float bbdL = dimHpFilter.processL(subLpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dDimL)));
         const float bbdR = dimHpFilter.processR(subLpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dDimR)));
 
-        // SDD-320 phase-inverted cross-channel wet matrix above 265 Hz (huge 3D width, zero pitch warble, 100% mono-safe!)
-        const float wetL = bbdL - 0.56f * bbdR;
-        const float wetR = bbdR - 0.56f * bbdL;
-        ioL = dryCleanL * 0.84f + wetL * 0.54f;
-        ioR = dryCleanR * 0.84f + wetR * 0.54f;
-        outExtraRevL = (dryCleanL + wetL) * 0.24f;
-        outExtraRevR = (dryCleanR + wetR) * 0.24f;
-    } else if (mode == 16 && shimMaxLen > 64) {
-        // 30: Poly-Octave Organ (EHX POG -12st 16' Bourdon Sub + Dry 8' + +12st 4' Choir + Bon Iver Messina Harmonium Reed)
-        lfoPhase1 += 0.55 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        // SDD-320 phase-inverted cross-channel wet matrix above 280 Hz (wide-screen 3D gloss, zero pitch shift, 100% mono-safe!)
+        const float wetL = bbdL - 0.52f * bbdR;
+        const float wetR = bbdR - 0.52f * bbdL;
+        ioL = dryCleanL * 0.86f + wetL * 0.50f;
+        ioR = dryCleanR * 0.86f + wetR * 0.50f;
+        outExtraRevL = (dryCleanL + wetL) * 0.22f;
+        outExtraRevR = (dryCleanR + wetR) * 0.22f;
+    } else if (mode == 16) {
+        // 30: Poly-Octave Organ (Messina Harmonium Bellows + Voix-Celeste ±1.0c Stereo Air + Cathedral Reflections)
+        // Note: 0.00-cent phase-locked 16' Sub + 8' Steel + silk-filtered 4' Octave ranks are generated per-string in renderBlock()!
+        lfoPhase1 += 0.27 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.15 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
 
-        shimBufL[static_cast<size_t>(shimWritePos)] = ioL;
-        shimBufR[static_cast<size_t>(shimWritePos)] = ioR;
+        const float celSin = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float celCos = static_cast<float>(std::cos(kTwoPi * lfoPhase1));
+        const float dCelL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (5.6f + 0.32f * celSin) * srMs);
+        const float dCelR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.5f + 0.32f * celCos) * srMs);
+        const float celL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dCelL));
+        const float celR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dCelR));
 
-        // 1. Glitch-free Dual-Grain C1 Hann +12st 4-Foot Upper Pipe/Choir Rank (ratio = 2.0x)
-        const float grainUp = juce::jlimit(256.0f, static_cast<float>(shimMaxLen - 32), static_cast<float>(0.064 * sr));
-        shimPhasor += 1.0 / static_cast<double>(grainUp);
-        if (shimPhasor >= 1.0) shimPhasor -= 1.0;
-
-        const double uLa = shimPhasor;
-        const double uLb = (uLa + 0.5 >= 1.0) ? (uLa - 0.5) : (uLa + 0.5);
-        const float wULa = 0.5f * (1.0f - static_cast<float>(std::cos(kTwoPi * uLa)));
-        const float dULa = static_cast<float>(1.0 - uLa) * grainUp + 12.0f;
-        const float dULb = static_cast<float>(1.0 - uLb) * grainUp + 12.0f;
-        const float rawUpL = wULa * readFloatBufHermite(shimBufL, shimWritePos, dULa)
-                           + (1.0f - wULa) * readFloatBufHermite(shimBufL, shimWritePos, dULb);
-
-        const double uRa = (uLa + 0.25 >= 1.0) ? (uLa - 0.75) : (uLa + 0.25);
-        const double uRb = (uRa + 0.5 >= 1.0) ? (uRa - 0.5) : (uRa + 0.5);
-        const float wURa = 0.5f * (1.0f - static_cast<float>(std::cos(kTwoPi * uRa)));
-        const float dURa = static_cast<float>(1.0 - uRa) * grainUp + 12.0f;
-        const float dURb = static_cast<float>(1.0 - uRb) * grainUp + 12.0f;
-        const float rawUpR = wURa * readFloatBufHermite(shimBufR, shimWritePos, dURa)
-                           + (1.0f - wURa) * readFloatBufHermite(shimBufR, shimWritePos, dURb);
-
-        const float upSilk = static_cast<float>(1.0 - std::exp(-kTwoPi * 2650.0 / sr));
-        shimLpL += upSilk * (dimHpFilter.processL(rawUpL) - shimLpL);
-        shimLpR += upSilk * (dimHpFilter.processR(rawUpR) - shimLpR);
-
-        // 2. Glitch-free Dual-Grain C1 Hann -12st 16-Foot Bourdon Sub-Octave Rank (ratio = 0.5x)
-        const float grainSub = juce::jlimit(256.0f, static_cast<float>(shimMaxLen - 32), static_cast<float>(0.072 * sr));
-        subPhasor += 0.5 / static_cast<double>(grainSub);
-        if (subPhasor >= 1.0) subPhasor -= 1.0;
-
-        const double qA = subPhasor;
-        const double qB = (qA + 0.5 >= 1.0) ? (qA - 0.5) : (qA + 0.5);
-        const float wSubA = 0.5f * (1.0f - static_cast<float>(std::cos(kTwoPi * qA)));
-        const float dSubA = static_cast<float>(qA) * grainSub + 12.0f;
-        const float dSubB = static_cast<float>(qB) * grainSub + 12.0f;
-        const float rawSubL = wSubA * readFloatBufHermite(shimBufL, shimWritePos, dSubA)
-                            + (1.0f - wSubA) * readFloatBufHermite(shimBufL, shimWritePos, dSubB);
-        const float rawSubR = wSubA * readFloatBufHermite(shimBufR, shimWritePos, dSubA)
-                            + (1.0f - wSubA) * readFloatBufHermite(shimBufR, shimWritePos, dSubB);
-        const float subL = subLpFilter.processL(rawSubL);
-        const float subR = subLpFilter.processR(rawSubR);
-
-        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
-
-        // 3. Subtle Celeste 8-Foot Detuned Harmonium Reed Rank + Warm Tube/Reed Saturation
-        const float celMod = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
-        const float dCelL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (4.8f + 0.42f * celMod) * srMs);
-        const float dCelR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (5.3f - 0.42f * celMod) * srMs);
-        const float celL = readFloatBufHermite(modBufL, modWritePos, dCelL);
-        const float celR = readFloatBufHermite(modBufR, modWritePos, dCelR);
-
-        const float mixL = juce::jlimit(-2.8f, 2.8f, ioL * 0.74f + subL * 0.58f + shimLpL * 0.46f + celL * 0.20f);
-        const float mixR = juce::jlimit(-2.8f, 2.8f, ioR * 0.74f + subR * 0.58f + shimLpR * 0.46f + celR * 0.20f);
-        const float reedL = (fastTanh(mixL * 1.38f + 0.16f * mixL * mixL) - 0.028f * mixL * mixL) * 0.80f;
-        const float reedR = (fastTanh(mixR * 1.38f + 0.16f * mixR * mixR) - 0.028f * mixR * mixR) * 0.80f;
+        const float mixL = juce::jlimit(-2.8f, 2.8f, ioL * 0.88f + celL * 0.26f - celR * 0.12f);
+        const float mixR = juce::jlimit(-2.8f, 2.8f, ioR * 0.88f + celR * 0.26f - celL * 0.12f);
+        const float reedL = (fastTanh(mixL * 1.10f + 0.08f * mixL * mixL) - 0.04f * fastTanh(mixL * mixL)) * 0.92f;
+        const float reedR = (fastTanh(mixR * 1.10f + 0.08f * mixR * mixR) - 0.04f * fastTanh(mixR * mixR)) * 0.92f;
         const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 24.0 / sr));
         leslieDcL += dcAlpha * (reedL - leslieDcL);
         leslieDcR += dcAlpha * (reedR - leslieDcR);
 
         ioL = charFilter3.processL(charFilter2.processL(charFilter1.processL(reedL - leslieDcL)));
         ioR = charFilter3.processR(charFilter2.processR(charFilter1.processR(reedR - leslieDcR)));
-        outExtraRevL = ioL * 0.44f;
-        outExtraRevR = ioR * 0.44f;
+
+        const float catWob = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float dCatL = juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), (29.0f + 0.75f * catWob) * srMs);
+        const float dCatR = juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), (43.0f - 0.75f * catWob) * srMs);
+        outExtraRevL = subLpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dCatL)) * 0.38f + ioL * 0.20f;
+        outExtraRevR = subLpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dCatR)) * 0.38f + ioR * 0.20f;
     }
 
     if (wetGain < 0.9999f) {
@@ -1485,6 +1443,7 @@ void PedalSteelEngine::reset() {
     studioTweedCabFilter.reset();
     dcBlockerStudio.reset();
     tweedSagEnv = 0.0f;
+    organRankSmooth = (params.fxCharacter == 16) ? 1.0f : 0.0f;
 
     sympathetic.reset();
     modernChar.reset();
@@ -1850,9 +1809,11 @@ void PedalSteelEngine::reassignChordRoles() {
             else if (rel == 7) v.role = StringRole::Fifth;
             else v.role = StringRole::SixthOr9th;
         } else {
+            // Standard E9th Copedent role mapping: Root (0), Third (3/4 -> Pedal B +1), Fifth (7 -> Pedal A +2),
+            // while 9ths (2) & 6ths (9) stay pure in SixthOr9th so add9/maj9 chords never clash on A+B pulls!
             if (rel == 0) v.role = StringRole::Root;
-            else if (rel == 3 || rel == 4 || rel == 2) v.role = StringRole::Third;
-            else if (rel == 7 || rel == 9) v.role = StringRole::Fifth;
+            else if (rel == 3 || rel == 4) v.role = StringRole::Third;
+            else if (rel == 7) v.role = StringRole::Fifth;
             else v.role = StringRole::SixthOr9th;
         }
     }
@@ -2352,6 +2313,8 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         smoothLKL    += (targetLKL - smoothLKL) * pSmooth;
         smoothLKR    += (targetLKR - smoothLKR) * pSmooth;
         smoothVolPedal += (targetVol - smoothVolPedal) * pSmooth;
+        const float targetOrgan = (params.fxCharacter == 16) ? 1.0f : 0.0f;
+        organRankSmooth += (targetOrgan - organRankSmooth) * static_cast<float>(1.0 - std::exp(-dt / 0.0085));
 
         const float pwOmega = (!anyVoiceHeld) ? 28.0f : std::min(barOmega, 10.5f);
         const float pwAccel = pwOmega * pwOmega * (pitchWheelNorm - smoothPitchWheel) - 2.0f * pwOmega * smoothPitchWheelVel;
@@ -2551,13 +2514,20 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             const float nyquistLimit = fSr * 0.44f;
             const float ageF = static_cast<float>(v.noteAgeSec);
 
-            // Baritone Canyon B6 subtle phase-locked -12st heavy wound resonator coupling
-            if (stStyle == 5 && !v.isPalmHarmonic) {
+            // Baritone Canyon B6 (-12st resonator) & Poly-Octave Organ (0.00-cent 16' Bourdon Sub-Octave Foundation!)
+            float organPipeMono = 0.0f;
+            if ((stStyle == 5 || organRankSmooth > 0.0005f) && !v.isPalmHarmonic) {
                 const float subHz = instFreqHz * 0.5f;
                 if (subHz >= 24.0f) {
                     v.subHarmPhase += kTwoPi * static_cast<double>(subHz) * dt;
                     if (v.subHarmPhase >= kTwoPi) v.subHarmPhase -= kTwoPi;
-                    harmSum += 0.34f * static_cast<float>(std::sin(v.subHarmPhase));
+                    const float subSin = static_cast<float>(std::sin(v.subHarmPhase));
+                    if (stStyle == 5) {
+                        harmSum += 0.34f * subSin;
+                    }
+                    if (organRankSmooth > 0.0005f) {
+                        organPipeMono += 0.085f * subSin * organRankSmooth;
+                    }
                 }
             }
 
@@ -2627,6 +2597,9 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 const float highRegPurity = (fh > 3600.0f && h >= 4) ? std::exp(-(fh - 3600.0f) * 0.0010f) : 1.0f;
 
                 harmSum += (sustainWeight + twangWeight) * lcGain * highRegPurity * static_cast<float>(std::sin(ph));
+                if (organRankSmooth > 0.0005f && !v.isPalmHarmonic && h == 2) {
+                    organPipeMono += 0.045f * organRankSmooth * static_cast<float>(std::sin(ph));
+                }
             }
 
             // Physical Chrome-Bar Winding Slide Layer (delicate high-Q metallic string-harmonic glint during glides!)
@@ -2672,6 +2645,21 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 } else {
                     msL *= params.sampleBlend;
                     msR *= params.sampleBlend;
+                    if (organRankSmooth > 0.0005f) {
+                        const double loopOffsetBase = static_cast<double>(std::max(0, ms.loopStartFrame - ms.startFrame)) + 512.0;
+                        float subMsL = 0.0f, subMsR = 0.0f, upMsL = 0.0f, upMsR = 0.0f;
+                        readStereoMultiSampleHermite(v.multiSampleIdx, loopOffsetBase + v.samplePos * 0.5, subMsL, subMsR);
+                        readStereoMultiSampleHermite(v.multiSampleIdx, loopOffsetBase + v.samplePos * 2.0, upMsL, upMsR);
+                        // Silk 1950 Hz 1-pole POG2/Messina lowpass on the +12st 4' steel rank so it floats like a velvety wooden flute!
+                        const float upSilkAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 1950.0 / sampleRate));
+                        v.chimeLpStateL += upSilkAlpha * (upMsL - v.chimeLpStateL);
+                        v.chimeLpStateR += upSilkAlpha * (upMsR - v.chimeLpStateR);
+                        const float upTame = juce::jlimit(0.24f, 1.0f, (1650.0f - targetSampleHz) / 900.0f);
+                        msL = msL * (1.0f - 0.12f * organRankSmooth)
+                            + (subMsL * 0.46f + v.chimeLpStateL * 0.44f * upTame) * params.sampleBlend * organRankSmooth;
+                        msR = msR * (1.0f - 0.12f * organRankSmooth)
+                            + (subMsR * 0.46f + v.chimeLpStateR * 0.44f * upTame) * params.sampleBlend * organRankSmooth;
+                    }
                 }
 
                 const double pitchRatio = static_cast<double>(targetSampleHz / std::max(50.0f, ms.baseFreqHz));
@@ -2696,9 +2684,9 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             const float envGain = v.ampEnv * swellShape;
             const float pan = (static_cast<float>(i) - 4.5f) * 0.045f;
 
-            // Route pure 44.1 kHz studio multi-sample to Studio Bus (preserving un-colored studio tone!)
-            const float sVoiceL = msL * envGain * (0.5f - pan) * 1.18f;
-            const float sVoiceR = msR * envGain * (0.5f + pan) * 1.18f;
+            // Route pure 44.1 kHz studio multi-sample (+ phase-locked Poly-Octave pipe ranks) to Studio Bus
+            const float sVoiceL = (msL + organPipeMono) * envGain * (0.5f - pan) * 1.18f;
+            const float sVoiceR = (msR + organPipeMono) * envGain * (0.5f + pan) * 1.18f;
             msStringsL += sVoiceL;
             msStringsR += sVoiceR;
 
@@ -2751,13 +2739,36 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                     } else {
                         msL *= params.sampleBlend;
                         msR *= params.sampleBlend;
+                        if (organRankSmooth > 0.0005f) {
+                            const double loopOffsetBase = static_cast<double>(std::max(0, ms.loopStartFrame - ms.startFrame)) + 512.0;
+                            float subMsL = 0.0f, subMsR = 0.0f, upMsL = 0.0f, upMsR = 0.0f;
+                            readStereoMultiSampleHermite(ct.multiSampleIdx, loopOffsetBase + ct.samplePos * 0.5, subMsL, subMsR);
+                            readStereoMultiSampleHermite(ct.multiSampleIdx, loopOffsetBase + ct.samplePos * 2.0, upMsL, upMsR);
+                            const float upSilkAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 1950.0 / sampleRate));
+                            ct.chimeHpStateL += upSilkAlpha * (upMsL - ct.chimeHpStateL);
+                            ct.chimeHpStateR += upSilkAlpha * (upMsR - ct.chimeHpStateR);
+                            const float upTame = juce::jlimit(0.24f, 1.0f, (1650.0f - targetSampleHz) / 900.0f);
+                            msL = msL * (1.0f - 0.12f * organRankSmooth)
+                                + (subMsL * 0.46f + ct.chimeHpStateL * 0.44f * upTame) * params.sampleBlend * organRankSmooth;
+                            msR = msR * (1.0f - 0.12f * organRankSmooth)
+                                + (subMsR * 0.46f + ct.chimeHpStateR * 0.44f * upTame) * params.sampleBlend * organRankSmooth;
+                        }
                     }
                     const double pitchRatio = static_cast<double>(targetSampleHz / std::max(50.0f, ms.baseFreqHz));
                     ct.samplePos += (PedalSteelMultiSamples::kSampleRate / sampleRate) * pitchRatio;
                 }
 
                 float harmTail = 0.0f;
+                float organPipeTail = 0.0f;
                 const float nyquistLimit = fSr * 0.44f;
+                if (organRankSmooth > 0.0005f && !ct.isPalmHarmonic) {
+                    const float subHz = instFreqHz * 0.5f;
+                    if (subHz >= 24.0f) {
+                        ct.subHarmPhase += kTwoPi * static_cast<double>(subHz) * dt;
+                        if (ct.subHarmPhase >= kTwoPi) ct.subHarmPhase -= kTwoPi;
+                        organPipeTail += 0.085f * static_cast<float>(std::sin(ct.subHarmPhase)) * organRankSmooth;
+                    }
+                }
                 for (int h = 1; h <= 4; ++h) {
                     const float fh = instFreqHz * static_cast<float>(h);
                     if (fh >= nyquistLimit) break;
@@ -2767,14 +2778,17 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                     const float w = ct.isPalmHarmonic ? ((h == 2) ? 1.15f : ((h >= 3) ? 0.40f : 0.08f))
                                                       : ((h <= 2) ? 0.80f : 0.25f);
                     harmTail += w * static_cast<float>(std::sin(ph));
+                    if (organRankSmooth > 0.0005f && !ct.isPalmHarmonic && h == 2) {
+                        organPipeTail += 0.045f * organRankSmooth * static_cast<float>(std::sin(ph));
+                    }
                 }
 
                 const float swellShape = (params.autoSwell > 0.3f) ? (ct.swellEnv * ct.swellEnv) : ct.swellEnv;
                 const float envGain = ct.ampEnv * swellShape * chokeGain;
                 const float pan = (static_cast<float>(ct.stringIndex) - 4.5f) * 0.045f;
 
-                msStringsL += msL * envGain * (0.5f - pan) * 1.18f;
-                msStringsR += msR * envGain * (0.5f + pan) * 1.18f;
+                msStringsL += (msL + organPipeTail) * envGain * (0.5f - pan) * 1.18f;
+                msStringsR += (msR + organPipeTail) * envGain * (0.5f + pan) * 1.18f;
 
                 const float physHarmBlend = ct.isPalmHarmonic
                     ? 0.16f

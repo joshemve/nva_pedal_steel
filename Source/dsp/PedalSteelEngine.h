@@ -327,6 +327,7 @@ private:
     Biquad studioTweedCabFilter;
     Biquad dcBlockerStudio;
     float tweedSagEnv = 0.0f;
+    float organRankSmooth = 0.0f;
 
     SympatheticBank sympathetic;
     ModernCharacterProcessor modernChar;

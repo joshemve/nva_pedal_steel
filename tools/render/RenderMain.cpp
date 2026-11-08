@@ -1648,16 +1648,16 @@ int main(int argc, char* argv[]) {
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        // Phrase 1: Glossy 1985 studio Dadd9 harp rake -> A+B (Gmaj7/D) -> E-lower (Bm7) -> Dadd9 motionless Dimension D!
+        // Phrase 1: Glossy 1985 studio Dadd9 harp rake -> A+B (G6/D) -> Pedal A (Bm9/D) -> pure Dadd9 motionless Dimension D!
         ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 50, 0.78f) }); // D3
         ev.push_back({ 0.15, juce::MidiMessage::noteOn(1, 57, 0.80f) }); // A3
-        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 64, 0.82f) }); // E4 (add9)
+        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 64, 0.82f) }); // E4 (pure 9th!)
         ev.push_back({ 0.21, juce::MidiMessage::noteOn(1, 66, 0.84f) }); // F#4
         ev.push_back({ 0.24, juce::MidiMessage::noteOn(1, 69, 0.86f) }); // A4
-        ev.push_back({ 0.88, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Dadd9 -> Gmaj7/D!
+        ev.push_back({ 0.88, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // A+B: Dadd9 -> pure G6/D {D3, B3, E4, G4, B4}!
         ev.push_back({ 1.72, juce::MidiMessage::noteOff(1, 28) });
-        ev.push_back({ 2.02, juce::MidiMessage::noteOn(1, 26, 1.00f) }); // E-knee lower -> silky Bm9/D!
-        ev.push_back({ 2.72, juce::MidiMessage::noteOff(1, 26) });
+        ev.push_back({ 1.98, juce::MidiMessage::noteOn(1, 24, 1.00f) }); // Pedal A: silky Bm9/D {D3, B3, E4, F#4, B4}!
+        ev.push_back({ 2.68, juce::MidiMessage::noteOff(1, 24) });      // Resolve cleanly into radiant Dadd9!
         for (int n : { 50, 57, 64, 66, 69 }) ev.push_back({ 3.45, juce::MidiMessage::noteOff(1, n) });
 
         // Phrase 2: Paul Franklin / Dire Straits ("On Every Street") crystalline upper-register fill over F#m7 -> Gmaj9
@@ -1681,7 +1681,7 @@ int main(int argc, char* argv[]) {
         ev.push_back({ 6.95, juce::MidiMessage::noteOff(3, 74) });
         ev.push_back({ 7.02, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 3: Prefab Sprout / Sophisti-Pop Em9 -> A13sus4 -> A9 rack shimmer
+        // Phrase 3: Prefab Sprout / Sophisti-Pop Em9 -> A13sus4 -> A13 rack shimmer
         ev.push_back({ 7.12, juce::MidiMessage::noteOn(1, 52, 0.78f) }); // E3
         ev.push_back({ 7.15, juce::MidiMessage::noteOn(1, 59, 0.80f) }); // B3
         ev.push_back({ 7.18, juce::MidiMessage::noteOn(1, 62, 0.81f) }); // D4
@@ -1698,76 +1698,83 @@ int main(int argc, char* argv[]) {
         ev.push_back({ 9.85, juce::MidiMessage::noteOff(3, 74) });
         ev.push_back({ 9.94, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 4: Wide-screen 1985 Dmaj9 bell chord floating across the SDD-320 Dimension D stage
+        // Phrase 4: Wide-screen 1985 Dadd9 bell chord with pure diatonic E5 -> F#5 grace floating across the SDD-320 stage
         ev.push_back({ 10.05, juce::MidiMessage::noteOn(1, 50, 0.80f) }); // D3
         ev.push_back({ 10.09, juce::MidiMessage::noteOn(1, 57, 0.82f) }); // A3
         ev.push_back({ 10.13, juce::MidiMessage::noteOn(1, 66, 0.84f) }); // F#4
         ev.push_back({ 10.17, juce::MidiMessage::noteOn(1, 69, 0.86f) }); // A4
-        ev.push_back({ 10.21, juce::MidiMessage::noteOn(1, 76, 0.88f) }); // E5 (maj9)
-        ev.push_back({ 10.32, juce::MidiMessage::noteOn(3, 80, 0.82f) }); // G#5 -> A5 crystalline grace!
-        addPitchWheelRamp(ev, 3, 10.38, 10.68, 0.0f, +1.0f / 12.0f);
-        for (int n : { 50, 57, 66, 69, 76 }) ev.push_back({ 12.85, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 12.85, juce::MidiMessage::noteOff(3, 80) });
+        ev.push_back({ 10.21, juce::MidiMessage::noteOn(1, 74, 0.87f) }); // D5
+        ev.push_back({ 10.26, juce::MidiMessage::noteOn(3, 76, 0.84f) }); // E5 -> F#5 diatonic country-pop bell grace!
+        addPitchWheelRamp(ev, 3, 10.34, 10.60, 0.0f, +2.0f / 12.0f);     // E5 -> F#5
+        for (int n : { 50, 57, 66, 69, 74 }) ev.push_back({ 12.85, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 12.85, juce::MidiMessage::noteOff(3, 76) });
 
         renderSequenceToWav(28, 14.2, 90.0, ev, presetsDir.getChildFile("29_80s_rack_dimension_clean.wav"));
     }
 
     // =========================================================================
-    // Preset 30: Poly-Octave Messina Choir (72 BPM, G Major — Bon Iver Messina / Chuck Johnson "Balsams" Pipe-Organ Steel)
+    // Preset 30: Poly-Octave Messina Choir (76 BPM, G Major — Bon Iver Messina / Chuck Johnson "Balsams" Pipe-Organ Steel)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        // Phrase 1: Breathing 3-octave pipe-organ/harmonium swell on Gadd9 -> slow A+B cathedral C/G bloom!
-        ev.push_back({ 0.12, juce::MidiMessage::noteOn(4, 43, 0.82f) }); // G2 on MPE ch 4 (-12st = 49 Hz G1 16' organ pedal!)
-        ev.push_back({ 0.16, juce::MidiMessage::noteOn(1, 55, 0.82f) }); // G3
-        ev.push_back({ 0.20, juce::MidiMessage::noteOn(1, 62, 0.84f) }); // D4
-        ev.push_back({ 0.24, juce::MidiMessage::noteOn(1, 69, 0.85f) }); // A4
-        ev.push_back({ 0.28, juce::MidiMessage::noteOn(1, 71, 0.88f) }); // B4
-        ev.push_back({ 1.45, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Slow oblique C/G pipe-organ swell!
-        ev.push_back({ 2.75, juce::MidiMessage::noteOff(1, 28) });      // Return to sacred Gadd9
-        ev.push_back({ 3.95, juce::MidiMessage::noteOff(4, 43) });
-        for (int n : { 55, 62, 69, 71 }) ev.push_back({ 3.95, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 1: Warm 16' + 8' + 4' Messina pedal-steel swell on Gadd9 -> oblique A+B C6/G bloom -> Gadd9!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(4, 43, 0.80f) }); // G2 (-12st = 49 Hz G1 16' Bourdon pedal!)
+        ev.push_back({ 0.14, juce::MidiMessage::noteOn(1, 55, 0.80f) }); // G3
+        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 62, 0.82f) }); // D4 -> E4
+        ev.push_back({ 0.22, juce::MidiMessage::noteOn(1, 69, 0.84f) }); // A4 (pure 9th anchor)
+        ev.push_back({ 0.26, juce::MidiMessage::noteOn(1, 71, 0.86f) }); // B4 -> C5
+        ev.push_back({ 0.30, juce::MidiMessage::noteOn(1, 74, 0.84f) }); // D5 -> E5
+        ev.push_back({ 1.08, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // A+B: Gadd9 -> sacred C6/G {G2, G3, E4, A4, C5, E5}!
+        ev.push_back({ 2.28, juce::MidiMessage::noteOff(1, 28) });      // Return to warm radiant Gadd9
+        ev.push_back({ 3.65, juce::MidiMessage::noteOff(4, 43) });
+        for (int n : { 55, 62, 69, 71, 74 }) ev.push_back({ 3.65, juce::MidiMessage::noteOff(1, n) });
 
-        // Phrase 2: Bon Iver Messina / Chuck Johnson sacred reed-organ suspension (Em9 -> Dadd4/F#)
-        ev.push_back({ 4.15, juce::MidiMessage::noteOn(1, 52, 0.82f) }); // E3
-        ev.push_back({ 4.19, juce::MidiMessage::noteOn(1, 59, 0.84f) }); // B3
-        ev.push_back({ 4.23, juce::MidiMessage::noteOn(1, 66, 0.86f) }); // F#4
-        ev.push_back({ 4.27, juce::MidiMessage::noteOn(1, 67, 0.88f) }); // G4
-        for (int n : { 52, 59, 66, 67 }) ev.push_back({ 6.05, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 2: Bon Iver Messina / Chuck Johnson "Balsams" open-voiced sacred hymn (Em -> D/F#, zero semitone clusters!)
+        ev.push_back({ 3.82, juce::MidiMessage::noteOn(1, 52, 0.80f) }); // E3
+        ev.push_back({ 3.86, juce::MidiMessage::noteOn(1, 59, 0.82f) }); // B3
+        ev.push_back({ 3.90, juce::MidiMessage::noteOn(1, 67, 0.85f) }); // G4
+        ev.push_back({ 3.96, juce::MidiMessage::noteOn(3, 69, 0.86f) }); // A4 (sus4) -> B4 (5th) pure open steel sigh!
+        addPitchWheelRamp(ev, 3, 4.30, 4.72, 0.0f, +2.0f / 12.0f);       // A4 -> B4
+        for (int n : { 52, 59, 67 }) ev.push_back({ 5.68, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 5.68, juce::MidiMessage::noteOff(3, 69) });
+        ev.push_back({ 5.74, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        ev.push_back({ 6.20, juce::MidiMessage::noteOn(1, 54, 0.82f) }); // F#3
-        ev.push_back({ 6.24, juce::MidiMessage::noteOn(1, 62, 0.84f) }); // D4
-        ev.push_back({ 6.28, juce::MidiMessage::noteOn(1, 69, 0.86f) }); // A4
-        ev.push_back({ 6.32, juce::MidiMessage::noteOn(3, 71, 0.88f) }); // B4 -> A4 -> F#4 in 3 octaves!
-        addPitchWheelRamp(ev, 3, 6.85, 7.45, 0.0f, -2.0f / 12.0f);       // B4 -> A4
-        for (int n : { 54, 62, 69 }) ev.push_back({ 8.15, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 8.15, juce::MidiMessage::noteOff(3, 71) });
-        ev.push_back({ 8.24, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 5.82, juce::MidiMessage::noteOn(1, 54, 0.80f) }); // F#3
+        ev.push_back({ 5.86, juce::MidiMessage::noteOn(1, 62, 0.82f) }); // D4
+        ev.push_back({ 5.90, juce::MidiMessage::noteOn(1, 69, 0.84f) }); // A4
+        ev.push_back({ 5.96, juce::MidiMessage::noteOn(3, 76, 0.85f) }); // E5 (add9) -> D5 (root) pure open resolution!
+        addPitchWheelRamp(ev, 3, 6.40, 6.88, 0.0f, -2.0f / 12.0f);       // E5 -> D5
+        for (int n : { 54, 62, 69 }) ev.push_back({ 7.55, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 7.55, juce::MidiMessage::noteOff(3, 76) });
+        ev.push_back({ 7.62, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 3: Celestial Cmaj9 -> G/B hymn voice-leading
-        ev.push_back({ 8.35, juce::MidiMessage::noteOn(1, 48, 0.82f) }); // C3
-        ev.push_back({ 8.39, juce::MidiMessage::noteOn(1, 55, 0.84f) }); // G3
-        ev.push_back({ 8.43, juce::MidiMessage::noteOn(1, 64, 0.86f) }); // E4
-        ev.push_back({ 8.47, juce::MidiMessage::noteOn(1, 71, 0.88f) }); // B4
-        ev.push_back({ 8.51, juce::MidiMessage::noteOn(1, 74, 0.90f) }); // D5
-        for (int n : { 48, 55, 64, 71, 74 }) ev.push_back({ 10.45, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 3: Celestial wide-voiced Cmaj9 -> Cmaj7 hymn (D5 -> E5 pure tenth, zero B4/C5 semitone clash!)
+        ev.push_back({ 7.72, juce::MidiMessage::noteOn(1, 48, 0.82f) }); // C3
+        ev.push_back({ 7.76, juce::MidiMessage::noteOn(1, 55, 0.83f) }); // G3
+        ev.push_back({ 7.80, juce::MidiMessage::noteOn(1, 64, 0.85f) }); // E4
+        ev.push_back({ 7.84, juce::MidiMessage::noteOn(1, 71, 0.86f) }); // B4 (maj7)
+        ev.push_back({ 7.90, juce::MidiMessage::noteOn(3, 74, 0.85f) }); // D5 (9th) -> E5 (10th)!
+        addPitchWheelRamp(ev, 3, 8.55, 9.05, 0.0f, +2.0f / 12.0f);       // D5 -> E5
+        for (int n : { 48, 55, 64, 71 }) ev.push_back({ 10.15, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 10.15, juce::MidiMessage::noteOff(3, 74) });
+        ev.push_back({ 10.22, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 4: Grand 16' + 8' + 4' Pipe-Organ G -> C/G -> G Amen Cathedral Finale!
-        ev.push_back({ 10.65, juce::MidiMessage::noteOn(4, 43, 0.85f) }); // G2 -> 49 Hz G1 16' Bourdon sub!
-        ev.push_back({ 10.69, juce::MidiMessage::noteOn(1, 50, 0.84f) }); // D3
-        ev.push_back({ 10.73, juce::MidiMessage::noteOn(1, 55, 0.85f) }); // G3
-        ev.push_back({ 10.77, juce::MidiMessage::noteOn(1, 59, 0.86f) }); // B3
-        ev.push_back({ 10.81, juce::MidiMessage::noteOn(1, 67, 0.88f) }); // G4
-        ev.push_back({ 10.85, juce::MidiMessage::noteOn(1, 74, 0.90f) }); // D5
-        ev.push_back({ 11.70, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Plagal IV/I Choir Amen!
-        ev.push_back({ 12.75, juce::MidiMessage::noteOff(1, 28) });
+        // Phrase 4: Grand 16' + 8' + 4' Pipe-Organ Steel G -> C/G -> G Plagal Cathedral Amen!
+        ev.push_back({ 10.35, juce::MidiMessage::noteOn(4, 43, 0.84f) }); // G2 -> 49 Hz G1 16' Bourdon sub!
+        ev.push_back({ 10.39, juce::MidiMessage::noteOn(1, 50, 0.82f) }); // D3 -> E3
+        ev.push_back({ 10.43, juce::MidiMessage::noteOn(1, 55, 0.84f) }); // G3
+        ev.push_back({ 10.47, juce::MidiMessage::noteOn(1, 59, 0.85f) }); // B3 -> C4
+        ev.push_back({ 10.51, juce::MidiMessage::noteOn(1, 67, 0.86f) }); // G4
+        ev.push_back({ 10.55, juce::MidiMessage::noteOn(1, 74, 0.87f) }); // D5 -> E5
+        ev.push_back({ 11.45, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // Plagal IV/I Choir Amen (C/G)!
+        ev.push_back({ 12.55, juce::MidiMessage::noteOff(1, 28) });      // Pure G Major Cathedral resolution!
         ev.push_back({ 14.35, juce::MidiMessage::noteOff(4, 43) });
         for (int n : { 50, 55, 59, 67, 74 }) ev.push_back({ 14.35, juce::MidiMessage::noteOff(1, n) });
 
-        renderSequenceToWav(29, 16.0, 72.0, ev, presetsDir.getChildFile("30_polyoctave_messina_choir.wav"));
+        renderSequenceToWav(29, 16.0, 76.0, ev, presetsDir.getChildFile("30_polyoctave_messina_choir.wav"));
     }
 
     // =========================================================================
