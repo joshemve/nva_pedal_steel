@@ -109,15 +109,16 @@ if __name__ == "__main__":
             apply(clean, n, box=[b[0] - m, b[1] - m, b[2] + m, b[3] + m], text=txt, grow=7 if txt else 9, soft=2 if txt else 4)
         else: print("missing", n)
     pb = A("pedals_unlit")["part_box_canvas"]; apply(clean, "pedals_unlit", box=pb)
-    # unlit, raised A and B = the reference's own pedal C column (lamp, panel, pedal; all real pixels), moved onto A/B.
-    # The three are identical and evenly spaced; the A/B letters above stay. (ChatGPT's unlit redraw left blotches.)
-    cx0, cx1, cy0, cy1 = 2303, 2484, 1436, 1764          # C column, canvas px: below the letter, to under the pedal
-    colC = base[cy0:cy1, cx0:cx1].copy(); h_, w_ = colC.shape[:2]
-    fx = np.clip(np.minimum(np.arange(w_), w_ - 1 - np.arange(w_)) / 10.0, 0, 1)
-    fy = np.clip(np.minimum(np.arange(h_), h_ - 1 - np.arange(h_)) / 8.0, 0, 1)
-    a_ = (fx[None, :] * fy[:, None])[..., None]
-    for shift in (-160, -333):                             # lamp C 2388 -> B 2228, A 2055
-        x0_ = cx0 + shift; clean[cy0:cy1, x0_:x0_ + w_] = colC * a_ + clean[cy0:cy1, x0_:x0_ + w_] * (1 - a_)
+    # unlit pedal section: ChatGPT redrew the whole section from the reference ("keep everything, A and B off and raised
+    # like C"); used whole (not diff-masked), feathered into the panel at its edges, so the panel texture is one piece
+    if os.path.exists("aligned/pedalsec_unlit_1.png"):
+        a_ = A("pedalsec_unlit_1"); gx0, gy0, gx1, gy1 = a_["canvas_box"]; g_ = img("pedalsec_unlit_1")
+        sx0, sy0, sx1, sy1 = round(948 * CW / 1568), round(712 * CH / 1003), round(1234 * CW / 1568), round(884 * CH / 1003)
+        sec = g_[sy0 - gy0:sy1 - gy0, sx0 - gx0:sx1 - gx0]; h_, w_ = sec.shape[:2]
+        fx = np.clip(np.minimum(np.arange(w_), w_ - 1 - np.arange(w_)) / 18.0, 0, 1)
+        fy = np.clip(np.minimum(np.arange(h_), h_ - 1 - np.arange(h_)) / 14.0, 0, 1)
+        f_ = (fx[None, :] * fy[:, None])[..., None]
+        clean[sy0:sy1, sx0:sx1] = sec * f_ + clean[sy0:sy1, sx0:sx1] * (1 - f_)
     RX_, RY_ = CW / 1568, CH / 1003
     def cbox(x0r, y0r, x1r, y1r): return [round(x0r * RX_), round(y0r * RY_), round(x1r * RX_), round(y1r * RY_)]
     import bar_plate; clean = bar_plate.rebuild(clean)   # no tone bar in the plate: it is drawn live

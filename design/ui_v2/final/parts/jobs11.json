@@ -1,0 +1,16 @@
+[
+ {
+  "name": "pedalsec_unlit_1",
+  "images": [
+   "final/parts/crops/pedalsec.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: pedals A and B are switched OFF exactly like pedal C: their round lamps are unlit grey glass identical to C's lamp, there is no amber light or glow anywhere (not on the panel, not on the pedals), and the A and B pedal blocks are raised, identical to the C pedal block in shape, height, chrome and lighting. Keep the matte black leather panel texture exactly as it is everywhere, even and clean, with no smudges or dark patches around the lamps. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pedalsec_unlit_2",
+  "images": [
+   "final/parts/crops/pedalsec.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: pedals A and B are switched OFF exactly like pedal C: their round lamps are unlit grey glass identical to C's lamp, there is no amber light or glow anywhere (not on the panel, not on the pedals), and the A and B pedal blocks are raised, identical to the C pedal block in shape, height, chrome and lighting. Keep the matte black leather panel texture exactly as it is everywhere, even and clean, with no smudges or dark patches around the lamps. Everything outside that change must stay identical to the input."
+ }
+]

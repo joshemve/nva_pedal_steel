@@ -475,5 +475,19 @@
    "round21/i18_1.png"
   ],
   "prompt": "Image 1 is a crop of a photoreal audio-plugin UI showing a pedal steel guitar. Image 2 shows another pedal steel design. Output ONE image, landscape 1536x1024, that is image 1 with ONLY the instrument's BODY (cabinet, apron, end caps, trim and legs) restyled after image 2: highly figured Hawaiian koa wood (golden-brown curl), with brass-toned changer and keyhead hardware, with image 2's body shape, end caps and legs. EXACTLY the same camera, framing, scale, perspective, room, rug and lighting as image 1, so it overlays image 1 pixel for pixel. These parts stay exactly where they are and look the same as in image 1: the black fretboard with its white fret lines, numbers and coloured markers, the ten strings, the chrome tone bar, the keyhead with ten keys, the changer, the pickup, the three foot pedals on their cross bar, the pull rods and the two knee levers. The body's top edge, front rail and outline stay where image 1 has them. No text, letters, badges or nameplates anywhere. It must look like a real photographed instrument with honest wear."
+ },
+ {
+  "name": "pedalsec_unlit_1",
+  "images": [
+   "final/parts/crops/pedalsec.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: pedals A and B are switched OFF exactly like pedal C: their round lamps are unlit grey glass identical to C's lamp, there is no amber light or glow anywhere (not on the panel, not on the pedals), and the A and B pedal blocks are raised, identical to the C pedal block in shape, height, chrome and lighting. Keep the matte black leather panel texture exactly as it is everywhere, even and clean, with no smudges or dark patches around the lamps. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "pedalsec_unlit_2",
+  "images": [
+   "final/parts/crops/pedalsec.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: pedals A and B are switched OFF exactly like pedal C: their round lamps are unlit grey glass identical to C's lamp, there is no amber light or glow anywhere (not on the panel, not on the pedals), and the A and B pedal blocks are raised, identical to the C pedal block in shape, height, chrome and lighting. Keep the matte black leather panel texture exactly as it is everywhere, even and clean, with no smudges or dark patches around the lamps. Everything outside that change must stay identical to the input."
  }
 ]
