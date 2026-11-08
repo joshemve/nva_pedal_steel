@@ -154,6 +154,10 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
 - First-launch tip (once per user, `%APPDATA%/Northern Valley Audio/NVA Pedal Steel/ui_settings.xml` playHintDone):
   "Click a string on the neck to play it..." on the wood below the neck; playing the neck or its x dismisses it. The
   shot tool resets it for its check and restores the user's file afterwards.
+- Undo/redo (Ctrl+Z, Ctrl+Shift+Z / Ctrl+Y, and in the display's right-click menu) for changes made in the window:
+  drags, clicks, pedal toggles, typed values, resets, mode picks; wheel turns and arrow nudges coalesce into one step.
+  Kept in the editor on purpose: host automation and MIDI CC moves are never undone. User preset notes show on their
+  browser card on hover.
 - Accessibility: `Source/AccessibleControls.h` puts a click-through screen-reader element over every control
   (sliders with the panel's value text, toggles for pedals/levers/MIDI LEARN, buttons for preset/mode); values are
   announced on change.

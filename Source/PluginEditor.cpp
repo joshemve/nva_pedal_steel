@@ -281,8 +281,41 @@ void PedalSteelAudioProcessorEditor::setNorm(Ctl c, float v) {
 }
 
 void PedalSteelAudioProcessorEditor::toggle(Ctl c) {
-    const int idx = c - PedA;
-    proc.setLivePedalState(idx, norm(c) > 0.5f ? 0.0f : 1.0f, true, true);
+    const int idx = c - PedA; const float before = norm(c);
+    proc.setLivePedalState(idx, before > 0.5f ? 0.0f : 1.0f, true, true);
+    recordChange(c, before);
+}
+
+void PedalSteelAudioProcessorEditor::recordChange(Ctl c, float before, bool coalesce) {
+    const float after = norm(c); if (std::abs(after - before) < 1e-6f) return;
+    const double now = juce::Time::getMillisecondCounterHiRes() * 0.001;
+    if (coalesce && ! undoStack.empty() && undoStack.back().ctl == c && undoStack.back().coalesce && now - undoStack.back().time < 0.8) {
+        undoStack.back().after = after; undoStack.back().time = now;   // one wheel turn / nudge run = one step
+    } else {
+        undoStack.push_back({ (int) c, before, after, now, coalesce });
+        if (undoStack.size() > 200) undoStack.erase(undoStack.begin());
+    }
+    redoStack.clear();
+}
+
+bool PedalSteelAudioProcessorEditor::undo() {
+    if (undoStack.empty()) return false;
+    auto st = undoStack.back(); undoStack.pop_back();
+    if (auto* p = param((Ctl) st.ctl)) {
+        if (st.ctl >= PedA && st.ctl <= LKR) proc.setLivePedalState(st.ctl - PedA, st.before, true, true);
+        else { p->beginChangeGesture(); p->setValueNotifyingHost(st.before); p->endChangeGesture(); }
+    }
+    flashValue((Ctl) st.ctl); redoStack.push_back(st); repaint(); return true;
+}
+
+bool PedalSteelAudioProcessorEditor::redo() {
+    if (redoStack.empty()) return false;
+    auto st = redoStack.back(); redoStack.pop_back();
+    if (auto* p = param((Ctl) st.ctl)) {
+        if (st.ctl >= PedA && st.ctl <= LKR) proc.setLivePedalState(st.ctl - PedA, st.after, true, true);
+        else { p->beginChangeGesture(); p->setValueNotifyingHost(st.after); p->endChangeGesture(); }
+    }
+    flashValue((Ctl) st.ctl); undoStack.push_back(st); repaint(); return true;
 }
 
 juce::String PedalSteelAudioProcessorEditor::valueText(Ctl c) const {
@@ -937,7 +970,8 @@ void PedalSteelAudioProcessorEditor::showModeMenu() {
     auto* mp = dynamic_cast<juce::AudioParameterChoice*>(param(Mode)); if (mp == nullptr) return;
     if (modePanel != nullptr) { modePanel.reset(); repaint(); return; }
     modePanel = std::make_unique<ModePanel>(kit, *mp);
-    modePanel->onClose = [this] { deferred([](PedalSteelAudioProcessorEditor& e) { e.modePanel.reset(); e.repaint(); }); };
+    modeBefore = norm(Mode);
+    modePanel->onClose = [this] { recordChange(Mode, modeBefore); deferred([](PedalSteelAudioProcessorEditor& e) { e.modePanel.reset(); e.repaint(); }); };
     addAndMakeVisible(*modePanel); placeOverlays();
 }
 
@@ -972,6 +1006,9 @@ void PedalSteelAudioProcessorEditor::showPresetMenu() {
                      isUser && (*files)[j].getFileNameWithoutExtension() == proc.getActiveUserPresetName());
     if (! files->empty()) menu.addSubMenu("User presets", user);
     menu.addSeparator();
+    menu.addItem(5004, "Undo", ! undoStack.empty());
+    menu.addItem(5005, "Redo", ! redoStack.empty());
+    menu.addSeparator();
     if (modifiedShown) menu.addItem(5003, "Revert to saved preset");
     menu.addItem(5002, "Browse presets...");
     menu.addItem(5000, "Save preset...");
@@ -980,6 +1017,8 @@ void PedalSteelAudioProcessorEditor::showPresetMenu() {
         if (r < 1000) { proc.setCurrentProgram(r - 1); return; }
         if (r < 5000) { proc.loadUserPreset((*files)[(size_t) (r - 1000)]); return; }
         if (r == 5002) { openBrowser(); return; }
+        if (r == 5004) { undo(); return; }
+        if (r == 5005) { redo(); return; }
         if (r == 5003) {   // back to the preset as loaded
             const auto user = proc.getActiveUserPresetName();
             if (user.isNotEmpty()) proc.loadUserPreset(PedalSteelAudioProcessor::getUserPresetsFolder().getChildFile(user + ".nvps"));
@@ -1006,7 +1045,7 @@ void PedalSteelAudioProcessorEditor::showContextMenu(Ctl c) {
         auto& m = proc.midiLearn;
         if (r == 1) { m.learnMode = true; m.armLearn(id); repaint(); }
         else if (r == 2) m.clear(id);
-        else if (r == 3) { if (auto* q = param(c)) { q->beginChangeGesture(); q->setValueNotifyingHost(q->getDefaultValue()); q->endChangeGesture(); } }
+        else if (r == 3) { if (auto* q = param(c)) { const float b = q->getValue(); q->beginChangeGesture(); q->setValueNotifyingHost(q->getDefaultValue()); q->endChangeGesture(); recordChange(c, b); flashValue(c); } }
         else if (r == 4) m.clearAll();
     });
 }
@@ -1019,7 +1058,7 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
     if (e.mods.isPopupMenu()) { if (isLearnable(c)) showContextMenu(c); else if (c == Display) showPresetMenu(); return; }
 
     if ((e.mods.isCtrlDown() || e.mods.isAltDown()) && c >= Tone && c <= Volume) {   // ctrl/alt-click: back to default
-        if (auto* p = param(c)) { p->beginChangeGesture(); p->setValueNotifyingHost(p->getDefaultValue()); p->endChangeGesture(); }
+        if (auto* p = param(c)) { const float b = p->getValue(); p->beginChangeGesture(); p->setValueNotifyingHost(p->getDefaultValue()); p->endChangeGesture(); recordChange(c, b); flashValue(c); }
         return;
     }
     auto& ml = proc.midiLearn;
@@ -1065,7 +1104,7 @@ void PedalSteelAudioProcessorEditor::mouseDrag(const juce::MouseEvent& e) {
 
 void PedalSteelAudioProcessorEditor::mouseUp(const juce::MouseEvent& e) {
     if (dragging == Fretboard || dragging == Pluck) releaseAllStrings();
-    else if (dragging != None) { if (auto* p = param(dragging)) p->endChangeGesture(); }
+    else if (dragging != None) { if (auto* p = param(dragging)) p->endChangeGesture(); recordChange(dragging, dragStartNorm); }
     dragging = None;
     mouseMove(e);
 }
@@ -1094,6 +1133,8 @@ bool PedalSteelAudioProcessorEditor::applyTypedValue(int ctl, const juce::String
     if (percentCtl) v = (v <= 1.0f && ! t.containsChar('%') && t.containsChar('.')) ? v : v / 100.0f;
     const auto range = p->getNormalisableRange();
     v = juce::jlimit(range.start, range.end, v);
+    const float before = p->getValue();
+    struct Rec { PedalSteelAudioProcessorEditor& e; int c; float b; ~Rec() { e.recordChange((Ctl) c, b); } } rec { *this, ctl, before };
     p->beginChangeGesture(); p->setValueNotifyingHost(p->convertTo0to1(v)); p->endChangeGesture();
     flashValue((Ctl) ctl); repaint(); return true;
 }
@@ -1138,13 +1179,13 @@ void PedalSteelAudioProcessorEditor::mouseDoubleClick(const juce::MouseEvent& e)
     if (const auto pc = pillAt(toDesign(e.position)); pc != None && ! proc.midiLearn.learnMode) { startValueEdit(pc); return; }
     const auto c = hitTest(toDesign(e.position));
     if (c >= Tone && c <= Volume && ! proc.midiLearn.learnMode)
-        if (auto* p = param(c)) { p->beginChangeGesture(); p->setValueNotifyingHost(p->getDefaultValue()); p->endChangeGesture(); }
+        if (auto* p = param(c)) { const float b = p->getValue(); p->beginChangeGesture(); p->setValueNotifyingHost(p->getDefaultValue()); p->endChangeGesture(); recordChange(c, b); flashValue(c); }
 }
 
 void PedalSteelAudioProcessorEditor::mouseWheelMove(const juce::MouseEvent& e, const juce::MouseWheelDetails& w) {
     const auto c = hitTest(toDesign(e.position));
     if (c >= Tone && c <= Volume) {
-        if (auto* p = param(c)) { p->beginChangeGesture(); setNorm(c, norm(c) + w.deltaY * (e.mods.isShiftDown() ? 0.01f : 0.05f)); p->endChangeGesture(); }
+        if (auto* p = param(c)) { const float b = norm(c); p->beginChangeGesture(); setNorm(c, b + w.deltaY * (e.mods.isShiftDown() ? 0.01f : 0.05f)); p->endChangeGesture(); recordChange(c, b, true); }
     } else if (c == Display || c == Prev || c == Next) {
         if (w.deltaY != 0) proc.stepPreset(w.deltaY > 0 ? -1 : 1);
     } else if (c == Mode) {
@@ -1184,6 +1225,8 @@ bool PedalSteelAudioProcessorEditor::keyPressed(const juce::KeyPress& k) {
         return false;
     }
     const int code = k.getKeyCode();
+    if (k.getModifiers().isCommandDown() && (code == 'Z' || code == 'z')) { if (k.getModifiers().isShiftDown()) redo(); else undo(); return true; }
+    if (k.getModifiers().isCommandDown() && (code == 'Y' || code == 'y')) { redo(); return true; }
     if (code == juce::KeyPress::tabKey) { moveFocus(k.getModifiers().isShiftDown() ? -1 : 1); return true; }
     const bool continuous = showFocus && focusCtl >= Tone && focusCtl <= Volume;
     if (continuous) {   // arrows nudge (shift = fine), page up/down = big steps, home/end = the ends
@@ -1196,7 +1239,7 @@ bool PedalSteelAudioProcessorEditor::keyPressed(const juce::KeyPress& k) {
         else if (code == juce::KeyPress::homeKey) { set = true; to = 0.0f; }
         else if (code == juce::KeyPress::endKey) { set = true; to = 1.0f; }
         if (delta != 0.0f || set) {
-            if (auto* p = param(focusCtl)) { p->beginChangeGesture(); setNorm(focusCtl, set ? to : norm(focusCtl) + delta); p->endChangeGesture(); }
+            if (auto* p = param(focusCtl)) { const float b = norm(focusCtl); p->beginChangeGesture(); setNorm(focusCtl, set ? to : b + delta); p->endChangeGesture(); recordChange(focusCtl, b, true); }
             repaint(); return true;
         }
     }

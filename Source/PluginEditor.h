@@ -34,6 +34,9 @@ public:
     NvaMenuLookAndFeel& getMenuLookAndFeel() { return menuLnf; }
     juce::String getDisplayText() const { return displayText(); }
     void clearValueFlash() { displayOverride.clear(); }
+    bool undo();
+    bool redo();
+    int undoDepth() const { return (int) undoStack.size(); }
     bool isHintShowing() const { return hintAlpha > 0.0f && ! hintDismissed; }
     void dismissHint();
     static juce::File settingsFile();   // per-user UI settings (first-launch hint)
@@ -123,6 +126,11 @@ private:
     std::array<float, 10> stringEnergy{};
     std::array<float, 10> stringBend{};          // semitones the pedals/levers add to each string (copedent glow)
     juce::String displayOverride; double displayOverrideUntil = 0.0;
+    // undo/redo of changes made in this window (host automation and MIDI are left alone)
+    struct UndoStep { int ctl; float before, after; double time; bool coalesce; };
+    std::vector<UndoStep> undoStack, redoStack;
+    void recordChange(Ctl c, float before, bool coalesce = false);
+    float modeBefore = -1.0f;
     bool hintDismissed = true; float hintAlpha = 0.0f; double hintClock = 0.0;   // first-launch "you can play the steel" tip
     juce::Rectangle<float> hintBounds() const;
     void drawHint(juce::Graphics&);   // "GLIDE 145 MS" while a control moves

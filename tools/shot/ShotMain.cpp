@@ -311,8 +311,10 @@ int main(int argc, char* argv[]) {
                     check(saved.existsAsFile() && sx != nullptr && sx->getStringAttribute("finish") == "redsparkle" && sx->getStringAttribute("category") == "Swell",
                           "Save writes the preset with its finish and category");
                     check(processor.getActiveUserPresetName() == "ZZ Test Preset" && pe->getSaveDialog() == nullptr, "...loads it and closes the dialog");
-                    br->setFilter("User"); bool found = false; for (int i = 0; i < br->numShown(); ++i) found |= br->shownTitle(i) == "ZZ Test Preset";
+                    br->setFilter("User"); bool found = false, notesOk = false;
+                    for (int i = 0; i < br->numShown(); ++i) if (br->shownTitle(i) == "ZZ Test Preset") { found = true; notesOk = br->shownNotes(i) == "made by the UI test"; }
                     check(found, "...and the browser lists it under User");
+                    check(notesOk, "...with the notes written when it was saved");
                     saved.deleteFile();
                 }
                 {   // small window: browser with bigger text and 3 columns, save dialog at 2/3 size
@@ -460,6 +462,25 @@ int main(int argc, char* argv[]) {
             auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_changer_frames.png");
             f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(strip, os);
             processor.setLivePedalState(0, 0.0f);
+        }
+        // undo / redo of changes made in the window (not of automation)
+        {
+            auto* pu = dynamic_cast<PedalSteelAudioProcessorEditor*>(editor.get());
+            processor.loadPreset(0); pu->refreshVisualizer(); const int depth0 = pu->undoDepth();
+            auto* tone = processor.apvts.getParameter(ParamIDs::toneWarmth); auto* pa2 = processor.apvts.getParameter(ParamIDs::pedalC);
+            const float t0 = tone->getValue(), c0 = pa2->getValue();
+            editor->mouseDown(ev({ 133.0f, 778.0f })); editor->mouseDrag(ev({ 133.0f, 748.0f })); editor->mouseUp(ev({ 133.0f, 748.0f }));
+            editor->mouseDown(ev({ 1202.0f, 800.0f })); editor->mouseUp(ev({ 1202.0f, 800.0f }));   // pedal C
+            tone->setValueNotifyingHost(0.05f); tone->setValueNotifyingHost(t0 + 0.12f);           // "automation": not recorded
+            using KP = juce::KeyPress;
+            pu->keyPressed(KP('z', juce::ModifierKeys::commandModifier, 0));
+            check(std::abs(pa2->getValue() - c0) < 1e-4f, "Ctrl+Z undoes the pedal C click");
+            pu->keyPressed(KP('z', juce::ModifierKeys::commandModifier, 0));
+            check(std::abs(tone->getValue() - t0) < 1e-3f, "...then the TONE drag");
+            pu->keyPressed(KP('z', juce::ModifierKeys::commandModifier | juce::ModifierKeys::shiftModifier, 0));
+            check(tone->getValue() > t0 + 0.05f, "Ctrl+Shift+Z redoes it");
+            check(pu->undoDepth() == depth0 + 1, "automation moves are not in the undo history");
+            pu->clearValueFlash(); processor.loadPreset(0);
         }
         // the display marks an edited preset
         {

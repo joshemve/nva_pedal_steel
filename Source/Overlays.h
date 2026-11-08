@@ -29,7 +29,7 @@ inline float spacedWidth(const juce::String& s, juce::Font f, float kern) {
 // preset catalogue: factory presets with their categories and card photos, plus the user's saved presets
 
 struct PresetEntry {
-    juce::String title; int factoryIndex = -1; juce::File file; juce::StringArray cats; int card = 1;
+    juce::String title; int factoryIndex = -1; juce::File file; juce::StringArray cats; int card = 1; juce::String notes;
 };
 
 inline juce::StringArray factoryCategories(int index) {
@@ -53,6 +53,7 @@ inline std::vector<PresetEntry> buildCatalogue(PedalSteelAudioProcessor& p) {
         if (auto xml = juce::XmlDocument::parse(f)) {
             for (auto& c : juce::StringArray::fromTokens(xml->getStringAttribute("category"), " /", "")) if (c.isNotEmpty()) e.cats.add(c);
             e.card = juce::jlimit(1, 24, xml->getIntAttribute("card", 1));
+            e.notes = xml->getStringAttribute("notes").trim();
         }
         out.push_back(e);
     }
@@ -200,6 +201,7 @@ public:
         repaint();
     }
     int numShown() const { return (int) shown.size(); }
+    juce::String shownNotes(int i) const { return i >= 0 && i < numShown() ? all[(size_t) shown[(size_t) i]].notes : juce::String(); }
     juce::String shownTitle(int i) const { return i >= 0 && i < numShown() ? all[(size_t) shown[(size_t) i]].title : juce::String(); }
     void setFilter(const juce::String& f) { filter = f; scroll = 0; refresh(); }
     void setSearch(const juce::String& s) { search.setText(s, false); refresh(); }
@@ -287,6 +289,12 @@ public:
                 }
                 if (i == selected) {   // keyboard selection
                     g.setColour(kit.cream.withAlpha(0.9f)); g.drawRoundedRectangle(photo.expanded(4.0f), 10.0f, 1.6f);
+                }
+                if (i == hoverCard && e.notes.isNotEmpty()) {   // the notes written when it was saved
+                    auto nb = photo.withTrimmedTop(photo.getHeight() * 0.55f).reduced(6.0f, 6.0f);
+                    g.setColour(juce::Colour(0xe0151210)); g.fillRoundedRectangle(nb, 6.0f);
+                    g.setColour(kit.cream.withAlpha(0.92f)); g.setFont(kit.font(12.5f * k));
+                    g.drawFittedText(e.notes, nb.reduced(8.0f, 4.0f).toNearestInt(), juce::Justification::centredLeft, 3, 0.9f);
                 }
                 if (e.factoryIndex < 0) {   // user preset badge
                     auto badge = juce::Rectangle<float>(photo.getRight() - 52.0f, photo.getY() + 8.0f, 44.0f, 18.0f);
