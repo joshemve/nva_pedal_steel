@@ -566,7 +566,7 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
         for (int s = 0; s < 10; ++s) {
             const float b = juce::jlimit(-2.0f, 2.0f, stringBend[(size_t) s]);
             if (std::abs(b) < 0.05f) continue;
-            const float ysC = stringY[s] * 2.0f, xsC = 2668.0f + (ysC - 385.0f) * 0.212f;   // finger at the string's end (2x px)
+            const float ysC = stringY[s] * 2.0f, xsC = 2680.0f + (ysC - 385.0f) * 0.2f;     // finger at the string's end (2x px)
             const float dx = b * 1.0f;   // UI px at the top of the hook
             const juce::Image& src = (skin > 0 && skinImg[skin].isValid()) ? skinImg[skin] : bg;
             const float ox = (skin > 0 && skinImg[skin].isValid()) ? skinBoxes[skin][0] * 2.0f : 0.0f;
