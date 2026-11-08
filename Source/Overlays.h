@@ -59,6 +59,16 @@ inline std::vector<PresetEntry> buildCatalogue(PedalSteelAudioProcessor& p) {
     return out;
 }
 
+// favourite presets (by title), kept in the per-user UI settings file
+struct Favourites {
+    static juce::File file() {
+        return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+                   .getChildFile("Northern Valley Audio").getChildFile("NVA Pedal Steel").getChildFile("favourites.txt");
+    }
+    static juce::StringArray load() { juce::StringArray a; a.addLines(file().loadFileAsString()); a.removeEmptyStrings(); return a; }
+    static void save(const juce::StringArray& a) { file().getParentDirectory().createDirectory(); file().replaceWithText(a.joinIntoString("\n")); }
+};
+
 inline juce::Image cardImage(int card) {
     int size = 0;
     const juce::String name = "card_" + juce::String(card).paddedLeft('0', 2) + "_jpg";
@@ -124,6 +134,8 @@ class PresetBrowser : public juce::Component {
 public:
     PresetBrowser(UiKit& k, PedalSteelAudioProcessor& p) : kit(k), proc(p) {
         setSize(1572, 786);
+        setWantsKeyboardFocus(true);
+        favs = Favourites::load();
         search.setFont(kit.font(15.0f));
         search.setTextToShowWhenEmpty("Search presets", kit.cream.withAlpha(0.45f));
         search.setColour(juce::TextEditor::backgroundColourId, juce::Colours::transparentBlack);   // box drawn by paint()
@@ -136,6 +148,7 @@ public:
         search.setBounds(getWidth() - 340, 56, 300, 34);
         search.onTextChange = [this] { refresh(); };
         search.onFocusLost = [this] { repaint(); };
+        search.onReturnKey = [this] { if (numShown() > 0) { selected = juce::jmax(0, selected); grabKeyboardFocus(); moveSelection(0); } };
         search.onEscapeKey = [this] { if (search.isEmpty()) close(); else search.clear(); };
         addAndMakeVisible(search);
         refresh();
@@ -158,10 +171,31 @@ public:
         const auto q = search.getText().trim();
         for (size_t i = 0; i < all.size(); ++i) {
             const auto& e = all[i];
-            if (filter != "All" && ! e.cats.contains(filter)) continue;
+            if (filter == "Favourites" ? ! favs.contains(e.title) : (filter != "All" && ! e.cats.contains(filter))) continue;
             if (q.isNotEmpty() && ! e.title.containsIgnoreCase(q)) continue;
             shown.push_back((int) i);
         }
+        scroll = juce::jlimit(0.0f, maxScroll(), scroll);
+        selected = juce::jlimit(-1, numShown() - 1, selected);
+        repaint();
+    }
+    // favourites
+    bool isFavourite(const juce::String& title) const { return favs.contains(title); }
+    void toggleFavourite(int i) {
+        if (i < 0 || i >= numShown()) return;
+        const auto t = shownTitle(i);
+        if (favs.contains(t)) favs.removeString(t); else favs.add(t);
+        Favourites::save(favs);
+        if (filter == "Favourites") refresh(); else repaint();
+    }
+    // keyboard: arrows move the selection through the grid, Enter loads, Esc closes, typing goes to the search box
+    int getSelected() const { return selected; }
+    void moveSelection(int delta) {
+        if (numShown() == 0) return;
+        selected = selected < 0 ? 0 : juce::jlimit(0, numShown() - 1, selected + delta);
+        auto c = cardBounds(selected), ga = gridArea();   // keep it in view
+        if (c.getY() < ga.getY()) scroll -= ga.getY() - c.getY();
+        if (c.getBottom() > ga.getBottom()) scroll += c.getBottom() - ga.getBottom();
         scroll = juce::jlimit(0.0f, maxScroll(), scroll);
         repaint();
     }
@@ -241,6 +275,19 @@ public:
                 }
                 g.setColour(kit.cream.withAlpha(current ? 1.0f : 0.88f)); g.setFont(kit.font(15.0f * k));
                 g.drawText(e.title, juce::Rectangle<float>(c.getX(), photo.getBottom() + 4.0f, c.getWidth(), 24.0f * k), juce::Justification::centred, true);
+                {   // favourite star: always on favourites, on hover otherwise
+                    const bool fav = favs.contains(e.title);
+                    if (fav || i == hoverCard) {
+                        auto sb = starBounds(photo);
+                        g.setColour(juce::Colour(0xc0151210)); g.fillEllipse(sb.expanded(3.0f));
+                        auto star = starPath(sb.reduced(3.0f));
+                        if (fav) { g.setColour(kit.amber); g.fillPath(star); }
+                        else { g.setColour(kit.cream.withAlpha(0.85f)); g.strokePath(star, juce::PathStrokeType(1.4f)); }
+                    }
+                }
+                if (i == selected) {   // keyboard selection
+                    g.setColour(kit.cream.withAlpha(0.9f)); g.drawRoundedRectangle(photo.expanded(4.0f), 10.0f, 1.6f);
+                }
                 if (e.factoryIndex < 0) {   // user preset badge
                     auto badge = juce::Rectangle<float>(photo.getRight() - 52.0f, photo.getY() + 8.0f, 44.0f, 18.0f);
                     g.setColour(juce::Colour(0xe0151210)); g.fillRoundedRectangle(badge, 9.0f);
@@ -284,13 +331,26 @@ public:
         if (closeBounds().contains(p)) { close(); return; }
         if (saveAsBounds().contains(p)) { if (onSaveAs) onSaveAs(); return; }
         if (const int f = filterAt(p); f >= 0) { setFilter(filters[(size_t) f]); return; }
-        if (const int c = cardAt(p); c >= 0) activate(c, e.getNumberOfClicks() >= 2);
+        if (const int c = cardAt(p); c >= 0) {
+            auto photo = cardBounds(c).withHeight(cardBounds(c).getWidth() / 2.3f);
+            if (starBounds(photo).expanded(4.0f).contains(p)) { toggleFavourite(c); return; }
+            selected = c; activate(c, e.getNumberOfClicks() >= 2);
+        }
     }
     void mouseWheelMove(const juce::MouseEvent&, const juce::MouseWheelDetails& w) override {
         scroll = juce::jlimit(0.0f, maxScroll(), scroll - w.deltaY * 260.0f); repaint();
     }
-    bool keyPressed(const juce::KeyPress& k) override {
-        if (k == juce::KeyPress::escapeKey) { close(); return true; }
+    bool keyPressed(const juce::KeyPress& key) override {
+        if (key == juce::KeyPress::escapeKey) { close(); return true; }
+        const int code = key.getKeyCode(), n = columns();
+        if (code == juce::KeyPress::leftKey) { moveSelection(-1); return true; }
+        if (code == juce::KeyPress::rightKey) { moveSelection(+1); return true; }
+        if (code == juce::KeyPress::upKey) { moveSelection(-n); return true; }
+        if (code == juce::KeyPress::downKey) { moveSelection(+n); return true; }
+        if (code == juce::KeyPress::returnKey && selected >= 0) { activate(selected, true); return true; }
+        if (code == juce::KeyPress::spaceKey && selected >= 0) { activate(selected, false); return true; }
+        if (key.getTextCharacter() == 'f' && selected >= 0 && ! search.hasKeyboardFocus(false)) { toggleFavourite(selected); return true; }
+        if (key.getTextCharacter() > ' ') { search.grabKeyboardFocus(); search.insertTextAtCaret(juce::String::charToString(key.getTextCharacter())); return true; }
         return false;
     }
 
@@ -324,11 +384,16 @@ private:
 
     UiKit& kit; PedalSteelAudioProcessor& proc;
     juce::TextEditor search;
-    std::vector<juce::String> filters { "All", "Clean", "Grit", "Swell", "Ambient", "Vintage", "User" };
+    std::vector<juce::String> filters { "All", "Favourites", "Clean", "Grit", "Swell", "Ambient", "Vintage", "User" };
     juce::String filter = "All";
     std::vector<PresetEntry> all; std::vector<int> shown;
     float scroll = 0.0f, k = 1.0f;
     int hoverCard = -1, hoverFilter = -1; bool hoverClose = false, hoverSaveAs = false;
+    int selected = -1; juce::StringArray favs;
+    juce::Rectangle<float> starBounds(juce::Rectangle<float> photo) const { return { photo.getX() + 8.0f, photo.getY() + 8.0f, 26.0f * k, 26.0f * k }; }
+    static juce::Path starPath(juce::Rectangle<float> r) {
+        juce::Path p; p.addStar(r.getCentre(), 5, r.getWidth() * 0.22f, r.getWidth() * 0.5f, 0.0f); return p;
+    }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

@@ -950,6 +950,7 @@ void PedalSteelAudioProcessorEditor::openBrowser() {
         addAndMakeVisible(*browser);
     }
     placeOverlays(); browser->toFront(true);
+    if (browser->isShowing()) browser->grabKeyboardFocus();
 }
 
 void PedalSteelAudioProcessorEditor::openSaveDialog() {

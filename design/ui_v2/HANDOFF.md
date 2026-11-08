@@ -122,7 +122,10 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   - preset browser `pb2_2`: click the LED display (right-click = quick list). Filters All/Clean/Grit/Swell/Ambient/
     Vintage/User, search, 4-column grid of photo cards (`card_01..24.jpg`: HD, logo-free ChatGPT redraws of the 12
     concept cards plus 12 new ones; `design/ui_v2/final/browser/make_cards.py`), current preset outlined amber, click
-    loads, double-click loads and closes, wheel scrolls, Save As.
+    loads, double-click loads and closes, wheel scrolls, Save As. Keyboard: arrows move a selection through the grid,
+    Space loads, Enter loads and closes, F stars, typing goes to search, Enter in search drops into the grid.
+    Favourites: a star on hover (amber when starred), a Favourites filter, saved in
+    `%APPDATA%/Northern Valley Audio/NVA Pedal Steel/favourites.txt`.
   - preset editor / save `pe1_2`: name, category, steel finish (walnut, maple, red sparkle, pearloid, koa; swatches
     cut from the concept; Black left out, Joshua called black finishes fake), notes, Cancel/Save; writes the user
     preset with `category`, `finish`, `card`, `notes` attributes, asks before replacing; the finish picks the instrument.

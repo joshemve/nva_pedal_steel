@@ -262,6 +262,30 @@ int main(int argc, char* argv[]) {
                     auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_browser.png");
                     f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
                 }
+                {   // keyboard: arrows move the selection, Enter loads it
+                    using KP = juce::KeyPress;
+                    br->keyPressed(KP(KP::rightKey)); br->keyPressed(KP(KP::rightKey)); br->keyPressed(KP(KP::downKey));
+                    check(br->getSelected() == 1 + br->columns(), "browser: arrow keys move through the grid (" + std::to_string(br->getSelected()) + ")");
+                    const int want = br->getSelected(); const auto title = br->shownTitle(want);
+                    br->keyPressed(KP(KP::spaceKey));
+                    check(processor.getCurrentProgram() == want, "browser: Space loads the selected preset (" + title.toStdString() + ")");
+                    // favourites (keep the user's own list)
+                    auto favFile = Favourites::file(); auto favBackup = favFile.loadFileAsString();
+                    favFile.deleteFile(); br->refresh();
+                    br->toggleFavourite(want); br->toggleFavourite(0);
+                    br->setFilter("Favourites");
+                    check(br->numShown() == 2 && Favourites::load().size() == 2, "favourites: starred presets show under Favourites and are saved");
+                    {
+                        pe->refreshVisualizer();
+                        auto img = editor->createComponentSnapshot(editor->getLocalBounds());
+                        auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_favourites.png");
+                        f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
+                    }
+                    br->toggleFavourite(0); br->toggleFavourite(0);
+                    check(br->numShown() == 0, "favourites: un-starring removes them");
+                    if (favBackup.isNotEmpty()) favFile.replaceWithText(favBackup); else favFile.deleteFile();
+                    br->setFilter("All");
+                }
                 br->setFilter("Grit"); const int nGrit = br->numShown();
                 check(nGrit > 0 && nGrit < nAll, "Grit filter narrows it (" + std::to_string(nGrit) + ")");
                 br->setFilter("All"); br->setSearch("swell");
