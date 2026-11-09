@@ -446,7 +446,7 @@ void PedalSteelAudioProcessorEditor::releaseAllStrings() {
 void PedalSteelAudioProcessorEditor::drawStripFrame(juce::Graphics& g, const Strip& s, int frame, juce::Rectangle<float> dest) const {
     if (! s.img.isValid()) return;
     frame = juce::jlimit(0, s.frames - 1, frame);
-    g.drawImage(s.img, dest.getX(), dest.getY(), dest.getWidth(), dest.getHeight(), 0, frame * s.px, s.px, s.px);
+    g.drawImage(s.img.getClippedImage({ 0, frame * s.px, s.px, s.px }), dest);   // float dest: no sub-pixel truncation
 }
 
 void PedalSteelAudioProcessorEditor::drawFloorLayer(juce::Graphics& g, const juce::Image& strip, const float* box, int frames,
