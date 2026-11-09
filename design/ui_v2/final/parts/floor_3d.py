@@ -4,7 +4,8 @@
   apply(img, skin):   paste the rug into a canvas-space image (3200x2000) below that skin's body edge.
   package(src, dst):  render frames -> vertical sprite strips cropped to each layer's alpha bbox + floor3d.json.
   python floor_3d.py check <render_dir> <out.png>    reference | composite at rest | A+LKL engaged
-  python floor_3d.py package <render_dir_chrome> <render_dir_brass>"""
+  python floor_3d.py package <render_dir_chrome> <render_dir_brass>
+  python floor_3d.py reflect           the blurred rug the chrome reflects (texture for blender/pedals_3d.py)"""
 import json, os, sys
 import numpy as np, cv2
 from PIL import Image
@@ -99,6 +100,10 @@ def package(dirs):
 if __name__ == "__main__":
     if sys.argv[1] == "package":
         package({"chrome": sys.argv[2], "brass": sys.argv[3]})
+    elif sys.argv[1] == "reflect":   # the soft rug copy blender/pedals_3d.py textures the floor with (for reflections)
+        a = cv2.imread(os.path.join(H, "aligned/floorclean_1.png"), cv2.IMREAD_UNCHANGED)
+        cv2.imwrite(os.path.join(H, "aligned/floorclean_1_reflect.png"), cv2.GaussianBlur(a, (0, 0), sigmaX=6, sigmaY=2))
+        import shutil; shutil.copy(os.path.join(H, "aligned/floorclean_1.json"), os.path.join(H, "aligned/floorclean_1_reflect.json"))
     elif sys.argv[1] == "check":
         d = sys.argv[2]; n = json.load(open(os.path.join(d, "render.json")))["frames"] - 1
         ref = np.asarray(Image.open(os.path.join(H, "bg_hd.png")).convert("RGB"), np.float32)

@@ -63,11 +63,37 @@ def mat(name, base, metal=0.0, rough=0.5, coat=0.0, aniso=0.0):
 M_METAL = mat("Chrome", (0.86, 0.86, 0.87), 1.0, 0.09) if METAL == "chrome" else mat("Brass", (0.86, 0.62, 0.30), 1.0, 0.16)
 M_RUBBER = mat("Rubber", (0.008, 0.007, 0.006), 0.0, 0.62)
 M_PADDLE = mat("Paddle", (0.010, 0.009, 0.008), 0.0, 0.30)
-M_LIP = mat("RubberLip", (0.006, 0.005, 0.005), 0.0, 0.62)
+M_LIP = mat("RubberLip", (0.003, 0.0025, 0.0025), 0.0, 0.8)   # matte black: reads as the black band above the rim
 M_RIB = mat("RubberRib", (0.012, 0.010, 0.009), 0.0, 0.42)
-for m_, sp_ in ((M_RUBBER, 0.07), (M_LIP, 0.18), (M_RIB, 0.22), (M_PADDLE, 0.2)):   # rubber reflects far less than the 0.5 default
+for m_, sp_ in ((M_RUBBER, 0.07), (M_LIP, 0.04), (M_RIB, 0.22), (M_PADDLE, 0.2)):   # rubber reflects far less than the 0.5 default
     m_.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = sp_
-M_FLOOR = mat("Rug", (0.10, 0.035, 0.022), 0.0, 0.9)
+# the rug as the chrome sees it (the floor is a shadow catcher: this colour only shows in reflections). Dark, so
+# the housings' front faces mirror mostly black, as on the reference
+FLOOR_RGB = tuple(float(v) for v in os.environ.get("FLOOR_RGB", "0.030,0.011,0.007").split(","))
+M_FLOOR = mat("Rug", FLOOR_RGB, 0.0, 0.9)
+# ... textured with the real rug (the pedal-free plate, mapped through this camera onto the floor plane), so the chrome
+# mirrors its pattern: dark streaks and black patches on the housing fronts, as on the reference
+# (a soft copy, blurred mostly sideways: the chrome shows it as warm streaks, not crisp motifs; made by
+# final/parts/floor_3d.py reflect)
+_rug = Path(__file__).resolve().parent.parent / "final/parts/aligned/floorclean_1_reflect"
+if _rug.with_suffix(".png").exists() and not os.environ.get("FLAT_RUG"):
+    _bx = json.loads(_rug.with_suffix(".json").read_text())["canvas_box"]
+    nt_ = M_FLOOR.node_tree; bsdf_ = nt_.nodes["Principled BSDF"]
+    geo_ = nt_.nodes.new("ShaderNodeNewGeometry"); sep_ = nt_.nodes.new("ShaderNodeSeparateXYZ")
+    nt_.links.new(geo_.outputs["Position"], sep_.inputs[0])
+    def lin(sock, a, b):   # a * sock + b
+        m1 = nt_.nodes.new("ShaderNodeMath"); m1.operation = "MULTIPLY_ADD"
+        nt_.links.new(sock, m1.inputs[0]); m1.inputs[1].default_value = a; m1.inputs[2].default_value = b; return m1.outputs[0]
+    W_, H_ = _bx[2] - _bx[0], _bx[3] - _bx[1]
+    u_ = lin(sep_.outputs["X"], S / W_, (X0 - _bx[0]) / W_)                     # canvas x = X0 + S*X
+    v_ = lin(sep_.outputs["Y"], S * sP / H_, 1 - (C - _bx[1]) / H_)              # canvas y = C - S*sin(PHI)*Y (Z = 0)
+    cmb = nt_.nodes.new("ShaderNodeCombineXYZ"); nt_.links.new(u_, cmb.inputs[0]); nt_.links.new(v_, cmb.inputs[1])
+    tex = nt_.nodes.new("ShaderNodeTexImage"); tex.image = bpy.data.images.load(str(_rug.with_suffix(".png")))
+    tex.extension = "EXTEND"; nt_.links.new(cmb.outputs[0], tex.inputs["Vector"])
+    k_ = nt_.nodes.new("ShaderNodeMixRGB"); k_.blend_type = "MULTIPLY"; k_.inputs[0].default_value = 1.0
+    nt_.links.new(tex.outputs["Color"], k_.inputs[1])
+    k_.inputs[2].default_value = (*([float(os.environ.get("RUG_GAIN", "0.45"))] * 3), 1)
+    nt_.links.new(k_.outputs[0], bsdf_.inputs["Base Color"])
 
 
 def obj(name, me_op, material, loc, scale=(1, 1, 1), rot=(0, 0, 0), bevel=0.0, seg=4, parent=None):
@@ -118,12 +144,13 @@ PED_X = {"A": (1355 - X0) / S, "B": 0.0, "C": (1717 - X0) / S}
 PW, PY0, PY1, PZ0, PZ1 = 0.064, -0.0367, 0.0565, 0.017, 0.050
 ROD_Y, ROD_R, ROD_TOP = 0.031, 0.0037, 0.86
 PRESS_DEG = 13.0
+HB = float(os.environ.get("HOUSING_BEVEL", "0.0055"))   # softer housing corners (reference); was 0.0035
 RODS = bpy.data.collections.new("RodReceivers")   # the pull rods: see the RodGlint strips (below) only
 ROD_PX = []
 PADS = bpy.data.collections.new("PadReceivers")   # lit by the low front pad light only (no rug shadows from it)
 for k, px in PED_X.items():
     piv = empty("Pivot_" + k, (px, 0, BAR_Z))
-    parts = [obj("Housing_" + k, cube, M_METAL, (px, (PY0 + PY1) / 2, (PZ0 + PZ1) / 2), (PW, PY1 - PY0, PZ1 - PZ0), bevel=0.0035, seg=5, parent=piv)]
+    parts = [obj("Housing_" + k, cube, M_METAL, (px, (PY0 + PY1) / 2, (PZ0 + PZ1) / 2), (PW, PY1 - PY0, PZ1 - PZ0), bevel=HB, seg=8, parent=piv)]
     parts.append(obj("Pad_" + k, cube, M_RUBBER, (px, (PY0 + PY1) / 2 + 0.001, PZ1 + 0.0012), (PW - 0.009, PY1 - PY0 - 0.008, 0.0026), bevel=0.0012, seg=3, parent=piv))
     nrib = 15
     for r_ in range(nrib):
