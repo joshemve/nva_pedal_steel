@@ -212,7 +212,7 @@ private:
         float process(float input, float amount);
     };
 
-    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..16; Mode 0 = bit-transparent bypass)
+    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..22; Mode 0 = bit-transparent bypass)
     struct ModernCharacterProcessor {
         std::vector<float> modBufL, modBufR;
         int modWritePos = 0;
@@ -262,6 +262,7 @@ private:
         Biquad charFilter1;
         Biquad charFilter2;
         Biquad charFilter3;
+        Biquad charFilter4;
         Biquad dimHpFilter;
         Biquad subLpFilter;
 
@@ -329,6 +330,9 @@ private:
     float tweedSagEnv = 0.0f;
     float rackBellSmooth = 0.0f;
     float organRankSmooth = 0.0f;
+    float dobroConeSmooth = 0.0f;
+    float jawariSmooth = 0.0f;
+    float cs80BrassSmooth = 0.0f;
 
     SympatheticBank sympathetic;
     ModernCharacterProcessor modernChar;

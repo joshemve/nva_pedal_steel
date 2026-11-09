@@ -1099,6 +1099,228 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.outputLevel   = -0.4f;
                 return p;
             }()
+        },
+        {
+            "31 - Spun-Aluminum Dobro Cone",
+            "Acoustic Resonator",
+            "1935 National / Scheerhorn square-neck spider-bridge Dobro: coupled 4-mode 10.5-inch spun-aluminum resonator cone, birch soundwell air cavity, phosphor-bronze thumbpick bark, and close Neumann KM84 room (Jerry Douglas / Dire Straits).",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0; // Poly Copedent: articulate 3-finger bluegrass rolls without accidental legato slurs
+                p.fxCharacter   = 17; // Spun-Aluminum Dobro
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.20f;
+                p.pedalSpeed    = 105.0f;
+                p.barGlide      = 110.0f;
+                p.barSlideNoise = 0.36f;
+                p.vibratoDepth  = 0.16f;
+                p.vibratoRate   = 5.30f;
+                p.autoSwell     = 0.0f; // Instant acoustic thumbpick bark
+                p.swellTime     = 60.0f;
+                p.sampleBlend   = 0.46f; // Let phosphor-bronze & spun-aluminum cone physical synthesis lead!
+                p.pickSnap      = 0.94f;
+                p.pickupPos     = 1.75f;
+                p.coilPeakFreq  = 2560.0f;
+                p.coilResonance = 0.72f;
+                p.sustainTime   = 2.6f; // Snappy acoustic resonator decay
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.10f;
+                p.ampDrive      = 0.18f;
+                p.toneWarmth    = 0.40f;
+                p.delayMix      = 0.0f;
+                p.delayTime     = 220.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.16f;
+                p.reverbDecay   = 0.34f;
+                p.outputLevel   = 0.4f;
+                return p;
+            }()
+        },
+        {
+            "32 - '66 Revolver Backwards Tape",
+            "Psychedelic Tape",
+            "Abbey Road Room 2 real-time -1.000x backwards-reading Studer J37 tape heads + 15-ips Zonal oxide compression & EMT 140 plate (George Harrison 'I'm Only Sleeping' / Castles Made of Sand / Beck): concert-locked reverse envelopes and backwards glides.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 1;
+                p.fxCharacter   = 18; // Revolver Reverse Tape
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.34f;
+                p.pedalSpeed    = 140.0f;
+                p.barGlide      = 145.0f;
+                p.barSlideNoise = 0.22f;
+                p.vibratoDepth  = 0.14f;
+                p.vibratoRate   = 4.90f;
+                p.autoSwell     = 0.0f; // Crisp input pluck creates unmistakable backwards zwoooop-SNAP!
+                p.swellTime     = 80.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.84f;
+                p.pickupPos     = 2.12f;
+                p.coilPeakFreq  = 2280.0f;
+                p.coilResonance = 0.68f;
+                p.sustainTime   = 7.4f;
+                p.cabinetDrop   = 0.08f;
+                p.stereoWidth   = 1.28f;
+                p.ampDrive      = 0.28f;
+                p.toneWarmth    = 0.52f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 380.0f; // 1/8
+                p.tempoSync     = true;
+                p.reverbMix     = 0.36f;
+                p.reverbDecay   = 0.64f;
+                p.outputLevel   = 0.2f;
+                return p;
+            }()
+        },
+        {
+            "33 - Mohan Veena Sitar-Slide",
+            "World / Psychedelic",
+            "Grammy-winning Indian slide guitar physics (Vishwa Mohan Bhatt & Ry Cooder / George Harrison / Steely Dan Coral Sitar): per-string parabolic deer-horn Jawari grazing-bridge buzz, hollow gourd Tumba resonance, and shimmering Taraf sympathetic strings.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0; // Poly Copedent: crisp mizrab plucks over open Tambura drone strings + MPE meend bends
+                p.fxCharacter   = 19; // Mohan Veena Jawari
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.44f; // Vocal Indian meend grace scoops
+                p.pedalSpeed    = 135.0f;
+                p.barGlide      = 160.0f;
+                p.barSlideNoise = 0.34f;
+                p.vibratoDepth  = 0.24f;
+                p.vibratoRate   = 5.45f;
+                p.autoSwell     = 0.02f;
+                p.swellTime     = 65.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.78f; // Wire mizrab plectrum bite
+                p.pickupPos     = 1.92f;
+                p.coilPeakFreq  = 2480.0f;
+                p.coilResonance = 0.66f;
+                p.sustainTime   = 8.8f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.26f;
+                p.ampDrive      = 0.20f;
+                p.toneWarmth    = 0.46f;
+                p.delayMix      = 0.08f;
+                p.delayTime     = 320.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.38f;
+                p.reverbDecay   = 0.68f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "34 - Atlanta Neo-Soul Syrup",
+            "Modern R&B / Indie",
+            "Modern indie-R&B & 808-ballad steel (Faye Webster 'Kingston' / Matt Stoessel / Blood Orange): heavy Ross/Dyna-Comp liquid sustain, anti-twang velvet thumb warmth, and a 1976 Boss CE-1 Chorus Ensemble JFET preamp + MN3002 stereo melt.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 1;
+                p.fxCharacter   = 20; // Neo-Soul CE-1 Syrup
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.46f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 165.0f;
+                p.barSlideNoise = 0.14f;
+                p.vibratoDepth  = 0.14f;
+                p.vibratoRate   = 4.65f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.92f;
+                p.pickSnap      = 0.32f; // Soft flesh/thumb warmth — zero country twang!
+                p.pickupPos     = 2.65f;
+                p.coilPeakFreq  = 1820.0f;
+                p.coilResonance = 0.50f;
+                p.sustainTime   = 9.2f;
+                p.cabinetDrop   = 0.08f;
+                p.stereoWidth   = 1.32f;
+                p.ampDrive      = 0.20f;
+                p.toneWarmth    = 0.74f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 620.0f; // 1/4
+                p.tempoSync     = true;
+                p.reverbMix     = 0.34f;
+                p.reverbDecay   = 0.62f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "35 - Binson Echorec Space-Fury",
+            "Prog / Psych Lead",
+            "David Gilmour Pompeii & 'High Hopes' soaring lap-steel rig: Pete Cornish tube-driver sustain into a 100W Hiwatt DR103 / Fane stack and an authentic 4-Head 1968 Binson Echorec B2 rotating magnetic steel drum (1/16 + 1/8 + 1/8D + 1/4 Swirl).",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 1; // Harmonic-rich Bootgaze steel voice
+                p.playMode      = 1;
+                p.fxCharacter   = 21; // Binson Echorec Drum
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.52f;
+                p.pedalSpeed    = 145.0f;
+                p.barGlide      = 170.0f;
+                p.barSlideNoise = 0.36f;
+                p.vibratoDepth  = 0.32f;
+                p.vibratoRate   = 4.85f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 80.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.72f;
+                p.pickupPos     = 2.15f;
+                p.coilPeakFreq  = 2160.0f;
+                p.coilResonance = 0.68f;
+                p.sustainTime   = 10.8f;
+                p.cabinetDrop   = 0.12f;
+                p.stereoWidth   = 1.34f;
+                p.ampDrive      = 0.38f;
+                p.toneWarmth    = 0.56f;
+                p.delayMix      = 0.06f;
+                p.delayTime     = 500.0f; // 1/8D
+                p.tempoSync     = true;
+                p.reverbMix     = 0.44f;
+                p.reverbDecay   = 0.78f;
+                p.outputLevel   = -0.4f;
+                return p;
+            }()
+        },
+        {
+            "36 - CS-80 Stadium Synth-Steel",
+            "Analog Synth-Steel",
+            "Greg Leisz on Daft Punk 'RAM' x Mike Dean / Vangelis 'Blade Runner': per-string 0.00-cent Yamaha CS-80 sawtooth + sub-oscillator & polyphonic IG0015 resonant brass filter swell co-voiced with real pedal steel into 3-phase chorus and stadium echo.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 1;
+                p.fxCharacter   = 22; // CS-80 Synth-Steel
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.16f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 150.0f;
+                p.barSlideNoise = 0.20f;
+                p.vibratoDepth  = 0.14f;
+                p.vibratoRate   = 4.75f;
+                p.autoSwell     = 0.16f;
+                p.swellTime     = 95.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.54f;
+                p.pickupPos     = 2.22f;
+                p.coilPeakFreq  = 2240.0f;
+                p.coilResonance = 0.60f;
+                p.sustainTime   = 10.6f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.40f;
+                p.ampDrive      = 0.20f;
+                p.toneWarmth    = 0.48f;
+                p.delayMix      = 0.10f;
+                p.delayTime     = 500.0f; // 1/8D
+                p.tempoSync     = true;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.84f;
+                p.outputLevel   = -0.4f;
+                return p;
+            }()
         }
     };
     return kPresets;

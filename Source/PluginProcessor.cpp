@@ -193,7 +193,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
             "1937 Bakelite Lap",
             "Abbey Road Tape ADT",
             "Dimension D Chorus",
-            "Poly-Octave Organ"
+            "Poly-Octave Organ",
+            "Spun-Aluminum Dobro",
+            "Revolver Reverse Tape",
+            "Mohan Veena Jawari",
+            "Neo-Soul CE-1 Syrup",
+            "Binson Echorec Drum",
+            "CS-80 Synth-Steel"
         }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(

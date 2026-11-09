@@ -510,9 +510,15 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
         "1937 Bakelite Lap",
         "Abbey Road Tape ADT",
         "Dimension D Chorus",
-        "Poly-Octave Organ"
+        "Poly-Octave Organ",
+        "Spun-Aluminum Dobro",
+        "Revolver Reverse Tape",
+        "Mohan Veena Jawari",
+        "Neo-Soul CE-1 Syrup",
+        "Binson Echorec Drum",
+        "CS-80 Synth-Steel"
     }, 1);
-    charBox.setTooltip("Analog Character Circuit (17 Modes): Cassette, Ribbon+LA-2A, Phaser, Spring+Trem, R&B, VB-2, Shimmer, Leslie 147, Diode Bloom, Standel 807, Bosstone Fuzz, Talk-Box, Bakelite, Abbey Road ADT, Dimension D, or Poly-Octave Organ!");
+    charBox.setTooltip("Analog Character Circuit (23 Modes): Cassette, Ribbon+LA-2A, Phaser, Spring+Trem, R&B, VB-2, Shimmer, Leslie 147, Diode Bloom, Standel, Bosstone, Talk-Box, Bakelite, ADT, Tri-Chorus, Organ, Dobro Cone, Reverse Tape, Mohan Veena, CE-1 Syrup, Binson Echorec, or CS-80 Synth-Steel!");
     addAndMakeVisible(charBox);
     charAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::fxCharacter, charBox);
