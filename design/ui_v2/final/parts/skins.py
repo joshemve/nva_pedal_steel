@@ -5,7 +5,7 @@ skins/skins.json (canvas boxes). Usage: python skins.py [maple=skin_maple_1 ...]
 import json, os, sys
 import numpy as np, cv2
 from PIL import Image
-import bar_plate
+import bar_plate, floor_3d
 H = os.path.dirname(os.path.abspath(__file__)); os.chdir(H)
 CW, CH = 3200, 2000; RX, RY = CW / 1568, CH / 1003
 clean = np.asarray(Image.open("bg_clean.png"), np.float32)
@@ -66,6 +66,7 @@ for sk, job in CHOICE.items():
     keep = np.maximum(a, 0)
     keep[bar_plate.Y0:bar_plate.Y1, bar_plate.X0 - 8:bar_plate.X1 + 8] = 1   # the rebuilt strip belongs to the layer too
     comp = comp * keep[..., None] + clean * (1 - keep[..., None])
+    comp = floor_3d.apply(comp, sk)                     # the one rug; the pedal assembly is drawn live (3D renders)
     ys, xs = np.where(keep > 0.01); bx = [int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1]
     Image.fromarray(np.clip(comp[bx[1]:bx[3], bx[0]:bx[2]], 0, 255).astype(np.uint8)).save("skins/skin_%s.jpg" % sk, quality=94)
     out[sk] = {"box": bx, "job": job}

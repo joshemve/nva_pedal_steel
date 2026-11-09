@@ -1,0 +1,16 @@
+[
+ {
+  "name": "floorclean_1",
+  "images": [
+   "final/parts/crops/floor.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the whole foot-pedal assembly under the instrument: the three black-rubber foot pedals, the long chrome horizontal cross bar they sit on, the thin vertical chrome pull rods going up from the pedals, and the two small black hanging knee-lever paddles with their chrome rods. Where they were, show only the same ornate red, rust and black patterned rug, its pattern continuing naturally and evenly, at the same scale, focus and lighting, with a very soft, faint shadow under the instrument body. The instrument's wooden body edge at the top and its chrome legs stay exactly as they are. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "floorclean_2",
+  "images": [
+   "final/parts/crops/floor.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the whole foot-pedal assembly under the instrument: the three black-rubber foot pedals, the long chrome horizontal cross bar they sit on, the thin vertical chrome pull rods going up from the pedals, and the two small black hanging knee-lever paddles with their chrome rods. Where they were, show only the same ornate red, rust and black patterned rug, its pattern continuing naturally and evenly, at the same scale, focus and lighting, with a very soft, faint shadow under the instrument body. The instrument's wooden body edge at the top and its chrome legs stay exactly as they are. Everything outside that change must stay identical to the input."
+ }
+]

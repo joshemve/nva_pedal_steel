@@ -192,3 +192,14 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   That seed and three new random seeds pass.
 - Fixed: the editor opened at its 800x500 minimum (setResizeLimits resized it first); default is 1280x800 and the
   last size is kept in the state (`editorWidth`).
+
+## 2026-11-08: real 3D knobs and floor pedal assembly (Joshua: "knobs don't rotate with lighting/shadows staying in place", "carpet bending/patchy around pedals, make it real blender 3d")
+- FEEL/SPACE knob strips are native Cycles renders again (fixed lights, only the knob turns): `blender/knob_studio.py` +
+  `final/knobs/native_v2.json` -> `final/knobs/native_to_strips.py native_v2` -> `final/fix_knob_halo.py` (static contact
+  shadow). The rotated-reference strips are kept as `strips/knob_*_refrot.png`. Check: `final/knobs/native_compare.py`.
+- Floor: `parts/make_jobs20.py` (ChatGPT pedal-free rug, aligned `floorclean_1`) + `blender/pedals_3d.py` (pedals pivoting on
+  the cross bar with pull rods, knee levers, cross bar; camera solved from the reference; shadow-catcher floor; warm key +
+  two back lamps for the rods' V shadows on the pads/bar; low pad light linked to pads for the front-lighter rubber; black
+  front lip; chrome + brass). `parts/floor_3d.py`: `check`, `package` (strips + sprites/floor3d.json), `apply()` used by
+  gen_layout (ui_bg) and skins.py (rug below each body edge, BODY y per skin). Editor: `drawFloorLayer` in drawSteel,
+  clipped at `skinBodyY[skin]`. Re-render only some layers: `PEDAL_LAYERS=knee_L,knee_R blender ... pedals_3d.py -- dir metal`.

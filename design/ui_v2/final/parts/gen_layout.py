@@ -16,11 +16,26 @@ def rect(name, x0, y0, x1, y1): L("inline constexpr float %s[4] = { %.2ff, %.2ff
 def refrect(name, x0, y0, x1, y1): rect(name, x0 * RX, y0 * RY, x1 * RX, y1 * RY)
 
 # background (JPEG keeps the plugin small; photo content)
-Image.open("bg_clean.png").convert("RGB").save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
+import floor_3d   # the rug under the steel: one pedal-free plate; the pedal assembly is drawn live from Blender renders
+Image.fromarray(np.clip(floor_3d.apply(np.asarray(Image.open("bg_clean.png").convert("RGB"), np.float32), "walnut"), 0, 255)
+                .astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 # sprites (canvas boxes -> UI rects)
+for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states are replaced by the 3D layers
+    if f_.startswith(("sp_floor_", "sp_kl_", "f3d_")): os.remove(os.path.join(OUT, f_))
 for k, v in S.items():
+    if k.startswith(("floor_", "kl_")): continue
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
     rect("sp_" + k, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
+# the 3D floor pedal assembly (floor_3d.py package): per layer one vertical strip per metal
+F3 = json.load(open("sprites/floor3d.json"))
+for name, v in F3["layers"].items():
+    for metal in ("chrome", "brass"):
+        shutil.copy("sprites/f3d_%s_%s.png" % (metal, name), os.path.join(OUT, "f3d_%s_%s.png" % (metal, name)))
+    b = v["box"]; rect("f3d_" + name, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
+    L("inline constexpr int f3dFrames_%s = %d;" % (name, v["frames"]))
+BY = F3["body_y"]
+L("inline constexpr float skinBodyY[5] = { %s };   // UI px: bottom edge of each instrument's body (walnut, maple, redsparkle, pearloid, koa)"
+  % ", ".join("%.1ff" % (BY[k] / 2) for k in ("walnut", "maple", "redsparkle", "pearloid", "koa")))
 # meter segments (x ranges inside the meter sprite, in sprite px)
 mo = np.asarray(Image.open("sprites/meter_on.png"), np.float32)
 Lm = mo[mo.shape[0] // 3:2 * mo.shape[0] // 3, :, :3].mean(2).mean(0); lit = Lm > 0.5 * (np.percentile(Lm, 90) + np.percentile(Lm, 10))

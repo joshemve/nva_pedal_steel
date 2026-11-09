@@ -61,18 +61,21 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     spLever[0] = loadImage(BinaryData::sp_lever_L_on_png, BinaryData::sp_lever_L_on_pngSize);
     spLever[1] = loadImage(BinaryData::sp_lever_R_on_png, BinaryData::sp_lever_R_on_pngSize);
     spMidi = loadImage(BinaryData::sp_midi_on_png, BinaryData::sp_midi_on_pngSize);
-    spKnee[0] = loadImage(BinaryData::sp_kl_left_pushed_png, BinaryData::sp_kl_left_pushed_pngSize);
-    spKnee[1] = loadImage(BinaryData::sp_kl_right_pushed_png, BinaryData::sp_kl_right_pushed_pngSize);
-    spFloor[0] = loadImage(BinaryData::sp_floor_A_png, BinaryData::sp_floor_A_pngSize);
-    spFloor[1] = loadImage(BinaryData::sp_floor_B_png, BinaryData::sp_floor_B_pngSize);
-    spFloor[2] = loadImage(BinaryData::sp_floor_C_png, BinaryData::sp_floor_C_pngSize);
     spBar = loadImage(BinaryData::sp_tone_bar_png, BinaryData::sp_tone_bar_pngSize);
     spBarHome = loadImage(BinaryData::sp_tone_bar_home_png, BinaryData::sp_tone_bar_home_pngSize);
-    spKneeBrass[0] = loadImage(BinaryData::sp_kl_left_pushed_brass_png, BinaryData::sp_kl_left_pushed_brass_pngSize);
-    spKneeBrass[1] = loadImage(BinaryData::sp_kl_right_pushed_brass_png, BinaryData::sp_kl_right_pushed_brass_pngSize);
-    spFloorBrass[0] = loadImage(BinaryData::sp_floor_A_brass_png, BinaryData::sp_floor_A_brass_pngSize);
-    spFloorBrass[1] = loadImage(BinaryData::sp_floor_B_brass_png, BinaryData::sp_floor_B_brass_pngSize);
-    spFloorBrass[2] = loadImage(BinaryData::sp_floor_C_brass_png, BinaryData::sp_floor_C_brass_pngSize);
+    {   // the floor pedal assembly: real 3D renders (blender/pedals_3d.py), chrome and brass, one strip per layer
+        const char* data[2][6] = {
+            { BinaryData::f3d_chrome_bar_png, BinaryData::f3d_chrome_knee_L_png, BinaryData::f3d_chrome_knee_R_png,
+              BinaryData::f3d_chrome_pedal_A_png, BinaryData::f3d_chrome_pedal_B_png, BinaryData::f3d_chrome_pedal_C_png },
+            { BinaryData::f3d_brass_bar_png, BinaryData::f3d_brass_knee_L_png, BinaryData::f3d_brass_knee_R_png,
+              BinaryData::f3d_brass_pedal_A_png, BinaryData::f3d_brass_pedal_B_png, BinaryData::f3d_brass_pedal_C_png } };
+        const int size[2][6] = {
+            { BinaryData::f3d_chrome_bar_pngSize, BinaryData::f3d_chrome_knee_L_pngSize, BinaryData::f3d_chrome_knee_R_pngSize,
+              BinaryData::f3d_chrome_pedal_A_pngSize, BinaryData::f3d_chrome_pedal_B_pngSize, BinaryData::f3d_chrome_pedal_C_pngSize },
+            { BinaryData::f3d_brass_bar_pngSize, BinaryData::f3d_brass_knee_L_pngSize, BinaryData::f3d_brass_knee_R_pngSize,
+              BinaryData::f3d_brass_pedal_A_pngSize, BinaryData::f3d_brass_pedal_B_pngSize, BinaryData::f3d_brass_pedal_C_pngSize } };
+        for (int m = 0; m < 2; ++m) for (int l = 0; l < 6; ++l) f3d[m][l] = loadImage(data[m][l], size[m][l]);
+    }
     scallop = { loadImage(BinaryData::knob_scallop_png, BinaryData::knob_scallop_pngSize), scallopFrames, scallopFramePx };
     space = { loadImage(BinaryData::knob_space_png, BinaryData::knob_space_pngSize), spaceFrames, spaceFramePx };
     ptrTone = { loadImage(BinaryData::ptr_tone_png, BinaryData::ptr_tone_pngSize), ptrTONEFrames, ptrTONEFramePx };
@@ -446,6 +449,23 @@ void PedalSteelAudioProcessorEditor::drawStripFrame(juce::Graphics& g, const Str
     g.drawImage(s.img, dest.getX(), dest.getY(), dest.getWidth(), dest.getHeight(), 0, frame * s.px, s.px, s.px);
 }
 
+void PedalSteelAudioProcessorEditor::drawFloorLayer(juce::Graphics& g, const juce::Image& strip, const float* box, int frames,
+                                                    float t, float clipTop) const {
+    // one rendered pose per frame (stacked vertically); in between two poses the next one fades in over the last
+    if (! strip.isValid() || frames <= 0) return;
+    juce::Graphics::ScopedSaveState ss(g);
+    g.reduceClipRegion(juce::Rectangle<float>(box[0] - 1, clipTop, box[2] + 2, box[1] + box[3] - clipTop + 1).toNearestInt());
+    const int fh = strip.getHeight() / frames;
+    const float f = juce::jlimit(0.0f, (float) (frames - 1), t * (float) (frames - 1));
+    const int i0 = (int) f; const float frac = f - (float) i0;
+    auto pose = [&](int i, float a) {
+        g.setOpacity(a);
+        g.drawImage(strip.getClippedImage({ 0, i * fh, strip.getWidth(), fh }), juce::Rectangle<float>(box[0], box[1], box[2], box[3]));
+    };
+    pose(i0, 1.0f);
+    if (frac > 0.01f && i0 + 1 < frames) pose(i0 + 1, frac);
+}
+
 void PedalSteelAudioProcessorEditor::drawSprite(juce::Graphics& g, const juce::Image& img, const float* box, float dx, float clipRight, float alpha) const {
     if (! img.isValid() || alpha <= 0.002f) return;
     juce::Graphics::ScopedSaveState ss(g);
@@ -525,18 +545,17 @@ void PedalSteelAudioProcessorEditor::rebuildDisplay() {
 }
 
 void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
-    // under the neck: knee levers swing, floor pedals go down (eased, so they move rather than blink)
-    const bool brass = skin == 4;   // the koa steel has brass rods and cross bar
-    drawSprite(g, brass ? spKneeBrass[0] : spKnee[0], sp_kl_left_pushed, 0, 1e9f, pedalShown(3));
-    drawSprite(g, brass ? spKneeBrass[1] : spKnee[1], sp_kl_right_pushed, 0, 1e9f, pedalShown(4));
-    {   // pressed floor pedals slide down into place as they engage (a half-pressed pedal sits half way, no double image)
-        const float* boxes[3] = { sp_floor_A, sp_floor_B, sp_floor_C };
-        for (int i = 0; i < 3; ++i) {
-            const float a = pedalShown(i); if (a <= 0.002f) continue;
-            const float* b = boxes[i]; const float lift = (1.0f - a) * 7.0f;
-            const float moved[4] = { b[0], b[1] - lift, b[2], b[3] };
-            drawSprite(g, brass ? spFloorBrass[i] : spFloor[i], moved, 0, 1e9f, juce::jmin(1.0f, a * 1.6f));
-        }
+    // under the neck: the 3D pedal assembly on the one rug - cross bar, knee levers swinging, floor pedals pivoting on
+    // the bar with their pull rods (rendered poses, eased); nothing is drawn above this instrument's body edge
+    {
+        const int m = skin == 4 ? 1 : 0;   // the koa steel has brass rods and cross bar
+        const float top = skinBodyY[juce::jlimit(0, 4, skin)];
+        drawFloorLayer(g, f3d[m][0], f3d_bar, f3dFrames_bar, 0.0f, top);
+        drawFloorLayer(g, f3d[m][1], f3d_knee_L, f3dFrames_knee_L, pedalShown(3), top);
+        drawFloorLayer(g, f3d[m][2], f3d_knee_R, f3dFrames_knee_R, pedalShown(4), top);
+        drawFloorLayer(g, f3d[m][3], f3d_pedal_A, f3dFrames_pedal_A, pedalShown(0), top);
+        drawFloorLayer(g, f3d[m][4], f3d_pedal_B, f3dFrames_pedal_B, pedalShown(1), top);
+        drawFloorLayer(g, f3d[m][5], f3d_pedal_C, f3dFrames_pedal_C, pedalShown(2), top);
     }
 
     // at its home fret the strip around the bar is the reference's own pixels; it fades out as the bar moves away

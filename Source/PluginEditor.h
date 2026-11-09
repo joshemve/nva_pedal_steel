@@ -69,6 +69,7 @@ private:
     void setNorm(Ctl c, float v);
     void toggle(Ctl c);
     void drawStripFrame(juce::Graphics&, const Strip&, int frame, juce::Rectangle<float> dest) const;
+    void drawFloorLayer(juce::Graphics& g, const juce::Image& strip, const float* box, int frames, float t, float clipTop) const;
     void drawSprite(juce::Graphics&, const juce::Image&, const float* box, float dx = 0, float clipRight = 1e9f, float alpha = 1.0f) const;
     void drawText(juce::Graphics&, const TextItem&, const juce::String&) const;
     void drawSteel(juce::Graphics&);
@@ -96,7 +97,8 @@ private:
     PedalSteelAudioProcessor& proc;
     float scale = 1.0f;
 
-    juce::Image bg, bgScaled, spPedal[3], spMeter, spThumb, spFill, dispImg, spLever[2], spMidi, spKnee[2], spFloor[3], spBar, spBarHome, spKneeBrass[2], spFloorBrass[3];
+    juce::Image bg, bgScaled, spPedal[3], spMeter, spThumb, spFill, dispImg, spLever[2], spMidi, spBar, spBarHome;
+    juce::Image f3d[2][6];   // the 3D floor assembly (Blender): [chrome, brass][bar, knee L, knee R, pedal A, B, C]
     Strip scallop, space, ptrTone, ptrPick, ptrTrim;
     std::vector<float> dotKernel; int dotK = 0;   // RGB, dotK x dotK
     juce::Typeface::Ptr poppinsMedium, poppinsSemi, interMedium;
