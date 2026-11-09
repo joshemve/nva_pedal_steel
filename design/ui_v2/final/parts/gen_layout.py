@@ -17,13 +17,14 @@ def refrect(name, x0, y0, x1, y1): rect(name, x0 * RX, y0 * RY, x1 * RX, y1 * RY
 
 # background (JPEG keeps the plugin small; photo content)
 import floor_3d   # the rug under the steel: one pedal-free plate; the pedal assembly is drawn live from Blender renders
-Image.fromarray(np.clip(floor_3d.apply(np.asarray(Image.open("bg_clean.png").convert("RGB"), np.float32), "walnut"), 0, 255)
+import sys; sys.path.insert(0, os.path.join(H, "..", "deck3d")); import deck_pack   # deck switches/toggles: same idea
+Image.fromarray(np.clip(deck_pack.apply(floor_3d.apply(np.asarray(Image.open("bg_clean.png").convert("RGB"), np.float32), "walnut")), 0, 255)
                 .astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 # sprites (canvas boxes -> UI rects)
 for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states are replaced by the 3D layers
-    if f_.startswith(("sp_floor_", "sp_kl_", "f3d_")): os.remove(os.path.join(OUT, f_))
+    if f_.startswith(("sp_floor_", "sp_kl_", "f3d_", "d3d_", "sp_pedal_", "sp_lever_")): os.remove(os.path.join(OUT, f_))
 for k, v in S.items():
-    if k.startswith(("floor_", "kl_")): continue
+    if k.startswith(("floor_", "kl_", "pedal_", "lever_")): continue   # pedal_/lever_: the deck controls are 3D (deck3d/)
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
     rect("sp_" + k, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
 # the 3D floor pedal assembly (floor_3d.py package): per layer one vertical strip per metal
@@ -33,6 +34,13 @@ for name, v in F3["layers"].items():
         shutil.copy("sprites/f3d_%s_%s.png" % (metal, name), os.path.join(OUT, "f3d_%s_%s.png" % (metal, name)))
     b = v["box"]; rect("f3d_" + name, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
     L("inline constexpr int f3dFrames_%s = %d;" % (name, v["frames"]))
+# the deck's foot switches and knee-lever toggles (deck3d/deck_pack.py package): frame strips + the A/B/C lamps
+D3 = json.load(open("sprites/d3d.json"))
+for name, v in D3["layers"].items():
+    src = "d3d_%s.png" % name if not name.startswith("lamp_") else "d3d_lamp_%s.png" % name[5:]
+    shutil.copy("sprites/" + src, os.path.join(OUT, "d3d_%s.png" % name))
+    b = v["box"]; rect("d3d_" + name, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
+    L("inline constexpr int d3dFrames_%s = %d;" % (name, v["frames"]))
 BY = F3["body_y"]
 L("inline constexpr float skinBodyY[5] = { %s };   // UI px: bottom edge of each instrument's body (walnut, maple, redsparkle, pearloid, koa)"
   % ", ".join("%.1ff" % (BY[k] / 2) for k in ("walnut", "maple", "redsparkle", "pearloid", "koa")))

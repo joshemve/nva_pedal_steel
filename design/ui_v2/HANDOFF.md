@@ -203,3 +203,12 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   front lip; chrome + brass). `parts/floor_3d.py`: `check`, `package` (strips + sprites/floor3d.json), `apply()` used by
   gen_layout (ui_bg) and skins.py (rug below each body edge, BODY y per skin). Editor: `drawFloorLayer` in drawSteel,
   clipped at `skinBodyY[skin]`. Re-render only some layers: `PEDAL_LAYERS=knee_L,knee_R blender ... pedals_3d.py -- dir metal`.
+
+## 2026-11-09: deck switches and knee-lever toggles in 3D
+- `blender/deck_3d.py -- final/deck3d/render [samples]` renders A/B/C (tip 14 deg forward about the back edge) and
+  LKL/LKR (mirror images; swing 14 deg outward about the ring, an amber halo in the ring lights) as 7-frame strips.
+- `final/deck3d/deck_pack.py package final/deck3d/render` -> `parts/sprites/d3d_*.png` + `d3d.json` (adds the halo glow,
+  cuts the A/B/C lamps from the old 'on' sprites). `deck_pack.apply` pastes the ChatGPT-cleaned deck
+  (`final/deck3d/gen/deckclean_1_1.png`, made by `make_deckclean.py`) under the controls; gen_layout uses it for ui_bg.
+- The editor draws them with `drawFloorLayer` (pose crossfade) + lamp sprites; hit areas unchanged (`hitPedalA`...).
+- TONE/PICK/TRIM knobs: verified their strips already keep the lighting fixed (round caps; only the pointer moves).

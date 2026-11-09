@@ -97,7 +97,7 @@ private:
     PedalSteelAudioProcessor& proc;
     float scale = 1.0f;
 
-    juce::Image bg, bgScaled, spPedal[3], spMeter, spThumb, spFill, dispImg, spLever[2], spMidi, spBar, spBarHome;
+    juce::Image bg, bgScaled, d3dPedal[3], d3dLamp[3], d3dLever[2], spMeter, spThumb, spFill, dispImg, spMidi, spBar, spBarHome;
     juce::Image f3d[2][6];   // the 3D floor assembly (Blender): [chrome, brass][bar, knee L, knee R, pedal A, B, C]
     Strip scallop, space, ptrTone, ptrPick, ptrTrim;
     std::vector<float> dotKernel; int dotK = 0;   // RGB, dotK x dotK

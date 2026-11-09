@@ -52,14 +52,18 @@ const juce::Rectangle<float> kSteelArea{ 470.0f, 60.0f, 900.0f, 620.0f };   // b
 PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioProcessor& p)
     : AudioProcessorEditor(&p), proc(p) {
     bg = loadImage(BinaryData::ui_bg_jpg, BinaryData::ui_bg_jpgSize);
-    spPedal[0] = loadImage(BinaryData::sp_pedal_A_on_png, BinaryData::sp_pedal_A_on_pngSize);
-    spPedal[1] = loadImage(BinaryData::sp_pedal_B_on_png, BinaryData::sp_pedal_B_on_pngSize);
-    spPedal[2] = loadImage(BinaryData::sp_pedal_C_on_png, BinaryData::sp_pedal_C_on_pngSize);
+    // deck foot switches A/B/C and knee-lever toggles: Blender frame strips (design/ui_v2/blender/deck_3d.py)
+    d3dPedal[0] = loadImage(BinaryData::d3d_pedal_A_png, BinaryData::d3d_pedal_A_pngSize);
+    d3dPedal[1] = loadImage(BinaryData::d3d_pedal_B_png, BinaryData::d3d_pedal_B_pngSize);
+    d3dPedal[2] = loadImage(BinaryData::d3d_pedal_C_png, BinaryData::d3d_pedal_C_pngSize);
+    d3dLamp[0] = loadImage(BinaryData::d3d_lamp_A_png, BinaryData::d3d_lamp_A_pngSize);
+    d3dLamp[1] = loadImage(BinaryData::d3d_lamp_B_png, BinaryData::d3d_lamp_B_pngSize);
+    d3dLamp[2] = loadImage(BinaryData::d3d_lamp_C_png, BinaryData::d3d_lamp_C_pngSize);
+    d3dLever[0] = loadImage(BinaryData::d3d_lever_L_png, BinaryData::d3d_lever_L_pngSize);
+    d3dLever[1] = loadImage(BinaryData::d3d_lever_R_png, BinaryData::d3d_lever_R_pngSize);
     spMeter = loadImage(BinaryData::sp_meter_on_png, BinaryData::sp_meter_on_pngSize);
     spThumb = loadImage(BinaryData::sp_slider_thumb_png, BinaryData::sp_slider_thumb_pngSize);
     spFill = loadImage(BinaryData::sp_slider_fill_png, BinaryData::sp_slider_fill_pngSize);
-    spLever[0] = loadImage(BinaryData::sp_lever_L_on_png, BinaryData::sp_lever_L_on_pngSize);
-    spLever[1] = loadImage(BinaryData::sp_lever_R_on_png, BinaryData::sp_lever_R_on_pngSize);
     spMidi = loadImage(BinaryData::sp_midi_on_png, BinaryData::sp_midi_on_pngSize);
     spBar = loadImage(BinaryData::sp_tone_bar_png, BinaryData::sp_tone_bar_pngSize);
     spBarHome = loadImage(BinaryData::sp_tone_bar_home_png, BinaryData::sp_tone_bar_home_pngSize);
@@ -698,12 +702,16 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     drawStripFrame(g, space, frameFor(knobAngle(Echo), spaceFrames), centred(spaceCentre0, spaceFramePx));
     drawStripFrame(g, space, frameFor(knobAngle(Reverb), spaceFrames), centred(spaceCentre1, spaceFramePx));
 
-    // pedals A B C (lit + pressed), knee levers (lit + pressed) -- eased in and out
-    drawSprite(g, spPedal[0], sp_pedal_A_on, 0, 1e9f, pedalShown(0));
-    drawSprite(g, spPedal[1], sp_pedal_B_on, 0, 1e9f, pedalShown(1));
-    drawSprite(g, spPedal[2], sp_pedal_C_on, 0, 1e9f, pedalShown(2));
-    drawSprite(g, spLever[0], sp_lever_L_on, 0, 1e9f, pedalShown(3));
-    drawSprite(g, spLever[1], sp_lever_R_on, 0, 1e9f, pedalShown(4));
+    // pedals A B C (tip forward into the panel, lamp lights), knee levers (swing outward, ring halo lights): rendered
+    // poses crossfaded like the floor pedals
+    drawFloorLayer(g, d3dPedal[0], d3d_pedal_A, d3dFrames_pedal_A, pedalShown(0), 0.0f);
+    drawFloorLayer(g, d3dPedal[1], d3d_pedal_B, d3dFrames_pedal_B, pedalShown(1), 0.0f);
+    drawFloorLayer(g, d3dPedal[2], d3d_pedal_C, d3dFrames_pedal_C, pedalShown(2), 0.0f);
+    drawSprite(g, d3dLamp[0], d3d_lamp_A, 0, 1e9f, pedalShown(0));
+    drawSprite(g, d3dLamp[1], d3d_lamp_B, 0, 1e9f, pedalShown(1));
+    drawSprite(g, d3dLamp[2], d3d_lamp_C, 0, 1e9f, pedalShown(2));
+    drawFloorLayer(g, d3dLever[0], d3d_lever_L, d3dFrames_lever_L, pedalShown(3), 0.0f);
+    drawFloorLayer(g, d3dLever[1], d3d_lever_R, d3dFrames_lever_R, pedalShown(4), 0.0f);
 
     // volume pedal slider: fill up to the handle, then the handle
     const float hx = anchored(norm(Volume), kVolume, sliderX0, sliderX1);

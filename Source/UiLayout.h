@@ -2,14 +2,9 @@
 // UI geometry in 1600x1000 px; bitmaps are 2x (3200x2000 canvas).
 #pragma once
 namespace UiLayout {
-    inline constexpr float sp_pedal_A_on[4] = { 981.50f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
-    inline constexpr float sp_pedal_B_on[4] = { 1070.00f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
-    inline constexpr float sp_pedal_C_on[4] = { 1158.50f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
     inline constexpr float sp_meter_on[4] = { 1257.00f, 42.00f, 163.50f, 22.00f };   // x, y, w, h
     inline constexpr float sp_slider_thumb[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
     inline constexpr float sp_slider_fill[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
-    inline constexpr float sp_lever_L_on[4] = { 1275.50f, 710.00f, 120.50f, 155.50f };   // x, y, w, h
-    inline constexpr float sp_lever_R_on[4] = { 1400.00f, 710.00f, 122.50f, 155.50f };   // x, y, w, h
     inline constexpr float sp_midi_on[4] = { 1345.00f, 897.50f, 183.50f, 61.50f };   // x, y, w, h
     inline constexpr float sp_tone_bar[4] = { 800.00f, 146.00f, 49.00f, 180.00f };   // x, y, w, h
     inline constexpr float sp_tone_bar_home[4] = { 799.00f, 146.00f, 51.00f, 180.00f };   // x, y, w, h
@@ -27,6 +22,22 @@ namespace UiLayout {
     inline constexpr int f3dFrames_pedal_B = 7;
     inline constexpr float f3d_pedal_C[4] = { 796.00f, 350.00f, 209.00f, 320.00f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_C = 7;
+    inline constexpr float d3d_pedal_A[4] = { 988.50f, 744.50f, 93.00f, 123.50f };   // x, y, w, h
+    inline constexpr int d3dFrames_pedal_A = 7;
+    inline constexpr float d3d_pedal_B[4] = { 1079.00f, 744.50f, 88.00f, 124.50f };   // x, y, w, h
+    inline constexpr int d3dFrames_pedal_B = 7;
+    inline constexpr float d3d_pedal_C[4] = { 1166.00f, 744.50f, 85.50f, 124.50f };   // x, y, w, h
+    inline constexpr int d3dFrames_pedal_C = 7;
+    inline constexpr float d3d_lever_L[4] = { 1264.00f, 719.00f, 127.50f, 134.00f };   // x, y, w, h
+    inline constexpr int d3dFrames_lever_L = 7;
+    inline constexpr float d3d_lever_R[4] = { 1410.50f, 719.00f, 124.50f, 134.00f };   // x, y, w, h
+    inline constexpr int d3dFrames_lever_R = 7;
+    inline constexpr float d3d_lamp_A[4] = { 981.50f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
+    inline constexpr int d3dFrames_lamp_A = 1;
+    inline constexpr float d3d_lamp_B[4] = { 1070.00f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
+    inline constexpr int d3dFrames_lamp_B = 1;
+    inline constexpr float d3d_lamp_C[4] = { 1158.50f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
+    inline constexpr int d3dFrames_lamp_C = 1;
     inline constexpr float skinBodyY[5] = { 405.5f, 413.5f, 404.5f, 376.5f, 404.5f };   // UI px: bottom edge of each instrument's body (walnut, maple, redsparkle, pearloid, koa)
     inline constexpr int meterSegments = 15;
     inline constexpr int meterSegEnd[15] = { 28, 49, 69, 90, 109, 129, 148, 168, 189, 208, 229, 249, 269, 290, 310 };   // sprite px (2x) where each lit segment ends
