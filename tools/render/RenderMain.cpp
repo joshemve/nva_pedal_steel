@@ -1641,75 +1641,79 @@ int main(int argc, char* argv[]) {
     }
 
     // =========================================================================
-    // Preset 29: 80s Rack Dimension Clean (90 BPM, D Major — Paul Franklin w/ Dire Straits / Prefab Sprout)
+    // =========================================================================
+    // Preset 29: 80s Rack Dimension Clean (96 BPM, D Major — 1985 Bradshaw LA Multi-Rack: Tri-Stereo Chorus + PCM70 Circular Delays)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        // Phrase 1: Glossy 1985 studio Dadd9 harp rake -> A+B (G6/D) -> Pedal A (Bm9/D) -> pure Dadd9 motionless Dimension D!
-        ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 50, 0.78f) }); // D3
-        ev.push_back({ 0.15, juce::MidiMessage::noteOn(1, 57, 0.80f) }); // A3
-        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 64, 0.82f) }); // E4 (pure 9th!)
-        ev.push_back({ 0.21, juce::MidiMessage::noteOn(1, 66, 0.84f) }); // F#4
-        ev.push_back({ 0.24, juce::MidiMessage::noteOn(1, 69, 0.86f) }); // A4
-        ev.push_back({ 0.88, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // A+B: Dadd9 -> pure G6/D {D3, B3, E4, G4, B4}!
-        ev.push_back({ 1.72, juce::MidiMessage::noteOff(1, 28) });
-        ev.push_back({ 1.98, juce::MidiMessage::noteOn(1, 24, 1.00f) }); // Pedal A: silky Bm9/D {D3, B3, E4, F#4, B4}!
-        ev.push_back({ 2.68, juce::MidiMessage::noteOff(1, 24) });      // Resolve cleanly into radiant Dadd9!
-        for (int n : { 50, 57, 64, 66, 69 }) ev.push_back({ 3.45, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 1: Sparkling 1985 LA-studio fingerpicked Dadd9 bell cascade -> A+B (G6/9/D) -> Pedal A (Bm11/D) -> Dadd9!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 50, 0.84f) }); // D3
+        ev.push_back({ 0.20, juce::MidiMessage::noteOn(1, 57, 0.85f) }); // A3
+        ev.push_back({ 0.30, juce::MidiMessage::noteOn(1, 66, 0.88f) }); // F#4
+        ev.push_back({ 0.40, juce::MidiMessage::noteOn(1, 69, 0.90f) }); // A4
+        ev.push_back({ 0.50, juce::MidiMessage::noteOn(1, 76, 0.93f) }); // E5 (high add9 diamond bell!)
+        ev.push_back({ 1.10, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // A+B: Dadd9 -> neon G6/9/D {D3, B3, G4, B4, E5}!
+        ev.push_back({ 1.88, juce::MidiMessage::noteOff(1, 28) });
+        ev.push_back({ 2.04, juce::MidiMessage::noteOn(1, 24, 1.00f) }); // Pedal A: silky Bm11/D {D3, B3, F#4, B4, E5}!
+        ev.push_back({ 2.72, juce::MidiMessage::noteOff(1, 24) });      // Resolve cleanly into radiant Dadd9!
+        for (int n : { 50, 57, 66, 69, 76 }) ev.push_back({ 3.48, juce::MidiMessage::noteOff(1, n) });
 
-        // Phrase 2: Paul Franklin / Dire Straits ("On Every Street") crystalline upper-register fill over F#m7 -> Gmaj9
-        ev.push_back({ 3.62, juce::MidiMessage::noteOn(1, 54, 0.76f) }); // F#3
-        ev.push_back({ 3.66, juce::MidiMessage::noteOn(1, 61, 0.78f) }); // C#4
-        ev.push_back({ 3.70, juce::MidiMessage::noteOn(1, 64, 0.80f) }); // E4
-        ev.push_back({ 3.78, juce::MidiMessage::noteOn(3, 69, 0.88f) }); // A4 -> B4 -> C#5!
-        addPitchWheelRamp(ev, 3, 4.02, 4.35, 0.0f, +2.0f / 12.0f);       // A4 -> B4
-        addPitchWheelRamp(ev, 3, 4.48, 4.80, +2.0f / 12.0f, +4.0f / 12.0f); // B4 -> C#5
-        for (int n : { 54, 61, 64 }) ev.push_back({ 5.15, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 5.15, juce::MidiMessage::noteOff(3, 69) });
-        ev.push_back({ 5.20, juce::MidiMessage::pitchWheel(3, 8192) });
+        // Phrase 2: Prefab Sprout / Dire Straits ("When Love Breaks Down") bell-register cascade & liquid Tri-Chorus bends
+        ev.push_back({ 3.64, juce::MidiMessage::noteOn(1, 54, 0.82f) }); // F#3
+        ev.push_back({ 3.73, juce::MidiMessage::noteOn(1, 61, 0.84f) }); // C#4
+        ev.push_back({ 3.82, juce::MidiMessage::noteOn(1, 64, 0.86f) }); // E4
+        ev.push_back({ 3.91, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // F#4
+        ev.push_back({ 4.00, juce::MidiMessage::noteOn(3, 69, 0.93f) }); // A4 -> B4 -> C#5!
+        addPitchWheelRamp(ev, 3, 4.18, 4.46, 0.0f, +2.0f / 12.0f);       // A4 -> B4
+        addPitchWheelRamp(ev, 3, 4.58, 4.86, +2.0f / 12.0f, +4.0f / 12.0f); // B4 -> C#5
+        for (int n : { 54, 61, 64, 66 }) ev.push_back({ 5.18, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 5.18, juce::MidiMessage::noteOff(3, 69) });
+        ev.push_back({ 5.23, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        ev.push_back({ 5.26, juce::MidiMessage::noteOn(1, 55, 0.78f) }); // G3
-        ev.push_back({ 5.30, juce::MidiMessage::noteOn(1, 62, 0.80f) }); // D4
-        ev.push_back({ 5.34, juce::MidiMessage::noteOn(1, 66, 0.82f) }); // F#4 (Gmaj7)
-        ev.push_back({ 5.40, juce::MidiMessage::noteOn(3, 74, 0.89f) }); // D5 -> E5 -> A4!
-        addPitchWheelRamp(ev, 3, 5.65, 5.95, 0.0f, +2.0f / 12.0f);       // D5 -> E5 (Gmaj13)
-        addPitchWheelRamp(ev, 3, 6.18, 6.55, +2.0f / 12.0f, -5.0f / 12.0f); // E5 -> A4 (Gmaj9)
-        for (int n : { 55, 62, 66 }) ev.push_back({ 6.95, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 6.95, juce::MidiMessage::noteOff(3, 74) });
-        ev.push_back({ 7.02, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 5.28, juce::MidiMessage::noteOn(1, 55, 0.83f) }); // G3
+        ev.push_back({ 5.37, juce::MidiMessage::noteOn(1, 62, 0.85f) }); // D4
+        ev.push_back({ 5.46, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // F#4
+        ev.push_back({ 5.55, juce::MidiMessage::noteOn(1, 71, 0.88f) }); // B4 (Gmaj7)
+        ev.push_back({ 5.64, juce::MidiMessage::noteOn(3, 74, 0.94f) }); // D5 -> E5 -> A4 across PCM70 circular pan-delays!
+        addPitchWheelRamp(ev, 3, 5.82, 6.08, 0.0f, +2.0f / 12.0f);       // D5 -> E5 (Gmaj13)
+        addPitchWheelRamp(ev, 3, 6.26, 6.60, +2.0f / 12.0f, -5.0f / 12.0f); // E5 -> A4 (Gmaj9)
+        for (int n : { 55, 62, 66, 71 }) ev.push_back({ 6.98, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 6.98, juce::MidiMessage::noteOff(3, 74) });
+        ev.push_back({ 7.04, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 3: Prefab Sprout / Sophisti-Pop Em9 -> A13sus4 -> A13 rack shimmer
-        ev.push_back({ 7.12, juce::MidiMessage::noteOn(1, 52, 0.78f) }); // E3
-        ev.push_back({ 7.15, juce::MidiMessage::noteOn(1, 59, 0.80f) }); // B3
-        ev.push_back({ 7.18, juce::MidiMessage::noteOn(1, 62, 0.81f) }); // D4
-        ev.push_back({ 7.21, juce::MidiMessage::noteOn(1, 66, 0.83f) }); // F#4
-        ev.push_back({ 7.24, juce::MidiMessage::noteOn(1, 71, 0.85f) }); // B4
-        for (int n : { 52, 59, 62, 66, 71 }) ev.push_back({ 8.35, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 3: Michael Landau / Toto wide-open 1985 LA rack Em9 bell harp -> A13sus4 -> A13
+        ev.push_back({ 7.12, juce::MidiMessage::noteOn(1, 52, 0.84f) }); // E3
+        ev.push_back({ 7.21, juce::MidiMessage::noteOn(1, 59, 0.85f) }); // B3
+        ev.push_back({ 7.30, juce::MidiMessage::noteOn(1, 67, 0.87f) }); // G4
+        ev.push_back({ 7.39, juce::MidiMessage::noteOn(1, 71, 0.89f) }); // B4
+        ev.push_back({ 7.48, juce::MidiMessage::noteOn(1, 78, 0.93f) }); // F#5 (high 9th neon bell!)
+        for (int n : { 52, 59, 67, 71, 78 }) ev.push_back({ 8.38, juce::MidiMessage::noteOff(1, n) });
 
-        ev.push_back({ 8.45, juce::MidiMessage::noteOn(1, 45, 0.80f) }); // A2
-        ev.push_back({ 8.48, juce::MidiMessage::noteOn(1, 55, 0.81f) }); // G3
-        ev.push_back({ 8.51, juce::MidiMessage::noteOn(1, 66, 0.83f) }); // F#4 (13th)
-        ev.push_back({ 8.55, juce::MidiMessage::noteOn(3, 74, 0.88f) }); // D5 (sus4) -> C#5 (A13)!
-        addPitchWheelRamp(ev, 3, 9.05, 9.42, 0.0f, -1.0f / 12.0f);       // D5 -> C#5
-        for (int n : { 45, 55, 66 }) ev.push_back({ 9.85, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 9.85, juce::MidiMessage::noteOff(3, 74) });
-        ev.push_back({ 9.94, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 8.48, juce::MidiMessage::noteOn(1, 45, 0.84f) }); // A2
+        ev.push_back({ 8.56, juce::MidiMessage::noteOn(1, 55, 0.85f) }); // G3
+        ev.push_back({ 8.64, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // F#4 (13th)
+        ev.push_back({ 8.72, juce::MidiMessage::noteOn(1, 69, 0.88f) }); // A4
+        ev.push_back({ 8.80, juce::MidiMessage::noteOn(3, 74, 0.92f) }); // D5 (sus4) -> C#5 (A13)!
+        addPitchWheelRamp(ev, 3, 9.08, 9.42, 0.0f, -1.0f / 12.0f);       // D5 -> C#5
+        for (int n : { 45, 55, 66, 69 }) ev.push_back({ 9.88, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 9.88, juce::MidiMessage::noteOff(3, 74) });
+        ev.push_back({ 9.95, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 4: Wide-screen 1985 Dadd9 bell chord with pure diatonic E5 -> F#5 grace floating across the SDD-320 stage
-        ev.push_back({ 10.05, juce::MidiMessage::noteOn(1, 50, 0.80f) }); // D3
-        ev.push_back({ 10.09, juce::MidiMessage::noteOn(1, 57, 0.82f) }); // A3
-        ev.push_back({ 10.13, juce::MidiMessage::noteOn(1, 66, 0.84f) }); // F#4
-        ev.push_back({ 10.17, juce::MidiMessage::noteOn(1, 69, 0.86f) }); // A4
-        ev.push_back({ 10.21, juce::MidiMessage::noteOn(1, 74, 0.87f) }); // D5
-        ev.push_back({ 10.26, juce::MidiMessage::noteOn(3, 76, 0.84f) }); // E5 -> F#5 diatonic country-pop bell grace!
-        addPitchWheelRamp(ev, 3, 10.34, 10.60, 0.0f, +2.0f / 12.0f);     // E5 -> F#5
-        for (int n : { 50, 57, 66, 69, 74 }) ev.push_back({ 12.85, juce::MidiMessage::noteOff(1, n) });
+        // Phrase 4: Wide-screen 1985 Blue Nile neon Dmaj9 crystal bell finale floating into circular PCM70 stereo horizon
+        ev.push_back({ 10.05, juce::MidiMessage::noteOn(1, 50, 0.85f) }); // D3
+        ev.push_back({ 10.14, juce::MidiMessage::noteOn(1, 57, 0.86f) }); // A3
+        ev.push_back({ 10.23, juce::MidiMessage::noteOn(1, 66, 0.88f) }); // F#4
+        ev.push_back({ 10.32, juce::MidiMessage::noteOn(1, 69, 0.89f) }); // A4
+        ev.push_back({ 10.41, juce::MidiMessage::noteOn(1, 73, 0.90f) }); // C#5 (maj7)
+        ev.push_back({ 10.50, juce::MidiMessage::noteOn(3, 76, 0.92f) }); // E5 (maj9) -> F#5 diamond bell shimmer!
+        addPitchWheelRamp(ev, 3, 10.68, 10.98, 0.0f, +2.0f / 12.0f);     // E5 -> F#5
+        for (int n : { 50, 57, 66, 69, 73 }) ev.push_back({ 12.85, juce::MidiMessage::noteOff(1, n) });
         ev.push_back({ 12.85, juce::MidiMessage::noteOff(3, 76) });
 
-        renderSequenceToWav(28, 14.2, 90.0, ev, presetsDir.getChildFile("29_80s_rack_dimension_clean.wav"));
+        renderSequenceToWav(28, 14.4, 96.0, ev, presetsDir.getChildFile("29_80s_rack_dimension_clean.wav"));
     }
 
     // =========================================================================

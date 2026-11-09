@@ -1029,37 +1029,37 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "29 - 80s Rack Dimension Clean",
             "80s Studio Pop",
-            "SSL 4000 VCA compression + Roland SDD-320 Dimension D Mode IV motionless-pitch cross-coupled BBD spatializer (Paul Franklin w/ Dire Straits / Prefab Sprout): ultra-glossy wide-screen 1985 studio clean.",
+            "1985 Bradshaw LA multi-rack: DBX 160X spanky VCA + Aphex Type-C bell air + symmetrical 3-phase DyTronics Tri-Stereo Chorus & Lexicon PCM70 circular pan-delays (Michael Landau / Paul Franklin / Prefab Sprout).",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0; // Nashville Gold
                 p.playMode      = 1; // Lead Legato (prevents raked-chord overlap stealing!)
-                p.fxCharacter   = 15; // Dimension D Chorus
+                p.fxCharacter   = 15; // 80s Tri-Chorus & PCM70 Rack
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.10f; // Crisp concert-locked studio chord attacks
-                p.pedalSpeed    = 145.0f;
-                p.barGlide      = 130.0f;
-                p.barSlideNoise = 0.20f;
-                p.vibratoDepth  = 0.12f;
+                p.scoopDepth    = 0.08f; // Crisp concert-locked studio chord attacks
+                p.pedalSpeed    = 140.0f;
+                p.barGlide      = 125.0f;
+                p.barSlideNoise = 0.18f;
+                p.vibratoDepth  = 0.10f;
                 p.vibratoRate   = 4.75f;
-                p.autoSwell     = 0.08f;
-                p.swellTime     = 90.0f;
+                p.autoSwell     = 0.04f; // Instant DBX 160X glassy pick spank!
+                p.swellTime     = 80.0f;
                 p.sampleBlend   = 0.90f;
-                p.pickSnap      = 0.62f;
-                p.pickupPos     = 2.22f;
-                p.coilPeakFreq  = 2280.0f;
-                p.coilResonance = 0.58f;
-                p.sustainTime   = 8.8f;
-                p.cabinetDrop   = 0.04f; // Rock-solid tuning across wide chord pulls
-                p.stereoWidth   = 1.32f;
-                p.ampDrive      = 0.14f;
-                p.toneWarmth    = 0.44f;
-                p.delayMix      = 0.14f;
+                p.pickSnap      = 0.76f; // Crystalline 1985 LA studio bell attack
+                p.pickupPos     = 2.08f;
+                p.coilPeakFreq  = 2580.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 9.4f;
+                p.cabinetDrop   = 0.03f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.12f;
+                p.toneWarmth    = 0.36f; // Glossy hi-fi rack top-end clarity
+                p.delayMix      = 0.08f; // Complements internal PCM70 circular 1/8 + 1/8D pan-delays
                 p.delayTime     = 500.0f; // 1/8D
                 p.tempoSync     = true;
-                p.reverbMix     = 0.38f;
-                p.reverbDecay   = 0.72f;
-                p.outputLevel   = 0.2f;
+                p.reverbMix     = 0.40f;
+                p.reverbDecay   = 0.76f;
+                p.outputLevel   = 0.0f;
                 return p;
             }()
         },

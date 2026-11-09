@@ -414,7 +414,7 @@ void PedalSteelEngine::ModernCharacterProcessor::prepare(double sr) {
     modBufL.assign(static_cast<size_t>(modMaxLen), 0.0f);
     modBufR.assign(static_cast<size_t>(modMaxLen), 0.0f);
 
-    shimMaxLen = std::max(4096, static_cast<int>(sr * 0.240) + 64);
+    shimMaxLen = std::max(4096, static_cast<int>(sr * 0.560) + 64);
     shimBufL.assign(static_cast<size_t>(shimMaxLen), 0.0f);
     shimBufR.assign(static_cast<size_t>(shimMaxLen), 0.0f);
 
@@ -620,12 +620,12 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         charFilter2.setPeak(sr, 2550.0f, 0.90f, 2.2f);
         charFilter3.setLowpass(sr, 5200.0f, 0.72f);
     } else if (mode == 15) {
-        // 29: Dimension D Chorus (SSL VCA Comp + Roland SDD-320 Motionless-Pitch Cross-Coupled BBD + 6.2 kHz Studio Air)
-        dimHpFilter.setHighpass(sr, 280.0f, 0.707f);
-        subLpFilter.setLowpass(sr, 7200.0f, 0.72f);
-        charFilter1.setPeak(sr, 165.0f, 0.74f, 2.0f);
-        charFilter2.setPeak(sr, 660.0f, 0.90f, -2.0f);
-        charFilter3.setPeak(sr, std::min(6200.0f, static_cast<float>(sr * 0.40)), 0.76f, 2.8f);
+        // 29: 1985 Bradshaw LA Multi-Rack (DBX 160X Spank + Aphex Type-C Bell Sheen + DyTronics CS-5 3-Phase Tri-Chorus + PCM70 Pan-Delays)
+        dimHpFilter.setHighpass(sr, 235.0f, 0.707f);
+        subLpFilter.setLowpass(sr, 6800.0f, 0.72f);
+        charFilter1.setPeak(sr, 138.0f, 0.76f, 2.4f);
+        charFilter2.setPeak(sr, 720.0f, 0.88f, -4.2f);
+        charFilter3.setPeak(sr, 5400.0f, 0.78f, 3.8f);
     } else if (mode == 16) {
         // 30: Poly-Octave Organ (Phase-Locked Per-String 16'+8'+4' Studio Steel Choir -> Messina Bellows & Silk POG2 LPF)
         dimHpFilter.setHighpass(sr, 195.0f, 0.707f);
@@ -1316,35 +1316,99 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         ioR = dirR * 0.28f + adtTapeR * 0.78f + adtTapeL * 0.18f;
         outExtraRevL = (dirL + adtTapeL) * 0.22f;
         outExtraRevR = (dirR + adtTapeR) * 0.22f;
-    } else if (mode == 15) {
-        // 29: Dimension D Chorus (SSL VCA Comp + Roland SDD-320 Motionless-Pitch Cross-Coupled BBD + 6.2 kHz Air)
-        // Ultra-slow 0.24 Hz ±0.48 ms anti-phase BBD sweep (±1.2 cents max -> zero pitch wobble, 100% concert-pitch lock!)
-        lfoPhase1 += 0.24 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        lfoPhase2 += 0.11 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+    } else if (mode == 15 && shimMaxLen > 64) {
+        // 29: 1985 Bradshaw LA Multi-Rack:
+        // Unit 1: DBX 160X Slow-Attack Spanky Bell VCA + Aphex Aural Exciter Type-C (>3.3 kHz Harmonic Air)
+        // Unit 2: DyTronics CS-5 Symmetrical 120-Deg 3-Phase Tri-Stereo Chorus (sin(0)+sin(120)+sin(240) == 0 -> 0.00-cent pitch lock!)
+        // Unit 3: Lexicon PCM70 Circular Pan-Delays (1/8 Left + Dotted-1/8 Right modulated crystal repeats)
+        lfoPhase1 += 0.58 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0; // Preset A lush wave
+        lfoPhase2 += 1.62 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0; // Preset B liquid shimmer
 
         const float pk = std::max(std::abs(ioL), std::abs(ioR));
-        const float vcaAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.005 : 0.160)));
-        cassetteSagEnv += vcaAlpha * (pk - cassetteSagEnv);
-        const float vcaGain = 1.24f / (1.0f + 0.52f * cassetteSagEnv);
+        const float fastAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > gateEnv) ? 0.0012 : 0.032)));
+        const float slowAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.026 : 0.155)));
+        gateEnv        += fastAlpha * (pk - gateEnv);
+        cassetteSagEnv += slowAlpha * (pk - cassetteSagEnv);
 
-        const float dryCleanL = charFilter3.processL(charFilter2.processL(charFilter1.processL(fastTanh(ioL * vcaGain) * 0.92f)));
-        const float dryCleanR = charFilter3.processR(charFilter2.processR(charFilter1.processR(fastTanh(ioR * vcaGain) * 0.92f)));
+        // DBX 160X slow-attack glassy transient pop + plush sustain leveling
+        const float spankSnap = juce::jlimit(0.0f, 0.55f, (gateEnv - cassetteSagEnv) * 2.15f);
+        const float vcaGain   = (1.16f + 0.72f * spankSnap) / (1.0f + 0.68f * cassetteSagEnv);
 
-        const float modSin = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
-        const float drift  = 0.08f * static_cast<float>(std::sin(kTwoPi * lfoPhase2));
-        const float dDimL = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.75f + 0.48f * modSin + drift) * srMs);
-        const float dDimR = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.55f - 0.48f * modSin - drift) * srMs);
+        const float vcaL = fastTanh(ioL * vcaGain) * 0.90f;
+        const float vcaR = fastTanh(ioR * vcaGain) * 0.90f;
 
-        const float bbdL = dimHpFilter.processL(subLpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dDimL)));
-        const float bbdR = dimHpFilter.processR(subLpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dDimR)));
+        // Aphex Type-C high-band harmonic sheen (>3.3 kHz zero-mean even-harmonic diamond air, DC-blocked)
+        const float exHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 3300.0 / sr));
+        xoverLp1L += exHpAlpha * (vcaL - xoverLp1L);
+        xoverLp1R += exHpAlpha * (vcaR - xoverLp1R);
+        const float hiL = juce::jlimit(-1.5f, 1.5f, (vcaL - xoverLp1L) * 1.85f);
+        const float hiR = juce::jlimit(-1.5f, 1.5f, (vcaR - xoverLp1R) * 1.85f);
+        const float rawExL = fastTanh(hiL + 0.34f * hiL * hiL) - 0.17f * fastTanh(hiL * hiL);
+        const float rawExR = fastTanh(hiR + 0.34f * hiR * hiR) - 0.17f * fastTanh(hiR * hiR);
+        const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 28.0 / sr));
+        leslieDcL += dcAlpha * (rawExL - leslieDcL);
+        leslieDcR += dcAlpha * (rawExR - leslieDcR);
 
-        // SDD-320 phase-inverted cross-channel wet matrix above 280 Hz (wide-screen 3D gloss, zero pitch shift, 100% mono-safe!)
-        const float wetL = bbdL - 0.52f * bbdR;
-        const float wetR = bbdR - 0.52f * bbdL;
-        ioL = dryCleanL * 0.86f + wetL * 0.50f;
-        ioR = dryCleanR * 0.86f + wetR * 0.50f;
-        outExtraRevL = (dryCleanL + wetL) * 0.22f;
-        outExtraRevR = (dryCleanR + wetR) * 0.22f;
+        const float dryCleanL = charFilter3.processL(charFilter2.processL(charFilter1.processL(vcaL + 0.24f * (rawExL - leslieDcL))));
+        const float dryCleanR = charFilter3.processR(charFilter2.processR(charFilter1.processR(vcaR + 0.24f * (rawExR - leslieDcR))));
+
+        // Write pre-EQ+Exciter signal into modBuf so the 3 Tri-Chorus BBDs shimmer with full 5.4 kHz bell glass!
+        modBufL[static_cast<size_t>(modWritePos)] = dryCleanL;
+        modBufR[static_cast<size_t>(modWritePos)] = dryCleanR;
+
+        // Symmetrical 120-degree 3-Phase Tri-Stereo Chorus (exact zero-sum instantaneous pitch centroid!)
+        const double th = kTwoPi * lfoPhase1;
+        const double ps = kTwoPi * lfoPhase2;
+        const float w1 = 1.62f * static_cast<float>(std::sin(th))            + 0.32f * static_cast<float>(std::sin(ps));
+        const float w2 = 1.62f * static_cast<float>(std::sin(th + 2.094395)) + 0.32f * static_cast<float>(std::sin(ps + 2.094395));
+        const float w3 = 1.62f * static_cast<float>(std::sin(th + 4.188790)) + 0.32f * static_cast<float>(std::sin(ps + 4.188790));
+
+        const float dTri1 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (6.50f  + w1) * srMs);
+        const float dTri2 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (9.45f  + w2) * srMs);
+        const float dTri3 = juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (12.40f + w3) * srMs);
+
+        const float tap1L = readFloatBufHermite(modBufL, modWritePos, dTri1);
+        const float tap2R = readFloatBufHermite(modBufR, modWritePos, dTri2);
+        const float tap3C = 0.5f * (readFloatBufHermite(modBufL, modWritePos, dTri3)
+                                  + readFloatBufHermite(modBufR, modWritePos, dTri3));
+
+        const float triL = dimHpFilter.processL(subLpFilter.processL(tap1L + 0.64f * tap3C - 0.34f * tap2R));
+        const float triR = dimHpFilter.processR(subLpFilter.processR(tap2R + 0.64f * tap3C - 0.34f * tap1L));
+
+        // Lexicon PCM70 Dynamically Ducked Circular Pan-Delays (1/8 Left + Dotted-1/8 Right — clean on chords, blooms in pauses!)
+        const double safeBpm = tempoSync ? juce::jlimit(68.0, 175.0, hostBpm) : 96.0;
+        const float eighthMs = static_cast<float>(30000.0 / safeBpm);
+        const float pcmMsL   = juce::jlimit(140.0f, 345.0f, eighthMs) + 0.32f * w2;
+        const float pcmMsR   = juce::jlimit(210.0f, 515.0f, eighthMs * 1.5f) + 0.32f * w3;
+        const float dPcmL    = juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), pcmMsL * srMs);
+        const float dPcmR    = juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), pcmMsR * srMs);
+
+        const float rawPcmL = readFloatBufHermite(shimBufL, shimWritePos, dPcmL);
+        const float rawPcmR = readFloatBufHermite(shimBufR, shimWritePos, dPcmR);
+
+        const float pcmLpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 3950.0 / sr));
+        const float pcmHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 240.0 / sr));
+        shimLpL += pcmLpAlpha * (rawPcmL - shimLpL);
+        shimLpR += pcmLpAlpha * (rawPcmR - shimLpR);
+        hornBeamLpL += pcmHpAlpha * (shimLpL - hornBeamLpL);
+        hornBeamLpR += pcmHpAlpha * (shimLpR - hornBeamLpR);
+        const float pcmTapL = shimLpL - hornBeamLpL;
+        const float pcmTapR = shimLpR - hornBeamLpR;
+
+        // True 85%-wet DyTronics CS-5 Tri-Stereo Chorus balance + PCM70 dynamic ducking!
+        const float triMixL  = dryCleanL * 0.34f + triL * 0.88f;
+        const float triMixR  = dryCleanR * 0.34f + triR * 0.88f;
+        const float duckGain = 1.0f / (1.0f + 4.8f * gateEnv);
+        const float pcmGain  = 0.11f + 0.32f * duckGain;
+
+        shimBufL[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.5f, 2.5f, triMixL * 0.85f + pcmTapR * 0.27f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.5f, 2.5f, triMixR * 0.85f + pcmTapL * 0.27f);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        ioL = triMixL + pcmTapL * pcmGain;
+        ioR = triMixR + pcmTapR * pcmGain;
+        outExtraRevL = (triMixL + pcmTapL * 0.70f) * 0.28f;
+        outExtraRevR = (triMixR + pcmTapR * 0.70f) * 0.28f;
     } else if (mode == 16) {
         // 30: Poly-Octave Organ (Messina Harmonium Bellows + Voix-Celeste ±1.0c Stereo Air + Cathedral Reflections)
         // Note: 0.00-cent phase-locked 16' Sub + 8' Steel + silk-filtered 4' Octave ranks are generated per-string in renderBlock()!
@@ -1443,6 +1507,7 @@ void PedalSteelEngine::reset() {
     studioTweedCabFilter.reset();
     dcBlockerStudio.reset();
     tweedSagEnv = 0.0f;
+    rackBellSmooth  = (params.fxCharacter == 15) ? 1.0f : 0.0f;
     organRankSmooth = (params.fxCharacter == 16) ? 1.0f : 0.0f;
 
     sympathetic.reset();
@@ -2313,8 +2378,11 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         smoothLKL    += (targetLKL - smoothLKL) * pSmooth;
         smoothLKR    += (targetLKR - smoothLKR) * pSmooth;
         smoothVolPedal += (targetVol - smoothVolPedal) * pSmooth;
+        const float targetRack  = (params.fxCharacter == 15) ? 1.0f : 0.0f;
         const float targetOrgan = (params.fxCharacter == 16) ? 1.0f : 0.0f;
-        organRankSmooth += (targetOrgan - organRankSmooth) * static_cast<float>(1.0 - std::exp(-dt / 0.0085));
+        const float rankAlpha   = static_cast<float>(1.0 - std::exp(-dt / 0.0085));
+        rackBellSmooth  += (targetRack  - rackBellSmooth)  * rankAlpha;
+        organRankSmooth += (targetOrgan - organRankSmooth) * rankAlpha;
 
         const float pwOmega = (!anyVoiceHeld) ? 28.0f : std::min(barOmega, 10.5f);
         const float pwAccel = pwOmega * pwOmega * (pitchWheelNorm - smoothPitchWheel) - 2.0f * pwOmega * smoothPitchWheelVel;
@@ -2600,6 +2668,12 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 if (organRankSmooth > 0.0005f && !v.isPalmHarmonic && h == 2) {
                     organPipeMono += 0.045f * organRankSmooth * static_cast<float>(std::sin(ph));
                 }
+                if (rackBellSmooth > 0.0005f && !v.isPalmHarmonic && (h == 2 || h == 4 || h == 6)) {
+                    const float bellEnv = std::exp(-ageF / 0.28f) * (0.35f + 0.65f * v.velocity) * (1.0f - 0.65f * params.autoSwell);
+                    const float bellW   = (h == 2) ? (0.026f + 0.058f * bellEnv)
+                                                   : ((h == 4) ? (0.012f + 0.046f * bellEnv) : (0.032f * bellEnv));
+                    organPipeMono += bellW * highRegPurity * rackBellSmooth * static_cast<float>(std::sin(ph));
+                }
             }
 
             // Physical Chrome-Bar Winding Slide Layer (delicate high-Q metallic string-harmonic glint during glides!)
@@ -2659,6 +2733,17 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                             + (subMsL * 0.46f + v.chimeLpStateL * 0.44f * upTame) * params.sampleBlend * organRankSmooth;
                         msR = msR * (1.0f - 0.12f * organRankSmooth)
                             + (subMsR * 0.46f + v.chimeLpStateR * 0.44f * upTame) * params.sampleBlend * organRankSmooth;
+                    } else if (rackBellSmooth > 0.0005f) {
+                        const double loopOffsetBase = static_cast<double>(std::max(0, ms.loopStartFrame - ms.startFrame)) + 512.0;
+                        float upMsL = 0.0f, upMsR = 0.0f;
+                        readStereoMultiSampleHermite(v.multiSampleIdx, loopOffsetBase + v.samplePos * 2.0, upMsL, upMsR);
+                        const float glassAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 2950.0 / sampleRate));
+                        v.chimeLpStateL += glassAlpha * (upMsL - v.chimeLpStateL);
+                        v.chimeLpStateR += glassAlpha * (upMsR - v.chimeLpStateR);
+                        const float upTame = juce::jlimit(0.22f, 1.0f, (1750.0f - targetSampleHz) / 950.0f);
+                        const float crystalBloom = (0.14f + 0.28f * std::exp(-ageF / 0.34f)) * upTame * rackBellSmooth;
+                        msL += v.chimeLpStateL * params.sampleBlend * crystalBloom;
+                        msR += v.chimeLpStateR * params.sampleBlend * crystalBloom;
                     }
                 }
 
