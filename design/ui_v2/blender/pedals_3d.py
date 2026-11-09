@@ -9,7 +9,7 @@ Writes OUT_DIR/<layer>_<frame>.png (RGBA, the canvas region REG) and OUT_DIR/ren
 Camera: orthographic, pitched PHI below horizontal. Canvas mapping (fitted to the reference's pedals, rods and bar):
     x = X0 + S*X        y = C - S*(Y*sin(PHI) + Z*cos(PHI))        (metres; X right, Y away from the player, Z up)
 """
-import bpy, json, math, sys
+import bpy, json, math, os, sys
 from pathlib import Path
 from mathutils import Vector
 
@@ -25,7 +25,7 @@ U = Vector((0, sP, cP)); D = Vector((0, cP, -sP))
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
-sc.render.engine = "CYCLES"; sc.cycles.device = "GPU"; sc.cycles.samples = SAMPLES; sc.cycles.use_denoising = True
+sc.render.engine = "CYCLES"; sc.cycles.device = "GPU"; sc.cycles.samples = SAMPLES; sc.cycles.use_denoising = not os.environ.get("NO_DENOISE")
 prefs = bpy.context.preferences.addons["cycles"].preferences
 try:
     prefs.compute_device_type = "OPTIX"; prefs.get_devices()
@@ -77,6 +77,8 @@ def obj(name, me_op, material, loc, scale=(1, 1, 1), rot=(0, 0, 0), bevel=0.0, s
     if bevel:
         bm = o.modifiers.new("bevel", "BEVEL"); bm.width = bevel; bm.segments = seg; bm.limit_method = "ANGLE"
     for p in o.data.polygons: p.use_smooth = True
+    if not bevel:   # cylinders: keep the end caps out of the side normals (smoothing them in tilted every rod's
+        o.data.set_sharp_from_angle(angle=math.radians(30))   # shading normal along its length: wrong reflections)
     o.data.materials.append(material)
     if parent: o.parent = parent; o.matrix_parent_inverse = parent.matrix_world.inverted()
     return o
@@ -114,8 +116,10 @@ layers["bar"] = {"objects": bar, "anim": None}
 # pedals: housing pivoting on the bar, ribbed rubber pad, pull rod from the toe (far end) straight up
 PED_X = {"A": (1355 - X0) / S, "B": 0.0, "C": (1717 - X0) / S}
 PW, PY0, PY1, PZ0, PZ1 = 0.064, -0.0367, 0.0565, 0.017, 0.050
-ROD_Y, ROD_R, ROD_TOP = 0.031, 0.0024, 0.86
+ROD_Y, ROD_R, ROD_TOP = 0.031, 0.0037, 0.86
 PRESS_DEG = 13.0
+RODS = bpy.data.collections.new("RodReceivers")   # the pull rods: see the RodGlint strips (below) only
+ROD_PX = []
 PADS = bpy.data.collections.new("PadReceivers")   # lit by the low front pad light only (no rug shadows from it)
 for k, px in PED_X.items():
     piv = empty("Pivot_" + k, (px, 0, BAR_Z))
@@ -135,7 +139,10 @@ for k, px in PED_X.items():
     lean = 0.04 * px                      # the reference's rods converge slightly toward the floor
     top = Vector((px + lean * (ROD_TOP - PZ1) / 0.58, ROD_Y, ROD_TOP))
     rd = [rod("Rod_" + k, Vector((px, ROD_Y, PZ1 + 0.002)), top, ROD_R, M_METAL)]
-    rd.append(obj("Collar_" + k, cyl(32), M_METAL, (px, ROD_Y, PZ1 + 0.006), (0.0042, 0.0042, 0.006), bevel=0.001, seg=2))
+    RODS.objects.link(rd[0])
+    # where the rod enters the pad: a small black rubber socket (as on the reference), not a chrome collar
+    rd.append(obj("Socket_" + k, sph, M_LIP, (px, ROD_Y, PZ1 + 0.0032), (0.0054, 0.0054, 0.0032)))
+    ROD_PX.append(px)
     layers["pedal_" + k] = {"objects": parts + rd, "anim": ("pedal", piv, rd)}
 
 # knee levers: an arm running under the body toward the player, a black paddle facing the knee; swings about a
@@ -197,13 +204,55 @@ nt.links.new(em.outputs[0], o_.inputs[0]); dome.data.materials.append(dm)
 dome.visible_camera = False; dome.visible_diffuse = False; dome.visible_shadow = False
 dome.visible_transmission = False; dome.visible_volume_scatter = False; dome.visible_glossy = True
 
+# the pull rods (Joshua: "silver reflective here more in reference than ours"). Seen from this camera a vertical
+# chrome rod mirrors the floor just in front of and below it (the dark rug), so it read dark. Each rod gets a warm
+# emitter strip on the floor exactly where its left-of-centre facets look: glossy rays only, light-linked to the rods,
+# so it shows up as a bright silver line running down each rod and touches nothing else. Every point of a
+# cylinder at facet angle th reflects the same direction r(th); a wedge (width ~ height) keeps the line even.
+dv = Vector((0, math.cos(PHI), -math.sin(PHI)))
+def refl(th):
+    n = Vector((math.sin(th), -math.cos(th), 0)); return dv - 2 * dv.dot(n) * n
+def glint_mat(name, strength):
+    m = bpy.data.materials.new(name); m.use_nodes = True; nt_ = m.node_tree; nt_.nodes.clear()
+    e = nt_.nodes.new("ShaderNodeEmission"); e.inputs["Color"].default_value = (1.0, 0.88, 0.72, 1)
+    e.inputs["Strength"].default_value = strength
+    # emission over a fully transparent surface: everything that is not linked to it (the housings, the bar) looks
+    # straight through to the rug instead of seeing a black strip
+    tr = nt_.nodes.new("ShaderNodeBsdfTransparent"); ad = nt_.nodes.new("ShaderNodeAddShader")
+    nt_.links.new(e.outputs[0], ad.inputs[0]); nt_.links.new(tr.outputs[0], ad.inputs[1])
+    nt_.links.new(ad.outputs[0], nt_.nodes.new("ShaderNodeOutputMaterial").inputs[0])
+    try: m.emission_sampling = "BOTH"
+    except Exception: pass
+    return m
+GK = float(os.environ.get("ROD_GLINT", "1.0"))
+# broad soft strip: the silver body of the rod (both flanks grey, not black); tight strip: the white core line
+GLINTS = [(glint_mat("RodSheen", 0.3 * GK), math.radians(-12), math.radians(52)),
+          (glint_mat("RodCore", 0.9 * GK), math.radians(-20), math.radians(9))]
+for i, px in (enumerate(ROD_PX) if not os.environ.get("NO_GLINT_OBJ") else []):
+    for j, (gm, th0, thw) in enumerate(GLINTS):
+        # built as a strip of short segments: one long sliver triangle pair samples badly in Cycles
+        # at the height of the pad top, not the floor: the rod's lowest stretch (over the pad) mirrors the pad, so
+        # floor strips left it dark; every non-rod surface looks straight through these strips anyway
+        GZ = PZ1 + 0.006; NS = 24; vs = []; fs = []
+        zt = ROD_TOP * float(os.environ.get("GLINT_EXT", "1"))
+        for si in range(NS + 1):
+            z = GZ + 0.003 + (zt - GZ - 0.003) * si / NS
+            for th in (th0 - thw, th0 + thw):
+                r = refl(th); t = (z - GZ) / -r.z
+                vs.append((px + r.x * t, ROD_Y + r.y * t, GZ + 0.0004 * j))
+            if si: fs.append((2 * si - 2, 2 * si - 1, 2 * si + 1, 2 * si))
+        me = bpy.data.meshes.new("RodGlint"); me.from_pydata(vs, [], fs); me.update(); me.materials.append(gm)
+        g = bpy.data.objects.new("RodGlint_%d_%d" % (i, j), me); sc.collection.objects.link(g)
+        g.visible_camera = bool(os.environ.get("GLINT_DEBUG")); g.visible_diffuse = False; g.visible_shadow = False
+        g.visible_transmission = False; g.visible_volume_scatter = False; g.visible_glossy = True
+        g.light_linking.receiver_collection = RODS
+
 allobjs = [o for L in layers.values() for o in L["objects"]]
 meta = {"region": REG, "frames": FRAMES, "metal": METAL, "press_deg": PRESS_DEG, "layers": {}}
 def render_to(path):
     sc.render.filepath = str(path); bpy.ops.render.render(write_still=True)
 
 
-import os
 ONLY = [x for x in os.environ.get("PEDAL_LAYERS", "").split(",") if x]   # re-render just these layers
 for name, L in layers.items():
     if ONLY and name not in ONLY: continue
