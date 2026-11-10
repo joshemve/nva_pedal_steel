@@ -123,6 +123,7 @@ refrect("hitMode", 183, 912, 462, 950); refrect("hitMidiLearn", 1332, 912, 1483,
 refrect("hitSlider", 752, 915, 1168, 958)
 pb = json.load(open("aligned/pedals_unlit.json"))["part_box_canvas"]; cw = (pb[2] - pb[0]) / 3
 for i, k in enumerate("ABC"): rect("hitPedal" + k, (pb[0] + i * cw) / 2, pb[1] / 2, (pb[0] + (i + 1) * cw) / 2, pb[3] / 2)
-refrect("hitLKL", 1262, 715, 1352, 860); refrect("hitLKR", 1388, 715, 1478, 860)
+for k_, n_ in (("hitLKL", "lever_L"), ("hitLKR", "lever_R")):   # the 3D levers' own boxes (all frames), not the old reference spots
+    b_ = D3["layers"][n_]["box"]; rect(k_, b_[0] / 2, b_[1] / 2, b_[2] / 2, b_[3] / 2)
 lines.append("}"); open(os.path.join(ROOT, "Source", "UiLayout.h"), "w").write("\n".join(lines) + "\n")
 print("wrote Source/UiLayout.h and", len(os.listdir(OUT)), "assets;", sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT)) // 1024, "KB")

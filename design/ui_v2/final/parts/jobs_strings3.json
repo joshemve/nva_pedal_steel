@@ -1,0 +1,30 @@
+[
+ {
+  "name": "strings3_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings3_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings3_koa_3",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings3_koa_4",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ }
+]

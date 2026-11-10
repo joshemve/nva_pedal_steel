@@ -212,3 +212,40 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   (`final/deck3d/gen/deckclean_1_1.png`, made by `make_deckclean.py`) under the controls; gen_layout uses it for ui_bg.
 - The editor draws them with `drawFloorLayer` (pose crossfade) + lamp sprites; hit areas unchanged (`hitPedalA`...).
 - TONE/PICK/TRIM knobs: verified their strips already keep the lighting fixed (round caps; only the pointer moves).
+
+## 2026-11-10: deck controls respaced from ChatGPT before/after concepts
+- Concepts: `final/deck3d/make_deck_ba.py` / `make_deck_ba2.py` (whole approved screen in, "keep everything the same,
+  change only..."); Joshua picked `ba/gen/r2_vert_2_1.png` (off) and `r2_small_2_1.png` (on).
+- `deck_3d.py`: levers were mirrored about the wrong midpoint (LKR ~100 px left of its label) with paddles pushed 84 px
+  outward. Now the rings sit on the plate's label centres (2712 / 2967), the levers hang straight down at rest and tilt
+  10 deg outward when engaged; amber halo dropped. A/B/C centred on their letters (C was 10 px off), 128 px wide, lower
+  housings, real-chrome reflectance; the press now sinks the front edge into the panel (the old sign lifted it).
+- Lever hit areas now come from the 3D boxes (`gen_layout.py`).
+- Follow-up same day (Joshua: shadows and warm reflection wrong vs the reference): the panel the chrome reflects is warm
+  copper now, a small "Contact" light gives tight shadows under each part, the pedals hinge on their FRONT edge (back
+  raised 7 deg at rest, flat when pressed: the lip and its shadow stay), and the clean-plate areas reach y 1765 so the
+  old reference controls' shadows no longer float under the new ones.
+- Walnut keyhead strings (Joshua: "strings look a little messed up"): `strings_walnut_4` (jobs.json, crop
+  steelbody_kh_walnut) pasted after keyhead_walnut_1 in build_ui.py: ten straight strings to ten keys.
+- Pipeline order after build_ui.py: small_labels.py and brass_sprites.py (both add to sprites.json), then gen_layout.py.
+
+## 2026-11-10: Knob Workshop (live tweak page; Joshua: "I finish it, you see the changes and do the rest")
+- `knob_workshop/`: `python server.py 8765` (or preview config `knob-workshop` in `.claude/launch.json`) -> http://127.0.0.1:8765.
+  Real-time three.js preview of one knob recipe (`recipes/<name>.json`). Autosaves to the recipe file; the Finished button
+  sets `"status": "finished"` plus Joshua's notes. No bake step for him.
+- Model: a knob is two stacked lathed parts, **Top** (carries the pointer) and **Base** (against the panel, can be off),
+  each with width/height/edge and its own grip type (smooth, fluted, creased, finger, straight knurl, diamond knurl; each
+  type remembers its settings in `grip.saved`). Joshua found a draggable dot outline and a grip height range confusing,
+  and a step-by-step wizard too slow: he wants direct parameters, a top half and a bottom half, and quick swapping.
+- Page: tabs Top / Base / Pointer / Material / Light (keys 1-5), every parameter a slider + typed number + per-row reset.
+  Views: Plugin (exact plugin framing), Angle, Side, or drag the knob to orbit. Target = the original ChatGPT image
+  (`APPROVED_main.png` crop), always shown as a thumbnail; Compare Target/Fade/Wipe, hold Space to flick.
+- `app.js` mirrors `blender/knob_studio_geometry.py` (lathe, pointer) and the `knob_studio.py` light rig; `LIGHT_GAIN` and
+  `LOOK` were measured against `strips/knob_scallop_orig.png` (face colour within a few levels). Not matched: Cycles
+  self-shadowing on the lower wall, so the live lower rim reads lighter than the render.
+- After he finishes: `python knob_workshop/recipe_to_studio.py feel > final/knobs/<tag>.json`, then the usual
+  `knob_studio.py` -> `native_to_strips.py` -> `fix_knob_halo.py` chain. The config carries `geometry.parts`; `build()` in
+  knob_studio_geometry.py lathes each part (new branch) and the diamond knurl is `sharp == -4`. Neither has been rendered
+  in Cycles yet. Only `recipes/feel.json` exists; his earlier dot-outline version is in `knob_workshop/backup/`.
+- Don't test on `recipes/feel.json` while Joshua has the page open (it autosaves over his edits): copy it to
+  `recipes/sandbox.json`, open `?r=sandbox`, delete after.

@@ -827,5 +827,208 @@
    "final/parts/crops/floor.png"
   ],
   "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the whole foot-pedal assembly under the instrument: the three black-rubber foot pedals, the long chrome horizontal cross bar they sit on, the thin vertical chrome pull rods going up from the pedals, and the two small black hanging knee-lever paddles with their chrome rods. Where they were, show only the same ornate red, rust and black patterned rug, its pattern continuing naturally and evenly, at the same scale, focus and lighting, with a very soft, faint shadow under the instrument body. The instrument's wooden body edge at the top and its chrome legs stay exactly as they are. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "strings_walnut_1",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ },
+ {
+  "name": "strings_walnut_2",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ },
+ {
+  "name": "strings_walnut_3",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ },
+ {
+  "name": "strings_walnut_4",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ },
+ {
+  "name": "strings_maple_1",
+  "images": [
+   "final/parts/crops/steelbody_kh_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_maple_2",
+  "images": [
+   "final/parts/crops/steelbody_kh_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_maple_3",
+  "images": [
+   "final/parts/crops/steelbody_kh_maple.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_redsparkle_1",
+  "images": [
+   "final/parts/crops/steelbody_kh_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_redsparkle_2",
+  "images": [
+   "final/parts/crops/steelbody_kh_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_redsparkle_3",
+  "images": [
+   "final/parts/crops/steelbody_kh_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_pearloid_1",
+  "images": [
+   "final/parts/crops/steelbody_kh_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_pearloid_2",
+  "images": [
+   "final/parts/crops/steelbody_kh_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_pearloid_3",
+  "images": [
+   "final/parts/crops/steelbody_kh_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_kh_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_kh_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings_koa_3",
+  "images": [
+   "final/parts/crops/steelbody_kh_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between this instrument's small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input. Keep this instrument's own keyhead style, material and key shape (only the count and the strings change)."
+ },
+ {
+  "name": "strings2_redsparkle_1",
+  "images": [
+   "final/parts/crops/steelbody_kh2_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has nine round posts, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_redsparkle_2",
+  "images": [
+   "final/parts/crops/steelbody_kh2_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has nine round posts, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_redsparkle_3",
+  "images": [
+   "final/parts/crops/steelbody_kh2_redsparkle.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has nine round posts, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_pearloid_1",
+  "images": [
+   "final/parts/crops/steelbody_kh2_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has nine keys, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_pearloid_2",
+  "images": [
+   "final/parts/crops/steelbody_kh2_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has nine keys, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_pearloid_3",
+  "images": [
+   "final/parts/crops/steelbody_kh2_pearloid.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has nine keys, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_kh2_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has eight keys, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_kh2_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has eight keys, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings2_koa_3",
+  "images": [
+   "final/parts/crops/steelbody_kh2_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. The keyhead at the LEFT end of this steel guitar currently has eight keys, but the instrument has TEN strings. Change ONLY this: give the keyhead exactly TEN tuning keys of the same style, size and material, evenly spaced in one neat single row along the same keyhead (keep the keyhead the same size and place; space the keys a little closer if needed; no doubled, stacked or overlapping keys), and make each of the ten strings run in one straight line from the nut to its own key, never crossing or merging. Count them: 1 2 3 4 5 6 7 8 9 10. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings3_koa_1",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings3_koa_2",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings3_koa_3",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ },
+ {
+  "name": "strings3_koa_4",
+  "images": [
+   "final/parts/crops/steelbody_kh3_koa.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
  }
 ]

@@ -22,15 +22,15 @@ namespace UiLayout {
     inline constexpr int f3dFrames_pedal_B = 7;
     inline constexpr float f3d_pedal_C[4] = { 796.00f, 350.00f, 209.00f, 320.00f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_C = 7;
-    inline constexpr float d3d_pedal_A[4] = { 988.50f, 744.50f, 93.00f, 123.50f };   // x, y, w, h
+    inline constexpr float d3d_pedal_A[4] = { 980.00f, 750.00f, 119.00f, 126.50f };   // x, y, w, h
     inline constexpr int d3dFrames_pedal_A = 7;
-    inline constexpr float d3d_pedal_B[4] = { 1079.00f, 744.50f, 88.00f, 124.50f };   // x, y, w, h
+    inline constexpr float d3d_pedal_B[4] = { 1071.00f, 750.00f, 117.50f, 126.50f };   // x, y, w, h
     inline constexpr int d3dFrames_pedal_B = 7;
-    inline constexpr float d3d_pedal_C[4] = { 1166.00f, 744.50f, 85.50f, 124.50f };   // x, y, w, h
+    inline constexpr float d3d_pedal_C[4] = { 1156.50f, 750.00f, 116.00f, 126.50f };   // x, y, w, h
     inline constexpr int d3dFrames_pedal_C = 7;
-    inline constexpr float d3d_lever_L[4] = { 1264.00f, 719.00f, 127.50f, 134.00f };   // x, y, w, h
+    inline constexpr float d3d_lever_L[4] = { 1301.50f, 725.50f, 105.00f, 133.00f };   // x, y, w, h
     inline constexpr int d3dFrames_lever_L = 7;
-    inline constexpr float d3d_lever_R[4] = { 1410.50f, 719.00f, 124.50f, 134.00f };   // x, y, w, h
+    inline constexpr float d3d_lever_R[4] = { 1450.00f, 725.50f, 93.00f, 133.00f };   // x, y, w, h
     inline constexpr int d3dFrames_lever_R = 7;
     inline constexpr float d3d_lamp_A[4] = { 981.50f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
     inline constexpr int d3dFrames_lamp_A = 1;
@@ -122,6 +122,6 @@ namespace UiLayout {
     inline constexpr float hitPedalA[4] = { 981.50f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
     inline constexpr float hitPedalB[4] = { 1070.00f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
     inline constexpr float hitPedalC[4] = { 1158.50f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
-    inline constexpr float hitLKL[4] = { 1287.76f, 712.86f, 91.84f, 144.57f };   // x, y, w, h
-    inline constexpr float hitLKR[4] = { 1416.33f, 712.86f, 91.84f, 144.57f };   // x, y, w, h
+    inline constexpr float hitLKL[4] = { 1301.50f, 725.50f, 105.00f, 133.00f };   // x, y, w, h
+    inline constexpr float hitLKR[4] = { 1450.00f, 725.50f, 93.00f, 133.00f };   // x, y, w, h
 }

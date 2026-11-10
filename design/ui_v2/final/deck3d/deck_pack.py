@@ -11,7 +11,7 @@ from PIL import Image
 H = os.path.dirname(os.path.abspath(__file__))
 P = os.path.join(H, "..", "parts")
 CW, CH = 3200, 2000
-AREAS = [(1965, 1488, 2490, 1745), (2565, 1435, 3060, 1712)]     # canvas: the pedals, the toggles (what gets cleaned)
+AREAS = [(1965, 1488, 2490, 1765), (2565, 1435, 3070, 1765)]   # down to the old controls' shadows     # canvas: the pedals, the toggles (what gets cleaned)
 LAYERS = ["pedal_A", "pedal_B", "pedal_C", "lever_L", "lever_R"]
 _plate = None
 
@@ -67,7 +67,7 @@ def package(d):
     for n in LAYERS:
         fs = [np.asarray(Image.open(os.path.join(d, "%s_%02d.png" % (n, f))).convert("RGBA"), np.float32) for f in range(meta["layers"][n])]
         for fr in fs: fr[fr[..., 3] < 4] = 0
-        if n.startswith("lever"):   # the engaged halo's soft warm glow on the leather (like the A/B/C lamps' glow)
+        if False and n.startswith("lever"):   # (halo dropped 2026-11-10: the concepts show state by the tilt) the engaged halo's soft warm glow on the leather (like the A/B/C lamps' glow)
             cx = (2733 if n == "lever_L" else 2870) - rx; cy = 1480 - ry
             yy, xx = np.mgrid[:fs[0].shape[0], :fs[0].shape[1]]; rr = np.hypot(xx - cx, (yy - cy) * 1.15)
             gl = np.exp(-(rr / 26.0) ** 2) * (rr > 14)

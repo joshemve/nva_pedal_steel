@@ -1,0 +1,30 @@
+[
+ {
+  "name": "strings_walnut_1",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ },
+ {
+  "name": "strings_walnut_2",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ },
+ {
+  "name": "strings_walnut_3",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ },
+ {
+  "name": "strings_walnut_4",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same. Change ONLY the strings and tuning keys at the LEFT end of the steel, between the small keyhead and the nut (the chrome bar at the left end of the fretboard): the keyhead keeps its current small, slim, understated size and position, but has exactly TEN small tuning keys in a neat evenly spaced row, and exactly ten thin strings, each running in one clean straight line from its own place on the nut to its own tuning key. The strings fan evenly and never cross, merge, bend, kink or double; same thin silver look as the strings on the fretboard. The fretboard, nut, body, top surface, bar, pickup, changer, legs, pedals and rug stay identical to the input."
+ }
+]

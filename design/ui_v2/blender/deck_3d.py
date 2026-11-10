@@ -21,7 +21,7 @@ out = Path(args[0]).resolve(); out.mkdir(parents=True, exist_ok=True)
 SAMPLES = int(args[1]) if len(args) > 1 else 128
 S, PHI, C, X0 = 2000.0, math.radians(60.0), 1728.0, 2050.0
 sP, cP = math.sin(PHI), math.cos(PHI)
-REG = (1950, 1420, 3070, 1770)        # canvas render region
+REG = (1950, 1420, 3120, 1770)        # canvas render region
 FRAMES = 7
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -59,7 +59,7 @@ def mat(name, base, metal=0.0, rough=0.5, spec=None):
     return m
 
 
-M_METAL = mat("Chrome", (0.86, 0.86, 0.87), 1.0, 0.09)
+M_METAL = mat("Chrome", (0.64, 0.61, 0.58), 1.0, 0.11)   # real chrome reflectance, not mirror-white
 M_RUBBER = mat("Rubber", (0.008, 0.007, 0.006), 0.0, 0.62, 0.07)
 M_RIB = mat("RubberRib", (0.012, 0.010, 0.009), 0.0, 0.42, 0.22)
 M_LIP = mat("RubberLip", (0.003, 0.0025, 0.0025), 0.0, 0.8, 0.04)
@@ -74,7 +74,7 @@ def halo_mat(name):
     nt_.links.new(ad.outputs[0], nt_.nodes.new("ShaderNodeOutputMaterial").inputs[0]); return m, e
 M_HALO, HALO_EM = {}, {}
 for k_ in ("L", "R"): M_HALO[k_], HALO_EM[k_] = halo_mat("Halo_" + k_)
-M_PANEL = mat("Panel", (0.022, 0.016, 0.012), 0.0, 0.55)   # the leather as the chrome sees it (shadow catcher)
+M_PANEL = mat("Panel", (0.24, 0.10, 0.045), 0.0, 0.5)   # what the chrome front faces see (shadow catcher): the reference's warm copper edge
 
 
 def obj(name, me_op, material, loc, scale=(1, 1, 1), rot=(0, 0, 0), bevel=0.0, seg=4, parent=None):
@@ -126,32 +126,28 @@ fl.is_shadow_catcher = True
 
 layers = {}
 # foot switches: chrome housing hinged at its back bottom edge, ribbed pad on top; pressed = front tips into the panel
-PW, PL, PH = 0.072, 0.112, 0.034
-PRESS_DEG = 14.0
-PED_X = {"A": 0.0, "B": (2230.5 - X0) / S, "C": (2405.0 - X0) / S}
+PW, PL, PH = 0.064, 0.112, 0.030      # 128 px wide on a ~170 px pitch: real leather between them
+PRESS_DEG = 7.0          # rest: back raised this much about the front edge; pressed: flat on the panel
+PED_X = {k: (x - X0) / S for k, x in (("A", 2055.0), ("B", 2229.5), ("C", 2394.5))}   # centred on the plate's letters/lamps
 for k, px in PED_X.items():
-    piv = empty("Hinge_" + k, (px, PL, 0))
+    piv = empty("Hinge_" + k, (px, 0, 0))     # front bottom edge: the lip and its shadow stay in both states
     parts = [obj("Housing_" + k, cube, M_METAL, (px, PL / 2, PH / 2), (PW, PL, PH), bevel=0.004, seg=8, parent=piv)]
-    parts += ribbed_pad("Pad_" + k, px, PL / 2, PH, PW - 0.013, PL - 0.012, piv, 15)   # a 6 mm flat chrome rim shows
+    parts += ribbed_pad("Pad_" + k, px, PL / 2, PH, PW - 0.009, PL - 0.010, piv, 13)   # a 6 mm flat chrome rim shows
     layers["pedal_" + k] = {"objects": parts, "anim": ("pedal", piv)}
 
 # knee-lever toggles: chrome ring mount on the panel, a chrome rod out to a small ribbed paddle; LKR mirrors LKL about
 # the middle of the pair; engaged = the lever swings outward about the ring
-RING = {"L": (2733.0 - X0) / S}
-MID = (2801.5 - X0) / S
-RING["R"] = 2 * MID - RING["L"]
+# Joshua 2026-11-10 (concepts ba/r2_vert_2 = off, r2_small_2 = on): at rest each lever hangs straight down, its paddle
+# centred under its label (the plate's LKL/LKR text centres); engaged = a short tilt outward, kept inside the bay
+RING = {"L": (2712.0 - X0) / S, "R": (2967.0 - X0) / S}
 RING_Y, RING_Z = 0.1397, 0.006
-PAD_DX, PAD_Y, PAD_W, PAD_L, PAD_H = -0.042, 0.040, 0.066, 0.050, 0.018
-SWING_DEG = 14.0
+PAD_DX, PAD_Y, PAD_W, PAD_L, PAD_H = 0.0, 0.040, 0.066, 0.050, 0.018
+SWING_DEG = 10.0
 for k, rx in RING.items():
     sgn = 1 if k == "L" else -1                       # LKL paddle to the lower left of its ring, LKR lower right
     piv = empty("Ring_" + k, (rx, RING_Y, 0))
     parts = [obj("Mount_" + k, torus(0.0125, 0.0034), M_METAL, (rx, RING_Y, RING_Z))]           # fixed
     parts.append(obj("Hole_" + k, cyl(48), M_HOLE, (rx, RING_Y, RING_Z - 0.002), (0.0095, 0.0095, 0.004)))
-    # engaged lamp: a warm jewel halo inside the ring mount that lights as the lever swings out (the A/B/C lamps'
-    # colour), so the toggles show their state as plainly as the pedals do
-    halo = obj("Halo_" + k, torus(0.0086, 0.0016), M_HALO[k], (rx, RING_Y, RING_Z + 0.0005))
-    parts.append(halo)
     swing = [obj("Ball_" + k, sph, M_METAL, (rx, RING_Y, RING_Z + 0.002), (0.0058, 0.0058, 0.0058), parent=piv)]
     pcx, pcy = rx + sgn * PAD_DX, PAD_Y
     p_top = Vector((pcx, pcy + PAD_L / 2 - 0.006, PAD_H * 0.8))        # into the paddle's back, centred
@@ -169,7 +165,8 @@ def area(name, loc, size, power, col, target=(0.25, 0.08, 0.0)):
     o.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat("-Z", "Y").to_euler(); return o
 KEYP = float(os.environ.get("DECK_KEY", "1.0"))
 area("Key", (-0.6, -0.12, 0.6), (0.5, 0.4), 14 * KEYP, (1.0, 0.80, 0.60))      # warm soft lamp, left: the vertical ribs catch it
-area("Top", (0.25, 0.25, 1.2), (1.4, 0.8), 6 * KEYP, (1.0, 0.88, 0.74))       # broad fill
+area("Top", (0.25, 0.25, 1.2), (1.4, 0.8), 1.5 * KEYP, (1.0, 0.88, 0.74))       # broad fill
+area("Contact", (0.25, 0.30, 0.9), (0.25, 0.12), 22 * KEYP, (1.0, 0.86, 0.70))  # small, above and behind: tight contact shadows just below each part (reference)
 area("Back", (0.25, 0.9, 0.5), (1.2, 0.3), 1.5 * KEYP, (1.0, 0.85, 0.68))       # rim light on the back edges
 
 # the room the chrome reflects (glossy rays only): bright warm above, dark toward the horizon
@@ -189,7 +186,7 @@ def mul(a, b):
 v = mul(mul(mr(sep.outputs["Z"], 0.6, 5.5, 0.0, 1.0), mr(sep.outputs["X"], 5.0, -5.0, 0.4, 1.0)), mr(sep.outputs["Y"], 5.0, -5.0, 0.6, 1.0))
 pw = nt.nodes.new("ShaderNodeMath"); pw.operation = "POWER"; nt.links.new(v, pw.inputs[0]); pw.inputs[1].default_value = 1.6
 ramp = nt.nodes.new("ShaderNodeValToRGB"); nt.links.new(pw.outputs[0], ramp.inputs[0])
-ramp.color_ramp.elements[0].color = (0.02, 0.014, 0.01, 1); ramp.color_ramp.elements[1].color = (1.0, 0.82, 0.62, 1)
+ramp.color_ramp.elements[0].color = (0.10, 0.05, 0.028, 1)   # the rug/walnut the front faces see; ramp.color_ramp.elements[1].color = (1.0, 0.82, 0.62, 1)
 nt.links.new(ramp.outputs[0], em.inputs["Color"]); em.inputs["Strength"].default_value = float(os.environ.get("DECK_DOME", "4.0"))
 nt.links.new(em.outputs[0], o_.inputs[0]); dome.data.materials.append(dm)
 dome.visible_camera = False; dome.visible_diffuse = False; dome.visible_shadow = False
@@ -205,10 +202,9 @@ for name, L in layers.items():
         t = f / (FRAMES - 1)
         t = t * t * (3 - 2 * t)                    # ease in/out: the frames are spaced like the motion
         if L["anim"][0] == "pedal":
-            L["anim"][1].rotation_euler = (-math.radians(PRESS_DEG) * t, 0, 0)
+            L["anim"][1].rotation_euler = (math.radians(PRESS_DEG) * (1 - t), 0, 0)   # back raised at rest, flat when pressed
         else:
             L["anim"][1].rotation_euler = (0, 0, -L["anim"][2] * math.radians(SWING_DEG) * t)
-            HALO_EM[name[-1]].inputs["Strength"].default_value = 1.1 * t
         bpy.context.view_layer.update()
         sc.render.filepath = str(out / ("%s_%02d.png" % (name, f)))
         bpy.ops.render.render(write_still=True)
