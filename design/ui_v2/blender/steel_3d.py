@@ -51,7 +51,7 @@ sc.render.image_settings.file_format = "PNG"; sc.render.image_settings.color_mod
 sc.view_settings.view_transform = "Standard"
 
 world = bpy.data.worlds.new("Room"); sc.world = world; world.use_nodes = True
-bgn = world.node_tree.nodes["Background"]; bgn.inputs[0].default_value = (0.16, 0.11, 0.075, 1); bgn.inputs[1].default_value = 1.0
+bgn = world.node_tree.nodes["Background"]; bgn.inputs[0].default_value = (0.10, 0.07, 0.05, 1); bgn.inputs[1].default_value = 1.0
 
 
 # ---- materials
@@ -67,7 +67,7 @@ def mat(name, base, metal=0.0, rough=0.5, coat=0.0, spec=None):
 
 def wood_mat():
     """rosewood: dark brown with long reddish and near-black streaks along the cabinet, satin lacquer"""
-    m = mat("Rosewood", (0.1, 0.04, 0.02), 0.0, 0.30, coat=0.5); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
+    m = mat("Rosewood", (0.1, 0.04, 0.02), 0.0, 0.26, coat=0.6); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
     tc = nt.nodes.new("ShaderNodeTexCoord"); mp = nt.nodes.new("ShaderNodeMapping")
     mp.inputs["Scale"].default_value = (2.0, 70.0, 70.0); nt.links.new(tc.outputs["Object"], mp.inputs[0])
     n1 = nt.nodes.new("ShaderNodeTexNoise"); n1.inputs["Scale"].default_value = 3.0; n1.inputs["Detail"].default_value = 6.0
@@ -82,7 +82,7 @@ def wood_mat():
     nt.links.new(n2.outputs["Fac"], sc2.inputs[0]); nt.links.new(sc2.outputs[0], mix.inputs[2])
     ramp = nt.nodes.new("ShaderNodeValToRGB"); cr = ramp.color_ramp
     cr.elements[0].position = 0.36; cr.elements[0].color = (0.014, 0.004, 0.002, 1)
-    cr.elements[1].position = 0.66; cr.elements[1].color = (0.25, 0.058, 0.018, 1)
+    cr.elements[1].position = 0.66; cr.elements[1].color = (0.30, 0.066, 0.020, 1)
     e = cr.elements.new(0.50); e.color = (0.075, 0.019, 0.008, 1)
     nt.links.new(mix.outputs[0], ramp.inputs[0]); nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
     return m
@@ -94,8 +94,8 @@ M_ALU_B = mat("AluBrushed", (0.50, 0.50, 0.51), 1.0, 0.46)        # neck, pedal 
 M_CHROME = mat("Chrome", (0.72, 0.71, 0.70), 1.0, 0.07)
 M_STEEL = mat("StringSteel", (0.78, 0.77, 0.74), 1.0, 0.22)
 M_BLACK = mat("Black", (0.014, 0.014, 0.014), 0.0, 0.42, spec=0.4)
-M_FB = mat("Fretboard", (0.010, 0.010, 0.011), 0.0, 0.38, spec=0.4)
-M_FRET = mat("FretLine", (0.72, 0.70, 0.66), 0.0, 0.5)
+M_FB = mat("Fretboard", (0.008, 0.008, 0.009), 0.0, 0.22, spec=0.5)
+M_FRET = mat("FretLine", (0.50, 0.49, 0.46), 0.0, 0.5)
 M_RUBBER = mat("Rubber", (0.022, 0.022, 0.022), 0.0, 0.55, spec=0.35)
 M_FLOOR = mat("Floor", (0.16, 0.06, 0.035), 0.0, 0.8)
 COL = {"red": (0.75, 0.05, 0.03), "cream": (0.86, 0.72, 0.52), "blue": (0.05, 0.25, 0.80), "yellow": (0.95, 0.65, 0.04)}
@@ -155,7 +155,7 @@ for sx in (-1, 1):                                                           # e
 FB_W = 0.122
 X_GUIDE = X_NUT - 0.098                                                      # the roller bar where the keyhead ends
 x0n, x1n = X_GUIDE + 0.004, X_BR + 0.004
-box("Neck", ((x0n + x1n) / 2, 0, NECK_H / 2), (x1n - x0n, NECK_W, NECK_H), M_ALU_B, bevel=0.0025, seg=3)
+box("Neck", ((x0n + x1n) / 2, 0, NECK_H / 2), (x1n - x0n, NECK_W, NECK_H), M_ALU, bevel=0.0025, seg=3)
 for xs_ in (X_NUT + 0.02, fret_x(6.5), fret_x(14.5), X_BR - 0.085):
     for sy in (-1, 1):
         cyl("NeckScrew", (xs_, sy * (NECK_W / 2 - 0.0045), NECK_H + 0.0004), 0.0028, 0.0012, M_CHROME, "Z", 16)
@@ -167,8 +167,8 @@ box("FbBorder", ((fb0 + fb1) / 2, 0, ZF_ - 0.00012), (fb1 - fb0 - 0.004, FB_W - 
 box("FbInner", ((fb0 + fb1) / 2, 0, ZF_ - 0.00006), (fb1 - fb0 - 0.0052, FB_W - 0.0052, 0.0002), M_FB)
 FRET_Y0, FRET_Y1 = -FB_W / 2 + 0.019, FB_W / 2 - 0.004                       # fret lines stop above the number strip
 for n in range(1, 25):
-    box("Fret", (fret_x(n), (FRET_Y0 + FRET_Y1) / 2, ZF_), (0.0010, FRET_Y1 - FRET_Y0, 0.0003), M_FRET)
-    box("FretTick", (fret_x(n), -FB_W / 2 + 0.011, ZF_), (0.0010, 0.016, 0.0003), M_FRET)
+    box("Fret", (fret_x(n), (FRET_Y0 + FRET_Y1) / 2, ZF_), (0.0007, FRET_Y1 - FRET_Y0, 0.0003), M_FRET)
+    box("FretTick", (fret_x(n), -FB_W / 2 + 0.011, ZF_), (0.0007, 0.016, 0.0003), M_FRET)
 for y in SY:                                                                 # the fretboard's printed string guide lines
     box("Guide", ((fb0 + fb1) / 2, y, ZF_ - 0.00002), (fb1 - fb0 - 0.006, 0.0004, 0.0002), M_GUIDE)
 MARKS = {3: ["red"], 5: ["cream"], 7: ["blue"], 9: ["cream"], 12: ["yellow", "yellow"], 15: ["red"], 17: ["cream"],
@@ -193,8 +193,9 @@ RAIL0 = lambda s: Vector((X_GUIDE - 0.002, s * (NECK_W / 2 - 0.006), KH_Z / 2))
 RAIL1 = lambda s: Vector((KH_X0 + 0.008, s * (BODY_D / 2 - 0.016), KH_Z / 2))
 for s in (1, -1):
     a_, b_ = RAIL0(s), RAIL1(s); v = b_ - a_
-    box("KeyRail", (a_ + b_) / 2, (v.length + 0.010, 0.017, KH_Z), M_ALU, bevel=0.006, seg=6, rot=(0, 0, math.atan2(v.y, v.x)))
-box("KeyEnd", (KH_X0 + 0.004, 0, KH_Z / 2), (0.017, BODY_D - 0.020, KH_Z), M_ALU, bevel=0.007, seg=6)
+    box("KeyRail", (a_ + b_) / 2, (v.length + 0.010, 0.012, KH_Z), M_ALU, bevel=0.0045, seg=6, rot=(0, 0, math.atan2(v.y, v.x)))
+box("KeyEnd", (KH_X0 + 0.004, 0, KH_Z / 2), (0.014, BODY_D - 0.022, KH_Z), M_ALU, bevel=0.0055, seg=6)
+box("KeyWell", ((KH_X0 + X_GUIDE) / 2, 0, 0.0012), (X_GUIDE - KH_X0 - 0.010, NECK_W - 0.012, 0.0024), mat("KeyWell", (0.012, 0.008, 0.006), 0.0, 0.5))
 for i, y in enumerate(SY):
     far = i < 5; k = i if far else 9 - i; s = 1 if far else -1                # outer strings to the posts nearest the nut
     t = 0.10 + k * 0.195
@@ -202,11 +203,11 @@ for i, y in enumerate(SY):
     cyl("PostBase", (post.x, post.y, KH_Z + 0.002), 0.0085, 0.004, M_ALU, "Z", 28, bevel=0.001)
     cyl("PostCollar", (post.x, post.y, KH_Z + 0.006), 0.0060, 0.004, M_CHROME, "Z", 24)
     cyl("Post", (post.x, post.y, KH_Z + 0.017), 0.0036, 0.028, M_CHROME, "Z", 20)
-    cyl("KeyButton", (post.x, post.y, KH_Z + 0.0340), 0.0118, 0.0085, M_ALU, "Z", 36, bevel=0.003)
+    cyl("KeyButton", (post.x, post.y, KH_Z + 0.0340), 0.0095, 0.0080, M_ALU, "Z", 36, bevel=0.0028)
     rod("String", (post.x, post.y - s * 0.003, KH_Z + 0.011), (X_GUIDE, y, Z_STR), GA[i] * SR, M_STEEL, 12)
     rod("String", (X_GUIDE, y, Z_STR), (X_BR + 0.004, y, Z_STR), GA[i] * SR, M_STEEL, 12)
     # changer finger: a curved finger the string wraps over, its tuning screw, spring and nut behind
-    cyl("Finger", (X_BR + 0.010, y, Z_STR - 0.0125), 0.0125, 0.0066, M_ALU, "Y", 36, bevel=0.0008)
+    cyl("Finger", (X_BR + 0.012, y, Z_STR - 0.0150), 0.0150, 0.0068, M_ALU, "Y", 36, bevel=0.0008)
     box("FingerBody", (X_BR + 0.030, y, Z_STR - 0.013), (0.044, 0.0066, 0.017), M_ALU, bevel=0.0025)
     rod("TuneScrew", (X_BR + 0.050, y, Z_STR - 0.015), (X_BR + 0.076, y, Z_STR - 0.015), 0.0019, M_CHROME, 12)
     for q in range(5):
@@ -217,7 +218,7 @@ box("Pickup", (X_BR - 0.038, 0, NECK_H + 0.0048), (0.024, FB_W - 0.006, 0.0100),
 box("ChangerWell", (X_BR + 0.040, 0, 0.006), (0.078, NECK_W - 0.004, 0.012), M_BLACK)
 for s in (1, -1):
     box("ChangerCheek", (X_BR + 0.022, s * (NECK_W / 2 - 0.0005), Z_STR / 2), (0.060, 0.010, Z_STR + 0.002), M_ALU, bevel=0.004, seg=4)
-rod("ChangerAxle", (X_BR + 0.010, -NECK_W / 2 - 0.004, Z_STR - 0.0100), (X_BR + 0.008, NECK_W / 2 + 0.004, Z_STR - 0.0125), 0.0034, M_CHROME)
+rod("ChangerAxle", (X_BR + 0.010, -NECK_W / 2 - 0.004, Z_STR - 0.0100), (X_BR + 0.008, NECK_W / 2 + 0.004, Z_STR - 0.0150), 0.0034, M_CHROME)
 
 # ---- legs: chrome upper tube, thinner lower tube with a clutch collar, rubber foot; as the reference draws them, the
 # feet stand a little inboard of the endplates and the back pair further in
@@ -228,9 +229,9 @@ for sx in (-1, 1):
         foot = Vector((sx * (BODY_L / 2 - (0.036 if sy < 0 else 0.066)), -BODY_D / 2 - 0.004 if sy < 0 else BODY_D / 2 - 0.034, Z_FLOOR + 0.012))
         ax = (foot - top).normalized(); mid = top.lerp(foot, 0.50)
         rod("LegSocket", top + ax * -0.006, top + ax * 0.020, 0.0150, M_ALU, 32)
-        rod("LegUpper", top, mid, 0.0112, M_CHROME, 32); rod("LegLower", mid, foot, 0.0078, M_CHROME, 32)
-        rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0138, M_CHROME, 32)
-        rod("LegFoot", foot - ax * 0.004, foot + ax * 0.014, 0.0105, M_RUBBER, 24)
+        rod("LegUpper", top, mid, 0.0135, M_CHROME, 32); rod("LegLower", mid, foot, 0.0095, M_CHROME, 32)
+        rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0165, M_CHROME, 32)
+        rod("LegFoot", foot - ax * 0.004, foot + ax * 0.014, 0.0125, M_RUBBER, 24)
         FEET[(sx, sy)] = foot
 
 # ---- pedal rod clamped to the front legs, three ribbed pedals, pull rods; knee levers at the front apron
@@ -303,7 +304,7 @@ def area(name, loc, size, power, col, target=(0, 0, -0.1)):
 KP = E("STEEL_LIGHT", 1.0)
 area("Key", (-1.2, -0.7, 1.5), (0.6, 0.5), 44 * KP, (1.0, 0.84, 0.66))
 area("Top", (0.2, 0.3, 1.9), (2.2, 1.2), 9 * KP, (1.0, 0.90, 0.78))
-area("Fill", (0.6, -1.6, 0.5), (1.6, 0.8), 14 * KP, (1.0, 0.86, 0.72))
+area("Fill", (0.6, -1.6, 0.5), (1.6, 0.8), 26 * KP, (1.0, 0.86, 0.72))
 
 bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, radius=9, location=(0, 0, 0))
 dome = bpy.context.object; dome.name = "RoomDome"
@@ -316,7 +317,7 @@ mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[1].default_value = -3.0; mr.i
 nt.links.new(sep.outputs["Z"], mr.inputs[0]); nt.links.new(mr.outputs[0], ramp.inputs[0])
 ramp.color_ramp.elements[0].color = (0.10, 0.045, 0.025, 1)                  # rug / dark room toward the horizon
 ramp.color_ramp.elements[1].color = (1.0, 0.85, 0.68, 1)                     # warm ceiling
-nt.links.new(ramp.outputs[0], em.inputs["Color"]); em.inputs["Strength"].default_value = E("STEEL_DOME", 0.32)
+nt.links.new(ramp.outputs[0], em.inputs["Color"]); em.inputs["Strength"].default_value = E("STEEL_DOME", 0.26)
 nt.links.new(em.outputs[0], o_.inputs[0]); dome.data.materials.append(dm)
 dome.visible_camera = False; dome.visible_diffuse = False; dome.visible_shadow = False; dome.visible_glossy = True
 
