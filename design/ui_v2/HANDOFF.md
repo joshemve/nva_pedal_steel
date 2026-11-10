@@ -249,3 +249,22 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   in Cycles yet. Only `recipes/feel.json` exists; his earlier dot-outline version is in `knob_workshop/backup/`.
 - Don't test on `recipes/feel.json` while Joshua has the page open (it autosaves over his edits): copy it to
   `recipes/sandbox.json`, open `?r=sandbox`, delete after.
+- 2026-11-10 later: parts gained `taper` (wall leans in toward the top) and grips gained `fade` (grip fades out up the
+  wall); walls are subdivided (`WALL` rings) so tapered fluted walls shade smoothly. The ChatGPT target for FEEL is a
+  one-piece tapered knob: flat top, sloped wall, 9 soft flutes fading out at the top edge. `recipes/feel.json` = Joshua's
+  own attempt (Base + 7-flute Top); `recipes/feel_claude.json` = Claude's match to the target (Base off, taper 0.17,
+  9 flutes, fade 0.6, tilt 13). Joshua has not yet chosen between them. Snapshots of his versions: `knob_workshop/backup/`.
+- Bug fixed: server.py rejected every save after the parts change (it still required `"shape"`), so an hour of his edits
+  lived only in the open tab; recovered by capturing the page's PUT body. Saves are now locked and retried.
+
+## 2026-11-10: real 3D pedal steel (in progress, not in the plugin yet)
+- Joshua rejected the five old instrument plates as 3D targets (they read as lap steels on tables). Approved goal:
+  `final/steel3d/gen/ref_rosewood_1_1.png` (dark rosewood + silver aluminium) + his real photo
+  `final/steel3d/real/real_rosewood_a.png` for sizes. Perfect rosewood first, then the other presets.
+- `blender/steel_3d.py -- final/steel3d/render [samples]` builds the whole instrument at real dimensions (24" scale,
+  equal-tempered frets, ten strings to ten tuners) through a perspective camera (pitch 48 deg, env STEEL_*), writes
+  `steel.png` (full 3200x2000 canvas, shadow catcher) and `steel.json` (fret x, string y, bridge x, pedal positions).
+  `final/steel3d/comp.py <render_dir> <out.png>` drops it on the instrument-free room plate `parts/aligned/room_empty_1`.
+  Legs are 0.33 m (real ~0.6) so the pedals stay above the deck. Comparisons: `final/steel3d/blender_vs_ref_v*.png`.
+- Still to do: wear/dust and richer wood, cast shapes on keyhead/changer, then split pedals/rods/knee levers/tone bar into
+  live layers and regenerate the layout (fretAnchor, stringY, stringEndX from steel.json).
