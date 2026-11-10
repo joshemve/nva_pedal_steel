@@ -1101,39 +1101,39 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
             }()
         },
         {
-            "31 - Spun-Aluminum Dobro Cone",
-            "Acoustic Resonator",
-            "1935 National / Scheerhorn square-neck spider-bridge Dobro: coupled 4-mode 10.5-inch spun-aluminum resonator cone, birch soundwell air cavity, phosphor-bronze thumbpick bark, and close Neumann KM84 room (Jerry Douglas / Dire Straits).",
+            "31 - Two Star VG-8 Bowed Steel",
+            "Alt-Indie / VG-8",
+            "Mk.gee 'Alesis' & 'How Many Miles' Two Star rig: velocity-softened rubber-bridge Baritone thump co-layered with a 115 ms Roland VG-8 D-Bank Bowed HRM bloom, Boss CE-2 chorus, and ducked Rainger FX Reverb-X exploding into Tascam 424 sag on hard strums.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
-                p.playMode      = 0; // Poly Copedent: articulate 3-finger bluegrass rolls without accidental legato slurs
-                p.fxCharacter   = 17; // Spun-Aluminum Dobro
+                p.playMode      = 1; // Crying Lead Gliss + Open-Shell Copedent
+                p.fxCharacter   = 17; // Two Star VG-8 Bowed
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.20f;
-                p.pedalSpeed    = 105.0f;
-                p.barGlide      = 110.0f;
-                p.barSlideNoise = 0.36f;
+                p.scoopDepth    = 0.38f;
+                p.pedalSpeed    = 145.0f;
+                p.barGlide      = 155.0f;
+                p.barSlideNoise = 0.24f;
                 p.vibratoDepth  = 0.16f;
-                p.vibratoRate   = 5.30f;
-                p.autoSwell     = 0.0f; // Instant acoustic thumbpick bark
-                p.swellTime     = 60.0f;
-                p.sampleBlend   = 0.46f; // Let phosphor-bronze & spun-aluminum cone physical synthesis lead!
-                p.pickSnap      = 0.94f;
-                p.pickupPos     = 1.75f;
-                p.coilPeakFreq  = 2560.0f;
-                p.coilResonance = 0.72f;
-                p.sustainTime   = 2.6f; // Snappy acoustic resonator decay
-                p.cabinetDrop   = 0.0f;
-                p.stereoWidth   = 1.10f;
-                p.ampDrive      = 0.18f;
-                p.toneWarmth    = 0.40f;
-                p.delayMix      = 0.0f;
-                p.delayTime     = 220.0f;
-                p.tempoSync     = false;
-                p.reverbMix     = 0.16f;
-                p.reverbDecay   = 0.34f;
-                p.outputLevel   = 0.4f;
+                p.vibratoRate   = 4.75f;
+                p.autoSwell     = 0.04f; // Rubber-bridge pluck up front while 115ms VG-8 Bowed HRM blooms behind it!
+                p.swellTime     = 85.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.58f; // Soft flesh warmth on interior notes; explodes on vel >= 0.85 blasts!
+                p.pickupPos     = 2.48f;
+                p.coilPeakFreq  = 1940.0f;
+                p.coilResonance = 0.56f;
+                p.sustainTime   = 8.6f;
+                p.cabinetDrop   = 0.08f;
+                p.stereoWidth   = 1.34f;
+                p.ampDrive      = 0.26f;
+                p.toneWarmth    = 0.62f;
+                p.delayMix      = 0.08f;
+                p.delayTime     = 340.0f;
+                p.tempoSync     = true;
+                p.reverbMix     = 0.32f;
+                p.reverbDecay   = 0.62f;
+                p.outputLevel   = 0.2f;
                 return p;
             }()
         },

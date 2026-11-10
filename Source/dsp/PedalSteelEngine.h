@@ -330,7 +330,7 @@ private:
     float tweedSagEnv = 0.0f;
     float rackBellSmooth = 0.0f;
     float organRankSmooth = 0.0f;
-    float dobroConeSmooth = 0.0f;
+    float vg8BowedSmooth = 0.0f;
     float jawariSmooth = 0.0f;
     float cs80BrassSmooth = 0.0f;
 

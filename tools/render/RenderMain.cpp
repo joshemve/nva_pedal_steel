@@ -1782,108 +1782,76 @@ int main(int argc, char* argv[]) {
     }
 
     // =========================================================================
-    // Preset 31: Spun-Aluminum Dobro Cone (116 BPM, G Major — Jerry Douglas / Alison Krauss / Dire Straits Spider-Bridge Dobro)
+    // Preset 31: Two Star VG-8 Bowed Steel (92 BPM, D Major / Bm7 — Mk.gee "Alesis" / "How Many Miles" Baritone + VG-8 + Reverb-X -> 424)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        // Phrase 1: Snappy Jerry Douglas Open-G 3-finger acoustic bluegrass forward-backward Dobro roll!
-        struct RollNote { double t0; double t1; int ch; int note; float vel; };
-        const RollNote p1[] = {
-            { 0.10, 0.48, 1, 43, 0.92f }, // G2 thumb bark!
-            { 0.23, 0.50, 1, 50, 0.84f }, // D3
-            { 0.36, 0.62, 1, 55, 0.86f }, // G3
-            { 0.49, 0.74, 1, 59, 0.88f }, // B3
-            { 0.62, 0.88, 1, 62, 0.90f }, // D4
-            { 0.75, 1.02, 1, 67, 0.91f }, // G4
-            { 0.88, 1.14, 1, 62, 0.84f }, // D4
-            { 1.01, 1.26, 1, 59, 0.86f }, // B3
-        };
-        for (const auto& rn : p1) {
-            ev.push_back({ rn.t0, juce::MidiMessage::noteOn(rn.ch, rn.note, rn.vel) });
-            ev.push_back({ rn.t1, juce::MidiMessage::noteOff(rn.ch, rn.note) });
-        }
-        // Bluegrass double-stop slant: Bb4 -> B4 (+1st curl) against ringing open D5 bronze bell!
-        ev.push_back({ 1.14, juce::MidiMessage::noteOn(1, 43, 0.88f) }); // G2 bass anchor
-        ev.push_back({ 1.26, juce::MidiMessage::noteOn(1, 74, 0.92f) }); // D5 open bell
-        ev.push_back({ 1.27, juce::MidiMessage::noteOn(3, 70, 0.95f) }); // Bb4 -> B4 (+1st bluegrass hammer-slide!)
-        addPitchWheelRamp(ev, 3, 1.32, 1.46, 0.0f, +1.0f / 12.0f);
-        ev.push_back({ 1.78, juce::MidiMessage::noteOff(3, 70) });
-        ev.push_back({ 1.78, juce::MidiMessage::noteOff(1, 74) });
-        ev.push_back({ 1.81, juce::MidiMessage::pitchWheel(3, 8192) });
+        // Phrase 1: Syncopated "Alesis" fingerpicked Baritone + VG-8 open-shell groove in D Major (interior vel = 0.64..0.80)
+        // Real guitar 2-to-3-note open shells (10ths & 5ths) with snappy 130 ms vocal grace slides — never slow siren chords!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 38, 0.72f) });  // D2 rubber-bridge baritone thumb root
+        ev.push_back({ 0.125, juce::MidiMessage::noteOn(1, 57, 0.68f) }); // A3 open 5th
+        ev.push_back({ 0.42, juce::MidiMessage::noteOn(3, 64, 0.78f) });  // E4 -> F#4 quick 130 ms vocal guitar hammer-slide (10th!)
+        addPitchWheelRamp(ev, 3, 0.46, 0.59, 0.0f, +2.0f / 12.0f);        // E4 -> F#4
+        ev.push_back({ 0.94, juce::MidiMessage::noteOn(1, 69, 0.74f) });  // A4 syncopated high string pluck
+        ev.push_back({ 1.26, juce::MidiMessage::noteOff(3, 64) });
+        ev.push_back({ 1.28, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 1.32, juce::MidiMessage::noteOn(3, 73, 0.80f) });  // C#5 -> D5 "Alesis" hook!
+        addPitchWheelRamp(ev, 3, 1.36, 1.48, 0.0f, +1.0f / 12.0f);        // C#5 -> D5
+        ev.push_back({ 1.88, juce::MidiMessage::noteOff(3, 73) });
+        ev.push_back({ 1.90, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 1.94, juce::MidiMessage::noteOn(1, 66, 0.75f) });  // F#4 warm answer pluck
+        for (int n : { 38, 57, 69, 66 }) ev.push_back({ 3.05, juce::MidiMessage::noteOff(1, n) });
 
-        // Crisp descending G-pentatonic acoustic Dobro lick (A4->G4, E4, D4, B3, G3!)
-        const RollNote lick1[] = {
-            { 1.84, 2.08, 1, 69, 0.90f }, // A4
-            { 1.98, 2.22, 1, 67, 0.92f }, // G4
-            { 2.12, 2.36, 1, 64, 0.86f }, // E4
-            { 2.26, 2.52, 1, 62, 0.89f }, // D4
-            { 2.40, 2.75, 1, 59, 0.87f }, // B3
-            { 2.54, 2.98, 1, 55, 0.91f }, // G3
-        };
-        for (const auto& rn : lick1) {
-            ev.push_back({ rn.t0, juce::MidiMessage::noteOn(rn.ch, rn.note, rn.vel) });
-            ev.push_back({ rn.t1, juce::MidiMessage::noteOff(rn.ch, rn.note) });
-        }
-        ev.push_back({ 2.98, juce::MidiMessage::noteOff(1, 43) });
+        // Phrase 2: "How Many Miles" Bm11 syncopated fingerpicked shell -> 15ms dead-note mute -> EXPLOSIVE vel=0.99 Gadd9 Tascam/VG-8 Strum Blast!
+        ev.push_back({ 3.22, juce::MidiMessage::noteOn(1, 47, 0.72f) });  // B2 baritone root
+        ev.push_back({ 3.245, juce::MidiMessage::noteOn(1, 54, 0.68f) }); // F#3 5th
+        ev.push_back({ 3.54, juce::MidiMessage::noteOn(1, 62, 0.76f) });  // D4 minor 10th shell
+        ev.push_back({ 3.86, juce::MidiMessage::noteOn(3, 69, 0.81f) });  // A4 -> B4 quick 120 ms slide + F#4 pull-off!
+        addPitchWheelRamp(ev, 3, 3.90, 4.02, 0.0f, +2.0f / 12.0f);        // A4 -> B4
+        ev.push_back({ 4.38, juce::MidiMessage::noteOff(3, 69) });
+        ev.push_back({ 4.40, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 4.44, juce::MidiMessage::noteOn(1, 66, 0.74f) });  // F#4
+        for (int n : { 47, 54, 62, 66 }) ev.push_back({ 5.18, juce::MidiMessage::noteOff(1, n) });
 
-        // Phrase 2: "Romeo and Juliet" / Union Station Cadd9 -> G/B fingerpicked resonator melody
-        const RollNote p2[] = {
-            { 3.12, 4.45, 1, 48, 0.90f }, // C3
-            { 3.25, 3.65, 1, 55, 0.84f }, // G3
-            { 3.38, 3.80, 1, 62, 0.87f }, // D4
-            { 3.51, 4.45, 1, 67, 0.89f }, // G4
-        };
-        for (const auto& rn : p2) {
-            ev.push_back({ rn.t0, juce::MidiMessage::noteOn(rn.ch, rn.note, rn.vel) });
-            ev.push_back({ rn.t1, juce::MidiMessage::noteOff(rn.ch, rn.note) });
-        }
-        ev.push_back({ 3.65, juce::MidiMessage::noteOn(3, 62, 0.94f) }); // D4 -> E4 (+2st vocal Dobro throat!)
-        addPitchWheelRamp(ev, 3, 3.72, 3.90, 0.0f, +2.0f / 12.0f);
-        ev.push_back({ 4.45, juce::MidiMessage::noteOff(3, 62) });
-        ev.push_back({ 4.49, juce::MidiMessage::pitchWheel(3, 8192) });
+        // 15 ms dead-note percussive fret-mute grace chick -> 30 ms 4-string vel=0.99 TASCAM 424 + TIN-STRUM + REVERB-X BLAST on Gadd9!
+        ev.push_back({ 5.30, juce::MidiMessage::noteOn(1, 50, 0.60f) });
+        ev.push_back({ 5.315, juce::MidiMessage::noteOff(1, 50) });
+        ev.push_back({ 5.38, juce::MidiMessage::channelPressureChange(3, 96) });
+        ev.push_back({ 5.400, juce::MidiMessage::noteOn(1, 43, 0.98f) }); // G2 BLAST!
+        ev.push_back({ 5.410, juce::MidiMessage::noteOn(1, 50, 0.99f) }); // D3
+        ev.push_back({ 5.420, juce::MidiMessage::noteOn(1, 59, 0.99f) }); // B3 (10th)
+        ev.push_back({ 5.430, juce::MidiMessage::noteOn(3, 69, 1.00f) }); // A4 (add9) -> B4 quick accent slide!
+        addPitchWheelRamp(ev, 3, 5.52, 5.66, 0.0f, +2.0f / 12.0f);        // A4 -> B4
+        ev.push_back({ 6.32, juce::MidiMessage::noteOff(3, 69) });
+        ev.push_back({ 6.34, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 6.38, juce::MidiMessage::noteOn(1, 66, 0.82f) });  // F#4 (Gmaj7 shimmer as ducked Reverb-X blooms open!)
+        ev.push_back({ 6.72, juce::MidiMessage::noteOn(1, 62, 0.76f) });  // D4 arpeggio tail
+        for (int n : { 43, 50, 59, 66, 62 }) ev.push_back({ 7.45, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 7.48, juce::MidiMessage::channelPressureChange(3, 0) });
 
-        const RollNote p2b[] = {
-            { 4.56, 5.85, 1, 47, 0.89f }, // B2 (G/B)
-            { 4.69, 5.15, 1, 55, 0.84f }, // G3
-            { 4.82, 5.85, 1, 62, 0.87f }, // D4
-        };
-        for (const auto& rn : p2b) {
-            ev.push_back({ rn.t0, juce::MidiMessage::noteOn(rn.ch, rn.note, rn.vel) });
-            ev.push_back({ rn.t1, juce::MidiMessage::noteOff(rn.ch, rn.note) });
-        }
-        ev.push_back({ 4.96, juce::MidiMessage::noteOn(3, 69, 0.94f) }); // A4 -> B4 -> A4 -> G4
-        addPitchWheelRamp(ev, 3, 5.04, 5.20, 0.0f, +2.0f / 12.0f);       // A4 -> B4
-        addPitchWheelRamp(ev, 3, 5.38, 5.56, +2.0f / 12.0f, -2.0f / 12.0f); // B4 -> G4
-        ev.push_back({ 5.85, juce::MidiMessage::noteOff(3, 69) });
-        ev.push_back({ 5.90, juce::MidiMessage::pitchWheel(3, 8192) });
+        // Phrase 3: Crisp Asus4 -> A dyad resolve -> final radiant Two-Star Dadd9 -> G6/9/D (A+B) bedroom bloom!
+        ev.push_back({ 7.62, juce::MidiMessage::noteOn(1, 45, 0.76f) });  // A2
+        ev.push_back({ 7.64, juce::MidiMessage::noteOn(1, 57, 0.75f) });  // A3
+        ev.push_back({ 7.67, juce::MidiMessage::noteOn(3, 62, 0.82f) });  // D4 (sus4) -> C#4 (maj 3rd) 130 ms resolve!
+        addPitchWheelRamp(ev, 3, 7.98, 8.11, 0.0f, -1.0f / 12.0f);        // D4 -> C#4
+        ev.push_back({ 8.42, juce::MidiMessage::noteOn(1, 64, 0.76f) });  // E4 top fifth
+        for (int n : { 45, 57, 64 }) ev.push_back({ 9.15, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 9.15, juce::MidiMessage::noteOff(3, 62) });
+        ev.push_back({ 9.18, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 3: Throaty D7 bluegrass turnaround bark -> crisp Open-G resonator finale!
-        ev.push_back({ 6.02, juce::MidiMessage::noteOn(1, 50, 0.92f) }); // D3
-        ev.push_back({ 6.15, juce::MidiMessage::noteOn(1, 57, 0.86f) }); // A3
-        ev.push_back({ 6.28, juce::MidiMessage::noteOn(3, 65, 0.95f) }); // F4 -> F#4 (+1st blues curl!)
-        addPitchWheelRamp(ev, 3, 6.34, 6.48, 0.0f, +1.0f / 12.0f);
-        ev.push_back({ 6.62, juce::MidiMessage::noteOn(1, 72, 0.91f) }); // C5 (D7!)
-        ev.push_back({ 6.88, juce::MidiMessage::noteOff(1, 72) });
-        ev.push_back({ 6.90, juce::MidiMessage::noteOn(1, 69, 0.90f) }); // A4
-        for (int n : { 50, 57, 69 }) ev.push_back({ 7.35, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 7.35, juce::MidiMessage::noteOff(3, 65) });
-        ev.push_back({ 7.40, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 9.32, juce::MidiMessage::noteOn(1, 38, 0.78f) });  // D2
+        ev.push_back({ 9.345, juce::MidiMessage::noteOn(1, 45, 0.76f) }); // A2
+        ev.push_back({ 9.370, juce::MidiMessage::noteOn(1, 54, 0.78f) }); // F#3
+        ev.push_back({ 9.395, juce::MidiMessage::noteOn(1, 64, 0.80f) }); // E4 (add9)
+        ev.push_back({ 9.420, juce::MidiMessage::noteOn(1, 69, 0.82f) }); // A4
+        ev.push_back({ 10.18, juce::MidiMessage::noteOn(1, 28, 1.00f) }); // A+B slant -> G6/9/D VG-8 bowed bloom!
+        ev.push_back({ 11.10, juce::MidiMessage::noteOff(1, 28) });       // Melt back to golden Dadd9 as Reverb-X swells!
+        for (int n : { 38, 45, 54, 64, 69 }) ev.push_back({ 12.55, juce::MidiMessage::noteOff(1, n) });
 
-        // Final Open-G acoustic resonator strum + Jerry Douglas high G5/B4 bell slant
-        ev.push_back({ 7.52, juce::MidiMessage::noteOn(1, 43, 0.93f) }); // G2
-        ev.push_back({ 7.56, juce::MidiMessage::noteOn(1, 50, 0.89f) }); // D3
-        ev.push_back({ 7.60, juce::MidiMessage::noteOn(1, 55, 0.90f) }); // G3
-        ev.push_back({ 7.64, juce::MidiMessage::noteOn(1, 62, 0.91f) }); // D4
-        ev.push_back({ 7.68, juce::MidiMessage::noteOn(1, 74, 0.93f) }); // D5
-        ev.push_back({ 7.72, juce::MidiMessage::noteOn(3, 69, 0.95f) }); // A4 -> B4 Open-G major 3rd ring!
-        addPitchWheelRamp(ev, 3, 7.82, 8.02, 0.0f, +2.0f / 12.0f);
-        for (int n : { 43, 50, 55, 62, 74 }) ev.push_back({ 10.10, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 10.10, juce::MidiMessage::noteOff(3, 69) });
-
-        renderSequenceToWav(30, 11.4, 116.0, ev, presetsDir.getChildFile("31_spun_aluminum_dobro_cone.wav"));
+        renderSequenceToWav(30, 14.2, 92.0, ev, presetsDir.getChildFile("31_two_star_vg8_bowed_steel.wav"));
     }
 
     // =========================================================================
