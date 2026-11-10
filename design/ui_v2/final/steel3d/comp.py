@@ -15,6 +15,7 @@ a = np.zeros((CH, CW), np.float32); a[sy0:sy1, sx0:sx1] = 1; a = cv2.GaussianBlu
 full = bg.copy(); full[max(y0, 0):y1, x0:x1] = room[max(y0, 0) - y0:, :]
 base = full * a + bg * (1 - a)
 st = np.asarray(Image.open(os.path.join(d, "steel.png")).convert("RGBA").resize((CW, CH), Image.LANCZOS), np.float32)
-al = st[..., 3:] / 255 * a
+sh = np.clip(1 - st[..., :3].max(2, keepdims=True) / 6.0, 0, 1)        # pure shadow-catcher pixels (black, alpha = shadow)
+al = st[..., 3:] / 255 * (1 - 0.45 * sh) * a                            # soften the floor shadow to the reference's depth
 out = st[..., :3] * al + base * (1 - al)
 Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).resize((1600, 1000), Image.LANCZOS).save(outp)
