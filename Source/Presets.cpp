@@ -1103,36 +1103,36 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "31 - Two Star VG-8 Bowed Steel",
             "Alt-Indie / VG-8",
-            "Mk.gee 'Alesis' & 'How Many Miles' Two Star rig: velocity-softened rubber-bridge Baritone thump co-layered with a 115 ms Roland VG-8 D-Bank Bowed HRM bloom, Boss CE-2 chorus, and ducked Rainger FX Reverb-X exploding into Tascam 424 sag on hard strums.",
+            "Direct Roland VG-8 D62 BowedPad & Baritone rig (A1 & C1 hardware reference): warm thumb-plucked baritone body + 95 ms COSM HRM BowedPad swell, singing bowed cello/horn lead, and velocity-gated 42 ms bridge-pickup strum blast.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
-                p.playMode      = 1; // Crying Lead Gliss + Open-Shell Copedent
+                p.playMode      = 1; // Crying Lead Gliss + Open-Shell Polyphony
                 p.fxCharacter   = 17; // Two Star VG-8 Bowed
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.38f;
-                p.pedalSpeed    = 145.0f;
-                p.barGlide      = 155.0f;
-                p.barSlideNoise = 0.24f;
-                p.vibratoDepth  = 0.16f;
-                p.vibratoRate   = 4.75f;
-                p.autoSwell     = 0.04f; // Rubber-bridge pluck up front while 115ms VG-8 Bowed HRM blooms behind it!
-                p.swellTime     = 85.0f;
+                p.scoopDepth    = 0.04f; // Concert-locked VG-8 chord intonation (no country pitch scoop on chords!)
+                p.pedalSpeed    = 140.0f;
+                p.barGlide      = 135.0f;
+                p.barSlideNoise = 0.16f;
+                p.vibratoDepth  = 0.08f; // Rock-solid chords; solo lead notes auto-boost to singing bowed vibrato!
+                p.vibratoRate   = 5.15f;
+                p.autoSwell     = 0.04f; // Warm thumb pluck up front while 95ms VG-8 D62 BowedPad HRM blooms behind it!
+                p.swellTime     = 95.0f;
                 p.sampleBlend   = 0.88f;
-                p.pickSnap      = 0.58f; // Soft flesh warmth on interior notes; explodes on vel >= 0.85 blasts!
-                p.pickupPos     = 2.48f;
-                p.coilPeakFreq  = 1940.0f;
+                p.pickSnap      = 0.48f; // Soft thumb warmth on A1 notes; explodes with 42ms tin-strum on C1 vel >= 0.86 blasts!
+                p.pickupPos     = 2.35f;
+                p.coilPeakFreq  = 2550.0f;
                 p.coilResonance = 0.56f;
-                p.sustainTime   = 8.6f;
-                p.cabinetDrop   = 0.08f;
-                p.stereoWidth   = 1.34f;
-                p.ampDrive      = 0.26f;
-                p.toneWarmth    = 0.62f;
-                p.delayMix      = 0.08f;
-                p.delayTime     = 340.0f;
+                p.sustainTime   = 9.6f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.18f;
+                p.toneWarmth    = 0.34f; // Open Studio Bus so A1 Bowed Cello Lead & C1 D62 BowedPad Strum Blasts shine!
+                p.delayMix      = 0.03f; // Tight direct hardware VG-8 room slap (no long echo smear between phrases!)
+                p.delayTime     = 280.0f;
                 p.tempoSync     = true;
-                p.reverbMix     = 0.32f;
-                p.reverbDecay   = 0.62f;
+                p.reverbMix     = 0.18f; // Tight studio room around the internal Ducked Rainger Reverb-X
+                p.reverbDecay   = 0.38f;
                 p.outputLevel   = 0.2f;
                 return p;
             }()
