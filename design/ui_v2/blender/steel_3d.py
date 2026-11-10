@@ -94,10 +94,10 @@ M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal 
 M_CHROME = mat("Chrome", (0.74, 0.73, 0.72), 1.0, 0.04)
 M_SPRING = mat("Spring", (0.10, 0.10, 0.10), 1.0, 0.35)
 M_BRASS = mat("Brass", (0.75, 0.60, 0.32), 1.0, 0.25)
-M_STEEL = mat("StringSteel", (0.78, 0.77, 0.74), 1.0, 0.22)
+M_STEEL = mat("StringSteel", (0.62, 0.61, 0.58), 1.0, 0.28)
 M_BLACK = mat("Black", (0.014, 0.014, 0.014), 0.0, 0.42, spec=0.4)
-M_FB = mat("Fretboard", (0.008, 0.008, 0.009), 0.0, 0.22, spec=0.5)
-M_FRET = mat("FretLine", (0.50, 0.49, 0.46), 0.0, 0.5)
+M_FB = mat("Fretboard", (0.004, 0.004, 0.005), 0.0, 0.10, spec=0.5)
+M_FRET = mat("FretLine", (0.78, 0.76, 0.72), 0.0, 0.5)
 M_RUBBER = mat("Rubber", (0.022, 0.022, 0.022), 0.0, 0.55, spec=0.35)
 M_FLOOR = mat("Floor", (0.16, 0.06, 0.035), 0.0, 0.8)
 COL = {"red": (0.75, 0.05, 0.03), "cream": (0.86, 0.72, 0.52), "blue": (0.05, 0.25, 0.80), "yellow": (0.95, 0.65, 0.04)}
@@ -192,7 +192,7 @@ for xs_ in (X_NUT + 0.02, fret_x(6.5), fret_x(14.5), X_BR - 0.085):
 fb0, fb1 = X_NUT + 0.004, X_NUT + 0.495
 box("Fretboard", ((fb0 + fb1) / 2, 0, NECK_H + 0.0008), (fb1 - fb0, FB_W, 0.0016), M_FB, bevel=0.0006)
 ZF_ = NECK_H + 0.00165
-M_GUIDE = mat("GuideLine", (0.16, 0.155, 0.15), 0.0, 0.5)
+M_GUIDE = mat("GuideLine", (0.42, 0.41, 0.39), 0.0, 0.5)
 box("FbBorder", ((fb0 + fb1) / 2, 0, ZF_ - 0.00012), (fb1 - fb0 - 0.004, FB_W - 0.004, 0.0002), M_FRET)
 box("FbInner", ((fb0 + fb1) / 2, 0, ZF_ - 0.00006), (fb1 - fb0 - 0.0052, FB_W - 0.0052, 0.0002), M_FB)
 FRET_Y0, FRET_Y1 = -FB_W / 2 + 0.019, FB_W / 2 - 0.004                       # fret lines stop above the number strip
@@ -208,12 +208,12 @@ for n, cols in MARKS.items():
     xm = (fret_x(n - 1) + fret_x(n)) / 2
     for j, c in enumerate(cols):
         ym = 0.004 if len(cols) == 1 else (0.024, -0.014)[j]
-        box("Marker", (xm, ym, ZF_ + 0.0001), (0.0082, 0.0082, 0.0003), M_MARK[c], rot=(0, 0, math.pi / 4))
+        box("Marker", (xm, ym, ZF_ + 0.0001), (0.0105, 0.0105, 0.0003), M_MARK[c], rot=(0, 0, math.pi / 4))
     text("Num%d" % n, str(n), (xm, -FB_W / 2 + 0.0105, ZF_ + 0.0002), 0.0120, M_NUM)
 
 # ---- nut roller bar, keyhead roller bar, strings, keyhead with upright tuners, pickup, changer
 GA = [0.00028, 0.00030, 0.00028, 0.00036, 0.00043, 0.00050, 0.00066, 0.00076, 0.00086, 0.00094]   # E9 gauges (radius)
-SR = 1.3                                                                     # drawn a little heavier so they read on screen
+SR = 0.95                                                                    # drawn a little heavier so they read on screen
 for xb, r_ in ((X_NUT, 0.0058), (X_GUIDE, 0.0062)):
     rod("RollerBar", (xb, -NECK_W / 2 + 0.002, Z_STR - r_), (xb, NECK_W / 2 - 0.002, Z_STR - r_), r_, M_CHROME, 40)
     for sy in (-1, 1):
@@ -291,11 +291,13 @@ cT, sT = math.cos(PT), math.sin(PT)
 for k, px in zip("ABC", PEDAL_X):
     box("PedalHinge_" + k, (px, BAR_Y, BAR_Z), (0.030, 0.020, 0.020), M_ALU, bevel=0.004, seg=3)
     pc = Vector((px, BAR_Y - 0.030, BAR_Z + 0.004))                         # pedal plate centre; local Y runs down the tread
-    box("Pedal_" + k, pc, (0.034, 0.048, 0.009), M_ALU, bevel=0.003, seg=4, rot=(PT, 0, 0))
-    for r_ in range(6):                                                      # ribs across the tread
-        ly = 0.0165 - r_ * 0.0066
-        box("PedalRib_" + k, pc + Vector((0, ly * cT - 0.0055 * sT, ly * sT + 0.0055 * cT)), (0.030, 0.0030, 0.0022), M_ALU, bevel=0.0008, rot=(PT, 0, 0))
-    box("RodClevis_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.024), (0.012, 0.010, 0.030), M_ALU, bevel=0.003)
+    box("Pedal_" + k, pc, (0.037, 0.048, 0.009), M_ALU, bevel=0.003, seg=4, rot=(PT, 0, 0))
+    for r_ in range(12):                                                      # ribs across the tread
+        ly = 0.0200 - r_ * 0.0036
+        box("PedalRib_" + k, pc + Vector((0, ly * cT - 0.0055 * sT, ly * sT + 0.0055 * cT)), (0.033, 0.0017, 0.0016), M_ALU, bevel=0.0005, rot=(PT, 0, 0))
+    box("RodClevis_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.030), (0.009, 0.009, 0.016), M_ALU, bevel=0.0025)
+    for sgn in (-1, 1):
+        box("Yoke_" + k, (px + sgn * 0.011, BAR_Y - 0.006, BAR_Z + 0.018), (0.005, 0.012, 0.032), M_ALU, bevel=0.002)
     cyl("ClevisPin_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.032), 0.0030, 0.016, M_CHROME, "X", 12)
     rod("PullRod_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.036), (px, -BODY_D / 2 + 0.012, -APRON), 0.0020, M_CHROME, 16)
 for k, kx in (("L", -0.1905), ("R", 0.1366)):
@@ -309,7 +311,7 @@ for k, kx in (("L", -0.1905), ("R", 0.1366)):
 # ---- tone bar: polished steel bullet bar lying across the strings (a separate live layer later)
 BAR_FRET = E("STEEL_BARFRET", 8.7)
 if BAR_FRET >= 0:
-    bx_ = fret_x(BAR_FRET); br = 0.0125
+    bx_ = fret_x(BAR_FRET); br = 0.0138
     cyl("ToneBar", (bx_, 0.004, Z_STR + br), br, 0.112, M_CHROME, "Y", 48, bevel=0.003)
     bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=br, location=(bx_, 0.060, Z_STR + br))
     finish(bpy.context.object, M_CHROME)
@@ -354,11 +356,20 @@ dm = bpy.data.materials.new("RoomDome"); dm.use_nodes = True; nt = dm.node_tree;
 o_ = nt.nodes.new("ShaderNodeOutputMaterial"); em = nt.nodes.new("ShaderNodeEmission")
 geo = nt.nodes.new("ShaderNodeNewGeometry"); sep = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(geo.outputs["Position"], sep.inputs[0])
 ramp = nt.nodes.new("ShaderNodeValToRGB")
-mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[1].default_value = 1.5; mr.inputs[2].default_value = 4.5   # a dark room with a bright ceiling: hard-edged reflections
-nt.links.new(sep.outputs["Z"], mr.inputs[0]); nt.links.new(mr.outputs[0], ramp.inputs[0])
+mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[1].default_value = 6.2; mr.inputs[2].default_value = 8.2   # a dark room with a bright ceiling: hard-edged reflections
+nt.links.new(sep.outputs["Z"], mr.inputs[0])
+# plus soft bright walls far to the left and right: round bars and legs pick them up as bands, flat tops don't
+ab = nt.nodes.new("ShaderNodeMath"); ab.operation = "ABSOLUTE"; nt.links.new(sep.outputs["X"], ab.inputs[0])
+ms = nt.nodes.new("ShaderNodeMapRange"); ms.inputs[1].default_value = 2.2; ms.inputs[2].default_value = 3.6; ms.inputs[4].default_value = 0.42
+nt.links.new(ab.outputs[0], ms.inputs[0])
+mz = nt.nodes.new("ShaderNodeMapRange"); mz.inputs[1].default_value = -2.0; mz.inputs[2].default_value = 0.0
+nt.links.new(sep.outputs["Z"], mz.inputs[0])
+sm = nt.nodes.new("ShaderNodeMath"); sm.operation = "MULTIPLY"; nt.links.new(ms.outputs[0], sm.inputs[0]); nt.links.new(mz.outputs[0], sm.inputs[1])
+mx = nt.nodes.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; nt.links.new(mr.outputs[0], mx.inputs[0]); nt.links.new(sm.outputs[0], mx.inputs[1])
+nt.links.new(mx.outputs[0], ramp.inputs[0])
 ramp.color_ramp.elements[0].color = (0.035, 0.016, 0.009, 1)                  # rug / dark room toward the horizon
 ramp.color_ramp.elements[1].color = (1.0, 0.85, 0.68, 1)                     # warm ceiling
-nt.links.new(ramp.outputs[0], em.inputs["Color"]); em.inputs["Strength"].default_value = E("STEEL_DOME", 0.55)
+nt.links.new(ramp.outputs[0], em.inputs["Color"]); em.inputs["Strength"].default_value = E("STEEL_DOME", 1.6)
 nt.links.new(em.outputs[0], o_.inputs[0]); dome.data.materials.append(dm)
 dome.visible_camera = False; dome.visible_diffuse = False; dome.visible_shadow = False; dome.visible_glossy = True
 
