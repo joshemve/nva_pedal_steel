@@ -268,3 +268,9 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   Legs are 0.33 m (real ~0.6) so the pedals stay above the deck. Comparisons: `final/steel3d/blender_vs_ref_v*.png`.
 - Still to do: wear/dust and richer wood, cast shapes on keyhead/changer, then split pedals/rods/knee levers/tone bar into
   live layers and regenerate the layout (fretAnchor, stringY, stringEndX from steel.json).
+- 3D steel passes 4-8 (same day): Joshua wanted it matched to the reference image itself, angles included, so geometry and
+  camera were re-measured off `ref_rosewood_1` (pitch 39 deg, 3.4 m, cabinet 917x193x75 mm, 141 mm neck plate, short legs
+  with inboard feet). `final/steel3d/overlay.py comp.png out.png` stacks reference / model / 50% blend in UI space.
+  His notes: headstock must be narrow at the LEFT and widen toward the nut; metal bars and wood were "hazed" -> cast parts
+  satin (M_ALU 0.30 rough), bars/rollers/legs polished, dome dark where flat tops reflect and bright at the zenith and the
+  sides, glossy black fretboard with a grid, dark blotchy rosewood. Comparisons: `final/steel3d/blender_vs_ref_v*.png`.

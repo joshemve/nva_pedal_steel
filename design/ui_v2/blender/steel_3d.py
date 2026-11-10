@@ -76,14 +76,24 @@ def wood_mat():
     nt.links.new(tc.outputs["Object"], mp2.inputs[0])
     n2 = nt.nodes.new("ShaderNodeTexNoise"); n2.inputs["Scale"].default_value = 4.0; n2.inputs["Detail"].default_value = 3.0
     nt.links.new(mp2.outputs[0], n2.inputs["Vector"])
-    mix = nt.nodes.new("ShaderNodeMath"); mix.operation = "MULTIPLY_ADD"; mix.inputs[1].default_value = 0.7
-    nt.links.new(n1.outputs["Fac"], mix.inputs[0])
-    sc2 = nt.nodes.new("ShaderNodeMath"); sc2.operation = "MULTIPLY"; sc2.inputs[1].default_value = 0.3
-    nt.links.new(n2.outputs["Fac"], sc2.inputs[0]); nt.links.new(sc2.outputs[0], mix.inputs[2])
+    # broad, cloudy figure under the streaks (the reference's rosewood is blotchy, not evenly striped)
+    mp3 = nt.nodes.new("ShaderNodeMapping"); mp3.inputs["Scale"].default_value = (1.0, 5.0, 5.0)
+    nt.links.new(tc.outputs["Object"], mp3.inputs[0])
+    n3 = nt.nodes.new("ShaderNodeTexNoise"); n3.inputs["Scale"].default_value = 2.2; n3.inputs["Detail"].default_value = 3.0
+    n3.inputs["Distortion"].default_value = 0.8; nt.links.new(mp3.outputs[0], n3.inputs["Vector"])
+    n1.inputs["Distortion"].default_value = 0.5
+    def lin(sock, k, add=None):
+        n = nt.nodes.new("ShaderNodeMath"); n.operation = "MULTIPLY_ADD"; n.inputs[1].default_value = k
+        nt.links.new(sock, n.inputs[0])
+        if add is None: n.inputs[2].default_value = 0.0
+        else: nt.links.new(add, n.inputs[2])
+        return n.outputs[0]
+    mix = nt.nodes.new("ShaderNodeMath"); mix.operation = "ADD"; mix.inputs[1].default_value = 0.0
+    nt.links.new(lin(n3.outputs["Fac"], 0.40, lin(n1.outputs["Fac"], 0.40, lin(n2.outputs["Fac"], 0.20))), mix.inputs[0])
     ramp = nt.nodes.new("ShaderNodeValToRGB"); cr = ramp.color_ramp
-    cr.elements[0].position = 0.34; cr.elements[0].color = (0.010, 0.003, 0.002, 1)
-    cr.elements[1].position = 0.68; cr.elements[1].color = (0.23, 0.052, 0.016, 1)
-    e = cr.elements.new(0.50); e.color = (0.060, 0.015, 0.006, 1)
+    cr.elements[0].position = 0.42; cr.elements[0].color = (0.008, 0.003, 0.002, 1)
+    cr.elements[1].position = 0.68; cr.elements[1].color = (0.30, 0.042, 0.010, 1)
+    e = cr.elements.new(0.54); e.color = (0.055, 0.011, 0.004, 1)
     nt.links.new(mix.outputs[0], ramp.inputs[0]); nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
     return m
 
@@ -170,7 +180,7 @@ wear(M_ALU, 0.07, 30.0); wear(M_ALU_B, 0.06, 60.0); wear(M_CHROME, 0.025, 45.0)
 
 # ---- cabinet
 box("Cabinet", (0, 0, -APRON / 2), (BODY_L, BODY_D, APRON), M_WOOD, bevel=0.003, seg=3)
-box("TopTrim", (0, -BODY_D / 2 + 0.0025, 0.0006), (BODY_L - 0.004, 0.005, 0.0022), M_ALU, bevel=0.0008)       # front top edge strip
+box("TopTrim", (0, -BODY_D / 2 + 0.0012, 0.0004), (BODY_L - 0.004, 0.0020, 0.0014), M_ALU, bevel=0.0005)       # front top edge strip
 EP_T = 0.025
 for sx in (-1, 1):                                                           # endplates: polished cast aluminium, proud of the cabinet
     xe = sx * (BODY_L / 2 + EP_T / 2 - 0.004)
@@ -347,7 +357,7 @@ def area(name, loc, size, power, col, target=(0, 0, -0.1)):
 KP = E("STEEL_LIGHT", 1.0)
 area("Key", (-1.2, -0.7, 1.5), (0.35, 0.30), 60 * KP, (1.0, 0.84, 0.66))
 area("Top", (0.2, 0.3, 1.9), (1.6, 0.5), 9 * KP, (1.0, 0.90, 0.78))
-area("Fill", (0.6, -1.6, 0.5), (1.6, 0.8), 17 * KP, (1.0, 0.86, 0.72))
+area("Fill", (0.6, -1.6, 0.5), (1.6, 0.8), 11 * KP, (1.0, 0.86, 0.72))
 
 bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, radius=9, location=(0, 0, 0))
 dome = bpy.context.object; dome.name = "RoomDome"
