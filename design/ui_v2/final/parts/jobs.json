@@ -1030,5 +1030,19 @@
    "final/parts/crops/steelbody_kh3_koa.png"
   ],
   "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Keep proportions and everything the same, including the brass keyhead with its ten keys. Change ONLY the ten strings between the keys and the nut (the chrome bar at the left end of the fretboard): right now they bow and curve upward. Make each string a perfectly STRAIGHT line, like a taut wire, from its own key directly to its own place on the nut; the ten straight lines fan out evenly and never curve, cross or merge. Thin, silver, same as the strings on the fretboard. Everything else stays identical to the input."
+ },
+ {
+  "name": "room_empty_1",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the whole musical instrument (the steel guitar body, its strings, fretboard, chrome bar, legs and all their shadows) so the room is empty. Where it was, continue the same Persian rug pattern naturally across the floor, with the same soft warm lighting, and the same blurred room background (amps, lamp, wall) at the top. The cream top bar and the dark control deck at the bottom stay exactly as they are. No instrument, no furniture, no shadows of them: just the empty rug and room."
+ },
+ {
+  "name": "room_empty_2",
+  "images": [
+   "final/parts/crops/steelbody_kh_walnut.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the whole musical instrument (the steel guitar body, its strings, fretboard, chrome bar, legs and all their shadows) so the room is empty. Where it was, continue the same Persian rug pattern naturally across the floor, with the same soft warm lighting, and the same blurred room background (amps, lamp, wall) at the top. The cream top bar and the dark control deck at the bottom stay exactly as they are. No instrument, no furniture, no shadows of them: just the empty rug and room."
  }
 ]
