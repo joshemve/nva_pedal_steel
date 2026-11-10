@@ -159,6 +159,20 @@ private:
         float slideSvfBand = 0.0f;
         float slideSvfLow  = 0.0f;
         float lastOutput = 0.0f;
+
+        // Per-string Roland VG-8 HRM VIO GUITAR / D62 BowedPad state (fxCharacter == 17)
+        double vg8PhaseA = 0.0;
+        double vg8PhaseB = 0.0;
+        double vg8SubPhase = 0.0;
+        float vg8AgcEnv = 0.06f;
+        float vg8BowEnv = 0.0f;
+        float vg8TouchEnv = 0.0f;
+        float vg8DcL = 0.0f;
+        float vg8DcR = 0.0f;
+        float vg8Svf1Ic1L = 0.0f, vg8Svf1Ic2L = 0.0f;
+        float vg8Svf2Ic1L = 0.0f, vg8Svf2Ic2L = 0.0f;
+        float vg8Svf1Ic1R = 0.0f, vg8Svf1Ic2R = 0.0f;
+        float vg8Svf2Ic1R = 0.0f, vg8Svf2Ic2R = 0.0f;
     };
 
     // Warm Stereo Echoplex / BBD Tape Delay with Capstan Modulation & Dynamic Ducking

@@ -1103,37 +1103,37 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "31 - Two Star VG-8 Bowed Steel",
             "Alt-Indie / VG-8",
-            "Direct Roland VG-8 D62 BowedPad & Baritone rig (A1 & C1 hardware reference): warm thumb-plucked baritone body + 95 ms COSM HRM BowedPad swell, singing bowed cello/horn lead, and velocity-gated 42 ms bridge-pickup strum blast.",
+            "Direct Roland VG-8 D62 BowedPad & VIO GUITAR hardware COSM HRM rig (A1 & C1 reference): parallel GK-2A guitar string + per-string full-wave even-harmonic HRM + 24 dB/oct ZDF resonant touch-filter sweep & monophonic legato solo.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
                 p.playMode      = 1; // Crying Lead Gliss + Open-Shell Polyphony
                 p.fxCharacter   = 17; // Two Star VG-8 Bowed
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.04f; // Concert-locked VG-8 chord intonation (no country pitch scoop on chords!)
-                p.pedalSpeed    = 140.0f;
-                p.barGlide      = 135.0f;
-                p.barSlideNoise = 0.16f;
-                p.vibratoDepth  = 0.08f; // Rock-solid chords; solo lead notes auto-boost to singing bowed vibrato!
-                p.vibratoRate   = 5.15f;
-                p.autoSwell     = 0.04f; // Warm thumb pluck up front while 95ms VG-8 D62 BowedPad HRM blooms behind it!
-                p.swellTime     = 95.0f;
-                p.sampleBlend   = 0.88f;
-                p.pickSnap      = 0.48f; // Soft thumb warmth on A1 notes; explodes with 42ms tin-strum on C1 vel >= 0.86 blasts!
+                p.scoopDepth    = 0.02f; // Concert-locked VG-8 chord intonation
+                p.pedalSpeed    = 65.0f; // Crisp guitar hammer-on / pull-off / bend articulation
+                p.barGlide      = 9.0f;  // Instant 9ms fretted guitar hammer-on / pull-off snap (use pitchWheel for smooth bends!)
+                p.barSlideNoise = 0.08f;
+                p.vibratoDepth  = 0.06f; // Rock-solid chords; solo lead notes auto-boost to singing bowed vibrato!
+                p.vibratoRate   = 5.75f; // Expressive 5.75 Hz left-hand cello/violin finger vibrato matching C1 & A1
+                p.autoSwell     = 0.02f; // Direct GK-2A string up front while per-string VG-8 BowedPad HRM blooms behind it!
+                p.swellTime     = 90.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.52f;
                 p.pickupPos     = 2.35f;
-                p.coilPeakFreq  = 2550.0f;
-                p.coilResonance = 0.56f;
-                p.sustainTime   = 9.6f;
+                p.coilPeakFreq  = 2750.0f;
+                p.coilResonance = 0.74f; // Neutral Studio Bus coil curve (0.0 dB cut!) so full VG-8 ZDF sweeps shine!
+                p.sustainTime   = 9.8f;
                 p.cabinetDrop   = 0.0f;
-                p.stereoWidth   = 1.38f;
-                p.ampDrive      = 0.18f;
-                p.toneWarmth    = 0.34f; // Open Studio Bus so A1 Bowed Cello Lead & C1 D62 BowedPad Strum Blasts shine!
-                p.delayMix      = 0.03f; // Tight direct hardware VG-8 room slap (no long echo smear between phrases!)
-                p.delayTime     = 280.0f;
+                p.stereoWidth   = 1.00f; // Direct hardware VG-8 stereo coherence matching A1 & C1
+                p.ampDrive      = 0.16f;
+                p.toneWarmth    = 0.22f; // Un-muffled open console top-end
+                p.delayMix      = 0.01f;
+                p.delayTime     = 260.0f;
                 p.tempoSync     = true;
-                p.reverbMix     = 0.18f; // Tight studio room around the internal Ducked Rainger Reverb-X
-                p.reverbDecay   = 0.38f;
-                p.outputLevel   = 0.2f;
+                p.reverbMix     = 0.04f; // Direct VG-8 focus (avoids stereo plate wash)
+                p.reverbDecay   = 0.28f;
+                p.outputLevel   = 0.4f;
                 return p;
             }()
         },
