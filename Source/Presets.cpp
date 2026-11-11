@@ -1506,6 +1506,80 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.outputLevel   = 1.8f;
                 return p;
             }()
+        },
+        {
+            "42 - Khruangbin '74 Cry-Spring",
+            "Psych-Soul / Thai Funk",
+            "Mark Speer ('Texas Sun' / 'Con Todo El Mundo' Houston barn chain): always-on cocked & velocity-breathing 1970 Fasel Cry Baby inductor wah into squishy MXR Dyna Comp sustain, '68 Silverface Deluxe, 6G15 spring drip, and 24-ips El Capistan echo.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0; // Sweet Georgia E9 studio clarity + singing upper mids
+                p.playMode      = 1; // Crying Lead Gliss (silky Thai Luk-Thung vocal slides & 6ths!)
+                p.fxCharacter   = 28; // Khruangbin Cry-Spring
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.36f;
+                p.pedalSpeed    = 130.0f;
+                p.barGlide      = 112.0f;
+                p.barSlideNoise = 0.28f;
+                p.vibratoDepth  = 0.28f;
+                p.vibratoRate   = 5.10f;
+                p.autoSwell     = 0.0f;
+                p.swellTime     = 65.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.72f; // Articulate flatwound snap that opens the Cry Baby inductor throat!
+                p.pickupPos     = 2.38f;
+                p.coilPeakFreq  = 2180.0f;
+                p.coilResonance = 0.68f;
+                p.sustainTime   = 8.8f;
+                p.cabinetDrop   = 0.28f;
+                p.stereoWidth   = 1.24f;
+                p.ampDrive      = 0.20f;
+                p.toneWarmth    = 0.52f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 312.0f;
+                p.tempoSync     = true;
+                p.reverbMix     = 0.42f;
+                p.reverbDecay   = 0.72f;
+                p.outputLevel   = -0.4f;
+                return p;
+            }()
+        },
+        {
+            "43 - '98 Generation VHS-Drift",
+            "Lo-Fi VHS / Tape Memory",
+            "Chase Bliss Generation Loss MKII x Boards of Canada / Frank Ocean ('Endless'): EP-mode VHS Hi-Fi compander breathing, Wallace spacing-loss oxide-crease dropouts, dual-deck head-azimuth spread, and 2.85 kHz nostalgic camcorder memory.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3; // Montana Swell warm harmonic foundation
+                p.playMode      = 2; // Lush Swell Pad
+                p.fxCharacter   = 29; // VHS Generation-Drift
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.48f;
+                p.pedalSpeed    = 190.0f;
+                p.barGlide      = 170.0f;
+                p.barSlideNoise = 0.24f;
+                p.vibratoDepth  = 0.26f;
+                p.vibratoRate   = 4.35f;
+                p.autoSwell     = 0.54f; // Pillowy volume-pedal swell into worn EP-mode VHS tape!
+                p.swellTime     = 230.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.36f;
+                p.pickupPos     = 2.65f;
+                p.coilPeakFreq  = 1920.0f;
+                p.coilResonance = 0.60f;
+                p.sustainTime   = 10.2f;
+                p.cabinetDrop   = 0.36f;
+                p.stereoWidth   = 1.32f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.70f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 410.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.82f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
         }
     };
     return kPresets;

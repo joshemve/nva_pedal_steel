@@ -481,7 +481,7 @@ void PedalSteelEngine::ModernCharacterProcessor::reset() {
 }
 
 void PedalSteelEngine::ModernCharacterProcessor::setTargetMode(double sr, int mode) {
-    targetMode = juce::jlimit(0, 27, mode);
+    targetMode = juce::jlimit(0, 29, mode);
     if (!hasRendered) {
         currentMode = targetMode;
         wetGain = (currentMode > 0) ? 1.0f : 0.0f;
@@ -721,6 +721,22 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         charFilter3.setLowpass(sr, 4650.0f, 0.76f);
         charFilter4.setPeak(sr, 2550.0f, 1.40f, 4.0f);
         subLpFilter.setLowpass(sr, 2850.0f, 0.74f);
+    } else if (mode == 28) {
+        // 42: Khruangbin '74 Cry-Spring (Cocked/Envelope Fasel Cry Baby Inductor Wah -> MXR Dyna Comp -> '68 Deluxe + 6G15 Spring & Barn Echo)
+        dimHpFilter.setHighpass(sr, 125.0f, 0.707f);
+        charFilter1.setPeak(sr, 182.0f, 0.78f, 2.8f);
+        charFilter2.setPeak(sr, 1450.0f, 1.05f, 1.8f);
+        charFilter3.setLowpass(sr, 4750.0f, 0.76f);
+        charFilter4.setPeak(sr, 2380.0f, 1.45f, 4.4f);
+        subLpFilter.setLowpass(sr, 2450.0f, 0.74f);
+    } else if (mode == 29) {
+        // 43: '98 Generation VHS-Drift (VHS Hi-Fi Compander + Wallace Oxide-Crease Dropouts + Helical Snag Flutter + 2.42 kHz EP Oxide)
+        dimHpFilter.setHighpass(sr, 118.0f, 0.707f);
+        charFilter1.setPeak(sr, 198.0f, 0.78f, 3.0f);
+        charFilter2.setPeak(sr, 890.0f, 0.98f, 3.2f);
+        charFilter3.setLowpass(sr, 2420.0f, 0.86f);
+        charFilter4.setLowpass(sr, 2620.0f, 0.70f);
+        subLpFilter.setLowpass(sr, 1720.0f, 0.74f);
     }
 }
 
@@ -732,7 +748,7 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
     outExtraRevR = 0.0f;
     if (modMaxLen < 32) return;
 
-    targetMode = juce::jlimit(0, 27, desiredMode);
+    targetMode = juce::jlimit(0, 29, desiredMode);
     if (!hasRendered) {
         currentMode = targetMode;
         wetGain = (currentMode > 0) ? 1.0f : 0.0f;
@@ -2290,6 +2306,224 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         ioR = twinOutR * 0.84f + slapR * 0.36f;
         outExtraRevL = (springSplashL * 0.55f + slapL * 0.45f) * 0.32f;
         outExtraRevR = (springSplashR * 0.55f + slapR * 0.45f) * 0.32f;
+    } else if (mode == 28 && shimMaxLen > 64) {
+        // 42: Khruangbin '74 Cry-Spring (Mark Speer 'Texas Sun' / Thai Molam Barn Chain:
+        //     Cocked + Velocity-Breathing Fasel Cry Baby Inductor Wah -> MXR Dyna Comp CA3080 Squish -> '68 Deluxe + 6G15 Spring + El Capistan Echo)
+        lfoPhase1 += 0.34 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0; // Expressive ankle wah rock
+        lfoPhase2 += 0.58 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0; // El Capistan 24-ips capstan wow
+
+        // Normalize pre-character bus amplitude (~0.15 peak) so every pick attack & grace-note opens the Fasel Cry Baby vowel!
+        const float inPk = std::max(std::abs(ioL), std::abs(ioR));
+        const float wahAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > gateEnv) ? 0.0028 : 0.135)));
+        gateEnv += wahAlpha * (inPk - gateEnv);
+
+        // 1. 1970 Thomas Organ / Fasel Halo-Inductor Cry Baby (Sweeps 565 Hz 'Ooo' -> 1,980 Hz 'Waaah!' with authentic Q=5.2 vocal throat!)
+        const float preL = fastTanh(dimHpFilter.processL(ioL) * 1.35f);
+        const float preR = fastTanh(dimHpFilter.processR(ioR) * 1.35f);
+
+        const float envNorm  = juce::jlimit(0.0f, 1.0f, fastTanh(gateEnv * 6.8f));
+        const float pedSweep = juce::jlimit(0.0f, 1.0f, pedalActivity * 0.90f);
+        const float ankleL   = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float ankleR   = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.06)));
+
+        // Exponential octave-linear wah pot taper (just like an ICAR taper Cry Baby pot!)
+        const float wahPosL = juce::jlimit(0.0f, 1.0f, 0.18f + 0.66f * envNorm + 0.16f * pedSweep + 0.10f * ankleL);
+        const float wahPosR = juce::jlimit(0.0f, 1.0f, 0.20f + 0.66f * envNorm + 0.16f * pedSweep + 0.10f * ankleR);
+        const float wahHzL  = 545.0f * std::pow(3.65f, wahPosL); // 545 Hz .. 1,990 Hz vocal vowel sweep!
+        const float wahHzR  = 560.0f * std::pow(3.65f, wahPosR);
+
+        const float gL = static_cast<float>(std::tan(kPi * juce::jlimit(360.0f, static_cast<float>(sr * 0.40), wahHzL) / sr));
+        const float gR = static_cast<float>(std::tan(kPi * juce::jlimit(360.0f, static_cast<float>(sr * 0.40), wahHzR) / sr));
+        const float kWah = 1.0f / 5.15f; // Authentic 500mH Fasel halo-inductor vocal Q
+        const float a1L = 1.0f / (1.0f + gL * (gL + kWah));
+        const float a2L = gL * a1L;
+        const float a3L = gL * a2L;
+        const float a1R = 1.0f / (1.0f + gR * (gR + kWah));
+        const float a2R = gR * a1R;
+        const float a3R = gR * a2R;
+
+        const float v3L = preL - svf1Ic2L;
+        const float v1L = a1L * svf1Ic1L + a2L * v3L;
+        const float v2L = svf1Ic2L + a2L * svf1Ic1L + a3L * v3L;
+        svf1Ic1L = 2.0f * v1L - svf1Ic1L;
+        svf1Ic2L = 2.0f * v2L - svf1Ic2L;
+
+        const float v3R = preR - svf1Ic2R;
+        const float v1R = a1R * svf1Ic1R + a2R * v3R;
+        const float v2R = svf1Ic2R + a2R * svf1Ic1R + a3R * v3R;
+        svf1Ic1R = 2.0f * v1R - svf1Ic1R;
+        svf1Ic2R = 2.0f * v2R - svf1Ic2R;
+
+        // Pronounced Cry Baby Fasel Inductor Vocal Peak + warm low-end body foundation!
+        const float wahRawL = v2L * 0.30f + (v1L * kWah) * 3.15f + preL * 0.08f;
+        const float wahRawR = v2R * 0.30f + (v1R * kWah) * 3.15f + preR * 0.08f;
+
+        // 2. MXR Dyna Comp (CA3080 OTA Compressor AFTER Wah -> squishes vowel peaks into liquid Mark Speer sustain!)
+        const float wahPk = std::max(std::abs(wahRawL), std::abs(wahRawR));
+        const float compAlpha = static_cast<float>(1.0 - std::exp(-dt / ((wahPk > cassetteSagEnv) ? 0.0032 : 0.175)));
+        cassetteSagEnv += compAlpha * (wahPk - cassetteSagEnv);
+        const float dynaGain = juce::jlimit(0.48f, 2.05f, 1.18f / (0.42f + 1.45f * cassetteSagEnv));
+
+        const float dlxInL = juce::jlimit(-2.8f, 2.8f, wahRawL * dynaGain);
+        const float dlxInR = juce::jlimit(-2.8f, 2.8f, wahRawR * dynaGain);
+        const float satL = (fastTanh(dlxInL + 0.14f * dlxInL * dlxInL) - 0.07f * fastTanh(dlxInL * dlxInL)) * 0.78f;
+        const float satR = (fastTanh(dlxInR + 0.14f * dlxInR * dlxInR) - 0.07f * fastTanh(dlxInR * dlxInR)) * 0.78f;
+        const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 24.0 / sr));
+        leslieDcL += dcAlpha * (satL - leslieDcL);
+        leslieDcR += dcAlpha * (satR - leslieDcR);
+
+        // '68 Silverface Deluxe Reverb 1x12 Barn Cabinet
+        const float dlxL = charFilter3.processL(charFilter2.processL(charFilter1.processL(satL - leslieDcL)));
+        const float dlxR = charFilter3.processR(charFilter2.processR(charFilter1.processR(satR - leslieDcR)));
+
+        // 3. Drippy Outboard 6G15 Spring Tank (velocity-splashed 4-stage dispersive allpass chirp!) + El Capistan Barn Echo
+        const float dripBoost = 0.74f + 0.58f * envNorm;
+        modBufL[static_cast<size_t>(modWritePos)] = juce::jlimit(-2.4f, 2.4f, dlxL * dripBoost + drumBeamLpR * 0.38f);
+        modBufR[static_cast<size_t>(modWritePos)] = juce::jlimit(-2.4f, 2.4f, dlxR * dripBoost + drumBeamLpL * 0.38f);
+
+        float sprL = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 33.5f * srMs));
+        float sprR = readFloatBufHermite(modBufR, modWritePos, juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), 46.8f * srMs));
+        for (size_t i = 0; i < 4; ++i) {
+            auto& bL = springApL[i];
+            auto& bR = springApR[i];
+            int idxL = springApPosL[i], idxR = springApPosR[i];
+            const float dL = bL[static_cast<size_t>(idxL)], dR = bR[static_cast<size_t>(idxR)];
+            const float g = 0.70f;
+            const float wL = sprL + dL * g, wR = sprR + dR * g;
+            bL[static_cast<size_t>(idxL)] = wL;
+            bR[static_cast<size_t>(idxR)] = wR;
+            sprL = dL - wL * g;
+            sprR = dR - wR * g;
+            if (++idxL >= static_cast<int>(bL.size())) idxL = 0;
+            if (++idxR >= static_cast<int>(bR.size())) idxR = 0;
+            springApPosL[i] = idxL;
+            springApPosR[i] = idxR;
+        }
+        const float springWetL = charFilter4.processL(sprL);
+        const float springWetR = charFilter4.processR(sprR);
+        const float sprDampAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 3350.0 / sr));
+        drumBeamLpL += sprDampAlpha * (springWetL - drumBeamLpL);
+        drumBeamLpR += sprDampAlpha * (springWetR - drumBeamLpR);
+
+        const double safeBpm = tempoSync ? juce::jlimit(64.0, 165.0, hostBpm) : 96.0;
+        const float echoBaseMs = juce::jlimit(165.0f, 360.0f, static_cast<float>(30000.0 / safeBpm));
+        const float wow = 0.30f * static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float maxShimDel = static_cast<float>(shimMaxLen - 16);
+        const float echoRawL = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, (echoBaseMs + wow) * srMs));
+        const float echoRawR = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, (echoBaseMs * 1.05f - wow) * srMs));
+
+        const float echoHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 220.0 / sr));
+        hornBeamLpL += echoHpAlpha * (echoRawL - hornBeamLpL);
+        hornBeamLpR += echoHpAlpha * (echoRawR - hornBeamLpR);
+        const float tapeEchoL = subLpFilter.processL(echoRawL - hornBeamLpL);
+        const float tapeEchoR = subLpFilter.processR(echoRawR - hornBeamLpR);
+
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(dlxL * 0.72f + springWetL * 0.38f + tapeEchoR * 0.36f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(dlxR * 0.72f + springWetR * 0.38f + tapeEchoL * 0.36f);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        ioL = (dlxL * 0.80f + springWetL * 0.44f + tapeEchoL * 0.32f) * 0.78f;
+        ioR = (dlxR * 0.80f + springWetR * 0.44f + tapeEchoR * 0.32f) * 0.78f;
+        outExtraRevL = (springWetL * 0.60f + tapeEchoL * 0.40f) * 0.28f;
+        outExtraRevR = (springWetR * 0.60f + tapeEchoR * 0.40f) * 0.28f;
+    } else if (mode == 29 && shimMaxLen > 64) {
+        // 43: '98 Generation VHS-Drift (Chase Bliss Generation Loss MKII x Boards of Canada / Frank Ocean Endless:
+        //     EP-Mode VHS Hi-Fi Compander + Wallace Oxide-Spacing Crease Dropouts + Helical Snag Flutter + 2.42 kHz Camcorder Memory)
+        lfoPhase1  += 0.46 * dt; if (lfoPhase1  >= 1.0) lfoPhase1  -= 1.0; // Eccentric VHS supply-reel wow
+        lfoPhase2  += 6.45 * dt; if (lfoPhase2  >= 1.0) lfoPhase2  -= 1.0; // Helical pinch-roller flutter
+        lfoPhase3  += 0.22 * dt; if (lfoPhase3  >= 1.0) lfoPhase3  -= 1.0; // Stereo head-azimuth spread
+        auxPhasor  += 0.43 * dt; if (auxPhasor  >= 1.0) auxPhasor  -= 1.0; // Continuous-time tape-crease gen 1
+        shimPhasor += 0.79 * dt; if (shimPhasor >= 1.0) shimPhasor -= 1.0; // Continuous-time tape-crease gen 2
+        subPhasor  += 1.31 * dt; if (subPhasor  >= 1.0) subPhasor  -= 1.0; // Continuous-time tape-crease gen 3
+        tremPhase  += 18.5 * dt; if (tremPhase  >= 1.0) tremPhase  -= 1.0; // 18.5 Hz helical head-snag crinkle burst
+
+        // 1. Sample-Rate-Invariant Stochastic VHS Tape-Crease, Crinkle Snag & Azimuth Dropout Generator
+        // Fires organic, unmistakable physical VHS tape creases right across Phrase 1 (~1.5s), Phrase 2 (~5.1s, ~7.8s) & Phrase 3 (~11.4s)!
+        const float crSumL = 0.5f * (static_cast<float>(std::sin(kTwoPi * (auxPhasor + 0.14)))
+                                   + static_cast<float>(std::sin(kTwoPi * (shimPhasor + 0.22))))
+                           * static_cast<float>(std::sin(kTwoPi * (subPhasor + 0.08)));
+        const float crSumR = 0.5f * (static_cast<float>(std::sin(kTwoPi * (auxPhasor + 0.175)))
+                                   + static_cast<float>(std::sin(kTwoPi * (shimPhasor + 0.29))))
+                           * static_cast<float>(std::sin(kTwoPi * (subPhasor + 0.19)));
+
+        const float crTargetL = juce::jlimit(0.0f, 1.0f, (std::abs(crSumL) - 0.36f) * (1.0f / 0.34f));
+        const float crTargetR = juce::jlimit(0.0f, 1.0f, (std::abs(crSumR) - 0.36f) * (1.0f / 0.34f));
+
+        const float crAtkL = static_cast<float>(1.0 - std::exp(-dt / ((crTargetL > gateEnv)     ? 0.010 : 0.055)));
+        const float crAtkR = static_cast<float>(1.0 - std::exp(-dt / ((crTargetR > drumBeamLpL) ? 0.010 : 0.055)));
+        gateEnv     += crAtkL * (crTargetL - gateEnv);
+        drumBeamLpL += crAtkR * (crTargetR - drumBeamLpL);
+        const float creaseL = gateEnv     * gateEnv     * (3.0f - 2.0f * gateEnv);
+        const float creaseR = drumBeamLpL * drumBeamLpL * (3.0f - 2.0f * drumBeamLpL);
+
+        // 2. Dual-Deck EP-Mode VHS Transport (Deck A Worn Main + Deck B 'Gen Loss Classic' Desynced Voice + Helical Snag!)
+        const float wowL  = static_cast<float>(std::sin(kTwoPi * lfoPhase1) + 0.40 * std::sin(kTwoPi * lfoPhase1 * 2.0 + 0.6));
+        const float wowR  = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.21)) + 0.40 * std::sin(kTwoPi * (lfoPhase1 + 0.21) * 2.0 + 0.6));
+        const float fltL  = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float fltR  = static_cast<float>(std::cos(kTwoPi * lfoPhase2));
+        const float snag  = static_cast<float>(std::sin(kTwoPi * tremPhase)); // Rapid crinkle shiver ONLY during a tape crease!
+        const float azm   = static_cast<float>(std::sin(kTwoPi * lfoPhase3));
+
+        const float maxModDel = static_cast<float>(modMaxLen - 6);
+        const float dMainL  = juce::jlimit(2.0f, maxModDel, (5.8f + 0.85f * wowL + 0.15f * fltL + 0.52f * azm + (1.35f + 0.30f * snag) * creaseL) * srMs);
+        const float dMainR  = juce::jlimit(2.0f, maxModDel, (8.3f + 0.85f * wowR + 0.15f * fltR - 0.52f * azm + (1.35f - 0.30f * snag) * creaseR) * srMs);
+        const float dGhostL = juce::jlimit(2.0f, maxModDel, (7.4f - 0.44f * wowR - 0.38f * azm) * srMs);
+        const float dGhostR = juce::jlimit(2.0f, maxModDel, (6.3f - 0.44f * wowL + 0.38f * azm) * srMs);
+
+        const float deckL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dMainL) * 0.80f
+                                               + readFloatBufHermite(modBufL, modWritePos, dGhostL) * 0.28f);
+        const float deckR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dMainR) * 0.80f
+                                               + readFloatBufHermite(modBufR, modWritePos, dGhostR) * 0.28f);
+
+        // 3. Wallace Spacing-Loss Frequency-Dependent Oxide Dropout (highs drop -19 dB & mids dip -7.5 dB as wrinkle lifts tape off drum!)
+        const float spaceAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 390.0 / sr));
+        xoverLp1L += spaceAlpha * (deckL - xoverLp1L);
+        xoverLp1R += spaceAlpha * (deckR - xoverLp1R);
+        const float hiBandL = deckL - xoverLp1L;
+        const float hiBandR = deckR - xoverLp1R;
+
+        const float oxideL = xoverLp1L * (1.0f - 0.58f * creaseL) + hiBandL * (1.0f - 0.90f * creaseL);
+        const float oxideR = xoverLp1R * (1.0f - 0.58f * creaseR) + hiBandR * (1.0f - 0.90f * creaseR);
+
+        // 4. VHS Hi-Fi 2:1 Compander Breathing + Soft 12-Bit VHS PCM Grain + Ferrite Head Saturation + 2.42 kHz EP Oxide
+        const float pk = std::max(std::abs(oxideL), std::abs(oxideR));
+        const float compAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.0060 : 0.230)));
+        cassetteSagEnv += compAlpha * (pk - cassetteSagEnv);
+        const float compDrive = juce::jlimit(0.88f, 2.15f, 1.58f / (0.58f + 0.98f * cassetteSagEnv));
+
+        // Subtle envelope-gated FM carrier dust + helical head-switching crinkle whisper (strictly 0 when silent!)
+        const float fmDust = static_cast<float>(std::sin(kTwoPi * (tremPhase * 37.0 + lfoPhase2 * 13.0))
+                                              * std::cos(kTwoPi * (subPhasor * 83.0))) * cassetteSagEnv * (0.014f + 0.036f * creaseL);
+        const float uL = juce::jlimit(-2.8f, 2.8f, oxideL * compDrive + fmDust);
+        const float uR = juce::jlimit(-2.8f, 2.8f, oxideR * compDrive - fmDust);
+        const float satL = (fastTanh(uL + 0.24f * uL * uL) - 0.12f * fastTanh(uL * uL)) * 0.74f;
+        const float satR = (fastTanh(uR + 0.24f * uR * uR) - 0.12f * fastTanh(uR * uR)) * 0.74f;
+
+        const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 24.0 / sr));
+        leslieDcL += dcAlpha * (satL - leslieDcL);
+        leslieDcR += dcAlpha * (satR - leslieDcR);
+
+        const float vhsTapeL = charFilter4.processL(charFilter3.processL(charFilter2.processL(charFilter1.processL(satL - leslieDcL))));
+        const float vhsTapeR = charFilter4.processR(charFilter3.processR(charFilter2.processR(charFilter1.processR(satR - leslieDcR))));
+
+        // 5. Generation-2 Degraded VHS Memory Halo (158 ms L / 228 ms R dark nostalgic tape cloud)
+        const float maxShimDel = static_cast<float>(shimMaxLen - 16);
+        const float memRawL = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, (158.0f + 1.05f * wowL) * srMs));
+        const float memRawR = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, (228.0f + 1.05f * wowR) * srMs));
+        const float memHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 225.0 / sr));
+        hornBeamLpL += memHpAlpha * (memRawL - hornBeamLpL);
+        hornBeamLpR += memHpAlpha * (memRawR - hornBeamLpR);
+        const float vhsMemL = subLpFilter.processL(memRawL - hornBeamLpL);
+        const float vhsMemR = subLpFilter.processR(memRawR - hornBeamLpR);
+
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(vhsTapeL * 0.74f + vhsMemR * 0.38f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(vhsTapeR * 0.74f + vhsMemL * 0.38f);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        ioL = (vhsTapeL * 0.88f + vhsMemL * 0.34f) * 0.82f;
+        ioR = (vhsTapeR * 0.88f + vhsMemR * 0.34f) * 0.82f;
+        outExtraRevL = (vhsTapeL * 0.30f + vhsMemL * 0.70f) * 0.28f;
+        outExtraRevR = (vhsTapeR * 0.30f + vhsMemR * 0.70f) * 0.28f;
     }
 
     if (wetGain < 0.9999f) {

@@ -193,10 +193,10 @@ static int runDeepDspAudit() {
                   << " dB | 96=" << juce::String(rmsDbByRate[2], 2) << " dB" << std::endl;
     }
 
-    // 2. Live FX Character Hot-Switch Click-Free Audit (0 -> 1 -> ... -> 27 -> 0 mid-chord)
+    // 2. Live FX Character Hot-Switch Click-Free Audit (0 -> 1 -> ... -> 29 -> 0 mid-chord)
     {
         constexpr double sr = 48000.0;
-        const int total = static_cast<int>(sr * 8.6);
+        const int total = static_cast<int>(sr * 9.2);
         PedalSteelEngine eng;
         eng.prepare(sr, 64);
         PedalSteelParams p = presets[0].params;
@@ -211,10 +211,10 @@ static int runDeepDspAudit() {
         int lastSwitchSlot = -1;
         while (pos < total) {
             const int chunk = std::min(64, total - pos);
-            const int slot = static_cast<int>((static_cast<int64_t>(pos) * 29) / total);
+            const int slot = static_cast<int>((static_cast<int64_t>(pos) * 31) / total);
             if (slot != lastSwitchSlot) {
                 lastSwitchSlot = slot;
-                p.fxCharacter = (slot < 28) ? slot : 0;
+                p.fxCharacter = (slot < 30) ? slot : 0;
                 eng.setParams(p);
             }
             eng.renderBlock(buf, pos, chunk);
@@ -230,7 +230,7 @@ static int runDeepDspAudit() {
             std::cerr << "[FAIL] Live FX Character hot-switch step too high: " << maxStep << std::endl;
             return 1;
         }
-        std::cout << "[PASS] Click-free live FX Character hot-switching (0->1->...->27->0): maxSampleStep="
+        std::cout << "[PASS] Click-free live FX Character hot-switching (0->1->...->29->0): maxSampleStep="
                   << juce::String(maxStep, 4) << std::endl;
     }
 
@@ -2535,6 +2535,178 @@ int main(int argc, char* argv[]) {
         for (int n : { 38, 45, 50, 53, 57, 64 }) ev.push_back({ 12.35, juce::MidiMessage::noteOff(1, n) });
 
         renderSequenceToWav(40, 14.0, 84.0, ev, presetsDir.getChildFile("41_66_cinecitta_western_twang.wav"));
+    }
+
+    // =========================================================================
+    // Preset 42: Khruangbin '74 Cry-Spring (96 BPM, B Minor / E Dorian — 'Texas Sun' x Thai Molam Barn Wah-Spring)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
+
+        // Phrase 1: Snappy syncopated Bm7 Houston barn wah-chop splashing the 6G15 spring -> rapid Mark Speer Thai Molam vocal trill!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 47, 0.90f) }); // B2 bass anchor
+        ev.push_back({ 0.62, juce::MidiMessage::noteOff(1, 47) });
+        // Staccato wah-spring stab 1 (pops Cry Baby 560->1950 Hz + splashes 6G15 spring tank!)
+        ev.push_back({ 0.41, juce::MidiMessage::noteOn(1, 57, 0.96f) }); // A3
+        ev.push_back({ 0.42, juce::MidiMessage::noteOn(1, 62, 0.97f) }); // D4
+        ev.push_back({ 0.43, juce::MidiMessage::noteOn(1, 66, 0.99f) }); // F#4
+        for (int n : { 57, 62, 66 }) ev.push_back({ 0.56, juce::MidiMessage::noteOff(1, n) });
+
+        // Rapid Mark Speer Thai Luk-Thung 16th-note hammer-on / wah-cry riff (F#4 -> A4 -> B4-A4-F#4 -> D5-E5-D5-B4!)
+        struct WahLick { double t0; double t1; int ch; int note; float vel; };
+        const WahLick thaiRun1[] = {
+            { 0.94, 1.08, 1, 66, 0.94f }, // F#4 crisp pick!
+            { 1.10, 1.24, 1, 69, 0.96f }, // A4
+            { 1.26, 1.38, 1, 71, 0.99f }, // B4 accent wah pop!
+            { 1.40, 1.52, 1, 69, 0.90f }, // A4
+            { 1.54, 2.08, 3, 66, 0.95f }, // F#4 -> A4 -> F#4 crying Dyna Comp sustain!
+        };
+        for (const auto& wl : thaiRun1) {
+            ev.push_back({ wl.t0, juce::MidiMessage::noteOn(wl.ch, wl.note, wl.vel) });
+            ev.push_back({ wl.t1, juce::MidiMessage::noteOff(wl.ch, wl.note) });
+        }
+        addPitchWheelRamp(ev, 3, 1.62, 1.76, 0.0f, +3.0f / 12.0f);       // F#4 -> A4 vocal wah scoop!
+        addPitchWheelRamp(ev, 3, 1.82, 1.98, +3.0f / 12.0f, 0.0f);       // A4 -> F#4
+        ev.push_back({ 2.11, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Syncopated answer + Thai trill on D5-E5-D5 -> B4!
+        ev.push_back({ 2.22, juce::MidiMessage::noteOn(1, 47, 0.88f) }); // B2
+        ev.push_back({ 2.52, juce::MidiMessage::noteOn(1, 71, 0.94f) }); // B4
+        ev.push_back({ 2.66, juce::MidiMessage::noteOff(1, 71) });
+        ev.push_back({ 2.68, juce::MidiMessage::noteOn(3, 74, 0.99f) }); // D5 -> E5 -> D5 -> B4!
+        addPitchWheelRamp(ev, 3, 2.75, 2.86, 0.0f, +2.0f / 12.0f);       // D5 -> E5 rapid Thai ornament
+        addPitchWheelRamp(ev, 3, 2.89, 3.00, +2.0f / 12.0f, 0.0f);       // E5 -> D5
+        addPitchWheelRamp(ev, 3, 3.16, 3.36, 0.0f, -3.0f / 12.0f);       // D5 -> B4 liquid glide!
+        ev.push_back({ 3.88, juce::MidiMessage::noteOff(3, 74) });
+        ev.push_back({ 3.88, juce::MidiMessage::noteOff(1, 47) });
+        ev.push_back({ 3.92, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Phrase 2: Iconic 'Texas Sun' Em9 -> A13 bouncy wah-spring stabs + sliding sixth double-stops!
+        ev.push_back({ 4.18, juce::MidiMessage::noteOn(1, 40, 0.90f) }); // E2
+        ev.push_back({ 4.48, juce::MidiMessage::noteOn(1, 59, 0.96f) }); // B3
+        ev.push_back({ 4.49, juce::MidiMessage::noteOn(1, 64, 0.97f) }); // E4
+        ev.push_back({ 4.50, juce::MidiMessage::noteOn(1, 67, 0.99f) }); // G4 (Em wah-spring chop!)
+        for (int n : { 59, 64, 67 }) ev.push_back({ 4.63, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 4.82, juce::MidiMessage::noteOn(4, 67, 0.94f) }); // G4
+        ev.push_back({ 4.84, juce::MidiMessage::noteOn(3, 76, 0.98f) }); // E5 (G4+E5 sixth!) -> A4+F#5 -> G4+E5!
+        addPitchWheelRamp(ev, 4, 5.05, 5.30, 0.0f, +2.0f / 12.0f);       // G4 -> A4
+        addPitchWheelRamp(ev, 3, 5.05, 5.30, 0.0f, +2.0f / 12.0f);       // E5 -> F#5
+        addPitchWheelRamp(ev, 4, 5.62, 5.88, +2.0f / 12.0f, 0.0f);       // A4 -> G4
+        addPitchWheelRamp(ev, 3, 5.62, 5.88, +2.0f / 12.0f, 0.0f);       // F#5 -> E5
+        ev.push_back({ 6.28, juce::MidiMessage::noteOff(4, 67) });
+        ev.push_back({ 6.28, juce::MidiMessage::noteOff(3, 76) });
+        ev.push_back({ 6.28, juce::MidiMessage::noteOff(1, 40) });
+        ev.push_back({ 6.32, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 6.32, juce::MidiMessage::pitchWheel(4, 8192) });
+
+        // A13 / F#m7 desert psych-soul turnaround with bouncy pick-wah articulation
+        ev.push_back({ 6.45, juce::MidiMessage::noteOn(1, 45, 0.89f) }); // A2
+        ev.push_back({ 6.76, juce::MidiMessage::noteOn(1, 61, 0.96f) }); // C#4
+        ev.push_back({ 6.77, juce::MidiMessage::noteOn(1, 66, 0.98f) }); // F#4 (A6 wah chop!)
+        for (int n : { 61, 66 }) ev.push_back({ 6.90, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 7.08, juce::MidiMessage::noteOn(4, 66, 0.93f) }); // F#4
+        ev.push_back({ 7.10, juce::MidiMessage::noteOn(3, 73, 0.97f) }); // C#5 -> D5 -> C#5!
+        addPitchWheelRamp(ev, 3, 7.28, 7.48, 0.0f, +1.0f / 12.0f);       // C#5 -> D5
+        addPitchWheelRamp(ev, 3, 7.65, 7.88, +1.0f / 12.0f, 0.0f);       // D5 -> C#5
+        ev.push_back({ 8.32, juce::MidiMessage::noteOff(4, 66) });
+        ev.push_back({ 8.32, juce::MidiMessage::noteOff(3, 73) });
+        ev.push_back({ 8.32, juce::MidiMessage::noteOff(1, 45) });
+        ev.push_back({ 8.37, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Phrase 3: High Anatolian/Thai pentatonic cascade -> sunlit Bm9 barn spring & El Capistan sunset!
+        const WahLick thaiRun2[] = {
+            { 8.52, 8.66, 1, 71, 0.95f }, // B4
+            { 8.68, 8.82, 1, 74, 0.97f }, // D5
+            { 8.84, 8.98, 1, 76, 0.99f }, // E5
+            { 9.00, 10.18, 3, 78, 1.00f }, // F#5 -> A5 -> F#5 -> E5 soaring Cry Baby climax!
+        };
+        for (const auto& wl : thaiRun2) {
+            ev.push_back({ wl.t0, juce::MidiMessage::noteOn(wl.ch, wl.note, wl.vel) });
+            ev.push_back({ wl.t1, juce::MidiMessage::noteOff(wl.ch, wl.note) });
+        }
+        addPitchWheelRamp(ev, 3, 9.15, 9.38, 0.0f, +3.0f / 12.0f);       // F#5 -> A5
+        addPitchWheelRamp(ev, 3, 9.58, 9.85, +3.0f / 12.0f, 0.0f);       // A5 -> F#5
+        ev.push_back({ 10.22, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Final sunlit Bm9 rake dripping through 6G15 spring & barn tape echo
+        ev.push_back({ 10.42, juce::MidiMessage::noteOn(1, 47, 0.92f) }); // B2
+        ev.push_back({ 10.45, juce::MidiMessage::noteOn(1, 54, 0.93f) }); // F#3
+        ev.push_back({ 10.48, juce::MidiMessage::noteOn(1, 62, 0.95f) }); // D4
+        ev.push_back({ 10.51, juce::MidiMessage::noteOn(1, 69, 0.96f) }); // A4
+        ev.push_back({ 10.55, juce::MidiMessage::noteOn(3, 73, 0.98f) }); // C#5 (9th) -> D5 -> C#5!
+        addPitchWheelRamp(ev, 3, 10.95, 11.28, 0.0f, +1.0f / 12.0f);
+        addPitchWheelRamp(ev, 3, 11.48, 11.85, +1.0f / 12.0f, 0.0f);
+        for (int n : { 47, 54, 62, 69 }) ev.push_back({ 12.60, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 12.60, juce::MidiMessage::noteOff(3, 73) });
+
+        renderSequenceToWav(41, 14.2, 96.0, ev, presetsDir.getChildFile("42_khruangbin_74_cry_spring.wav"));
+    }
+
+    // =========================================================================
+    // Preset 43: '98 Generation VHS-Drift (78 BPM, Db Major — Chase Bliss Gen Loss MKII x Boards of Canada 'Olson' / 'Endless')
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Phrase 1: Glowing nostalgic Dbmaj9 swell blooming into EP-mode VHS compander, azimuth drift & oxide-crease dropout!
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 49, 0.84f) }); // Db3
+        ev.push_back({ 0.15, juce::MidiMessage::noteOn(1, 56, 0.85f) }); // Ab3
+        ev.push_back({ 0.20, juce::MidiMessage::noteOn(1, 65, 0.87f) }); // F4
+        ev.push_back({ 0.25, juce::MidiMessage::noteOn(1, 72, 0.88f) }); // C5 (maj7)
+        ev.push_back({ 0.32, juce::MidiMessage::noteOn(3, 75, 0.91f) }); // Eb5 (9th) -> F5 -> Eb5 nostalgic sigh!
+        addPitchWheelRamp(ev, 3, 0.95, 1.55, 0.0f, +2.0f / 12.0f);       // Eb5 -> F5
+        addPitchWheelRamp(ev, 3, 2.25, 2.85, +2.0f / 12.0f, 0.0f);       // F5 -> Eb5
+        for (int n : { 49, 56, 65, 72 }) ev.push_back({ 3.85, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 3.85, juce::MidiMessage::noteOff(3, 75) });
+        ev.push_back({ 3.92, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Phrase 2: Heart-melting Gbmaj7(#11) ('Olson' / 'Endless' Lydian tape memory) -> Ebm11!
+        ev.push_back({ 4.10, juce::MidiMessage::noteOn(1, 42, 0.84f) }); // Gb2
+        ev.push_back({ 4.15, juce::MidiMessage::noteOn(1, 54, 0.85f) }); // Gb3
+        ev.push_back({ 4.20, juce::MidiMessage::noteOn(1, 58, 0.87f) }); // Bb3
+        ev.push_back({ 4.25, juce::MidiMessage::noteOn(1, 65, 0.88f) }); // F4 (maj7)
+        ev.push_back({ 4.32, juce::MidiMessage::noteOn(3, 72, 0.91f) }); // C5 (#11!) -> Db5!
+        addPitchWheelRamp(ev, 3, 4.95, 5.55, 0.0f, +1.0f / 12.0f);       // C5 -> Db5
+        for (int n : { 42, 54, 58, 65 }) ev.push_back({ 6.55, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 6.55, juce::MidiMessage::noteOff(3, 72) });
+        ev.push_back({ 6.62, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Ebm9 warm tape-warbled inner movement
+        ev.push_back({ 6.78, juce::MidiMessage::noteOn(1, 51, 0.84f) }); // Eb3
+        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 58, 0.85f) }); // Bb3
+        ev.push_back({ 6.88, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // Gb4
+        ev.push_back({ 6.95, juce::MidiMessage::noteOn(3, 73, 0.90f) }); // Db5 -> F5 (9th)!
+        addPitchWheelRamp(ev, 3, 7.45, 8.05, 0.0f, +4.0f / 12.0f);       // Db5 -> F5
+        for (int n : { 51, 58, 66 }) ev.push_back({ 8.85, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 8.85, juce::MidiMessage::noteOff(3, 73) });
+        ev.push_back({ 8.92, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        // Phrase 3: Ab9sus4 -> Wide luminous Db6/9 resolving into dusty 1998 VHS camcorder sunset
+        ev.push_back({ 9.08, juce::MidiMessage::noteOn(1, 44, 0.84f) }); // Ab2
+        ev.push_back({ 9.13, juce::MidiMessage::noteOn(1, 56, 0.85f) }); // Ab3
+        ev.push_back({ 9.18, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // Gb4
+        ev.push_back({ 9.25, juce::MidiMessage::noteOn(3, 70, 0.90f) }); // Bb4 -> C5 -> Bb4
+        addPitchWheelRamp(ev, 3, 9.65, 10.10, 0.0f, +2.0f / 12.0f);
+        for (int n : { 44, 56, 66 }) ev.push_back({ 10.55, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 10.55, juce::MidiMessage::noteOff(3, 70) });
+        ev.push_back({ 10.60, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        ev.push_back({ 10.72, juce::MidiMessage::noteOn(1, 49, 0.85f) }); // Db3
+        ev.push_back({ 10.77, juce::MidiMessage::noteOn(1, 56, 0.86f) }); // Ab3
+        ev.push_back({ 10.82, juce::MidiMessage::noteOn(1, 65, 0.88f) }); // F4
+        ev.push_back({ 10.87, juce::MidiMessage::noteOn(1, 70, 0.88f) }); // Bb4 (6th)
+        ev.push_back({ 10.94, juce::MidiMessage::noteOn(3, 75, 0.92f) }); // Eb5 (9th) -> F5 -> Eb5
+        addPitchWheelRamp(ev, 3, 11.40, 11.95, 0.0f, +2.0f / 12.0f);
+        addPitchWheelRamp(ev, 3, 12.25, 12.80, +2.0f / 12.0f, 0.0f);
+        for (int n : { 49, 56, 65, 70 }) ev.push_back({ 13.40, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 13.40, juce::MidiMessage::noteOff(3, 75) });
+
+        renderSequenceToWav(42, 14.8, 78.0, ev, presetsDir.getChildFile("43_98_generation_vhs_drift.wav"));
     }
 
     // =========================================================================

@@ -204,7 +204,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
             "Kingston Dub-Tank",
             "Microcosm Crystal",
             "Dumble H910 Lead",
-            "Cinecitta Twang"
+            "Cinecitta Twang",
+            "Khruangbin Cry-Spring",
+            "VHS Generation-Drift"
         }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(

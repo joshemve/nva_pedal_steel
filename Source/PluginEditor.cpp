@@ -521,9 +521,11 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
         "Kingston Dub-Tank",
         "Microcosm Crystal",
         "Dumble H910 Lead",
-        "Cinecitta Twang"
+        "Cinecitta Twang",
+        "Khruangbin Cry-Spring",
+        "VHS Generation-Drift"
     }, 1);
-    charBox.setTooltip("Analog Character Circuit (28 Modes): Cassette, Ribbon+LA-2A, Phaser, Spring+Trem, R&B, VB-2, Shimmer, Leslie 147, Diode Bloom, Standel, Bosstone, Talk-Box, Bakelite, ADT, Tri-Chorus, Organ, Harmonic-Trem Noir, Reverse Tape, Mohan Veena, CE-1 Syrup, Binson Echorec, CS-80, SPX90 Shoegaze, Kingston Dub, Microcosm Crystal, Dumble H910, or Cinecitta Twang!");
+    charBox.setTooltip("Analog Character Circuit (30 Modes): Cassette, Ribbon+LA-2A, Phaser, Spring+Trem, R&B, VB-2, Shimmer, Leslie 147, Diode Bloom, Standel, Bosstone, Talk-Box, Bakelite, ADT, Tri-Chorus, Organ, Harmonic-Trem Noir, Reverse Tape, Mohan Veena, CE-1 Syrup, Binson Echorec, CS-80, SPX90 Shoegaze, Kingston Dub, Microcosm Crystal, Dumble H910, Cinecitta Twang, Khruangbin Cry-Spring, or VHS Generation-Drift!");
     addAndMakeVisible(charBox);
     charAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::fxCharacter, charBox);

@@ -212,7 +212,7 @@ private:
         float process(float input, float amount);
     };
 
-    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..27; Mode 0 = bit-transparent bypass)
+    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..29; Mode 0 = bit-transparent bypass)
     struct ModernCharacterProcessor {
         std::vector<float> modBufL, modBufR;
         int modWritePos = 0;
