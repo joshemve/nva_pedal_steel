@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1cbec-836d-7061-b9bd-70d659681e76"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll whiten the pearl while preserving the UV panel layout, black background, and existing flake pattern."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"White and silvery pearl UV texture with subtle pastel iridescence and black panel surrounds, at 1536×1024."}}
+{"type":"turn.completed","usage":{"input_tokens":54211,"cached_input_tokens":39680,"cache_write_input_tokens":0,"output_tokens":290,"reasoning_output_tokens":0}}

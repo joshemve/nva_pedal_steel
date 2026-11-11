@@ -149,7 +149,7 @@ def flake_mat(name, base, cell, lo, hi, metal):
         add = nt.nodes.new("ShaderNodeVectorMath"); add.operation = "ADD"
         nt.links.new(geo.outputs["Normal"], add.inputs[0]); nt.links.new(scl.outputs[0], add.inputs[1])
         nrm = nt.nodes.new("ShaderNodeVectorMath"); nrm.operation = "NORMALIZE"; nt.links.new(add.outputs[0], nrm.inputs[0])
-        nt.links.new(nrm.outputs[0], b.inputs["Normal"]); b.inputs["Roughness"].default_value = 0.18
+        nt.links.new(nrm.outputs[0], b.inputs["Normal"]); b.inputs["Roughness"].default_value = E("FLAKE_ROUGH", 0.08)
     mx_ = nt.nodes.new("ShaderNodeMix"); mx_.data_type = "RGBA"; mx_.blend_type = "MULTIPLY"; mx_.inputs[0].default_value = 1.0
     mx_.inputs[6].default_value = (*base, 1); nt.links.new(mr.outputs[0], mx_.inputs[7]); nt.links.new(mx_.outputs[2], b.inputs["Base Color"])
     return m
@@ -182,7 +182,7 @@ M_WOOD = (photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_T
           photo_wood(KOA_TEX, E("KOA_SAT", 1.12), E("KOA_VAL", 0.93), E("KOA_HUE", 0.515), E("KOA_SCALE", 1.8)) if FINISH == "koa" and os.path.exists(KOA_TEX) else
           photo_wood(PEARL_TEX, E("PEARL_SAT", 0.42), E("PEARL_VAL", 1.08), E("PEARL_HUE", 0.512), E("PEARL_SCALE", 2.2)) if FINISH == "pearloid" and os.path.exists(PEARL_TEX) else
           photo_wood(MAPLE_TEX, E("MAPLE_SAT", 0.86), E("MAPLE_VAL", 1.17), E("MAPLE_HUE", 0.532), E("MAPLE_SCALE", 1.3)) if FINISH == "maple" and os.path.exists(MAPLE_TEX) else
-          flake_mat("RedSparkle", (0.42, 0.005, 0.007), 1100.0, 0.70, 1.45, 0.90) if FINISH == "redsparkle" else
+          flake_mat("RedSparkle", (0.26, 0.004, 0.006), 1100.0, 0.55, 2.4, 0.90) if FINISH == "redsparkle" else
           flake_mat("Pearloid", (0.88, 0.85, 0.78), 22.0, 0.66, 1.08, 0.0) if FINISH == "pearloid" else wood_mat())
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
 M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal bar
@@ -314,8 +314,8 @@ def uv_mat(path):
     b = nt.nodes["Principled BSDF"]; b.inputs["Coat Roughness"].default_value = E("CAB_COAT_ROUGH", 0.16)
     tc = nt.nodes.new("ShaderNodeTexCoord"); tx = nt.nodes.new("ShaderNodeTexImage"); tx.image = bpy.data.images.load(path)
     tx.interpolation = "Cubic"; nt.links.new(tc.outputs["UV"], tx.inputs["Vector"])
-    hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = E("CAB_SAT", 1.35 if FINISH == "rosewood" else 1.0)
-    hs.inputs["Value"].default_value = E("CAB_VAL", 1.0); hs.inputs["Hue"].default_value = E("CAB_HUE", 0.5)
+    hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = E("CAB_SAT", {"rosewood": 1.35, "koa": 0.85}.get(FINISH, 1.0))
+    hs.inputs["Value"].default_value = E("CAB_VAL", 1.0); hs.inputs["Hue"].default_value = E("CAB_HUE", {"koa": 0.514}.get(FINISH, 0.5))
     nt.links.new(tx.outputs["Color"], hs.inputs["Color"]); nt.links.new(hs.outputs["Color"], b.inputs["Base Color"])
     bw = nt.nodes.new("ShaderNodeRGBToBW"); nt.links.new(tx.outputs["Color"], bw.inputs[0])
     bm = nt.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = 0.05; bm.inputs["Distance"].default_value = 0.0003
@@ -354,7 +354,7 @@ for sx in (-1, 1):                                                           # e
 if FINISH == "maple":                                                         # dark inlaid stripe low on the front
     box("Inlay", (0, -BODY_D / 2 - 0.0002, -APRON * E("INLAY_Z", 0.62)), (BODY_L - 0.002, 0.0012, E("INLAY_H", 0.0055)), M_INLAY)
 if FINISH == "redsparkle":                                                    # chrome trim strip along the front
-    box("FrontTrim", (0, -BODY_D / 2 - 0.0008, -APRON * E("TRIM_Z", 0.42)), (BODY_L - 0.002, 0.0026, E("TRIM_H", 0.0060)), M_CHROME, bevel=0.0010, seg=3)
+    box("FrontTrim", (0, -BODY_D / 2 - 0.0016, -APRON * E("TRIM_Z", 0.42)), (BODY_L - 0.002, 0.0070, E("TRIM_H", 0.0140)), mat("TrimBright", (0.90, 0.89, 0.87), 1.0, E("TRIM_ROUGH", 0.20)), bevel=0.0034, seg=10)   # wider, rounded so it catches the light (Joshua)
 
 # ---- neck plate (runs from the keyhead to the changer), fretboard
 FB_W = 0.122
@@ -403,6 +403,10 @@ WR = 0.021                                                                   # r
 yL, yR = 0.036 + WR / 2, NECK_W / 2 - 0.006 + WR / 2
 xl, xr = KH_X0 - 0.002, X_GUIDE + 0.004
 outer = [(xl + 0.012, -yL), (xr, -yR), (xr, yR), (xl + 0.012, yL), (xl + 0.003, yL - 0.010), (xl, yL - 0.024), (xl, -yL + 0.024), (xl + 0.003, -yL + 0.010)]
+if os.environ.get("KEYBED", "1" if FINISH == "pearloid" else "0") == "1":   # dark plate under the keyhead and up to the nut
+    # (the concept shows black there; bright pearl read as glare: Joshua)
+    box("KeyBed", ((KH_X0 + X_NUT) / 2 - 0.004, 0, 0.0006), (X_NUT - KH_X0 + 0.004, NECK_W - 0.002, 0.0012),
+        mat("KeyBed", (0.020, 0.020, 0.022), 0.0, 0.35, spec=0.4), bevel=0.0004)
 kh = prism("Keyhead", outer, 0.0, KH_Z, M_KH)
 inner = [(xl + WR + 0.006, -yL + WR + 0.004), (xr - 0.012, -yR + WR), (xr - 0.012, yR - WR), (xl + WR + 0.006, yL - WR - 0.004), (xl + WR, yL - WR - 0.012), (xl + WR, -yL + WR + 0.012)]
 cut = prism("KeyheadWindow", inner, -0.01, KH_Z + 0.01, M_ALU); cut.hide_render = True; cut.display_type = "WIRE"
@@ -574,9 +578,9 @@ GL = E("STEEL_GLINT", 1.0)
 d_front = Vector((0, -math.cos(TH), -math.sin(TH)))        # where the front apron's mirror direction points
 d_top = Vector((0, math.cos(TH), math.sin(TH)))            # where the flat tops' mirror direction points
 for i, gx in enumerate((-0.42, 0.02, 0.40)):
-    glint("GlintTop%d" % i, d_top * 3.0 + Vector((gx * 1.0, 0, 0)), 0.55, 1.4, 1.6 * GL)
+    glint("GlintTop%d" % i, d_top * 3.0 + Vector((gx * 1.0, 0, 0)), 0.55, 1.4, E("TOP_GLINT", {"redsparkle": 3.6}.get(FINISH, 1.6)) * GL)
 # the front apron: one long soft sheen running past both ends (three panels read as blurry blotches: Joshua)
-glint("GlintFront", d_front * 3.0, E("FRONT_W", 9.0), E("FRONT_H", 1.3), E("FRONT_GLINT", 2.2) * GL)
+glint("GlintFront", d_front * 3.0, E("FRONT_W", 9.0), E("FRONT_H", 1.3), E("FRONT_GLINT", {"koa": 1.0}.get(FINISH, 2.2)) * GL)   # koa: less haze on the front (Joshua)
 
 bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, radius=9, location=(0, 0, 0))
 dome = bpy.context.object; dome.name = "RoomDome"

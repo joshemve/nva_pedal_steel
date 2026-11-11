@@ -1,0 +1,18 @@
+[
+ {
+  "name": "cab_pearloid_w1",
+  "images": [
+   "final/steel3d/gen/p3d_pearloid_4_1.png",
+   "textures/cabinet/snap_pearloid_1.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar; its cabinet is covered in white mother-of-pearl celluloid. Image 2 is our UV texture sheet of that cabinet: wood-panel layout on black. Keep image 2's layout EXACTLY (every panel in the same place and size, black outside the panels) and keep its flake pattern, but repaint the pearl so it matches image 1: much more WHITE pearl - bright white and silvery-white mother-of-pearl flakes dominating, with soft pink, green and blue iridescence, only a light cream tone between them, less yellow and less beige overall. Output ONE image exactly 1536x1024. Material-source image, straight-on, neutral white balance, uniform diffuse illumination, no highlights, no shadows, no vignette, no labels."
+ },
+ {
+  "name": "cab_pearloid_w2",
+  "images": [
+   "final/steel3d/gen/p3d_pearloid_4_1.png",
+   "textures/cabinet/snap_pearloid_1.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar; its cabinet is covered in white mother-of-pearl celluloid. Image 2 is our UV texture sheet of that cabinet: wood-panel layout on black. Keep image 2's layout EXACTLY (every panel in the same place and size, black outside the panels) and keep its flake pattern, but repaint the pearl so it matches image 1: much more WHITE pearl - bright white and silvery-white mother-of-pearl flakes dominating, with soft pink, green and blue iridescence, only a light cream tone between them, less yellow and less beige overall. Output ONE image exactly 1536x1024. Material-source image, straight-on, neutral white balance, uniform diffuse illumination, no highlights, no shadows, no vignette, no labels."
+ }
+]
