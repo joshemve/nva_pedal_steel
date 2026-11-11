@@ -317,3 +317,9 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   (FRONT_W/H/GLINT); pull rods bright satin steel r 2.4 mm (`M_PULL`, chrome showed only the dark room); maple colour
   measured against the reference (MAPLE_SAT .86 / VAL 1.17 / HUE .532 / SCALE 1.3); koa uses real veneer
   `textures/wood/koa_1_1.png` (procedural curl read as stripes). Layers, layers_brass and every finish plate re-rendered.
+- Joshua picked koa 5 and pearloid 4 (2026-11-11). Koa = real veneer `koa_1_1.png` tuned to the ref (KOA_*), aluminium
+  hardware: its skin/card now come from `finish_koa`, and the editor uses the chrome pedal set for every model (brass
+  set kept but unused). Pearloid = real mother-of-pearl wrap `textures/wood/pearloid_2_1.png` (PEARL_*).
+- Hardware options in steel_3d.py: HW_KEYHEAD satin|polished|black, HW_KEYS alu|chrome|ivory|pearl|ebony,
+  HW_PICKUP black|chrome|ring, HW_END satin|chrome|nickel (unset = current). `final/steel3d/hw_variants.sh` renders
+  three options per model for Joshua to pick visually.

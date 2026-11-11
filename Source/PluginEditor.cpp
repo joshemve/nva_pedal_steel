@@ -552,7 +552,7 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
     // under the neck: the 3D pedal assembly on the one rug - cross bar, knee levers swinging, floor pedals pivoting on
     // the bar with their pull rods (rendered poses, eased); nothing is drawn above this instrument's body edge
     {
-        const int m = skin == 4 ? 1 : 0;   // the koa steel has brass rods and cross bar
+        const int m = 0;   // every model has the aluminium/chrome pedal set (approved koa 5 dropped the brass; set 1 kept unused)
         const float top = skinBodyY[juce::jlimit(0, 4, skin)];
         drawFloorLayer(g, f3d[m][0], f3d_bar, f3dFrames_bar, 0.0f, top);
         drawFloorLayer(g, f3d[m][1], f3d_knee_L, f3dFrames_knee_L, pedalShown(3), top);

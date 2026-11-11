@@ -175,10 +175,12 @@ def photo_wood(path, sat=0.92, val=0.78, hue=0.5, scale=1.0):
 
 WOOD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "wood")
 WOOD_TEX = os.path.join(WOOD_DIR, "rosewood_1_1.png")
+PEARL_TEX = os.path.join(WOOD_DIR, "pearloid_2_1.png")    # real mother-of-pearl celluloid (approved ref p3d_pearloid_4)
 KOA_TEX = os.path.join(WOOD_DIR, "koa_1_1.png")           # real figured koa (the procedural curl read as stripes: Joshua)
 MAPLE_TEX = os.path.join(WOOD_DIR, "maple_1_1.png")       # approved ref p3d_maple_1: honey birdseye/burl maple
 M_WOOD = (photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_TEX) else
-          photo_wood(KOA_TEX, E("KOA_SAT", 0.85), E("KOA_VAL", 0.82), 0.5, E("KOA_SCALE", 1.2)) if FINISH == "koa" and os.path.exists(KOA_TEX) else
+          photo_wood(KOA_TEX, E("KOA_SAT", 1.12), E("KOA_VAL", 0.93), E("KOA_HUE", 0.515), E("KOA_SCALE", 1.8)) if FINISH == "koa" and os.path.exists(KOA_TEX) else
+          photo_wood(PEARL_TEX, E("PEARL_SAT", 0.42), E("PEARL_VAL", 1.08), E("PEARL_HUE", 0.512), E("PEARL_SCALE", 2.2)) if FINISH == "pearloid" and os.path.exists(PEARL_TEX) else
           photo_wood(MAPLE_TEX, E("MAPLE_SAT", 0.86), E("MAPLE_VAL", 1.17), E("MAPLE_HUE", 0.532), E("MAPLE_SCALE", 1.3)) if FINISH == "maple" and os.path.exists(MAPLE_TEX) else
           flake_mat("RedSparkle", (0.42, 0.005, 0.007), 1100.0, 0.70, 1.45, 0.90) if FINISH == "redsparkle" else
           flake_mat("Pearloid", (0.88, 0.85, 0.78), 22.0, 0.66, 1.08, 0.0) if FINISH == "pearloid" else wood_mat())
@@ -203,8 +205,19 @@ M_FLOOR = mat("Floor", (0.16, 0.06, 0.035), 0.0, 0.8)
 COL = {"red": (0.75, 0.05, 0.03), "cream": (0.86, 0.72, 0.52), "blue": (0.05, 0.25, 0.80), "yellow": (0.95, 0.65, 0.04)}
 M_MARK = {k: mat("Mark_" + k, v, 0.0, 0.45) for k, v in COL.items()}
 # per-model trim (approved refs p3d_maple_1 / p3d_redsparkle_1): mirror-chrome endplates, cream keys on the maple
-M_END = M_CHROME if FINISH in ("maple", "redsparkle") else M_ALU
-M_KEY = mat("CreamKey", (0.80, 0.70, 0.50), 0.0, 0.25, coat=0.6) if FINISH == "maple" else M_ALU
+# hardware options per model (HW_KEYHEAD satin|polished|black, HW_KEYS alu|chrome|ivory|pearl|ebony,
+# HW_PICKUP black|chrome|ring, HW_END satin|chrome|nickel); unset = the model's current hardware
+HW = lambda k, d: os.environ.get(k, d)
+M_NICKEL = mat("Nickel", (0.72, 0.68, 0.60), 1.0, 0.10)
+M_BLACKANO = mat("BlackAnodised", (0.030, 0.030, 0.032), 1.0, 0.32)
+KEYMATS = {"alu": M_ALU, "chrome": M_CHROME,
+           "ivory": mat("IvoryKey", (0.80, 0.70, 0.50), 0.0, 0.25, coat=0.6),
+           "pearl": mat("PearlKey", (0.86, 0.84, 0.79), 0.0, 0.18, coat=1.0),
+           "ebony": mat("EbonyKey", (0.025, 0.018, 0.014), 0.0, 0.30, coat=0.7)}
+M_END = {"satin": M_ALU, "chrome": M_CHROME, "nickel": M_NICKEL}[HW("HW_END", "chrome" if FINISH in ("maple", "redsparkle") else "satin")]
+M_KEY = KEYMATS[HW("HW_KEYS", "ivory" if FINISH == "maple" else "alu")]
+M_KH = {"satin": M_ALU, "polished": M_CHROME, "black": M_BLACKANO}[HW("HW_KEYHEAD", "satin")]
+PICKUP = HW("HW_PICKUP", "black")
 M_INLAY = mat("Inlay", (0.020, 0.008, 0.004), 0.0, 0.35, coat=0.8)
 
 
@@ -353,7 +366,7 @@ WR = 0.021                                                                   # r
 yL, yR = 0.036 + WR / 2, NECK_W / 2 - 0.006 + WR / 2
 xl, xr = KH_X0 - 0.002, X_GUIDE + 0.004
 outer = [(xl + 0.012, -yL), (xr, -yR), (xr, yR), (xl + 0.012, yL), (xl + 0.003, yL - 0.010), (xl, yL - 0.024), (xl, -yL + 0.024), (xl + 0.003, -yL + 0.010)]
-kh = prism("Keyhead", outer, 0.0, KH_Z, M_ALU)
+kh = prism("Keyhead", outer, 0.0, KH_Z, M_KH)
 inner = [(xl + WR + 0.006, -yL + WR + 0.004), (xr - 0.012, -yR + WR), (xr - 0.012, yR - WR), (xl + WR + 0.006, yL - WR - 0.004), (xl + WR, yL - WR - 0.012), (xl + WR, -yL + WR + 0.012)]
 cut = prism("KeyheadWindow", inner, -0.01, KH_Z + 0.01, M_ALU); cut.hide_render = True; cut.display_type = "WIRE"
 bo = kh.modifiers.new("window", "BOOLEAN"); bo.operation = "DIFFERENCE"; bo.object = cut; bo.solver = "EXACT"
@@ -396,7 +409,9 @@ for i, y in enumerate(SY):
     # pickup pole piece: a steel slug standing a hair proud of the cover, with a dark ring around it
     cyl("PoleRing", (X_BR - 0.038, y, NECK_H + 0.0099), 0.0034, 0.0004, M_BLACK, "Z", 20)
     cyl("Pole", (X_BR - 0.038, y, NECK_H + 0.0102), 0.0024, 0.0009, M_STEEL, "Z", 20, bevel=0.0003)
-box("Pickup", (X_BR - 0.038, 0, NECK_H + 0.0048), (0.026, FB_W - 0.004, 0.0100), M_PICKUP, bevel=0.0035, seg=6)
+box("Pickup", (X_BR - 0.038, 0, NECK_H + 0.0048), (0.026, FB_W - 0.004, 0.0100), M_CHROME if PICKUP == "chrome" else M_PICKUP, bevel=0.0035, seg=6)
+if PICKUP == "ring":                                                          # chrome surround ring under the black cover
+    box("PickupRing", (X_BR - 0.038, 0, NECK_H + 0.0012), (0.034, FB_W + 0.004, 0.0024), M_CHROME, bevel=0.0010, seg=3)
 box("ChangerTray", (X_BR + 0.038, 0, 0.004), (0.074, NECK_W - 0.006, 0.008), M_BLACK)
 box("TrayWall", (X_BR + 0.0735, 0, Z_STR / 2 - 0.004), (0.005, NECK_W - 0.002, Z_STR - 0.006), M_ALU, bevel=0.0015)
 for s in (1, -1):

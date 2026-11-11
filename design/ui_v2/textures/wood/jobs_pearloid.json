@@ -1,0 +1,16 @@
+[
+ {
+  "name": "pearloid_1",
+  "images": [
+   "final/steel3d/gen/p3d_pearloid_4_1.png"
+  ],
+  "prompt": "Image 1 shows the pearloid finish we want (on the instrument's front). Generate ONE image, 1536x1024, landscape: a flat, straight-on, evenly lit, high-resolution photograph of a sheet of real vintage mother-of-pearl celluloid (pearloid) guitar wrap, filling the whole frame edge to edge. Cream / ivory base with irregular overlapping pearl flakes and shards of varying size, each flake with soft iridescent shimmer (faint pink, green, blue and gold sheen) and darker fine crack lines between them, slight warm yellowing like an aged 1950s instrument. Not glitter, not swirls, not plastic-looking. No shadows, no reflections, no edges, no objects, no vignetting, no text: just the surface, sharp and detailed, so it can be used as a texture."
+ },
+ {
+  "name": "pearloid_2",
+  "images": [
+   "final/steel3d/gen/p3d_pearloid_4_1.png"
+  ],
+  "prompt": "Image 1 shows the pearloid finish we want (on the instrument's front). Generate ONE image, 1536x1024, landscape: a flat, straight-on, evenly lit, high-resolution photograph of a sheet of real vintage mother-of-pearl celluloid (pearloid) guitar wrap, filling the whole frame edge to edge. Cream / ivory base with irregular overlapping pearl flakes and shards of varying size, each flake with soft iridescent shimmer (faint pink, green, blue and gold sheen) and darker fine crack lines between them, slight warm yellowing like an aged 1950s instrument. Not glitter, not swirls, not plastic-looking. No shadows, no reflections, no edges, no objects, no vignetting, no text: just the surface, sharp and detailed, so it can be used as a texture."
+ }
+]
