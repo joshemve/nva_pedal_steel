@@ -1101,39 +1101,39 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
             }()
         },
         {
-            "31 - Scheerhorn Spider-Cone Dobro",
-            "Bluegrass / Acoustic",
-            "Close-mic'd Tim Scheerhorn squareneck acoustic resophonic Dobro (Jerry Douglas / Union Station): phosphor-bronze Dunlop thumbpick bark, 128 Hz mahogany air cavity, 485 Hz 8-leg spider notch, and 1.68 kHz spun-aluminum cone cry.",
+            "31 - Twin Peaks '89 Trem-Noir",
+            "Midnight Dream-Noir",
+            "Angelo Badalamenti 'Falling' x James Calvin Wilsey 'Wicked Game' (1989): true 1961 Brownface Fender 2-band 180-deg out-of-phase tube Harmonic Tremolo swaying into an endless dark 1989 Lexicon 480L Random Hall.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 0;
-                p.playMode      = 0; // Poly Copedent: lightning bluegrass fingerpicking rolls + expressive tonebar slants!
-                p.fxCharacter   = 17; // Spider-Cone Dobro
+                p.presetStyle   = 0; // Pure balanced E9th singing voice
+                p.playMode      = 1; // Crying Lead Gliss + lush nocturnal chords
+                p.fxCharacter   = 17; // Harmonic-Trem Noir
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.36f;
-                p.pedalSpeed    = 115.0f;
-                p.barGlide      = 110.0f;
-                p.barSlideNoise = 0.28f;
+                p.scoopDepth    = 0.48f; // Slow, heart-aching nocturnal vocal scoops
+                p.pedalSpeed    = 165.0f;
+                p.barGlide      = 175.0f;
+                p.barSlideNoise = 0.16f;
                 p.vibratoDepth  = 0.22f;
-                p.vibratoRate   = 5.35f;
-                p.autoSwell     = 0.0f;
-                p.swellTime     = 65.0f;
-                p.sampleBlend   = 0.86f;
-                p.pickSnap      = 0.86f; // Crisp Dunlop thumbpick + metal fingerpicks over split maple saddle
-                p.pickupPos     = 1.95f;
-                p.coilPeakFreq  = 2420.0f;
-                p.coilResonance = 0.66f;
-                p.sustainTime   = 3.6f;  // Authentic acoustic resophonic cone energy radiation & woody taper
-                p.cabinetDrop   = 0.0f;  // Squareneck acoustic Dobro has zero pedal-rod cabinet sag
-                p.stereoWidth   = 1.18f; // Natural ORTF stereo condenser pair in a wooden Nashville room
-                p.ampDrive      = 0.08f; // Unamplified acoustic resonator body into studio condenser pair!
-                p.toneWarmth    = 0.44f;
-                p.delayMix      = 0.0f;
-                p.delayTime     = 280.0f;
+                p.vibratoRate   = 4.60f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 85.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.44f; // Warm flesh/thumb midnight intimacy — zero country twang!
+                p.pickupPos     = 2.48f;
+                p.coilPeakFreq  = 1920.0f;
+                p.coilResonance = 0.56f;
+                p.sustainTime   = 10.8f;
+                p.cabinetDrop   = 0.08f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.18f;
+                p.toneWarmth    = 0.66f;
+                p.delayMix      = 0.10f;
+                p.delayTime     = 468.0f; // Slow midnight slap/echo into the 480L hall
                 p.tempoSync     = false;
-                p.reverbMix     = 0.18f;
-                p.reverbDecay   = 0.38f;
-                p.outputLevel   = 1.6f;
+                p.reverbMix     = 0.46f;
+                p.reverbDecay   = 0.86f;
+                p.outputLevel   = -1.6f;
                 return p;
             }()
         },

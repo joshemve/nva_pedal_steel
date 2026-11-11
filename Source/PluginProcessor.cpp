@@ -194,7 +194,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
             "Abbey Road Tape ADT",
             "Dimension D Chorus",
             "Poly-Octave Organ",
-            "Spider-Cone Dobro",
+            "Harmonic-Trem Noir",
             "Revolver Reverse Tape",
             "Mohan Veena Jawari",
             "Neo-Soul CE-1 Syrup",

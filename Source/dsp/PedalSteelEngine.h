@@ -159,10 +159,6 @@ private:
         float slideSvfBand = 0.0f;
         float slideSvfLow  = 0.0f;
         float lastOutput = 0.0f;
-
-        // Per-string Scheerhorn Spider-Cone Dobro bronze saddle & cone state (fxCharacter == 17)
-        float dobroHpState = 0.0f;
-        float dobroLpState = 0.0f;
     };
 
     // Warm Stereo Echoplex / BBD Tape Delay with Capstan Modulation & Dynamic Ducking
@@ -335,7 +331,6 @@ private:
     float tweedSagEnv = 0.0f;
     float rackBellSmooth = 0.0f;
     float organRankSmooth = 0.0f;
-    float dobroConeSmooth = 0.0f;
     float jawariSmooth = 0.0f;
     float cs80BrassSmooth = 0.0f;
 

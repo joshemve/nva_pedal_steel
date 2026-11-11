@@ -636,13 +636,13 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         charFilter2.setPeak(sr, 920.0f, 0.85f, -1.6f);
         charFilter3.setLowpass(sr, 3850.0f, 0.72f);
     } else if (mode == 17) {
-        // 31: Scheerhorn Spider-Cone Dobro (128 Hz Mahogany Air Cavity + 485 Hz 8-Leg Spider Notch + 1.58 kHz Spun-Aluminum Cone Bark)
-        dimHpFilter.setHighpass(sr, 95.0f, 0.72f);
-        charFilter1.setPeak(sr, 128.0f, 1.18f, 4.8f);
-        charFilter2.setPeak(sr, 485.0f, 1.45f, -4.8f);
-        charFilter3.setPeak(sr, 1580.0f, 1.55f, 5.4f);
-        charFilter4.setPeak(sr, 2950.0f, 1.15f, 3.2f);
-        subLpFilter.setLowpass(sr, 6200.0f, 0.74f);
+        // 31: Twin Peaks '89 Trem-Noir (1961 Brownface Fender 2-Band Out-of-Phase Tube Harmonic Tremolo + 1989 Lexicon 480L Dark Dream Hall)
+        dimHpFilter.setHighpass(sr, 96.0f, 0.707f);
+        charFilter1.setPeak(sr, 168.0f, 0.80f, 3.2f);
+        charFilter2.setPeak(sr, 2380.0f, 0.95f, -2.6f);
+        charFilter3.setPeak(sr, 3550.0f, 0.85f, 2.4f);
+        charFilter4.setLowpass(sr, 5200.0f, 0.74f);
+        subLpFilter.setLowpass(sr, 2450.0f, 0.74f);
     } else if (mode == 18) {
         // 32: '66 Revolver Backwards Tape (Dual Overlapping -1.000x Reverse Studer J37 Tape Heads + 15-ips Oxide Silk)
         dimHpFilter.setHighpass(sr, 135.0f, 0.707f);
@@ -1526,88 +1526,95 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         const float dCatR = juce::jlimit(4.0f, static_cast<float>(modMaxLen - 4), (43.0f - 0.75f * catWob) * srMs);
         outExtraRevL = subLpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dCatL)) * 0.38f + ioL * 0.20f;
         outExtraRevR = subLpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dCatR)) * 0.38f + ioR * 0.20f;
-    } else if (mode == 17) {
-        // 31: Scheerhorn Spider-Cone Dobro (Jerry Douglas / Union Station Acoustic Resophonic Squareneck:
-        //     128 Hz Mahogany Air Cavity + 485 Hz 8-Leg Spider Notch + Dual ZDF Spun-Aluminum Cone Formants (720 + 1540 Hz) & Soundwell ORTF Pair)
+    } else if (mode == 17 && shimMaxLen > 64) {
+        // 31: Twin Peaks '89 Trem-Noir (Angelo Badalamenti 'Falling' x Chris Isaak / James Calvin Wilsey 'Wicked Game':
+        //     1961 Brownface Fender Showman 2-Band 180-Deg Out-of-Phase Tube Harmonic Tremolo -> 1989 Lexicon 480L Dark Velvet Dream Hall!)
+        const double tremHz = tempoSync
+            ? juce::jlimit(1.75, 2.85, (juce::jlimit(54.0, 160.0, hostBpm) / 60.0) * 2.0)
+            : 2.24;
+        lfoPhase1 += tremHz * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.33 * dt;   if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0; // Lexicon 480L Spin
+        lfoPhase3 += 0.51 * dt;   if (lfoPhase3 >= 1.0) lfoPhase3 -= 1.0; // Lexicon 480L Wander
+
         const float inPk = std::max(std::abs(ioL), std::abs(ioR));
-        const float envAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > gateEnv) ? 0.0012 : 0.075)));
-        gateEnv += envAlpha * (inPk - gateEnv);
+        const float fastAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > gateEnv) ? 0.0025 : 0.140)));
+        const float slowAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > cassetteSagEnv) ? 0.0060 : 0.280)));
+        gateEnv        += fastAlpha * (inPk - gateEnv);
+        cassetteSagEnv += slowAlpha * (inPk - cassetteSagEnv);
 
-        // 1. Acoustic mahogany L-body Helmholtz air cavity (128 Hz) + 8-leg cast-aluminum spider impedance notch (485 Hz)
-        const float bodyInL = charFilter2.processL(charFilter1.processL(dimHpFilter.processL(ioL)));
-        const float bodyInR = charFilter2.processR(charFilter1.processR(dimHpFilter.processR(ioR)));
-
-        // 2. Dual ZDF Spun-Aluminum Resonator Cone Modes: 720 Hz (Q=2.9 hollow cone throat) + 1540 Hz (Q=3.2 signature nasal Dobro cry!)
-        const float gC1 = std::tan(static_cast<float>(kPi) * std::min(720.0f, static_cast<float>(sr * 0.42)) / static_cast<float>(sr));
-        const float kC1 = 0.345f; // Q = 2.9
-        const float a1C = 1.0f / (1.0f + gC1 * (gC1 + kC1));
-        const float a2C = gC1 * a1C, a3C = gC1 * a2C;
-        const float v3_1L = bodyInL - svf1Ic2L, v3_1R = bodyInR - svf1Ic2R;
-        const float v1_1L = a1C * svf1Ic1L + a2C * v3_1L, v1_1R = a1C * svf1Ic1R + a2C * v3_1R;
-        const float v2_1L = svf1Ic2L + a2C * svf1Ic1L + a3C * v3_1L, v2_1R = svf1Ic2R + a2C * svf1Ic1R + a3C * v3_1R;
-        svf1Ic1L = 2.0f * v1_1L - svf1Ic1L; svf1Ic2L = 2.0f * v2_1L - svf1Ic2L;
-        svf1Ic1R = 2.0f * v1_1R - svf1Ic1R; svf1Ic2R = 2.0f * v2_1R - svf1Ic2R;
-
-        const float gC2 = std::tan(static_cast<float>(kPi) * std::min(1540.0f, static_cast<float>(sr * 0.42)) / static_cast<float>(sr));
-        const float kC2 = 0.312f; // Q = 3.2
-        const float b1C = 1.0f / (1.0f + gC2 * (gC2 + kC2));
-        const float b2C = gC2 * b1C, b3C = gC2 * b2C;
-        const float v3_2L = bodyInL - svf2Ic2L, v3_2R = bodyInR - svf2Ic2R;
-        const float v1_2L = b1C * svf2Ic1L + b2C * v3_2L, v1_2R = b1C * svf2Ic1R + b2C * v3_2R;
-        const float v2_2L = svf2Ic2L + b2C * svf2Ic1L + b3C * v3_2L, v2_2R = svf2Ic2R + b2C * svf2Ic1R + b3C * v3_2R;
-        svf2Ic1L = 2.0f * v1_2L - svf2Ic1L; svf2Ic2L = 2.0f * v2_2L - svf2Ic2L;
-        svf2Ic1R = 2.0f * v1_2R - svf2Ic1R; svf2Ic2R = 2.0f * v2_2R - svf2Ic2R;
-
-        const float coneFormantL = 0.44f * (kC1 * v1_1L) + 0.58f * (kC2 * v1_2L);
-        const float coneFormantR = 0.44f * (kC1 * v1_1R) + 0.58f * (kC2 * v1_2R);
-
-        // 3. Spun 0.016" aluminum resonator cone throat bark (1.58 kHz) + phosphor-bronze sheen (2.95 kHz) + natural diaphragm flex
-        const float coneExcL = charFilter4.processL(charFilter3.processL(bodyInL * 0.55f + coneFormantL * 0.95f));
-        const float coneExcR = charFilter4.processR(charFilter3.processR(bodyInR * 0.55f + coneFormantR * 0.95f));
-        const float conePush = 1.24f + 0.72f * juce::jlimit(0.0f, 1.0f, gateEnv * 2.5f);
-        const float rawFlexL = (fastTanh(coneExcL * conePush + 0.18f * coneExcL * coneExcL) - 0.09f * fastTanh(coneExcL * coneExcL)) / (0.90f + 0.22f * conePush);
-        const float rawFlexR = (fastTanh(coneExcR * conePush + 0.18f * coneExcR * coneExcR) - 0.09f * fastTanh(coneExcR * coneExcR)) / (0.90f + 0.22f * conePush);
+        // 1. Warm 1961 Brownface 12AX7 Tube Preamp & Nocturnal Velvet Contour (168 Hz chest + 2.38 kHz anti-twang + 3.55 kHz glass bell)
+        const float tubeGain = 1.26f / (0.64f + 0.95f * cassetteSagEnv);
+        const float xL = juce::jlimit(-2.6f, 2.6f, dimHpFilter.processL(ioL) * tubeGain);
+        const float xR = juce::jlimit(-2.6f, 2.6f, dimHpFilter.processR(ioR) * tubeGain);
+        const float rawTubeL = (fastTanh(xL + 0.15f * xL * xL) - 0.075f * fastTanh(xL * xL)) * 0.84f;
+        const float rawTubeR = (fastTanh(xR + 0.15f * xR * xR) - 0.075f * fastTanh(xR * xR)) * 0.84f;
         const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 24.0 / sr));
-        leslieDcL += dcAlpha * (rawFlexL - leslieDcL);
-        leslieDcR += dcAlpha * (rawFlexR - leslieDcR);
+        leslieDcL += dcAlpha * (rawTubeL - leslieDcL);
+        leslieDcR += dcAlpha * (rawTubeR - leslieDcR);
 
-        // 4. 4-Stage Dispersive 10.5" Spun-Aluminum Cone Modal Ring Network (2.56..7.87 ms physical cone modes)
-        float coneDispL = rawFlexL - leslieDcL;
-        float coneDispR = rawFlexR - leslieDcR;
-        for (size_t i = 0; i < 4; ++i) {
-            auto& bL = springApL[i];
-            auto& bR = springApR[i];
-            int idxL = springApPosL[i], idxR = springApPosR[i];
-            const float dL = bL[static_cast<size_t>(idxL)], dR = bR[static_cast<size_t>(idxR)];
-            const float g = 0.58f;
-            const float wL = coneDispL + dL * g, wR = coneDispR + dR * g;
-            bL[static_cast<size_t>(idxL)] = wL;
-            bR[static_cast<size_t>(idxR)] = wR;
-            coneDispL = dL - wL * g;
-            coneDispR = dR - wR * g;
-            if (++idxL >= static_cast<int>(bL.size())) idxL = 0;
-            if (++idxR >= static_cast<int>(bR.size())) idxR = 0;
-            springApPosL[i] = idxL;
-            springApPosR[i] = idxR;
-        }
+        const float ampPreL = charFilter4.processL(charFilter3.processL(charFilter2.processL(charFilter1.processL(rawTubeL - leslieDcL))));
+        const float ampPreR = charFilter4.processR(charFilter3.processR(charFilter2.processR(charFilter1.processR(rawTubeR - leslieDcR))));
 
-        // 5. Close-mic'd ORTF Stereo Coverplate Rim (3.85/5.45 ms) & Mahogany Soundwell Early Reflections (11.6/16.9 ms)
-        modBufL[static_cast<size_t>(modWritePos)] = juce::jlimit(-2.4f, 2.4f, bodyInL * 0.44f + coneDispL * 0.78f);
-        modBufR[static_cast<size_t>(modWritePos)] = juce::jlimit(-2.4f, 2.4f, bodyInR * 0.44f + coneDispR * 0.78f);
+        // 2. True 1961 Leo Fender 6G14 Complementary 2-Band Harmonic Tremolo (Low <520 Hz & High >520 Hz throb 180-deg out of phase!)
+        const double tremHz2 = tempoSync
+            ? juce::jlimit(2.05, 3.15, (juce::jlimit(54.0, 160.0, hostBpm) / 60.0) * 2.5)
+            : 2.65;
+        lfoPhase1 += (tremHz2 - tremHz) * dt;
+        if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        if (lfoPhase1 < 0.0)  lfoPhase1 += 1.0;
 
-        const float rimRefL  = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), 3.85f  * srMs));
-        const float rimRefR  = readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), 5.45f  * srMs));
-        const float wellRefL = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), 11.60f * srMs));
-        const float wellRefR = readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), 16.90f * srMs));
+        const float xoverAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 520.0 / sr));
+        xoverLp1L += xoverAlpha * (ampPreL - xoverLp1L);
+        xoverLp1R += xoverAlpha * (ampPreR - xoverLp1R);
+        xoverLp2L += xoverAlpha * (xoverLp1L - xoverLp2L);
+        xoverLp2R += xoverAlpha * (xoverLp1R - xoverLp2R);
 
-        const float wellDampAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 2350.0 / sr));
-        hornBeamLpL += wellDampAlpha * (wellRefL - hornBeamLpL);
-        hornBeamLpR += wellDampAlpha * (wellRefR - hornBeamLpR);
+        const float lowBandL  = xoverLp2L;
+        const float lowBandR  = xoverLp2R;
+        const float highBandL = ampPreL - lowBandL;
+        const float highBandR = ampPreR - lowBandR;
 
-        ioL = subLpFilter.processL(bodyInL * 0.32f + coneDispL * 0.68f + rimRefL * 0.25f + hornBeamLpR * 0.20f);
-        ioR = subLpFilter.processR(bodyInR * 0.32f + coneDispR * 0.68f + rimRefR * 0.25f + hornBeamLpL * 0.20f);
-        outExtraRevL = (coneDispL * 0.60f + hornBeamLpL * 0.40f) * 0.16f;
-        outExtraRevR = (coneDispR * 0.60f + hornBeamLpR * 0.40f) * 0.16f;
+        // Asymmetric 12AX7 bias oscillator with 42-deg stereo sway: deep 180-deg Low/High chew + hypnotic midnight bias pulse!
+        const double thL = kTwoPi * lfoPhase1;
+        const double thR = thL + 0.74;
+        const float waveL = juce::jlimit(-1.0f, 1.0f, static_cast<float>(std::sin(thL) + 0.18 * std::sin(2.0 * thL)));
+        const float waveR = juce::jlimit(-1.0f, 1.0f, static_cast<float>(std::sin(thR) + 0.18 * std::sin(2.0 * thR)));
+        const float depth = 0.88f / (1.0f + 0.28f * gateEnv);
+
+        const float gLowL  = (1.0f + 0.86f * depth * waveL) * (0.86f + 0.24f * waveL);
+        const float gHighL = (1.0f - 0.82f * depth * waveL) * (0.88f + 0.30f * waveL);
+        const float gLowR  = (1.0f + 0.86f * depth * waveR) * (0.86f + 0.24f * waveR);
+        const float gHighR = (1.0f - 0.82f * depth * waveR) * (0.88f + 0.30f * waveR);
+
+        const float tremL = lowBandL * gLowL + highBandL * gHighL;
+        const float tremR = lowBandR * gLowR + highBandR * gHighR;
+
+        // 3. 1989 Lexicon 480L 'Random Hall' Spin/Wander Chorused Pre-Delay & Dark Velvet Dream Cloud (ducked slightly so tremolo throbs clearly!)
+        const float spinL   = 1.35f * static_cast<float>(std::sin(kTwoPi * lfoPhase2)) + 0.65f * static_cast<float>(std::sin(kTwoPi * lfoPhase3));
+        const float wanderR = 1.35f * static_cast<float>(std::cos(kTwoPi * lfoPhase2)) - 0.65f * static_cast<float>(std::sin(kTwoPi * lfoPhase3 + 1.1));
+        const float maxD = static_cast<float>(shimMaxLen - 8);
+        const float erL  = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxD, (58.0f  + spinL)   * srMs));
+        const float erR  = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxD, (87.0f  + wanderR) * srMs));
+        const float latL = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxD, (192.0f - wanderR) * srMs));
+        const float latR = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxD, (268.0f + spinL)   * srMs));
+
+        const float cloudRawL = erL * 0.40f + latR * 0.60f;
+        const float cloudRawR = erR * 0.40f + latL * 0.60f;
+        const float hpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 175.0 / sr));
+        drumBeamLpL += hpAlpha * (cloudRawL - drumBeamLpL);
+        drumBeamLpR += hpAlpha * (cloudRawR - drumBeamLpR);
+        const float lexCloudL = subLpFilter.processL(cloudRawL - drumBeamLpL);
+        const float lexCloudR = subLpFilter.processR(cloudRawR - drumBeamLpR);
+
+        shimBufL[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.2f, 2.2f, tremL * 0.68f + lexCloudR * 0.44f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.2f, 2.2f, tremR * 0.68f + lexCloudL * 0.44f);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        const float cloudDuck = 0.56f + 0.44f / (1.0f + 2.4f * cassetteSagEnv);
+        ioL = tremL * 0.88f + lexCloudL * 0.30f * cloudDuck;
+        ioR = tremR * 0.88f + lexCloudR * 0.30f * cloudDuck;
+        outExtraRevL = (lexCloudL * 0.76f + tremL * 0.24f) * 0.42f;
+        outExtraRevR = (lexCloudR * 0.76f + tremR * 0.24f) * 0.42f;
     } else if (mode == 18 && shimMaxLen > 64) {
         // 32: '66 Revolver Backwards Tape (Abbey Road Room 2 Dual -1.000x Backwards-Reading Studer J37 Tape Heads!)
         const float pk = std::max(std::abs(ioL), std::abs(ioR));
@@ -2354,7 +2361,6 @@ void PedalSteelEngine::reset() {
     tweedSagEnv = 0.0f;
     rackBellSmooth  = (params.fxCharacter == 15) ? 1.0f : 0.0f;
     organRankSmooth = (params.fxCharacter == 16) ? 1.0f : 0.0f;
-    dobroConeSmooth = (params.fxCharacter == 17) ? 1.0f : 0.0f;
     jawariSmooth    = (params.fxCharacter == 19) ? 1.0f : 0.0f;
     cs80BrassSmooth = (params.fxCharacter == 22) ? 1.0f : 0.0f;
 
@@ -2454,7 +2460,6 @@ void PedalSteelEngine::updateFilterCoeffs() {
     if (!modernChar.hasRendered) {
         rackBellSmooth  = (params.fxCharacter == 15) ? 1.0f : 0.0f;
         organRankSmooth = (params.fxCharacter == 16) ? 1.0f : 0.0f;
-        dobroConeSmooth = (params.fxCharacter == 17) ? 1.0f : 0.0f;
         jawariSmooth    = (params.fxCharacter == 19) ? 1.0f : 0.0f;
         cs80BrassSmooth = (params.fxCharacter == 22) ? 1.0f : 0.0f;
     }
@@ -2919,8 +2924,6 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
             v.chimeHpStateR = 0.0f;
             v.chimeLpStateL = 0.0f;
             v.chimeLpStateR = 0.0f;
-            v.dobroHpState = 0.0f;
-            v.dobroLpState = 0.0f;
 
             for (int h = 0; h < kMaxHarmonics; ++h) {
                 v.harmPhases[static_cast<size_t>(h)] = std::fmod(kPi * static_cast<double>(h * (h + 1)) / static_cast<double>(kMaxHarmonics) + static_cast<double>(strIdx) * 0.57, kTwoPi);
@@ -3240,7 +3243,6 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         const float rankAlpha   = static_cast<float>(1.0 - std::exp(-dt / 0.0085));
         rackBellSmooth  += (targetRack  - rackBellSmooth)  * rankAlpha;
         organRankSmooth += (targetOrgan - organRankSmooth) * rankAlpha;
-        dobroConeSmooth += (((params.fxCharacter == 17) ? 1.0f : 0.0f) - dobroConeSmooth) * rankAlpha;
         jawariSmooth    += (((params.fxCharacter == 19) ? 1.0f : 0.0f) - jawariSmooth)    * rankAlpha;
         cs80BrassSmooth += (((params.fxCharacter == 22) ? 1.0f : 0.0f) - cs80BrassSmooth) * rankAlpha;
 
@@ -3336,8 +3338,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                     const float atkRate = static_cast<float>(1.0 - std::exp(-dt / atkTau));
                     v.ampEnv += (targetAmp - v.ampEnv) * atkRate;
                 } else {
-                    // Acoustic spider-cone Dobro radiates string energy rapidly into the 10.5" spun-aluminum cone!
-                    v.ampEnv -= v.ampEnv * sustainDecayRate * (1.0f + 0.65f * dobroConeSmooth);
+                    v.ampEnv -= v.ampEnv * sustainDecayRate;
                 }
             }
 
@@ -3661,29 +3662,6 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
 
                 const double pitchRatio = static_cast<double>(targetSampleHz / std::max(50.0f, ms.baseFreqHz));
                 v.samplePos += (PedalSteelMultiSamples::kSampleRate / sampleRate) * pitchRatio;
-            }
-
-            if (dobroConeSmooth > 0.0005f && !v.isPalmHarmonic) {
-                // Per-string Scheerhorn Spider-Cone Dobro: explosive acoustic resonator radiation envelope (0..130 ms cone punch -> natural acoustic taper)
-                // coupled with unilateral 0.016" spun-aluminum cone apex flex (zero chord intermodulation!).
-                const float acousRad = 0.22f + 1.18f * std::exp(-ageF / 0.130f) + 0.40f * std::exp(-ageF / 0.68f);
-                const float strGain  = 1.0f + (acousRad - 1.0f) * dobroConeSmooth;
-                msL *= strGain;
-                msR *= strGain;
-
-                const float saddlePunch = 0.42f + 1.35f * std::exp(-ageF / 0.068f) * (0.45f + 0.55f * v.velocity);
-                const float strMono = 0.5f * (msL + msR) + harmSum * 0.042f + transientSig * 0.28f;
-                const float uPos = std::max(0.0f, strMono);
-                const float uNeg = std::min(0.0f, strMono);
-                const float coneBarkRaw = (fastTanh(uPos * (3.45f * saddlePunch)) - uPos * 0.80f)
-                                        - 0.48f * (fastTanh((-uNeg) * (2.45f * saddlePunch)) - (-uNeg) * 0.72f);
-                const float dHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 520.0 / sampleRate));
-                const float dLpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 3450.0 / sampleRate));
-                v.dobroHpState += dHpAlpha * (coneBarkRaw - v.dobroHpState);
-                const float dHp = coneBarkRaw - v.dobroHpState;
-                v.dobroLpState += dLpAlpha * (dHp - v.dobroLpState);
-                organPipeMono += v.dobroLpState * 0.64f * dobroConeSmooth;
-                transientSig  *= (1.0f + 0.44f * dobroConeSmooth);
             }
 
             const float swellShape = (params.autoSwell > 0.3f) ? (v.swellEnv * v.swellEnv) : v.swellEnv;
