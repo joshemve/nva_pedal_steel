@@ -1,0 +1,66 @@
+[
+ {
+  "name": "cab_maple_1",
+  "images": [
+   "final/steel3d/gen/p3d_maple_1_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the honey birdseye/burl maple exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out. Include the thin dark inlaid stripe exactly where it runs along the FRONT panel in image 1 (about two thirds of the way down). Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ },
+ {
+  "name": "cab_maple_2",
+  "images": [
+   "final/steel3d/gen/p3d_maple_1_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the honey birdseye/burl maple exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out. Include the thin dark inlaid stripe exactly where it runs along the FRONT panel in image 1 (about two thirds of the way down). Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ },
+ {
+  "name": "cab_redsparkle_1",
+  "images": [
+   "final/steel3d/gen/p3d_redsparkle_1_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the deep red metal-flake sparkle finish exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out. Fine sparkling flakes, not wood. Do not paint the chrome trim strip. Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ },
+ {
+  "name": "cab_redsparkle_2",
+  "images": [
+   "final/steel3d/gen/p3d_redsparkle_1_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the deep red metal-flake sparkle finish exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out. Fine sparkling flakes, not wood. Do not paint the chrome trim strip. Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ },
+ {
+  "name": "cab_pearloid_1",
+  "images": [
+   "final/steel3d/gen/p3d_pearloid_4_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the cream mother-of-pearl celluloid (pearloid) wrap with its iridescent flakes exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out.  Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ },
+ {
+  "name": "cab_pearloid_2",
+  "images": [
+   "final/steel3d/gen/p3d_pearloid_4_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the cream mother-of-pearl celluloid (pearloid) wrap with its iridescent flakes exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out.  Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ },
+ {
+  "name": "cab_koa_1",
+  "images": [
+   "final/steel3d/gen/p3d_koa_5_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the figured curly koa wood exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out.  Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ },
+ {
+  "name": "cab_koa_2",
+  "images": [
+   "final/steel3d/gen/p3d_koa_5_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the figured curly koa wood exactly as it appears on the cabinet in image 1 - same colour, same pattern and scale. The FRONT panel should look like image 1's front face flattened out.  Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: the cabinet finish only."
+ }
+]

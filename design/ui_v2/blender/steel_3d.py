@@ -314,7 +314,7 @@ def uv_mat(path):
     b = nt.nodes["Principled BSDF"]; b.inputs["Coat Roughness"].default_value = E("CAB_COAT_ROUGH", 0.16)
     tc = nt.nodes.new("ShaderNodeTexCoord"); tx = nt.nodes.new("ShaderNodeTexImage"); tx.image = bpy.data.images.load(path)
     tx.interpolation = "Cubic"; nt.links.new(tc.outputs["UV"], tx.inputs["Vector"])
-    hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = E("CAB_SAT", 1.35)
+    hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = E("CAB_SAT", 1.35 if FINISH == "rosewood" else 1.0)
     hs.inputs["Value"].default_value = E("CAB_VAL", 1.0); hs.inputs["Hue"].default_value = E("CAB_HUE", 0.5)
     nt.links.new(tx.outputs["Color"], hs.inputs["Color"]); nt.links.new(hs.outputs["Color"], b.inputs["Base Color"])
     bw = nt.nodes.new("ShaderNodeRGBToBW"); nt.links.new(tx.outputs["Color"], bw.inputs[0])
