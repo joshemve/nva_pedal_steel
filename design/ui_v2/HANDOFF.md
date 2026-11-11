@@ -289,3 +289,11 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   red sparkle and pearloid flake coats). Their own designs are still to be modelled. "brass" hardware = the chrome set.
 - Editor: bar drawn the same on every finish, changer rocking at stringEndX, kSteelArea widened; ShotMain neck tests use
   the generated layout.
+- Koa has brass hardware again: `STEEL_MODE=layers STEEL_FINISH=koa STEEL_METAL=brass ... -- final/steel3d/layers_brass`;
+  `steel_pack.py package layers layers_brass` writes both sprite sets with shared boxes; koa's skin comes from layers_brass.
+- Browser cards: `steel_pack.py cards walnut=layers maple=finish_maple ... koa=layers_brass` renders cards 01/04/06/13/18
+  from the 3D steel at rest. The other 19 (rooms) were redrawn by ChatGPT with the rosewood steel replacing the old
+  instrument (`final/browser/jobs3d.json`, inputs in `in3d/`, outputs `gen3d/`, middle 2.3:1 band -> 726x316).
+- On-screen host test re-run with the 3D steel: 13 passes; bar follows notes, MIDI pedals press (renders/_host_win*.png).
+- Reference proposals for the four other presets' own designs (made from the 3D render): `final/steel3d/gen/p3d_*`,
+  sheet `final/steel3d/presets_refs_sheet.png`. Waiting for Joshua's pick before modelling them.

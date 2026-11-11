@@ -14,11 +14,11 @@ namespace UiLayout {
     inline constexpr int f3dFrames_bar = 1;
     inline constexpr float f3d_knee_L[4] = { 464.00f, 410.00f, 112.00f, 148.00f };   // x, y, w, h
     inline constexpr int f3dFrames_knee_L = 7;
-    inline constexpr float f3d_knee_R[4] = { 950.00f, 417.50f, 109.50f, 143.50f };   // x, y, w, h
+    inline constexpr float f3d_knee_R[4] = { 950.00f, 411.00f, 109.50f, 150.00f };   // x, y, w, h
     inline constexpr int f3dFrames_knee_R = 7;
     inline constexpr float f3d_pedal_A[4] = { 615.00f, 410.00f, 118.50f, 261.50f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_A = 7;
-    inline constexpr float f3d_pedal_B[4] = { 717.50f, 410.00f, 108.50f, 261.50f };   // x, y, w, h
+    inline constexpr float f3d_pedal_B[4] = { 717.50f, 409.50f, 108.50f, 262.00f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_B = 7;
     inline constexpr float f3d_pedal_C[4] = { 807.50f, 410.00f, 109.00f, 261.50f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_C = 7;

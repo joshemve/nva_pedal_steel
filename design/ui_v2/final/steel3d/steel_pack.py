@@ -3,7 +3,8 @@
   package(dir)      moving layers -> ../parts/sprites/f3d_*.png + floor3d.json, tone bar sprite + sprites.json entries,
                     ../parts/steel_layout.json (fret x, string rows, bridge: what gen_layout.py reads)
   skins(dirs)       other finishes' static plates -> ../parts/skins/skin_<name>.jpg + skins.json
-  python steel_pack.py package <layers_dir>
+  python steel_pack.py package <layers_dir> [<brass_layers_dir>]
+  python steel_pack.py cards walnut=<dir> maple=<dir> ...   the five instrument cards of the preset browser
   python steel_pack.py skins maple=<dir> redsparkle=<dir> pearloid=<dir> koa=<dir>
   python steel_pack.py check <layers_dir> <out.png>       rest | everything engaged
 A layer frame is stored as "what changes against the static plate": the frame composited on the plate, with alpha from
@@ -57,25 +58,29 @@ def frame_sprite(p0, d, name, f, reg):
     return np.dstack([img, al * 255])
 
 
-def package(d):
+def package(d, brass=None):
+    """d: the chrome layers dir; brass: a layers dir rendered with STEEL_METAL=brass (same boxes for both sets)"""
     info = json.load(open(os.path.join(d, "layers.json"))); p0 = background(d)
+    sets = {"chrome": (d, p0)}
+    if brass: sets["brass"] = (brass, background(brass))
     os.makedirs(os.path.join(P, "sprites"), exist_ok=True)
     out = {"layers": {}, "body_y": {k: 180 for k in ("walnut", "maple", "redsparkle", "pearloid", "koa")}, "rect": list(ZONE)}
     # the cross bar is part of the plate now; the layer stays as an empty frame so the editor's list is unchanged
-    Image.new("RGBA", (8, 8), (0, 0, 0, 0)).save(os.path.join(P, "sprites", "f3d_chrome_bar.png"))
+    for metal in ("chrome", "brass"):
+        Image.new("RGBA", (8, 8), (0, 0, 0, 0)).save(os.path.join(P, "sprites", "f3d_%s_bar.png" % metal))
     out["layers"]["bar"] = {"box": [1600, 1200, 1608, 1208], "frames": 1}
     for name in LAYERS:
         reg = info["layers"][name]["region"]
-        fs = [frame_sprite(p0, d, name, f, reg) for f in range(info["frames"])]
-        hh = min(f.shape[0] for f in fs); ww = min(f.shape[1] for f in fs); fs = [f[:hh, :ww] for f in fs]
-        al = np.max([f[..., 3] for f in fs], 0); ys, xs = np.where(al >= 4)
+        fs = {m: [frame_sprite(pp, dd, name, f, reg) for f in range(info["frames"])] for m, (dd, pp) in sets.items()}
+        hh = min(f.shape[0] for v in fs.values() for f in v); ww = min(f.shape[1] for v in fs.values() for f in v)
+        fs = {m: [f[:hh, :ww] for f in v] for m, v in fs.items()}
+        al = np.max([f[..., 3] for v in fs.values() for f in v], 0); ys, xs = np.where(al >= 4)
         x0, y0, x1, y1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
-        strip = np.concatenate([f[y0:y1, x0:x1] for f in fs], 0)
-        Image.fromarray(np.clip(strip, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(P, "sprites", "f3d_chrome_%s.png" % name), optimize=True)
-        out["layers"][name] = {"box": [int(x0 + reg[0]), int(y0 + reg[1]), int(x1 + reg[0]), int(y1 + reg[1])], "frames": len(fs)}
+        for m in ("chrome", "brass"):
+            v = fs.get(m, fs["chrome"]); strip = np.concatenate([f[y0:y1, x0:x1] for f in v], 0)
+            Image.fromarray(np.clip(strip, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(P, "sprites", "f3d_%s_%s.png" % (m, name)), optimize=True)
+        out["layers"][name] = {"box": [int(x0 + reg[0]), int(y0 + reg[1]), int(x1 + reg[0]), int(y1 + reg[1])], "frames": info["frames"]}
         print(name, out["layers"][name])
-    for name in ["bar"] + LAYERS:      # one hardware finish for now: the 'brass' set is the same renders
-        shutil.copy(os.path.join(P, "sprites", "f3d_chrome_%s.png" % name), os.path.join(P, "sprites", "f3d_brass_%s.png" % name))
     json.dump(out, open(os.path.join(P, "sprites", "floor3d.json"), "w"), indent=1)
     # tone bar: its own pixels, cropped; a soft contact shadow under it
     b = info["bar"]; reg = b["region"]
@@ -109,6 +114,29 @@ def skins(dirs):
     json.dump(out, open(os.path.join(P, "skins", "skins.json"), "w"), indent=1)
 
 
+def rest_image(plate_dir, metal="chrome"):
+    """the plate with every moving layer at rest and the tone bar at its reference fret (what the plugin shows idle)"""
+    im = background(plate_dir); S = json.load(open(os.path.join(P, "sprites", "sprites.json")))
+    F = json.load(open(os.path.join(P, "sprites", "floor3d.json")))["layers"]
+    for name in LAYERS:
+        st = np.asarray(Image.open(os.path.join(P, "sprites", "f3d_%s_%s.png" % (metal, name))).convert("RGBA"), np.float32)
+        b = F[name]["box"]; h = b[3] - b[1]; fr = st[:h]; a = fr[..., 3:] / 255
+        im[b[1]:b[3], b[0]:b[2]] = fr[..., :3] * a + im[b[1]:b[3], b[0]:b[2]] * (1 - a)
+    tb = S["tone_bar"]["box"]; t = np.asarray(Image.open(os.path.join(P, "sprites", "tone_bar.png")).convert("RGBA"), np.float32); a = t[..., 3:] / 255
+    im[tb[1]:tb[3], tb[0]:tb[2]] = t[..., :3] * a + im[tb[1]:tb[3], tb[0]:tb[2]] * (1 - a)
+    return im
+
+
+def cards(dirs):
+    """the five instrument cards of the preset browser (card number -> finish), 726x316, from the 3D steel"""
+    num = {"walnut": 1, "maple": 4, "redsparkle": 6, "pearloid": 13, "koa": 18}
+    dst = os.path.join(H, "..", "..", "..", "..", "Source", "ui_assets")
+    for sk, d in dirs.items():
+        im = rest_image(d, "brass" if sk == "koa" else "chrome")
+        c = Image.fromarray(np.clip(im, 0, 255).astype(np.uint8)).crop((190, 160, 3010, 1386)).resize((726, 316), Image.LANCZOS)
+        c.save(os.path.join(dst, "card_%02d.jpg" % num[sk]), quality=92); print("card_%02d" % num[sk], sk)
+
+
 def check(d, outp):
     info = json.load(open(os.path.join(d, "layers.json"))); p0 = background(d); S = json.load(open(os.path.join(P, "sprites", "sprites.json")))
     F = json.load(open(os.path.join(P, "sprites", "floor3d.json")))["layers"]; tiles = []
@@ -126,6 +154,7 @@ def check(d, outp):
 
 
 if __name__ == "__main__":
-    if sys.argv[1] == "package": package(sys.argv[2])
+    if sys.argv[1] == "package": package(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)
+    elif sys.argv[1] == "cards": cards(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "skins": skins(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "check": check(sys.argv[2], sys.argv[3])

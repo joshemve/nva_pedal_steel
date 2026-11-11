@@ -130,6 +130,8 @@ M_WOOD = (flake_mat("RedSparkle", (0.55, 0.012, 0.012), 900.0, 0.35, 1.6, 0.7) i
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
 M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal bar
 M_CHROME = mat("Chrome", (0.74, 0.73, 0.72), 1.0, 0.04)
+# pedal rod, pull rods and collars: brass on the koa steel (STEEL_METAL=brass)
+M_ROD = mat("RodBrass", (0.78, 0.56, 0.24), 1.0, 0.10) if os.environ.get("STEEL_METAL") == "brass" else M_CHROME
 M_SPRING = mat("Spring", (0.02, 0.02, 0.02), 1.0, 0.5)
 M_COIL = mat("Coil", (0.32, 0.31, 0.30), 1.0, 0.30)
 M_POL = mat("PolishedAlu", (0.80, 0.79, 0.78), 1.0, 0.12)
@@ -328,21 +330,21 @@ for sx in (-1, 1):
         ax = (foot - top).normalized(); mid = top.lerp(foot, 0.70)
         rod("LegSocket", top + ax * -0.006, top + ax * 0.020, 0.0150, M_ALU, 32)
         rod("LegUpper", top, mid, 0.0112, M_CHROME, 40); rod("LegLower", mid, foot, 0.0080, M_CHROME, 40)
-        rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0142, M_CHROME, 32)
+        rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0142, M_ROD, 32)
         rod("LegFoot", foot - ax * 0.004, foot + ax * 0.014, 0.0125, M_RUBBER, 24)
         FEET[(sx, sy)] = foot
 
 # ---- pedal rod clamped to the front legs, three ribbed pedals, pull rods; knee levers at the front apron
 fl, fr = FEET[(-1, -1)], FEET[(1, -1)]
 BAR_Z = Z_FLOOR + 0.036; BAR_Y = fl.y - 0.002
-rod("PedalBar", (fl.x, BAR_Y, BAR_Z), (fr.x, BAR_Y, BAR_Z), 0.0062, M_CHROME, 32)
+rod("PedalBar", (fl.x, BAR_Y, BAR_Z), (fr.x, BAR_Y, BAR_Z), 0.0062, M_ROD, 32)
 for f in (fl, fr):
     box("BarClamp", (f.x, BAR_Y + 0.004, BAR_Z), (0.032, 0.034, 0.030), M_POL, bevel=0.008, seg=6)
     cyl("ClampBolt", (f.x - 0.008, BAR_Y - 0.0145, BAR_Z), 0.0036, 0.003, M_CHROME, "Y", 6)
     cyl("ClampBolt", (f.x + 0.008, BAR_Y - 0.0145, BAR_Z), 0.0036, 0.003, M_CHROME, "Y", 6)
 PEDAL_X = [-0.0935, -0.0250, 0.0410]
 for xs_ in (PEDAL_X[0] - 0.030, PEDAL_X[2] + 0.030):                         # stop collars either side of the pedal group
-    cyl("BarCollar", (xs_, BAR_Y, BAR_Z), 0.0095, 0.010, M_CHROME, "X", 24, bevel=0.001)
+    cyl("BarCollar", (xs_, BAR_Y, BAR_Z), 0.0095, 0.010, M_ROD, "X", 24, bevel=0.001)
 PT = math.radians(-16)
 cT, sT = math.cos(PT), math.sin(PT)
 for k, px in zip("ABC", PEDAL_X):
@@ -356,7 +358,7 @@ for k, px in zip("ABC", PEDAL_X):
     for sgn in (-1, 1):
         box("Yoke_" + k, (px + sgn * 0.011, BAR_Y - 0.006, BAR_Z + 0.018), (0.005, 0.012, 0.032), M_ALU, bevel=0.002)
     cyl("ClevisPin_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.032), 0.0030, 0.016, M_CHROME, "X", 12)
-    rod("PullRod_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.036), (px, -BODY_D / 2 + 0.012, -APRON), 0.0020, M_CHROME, 16)
+    rod("PullRod_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.036), (px, -BODY_D / 2 + 0.012, -APRON), 0.0020, M_ROD, 16)
 for k, kx in (("L", -0.1905), ("R", 0.1366)):
     box("KneeBracket_" + k, (kx, -BODY_D / 2 + 0.008, -APRON - 0.005), (0.046, 0.020, 0.010), M_ALU, bevel=0.002)
     for bx in (-0.015, 0.015):
