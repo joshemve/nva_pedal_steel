@@ -189,14 +189,17 @@ for sx in (-1, 1):                                                           # e
     box("Endplate", (xe, 0, -APRON / 2 - 0.004), (EP_T, BODY_D + 0.014, APRON + 0.022), M_ALU, bevel=0.006, seg=5)
     box("EndLip", (sx * (BODY_L / 2 - 0.004), 0, 0.0025), (0.026, BODY_D + 0.014, 0.005), M_ALU, bevel=0.002, seg=3)
     for z in (-0.016, -APRON + 0.006):                                       # screws on the front face
-        cyl("Screw", (xe, -BODY_D / 2 - 0.0072, z), 0.0036, 0.0016, M_CHROME, "Y", 16)
+        cyl("Screw", (xe, -BODY_D / 2 - 0.0072, z), 0.0048, 0.0018, M_CHROME, "Y", 20, bevel=0.0006)
+        box("ScrewSlot", (xe, -BODY_D / 2 - 0.0082, z), (0.0070, 0.0006, 0.0010), M_BLACK, rot=(0, math.radians(35), 0))
     for sy in (-1, 1):
         cyl("LipScrew", (sx * (BODY_L / 2 - 0.006), sy * (BODY_D / 2 - 0.016), 0.0052), 0.0030, 0.0012, M_CHROME, "Z", 16)
 
 # ---- neck plate (runs from the keyhead to the changer), fretboard
 FB_W = 0.122
 X_GUIDE = X_NUT - 0.098                                                      # the roller bar where the keyhead ends
-x0n, x1n = X_GUIDE + 0.004, X_BR + 0.004
+x0n, x1n = X_NUT - 0.009, X_BR + 0.004
+for sy in (-1, 1):                                                           # between keyhead and nut: an open frame over the wood
+    box("NeckRail", ((X_GUIDE + X_NUT) / 2, sy * (NECK_W / 2 - 0.0045), NECK_H / 2), (X_NUT - X_GUIDE + 0.006, 0.009, NECK_H), M_ALU_B, bevel=0.002)
 box("Neck", ((x0n + x1n) / 2, 0, NECK_H / 2), (x1n - x0n, NECK_W, NECK_H), M_ALU_B, bevel=0.0025, seg=3)
 for xs_ in (X_NUT + 0.02, fret_x(6.5), fret_x(14.5), X_BR - 0.085):
     for sy in (-1, 1):
@@ -289,7 +292,7 @@ for sx in (-1, 1):
         foot = Vector((sx * (BODY_L / 2 - (0.036 if sy < 0 else 0.066)), -BODY_D / 2 - 0.004 if sy < 0 else BODY_D / 2 - 0.034, Z_FLOOR + 0.012))
         ax = (foot - top).normalized(); mid = top.lerp(foot, 0.70)
         rod("LegSocket", top + ax * -0.006, top + ax * 0.020, 0.0150, M_ALU, 32)
-        rod("LegUpper", top, mid, 0.0135, M_CHROME, 32); rod("LegLower", mid, foot, 0.0095, M_CHROME, 32)
+        rod("LegUpper", top, mid, 0.0128, M_CHROME, 40); rod("LegLower", mid, foot, 0.0088, M_CHROME, 40)
         rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0165, M_CHROME, 32)
         rod("LegFoot", foot - ax * 0.004, foot + ax * 0.014, 0.0125, M_RUBBER, 24)
         FEET[(sx, sy)] = foot
@@ -299,7 +302,7 @@ fl, fr = FEET[(-1, -1)], FEET[(1, -1)]
 BAR_Z = Z_FLOOR + 0.036; BAR_Y = fl.y - 0.002
 rod("PedalBar", (fl.x, BAR_Y, BAR_Z), (fr.x, BAR_Y, BAR_Z), 0.0062, M_CHROME, 32)
 for f in (fl, fr):
-    box("BarClamp", (f.x, BAR_Y + 0.004, BAR_Z), (0.034, 0.036, 0.034), M_ALU, bevel=0.006, seg=4)
+    box("BarClamp", (f.x, BAR_Y + 0.004, BAR_Z), (0.032, 0.034, 0.030), M_POL, bevel=0.008, seg=6)
     cyl("ClampBolt", (f.x - 0.008, BAR_Y - 0.0145, BAR_Z), 0.0036, 0.003, M_CHROME, "Y", 6)
     cyl("ClampBolt", (f.x + 0.008, BAR_Y - 0.0145, BAR_Z), 0.0036, 0.003, M_CHROME, "Y", 6)
 PEDAL_X = [-0.0935, -0.0250, 0.0410]
@@ -332,7 +335,7 @@ for k, kx in (("L", -0.1905), ("R", 0.1366)):
 # ---- tone bar: polished steel bullet bar lying across the strings (a separate live layer later)
 BAR_FRET = E("STEEL_BARFRET", 8.7)
 if BAR_FRET >= 0:
-    bx_ = fret_x(BAR_FRET); br = 0.0138
+    bx_ = fret_x(BAR_FRET); br = 0.0148
     cyl("ToneBar", (bx_, 0.004, Z_STR + br), br, 0.112, M_CHROME, "Y", 48, bevel=0.003)
     bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=br, location=(bx_, 0.060, Z_STR + br))
     finish(bpy.context.object, M_CHROME)
@@ -381,7 +384,7 @@ mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[1].default_value = 6.2; mr.in
 nt.links.new(sep.outputs["Z"], mr.inputs[0])
 # plus soft bright walls far to the left and right: round bars and legs pick them up as bands, flat tops don't
 ab = nt.nodes.new("ShaderNodeMath"); ab.operation = "ABSOLUTE"; nt.links.new(sep.outputs["X"], ab.inputs[0])
-ms = nt.nodes.new("ShaderNodeMapRange"); ms.inputs[1].default_value = 2.2; ms.inputs[2].default_value = 3.6; ms.inputs[4].default_value = 0.42
+ms = nt.nodes.new("ShaderNodeMapRange"); ms.inputs[1].default_value = 2.2; ms.inputs[2].default_value = 3.6; ms.inputs[4].default_value = 0.55
 nt.links.new(ab.outputs[0], ms.inputs[0])
 mz = nt.nodes.new("ShaderNodeMapRange"); mz.inputs[1].default_value = -2.0; mz.inputs[2].default_value = 0.0
 nt.links.new(sep.outputs["Z"], mz.inputs[0])
