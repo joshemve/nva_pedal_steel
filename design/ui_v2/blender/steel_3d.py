@@ -95,6 +95,13 @@ def wood_mat():
     cr.elements[1].position = 0.68; cr.elements[1].color = (0.30, 0.042, 0.010, 1)
     e = cr.elements.new(0.54); e.color = (0.055, 0.011, 0.004, 1)
     nt.links.new(mix.outputs[0], ramp.inputs[0]); nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
+    # the lacquer is not factory-new: fine swirls and dull patches in the gloss
+    mp4 = nt.nodes.new("ShaderNodeMapping"); mp4.inputs["Scale"].default_value = (14.0, 14.0, 14.0); nt.links.new(tc.outputs["Object"], mp4.inputs[0])
+    n4 = nt.nodes.new("ShaderNodeTexNoise"); n4.inputs["Scale"].default_value = 3.0; n4.inputs["Detail"].default_value = 6.0
+    nt.links.new(mp4.outputs[0], n4.inputs["Vector"])
+    cr_ = nt.nodes.new("ShaderNodeMapRange"); cr_.inputs[1].default_value = 0.35; cr_.inputs[2].default_value = 0.75
+    cr_.inputs[3].default_value = 0.03; cr_.inputs[4].default_value = 0.16
+    nt.links.new(n4.outputs["Fac"], cr_.inputs[0]); nt.links.new(cr_.outputs[0], b.inputs["Coat Roughness"])
     return m
 
 
@@ -169,6 +176,13 @@ def wear(m, amount=0.07, scale=38.0):
     mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[1].default_value = 0.30; mr.inputs[2].default_value = 0.75
     mr.inputs[3].default_value = max(base - amount * 0.5, 0.02); mr.inputs[4].default_value = base + amount
     nt.links.new(n.outputs["Fac"], mr.inputs[0]); nt.links.new(mr.outputs[0], b.inputs["Roughness"])
+    # handling marks: the tone dips a little where the surface is rougher
+    tn = nt.nodes.new("ShaderNodeMapRange"); tn.inputs[1].default_value = 0.35; tn.inputs[2].default_value = 0.80
+    tn.inputs[3].default_value = 1.0; tn.inputs[4].default_value = 1.0 - amount * 1.6
+    nt.links.new(n.outputs["Fac"], tn.inputs[0])
+    mx_ = nt.nodes.new("ShaderNodeMix"); mx_.data_type = "RGBA"; mx_.blend_type = "MULTIPLY"; mx_.inputs[0].default_value = 1.0
+    mx_.inputs[6].default_value = b.inputs["Base Color"].default_value
+    nt.links.new(tn.outputs[0], mx_.inputs[7]); nt.links.new(mx_.outputs[2], b.inputs["Base Color"])
     return m
 
 
@@ -178,7 +192,7 @@ def text(name, s, loc, size, material):
     return o
 
 
-wear(M_ALU, 0.07, 30.0); wear(M_ALU_B, 0.06, 60.0); wear(M_CHROME, 0.025, 45.0)
+wear(M_ALU, 0.11, 30.0); wear(M_ALU_B, 0.06, 60.0); wear(M_CHROME, 0.025, 45.0)
 
 # ---- cabinet
 box("Cabinet", (0, 0, -APRON / 2), (BODY_L, BODY_D, APRON), M_WOOD, bevel=0.003, seg=3)
@@ -292,8 +306,8 @@ for sx in (-1, 1):
         foot = Vector((sx * (BODY_L / 2 - (0.036 if sy < 0 else 0.066)), -BODY_D / 2 - 0.004 if sy < 0 else BODY_D / 2 - 0.034, Z_FLOOR + 0.012))
         ax = (foot - top).normalized(); mid = top.lerp(foot, 0.70)
         rod("LegSocket", top + ax * -0.006, top + ax * 0.020, 0.0150, M_ALU, 32)
-        rod("LegUpper", top, mid, 0.0128, M_CHROME, 40); rod("LegLower", mid, foot, 0.0088, M_CHROME, 40)
-        rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0165, M_CHROME, 32)
+        rod("LegUpper", top, mid, 0.0112, M_CHROME, 40); rod("LegLower", mid, foot, 0.0080, M_CHROME, 40)
+        rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0142, M_CHROME, 32)
         rod("LegFoot", foot - ax * 0.004, foot + ax * 0.014, 0.0125, M_RUBBER, 24)
         FEET[(sx, sy)] = foot
 
@@ -384,7 +398,7 @@ mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[1].default_value = 6.2; mr.in
 nt.links.new(sep.outputs["Z"], mr.inputs[0])
 # plus soft bright walls far to the left and right: round bars and legs pick them up as bands, flat tops don't
 ab = nt.nodes.new("ShaderNodeMath"); ab.operation = "ABSOLUTE"; nt.links.new(sep.outputs["X"], ab.inputs[0])
-ms = nt.nodes.new("ShaderNodeMapRange"); ms.inputs[1].default_value = 2.2; ms.inputs[2].default_value = 3.6; ms.inputs[4].default_value = 0.55
+ms = nt.nodes.new("ShaderNodeMapRange"); ms.inputs[1].default_value = 2.2; ms.inputs[2].default_value = 3.6; ms.inputs[4].default_value = 0.78
 nt.links.new(ab.outputs[0], ms.inputs[0])
 mz = nt.nodes.new("ShaderNodeMapRange"); mz.inputs[1].default_value = -2.0; mz.inputs[2].default_value = 0.0
 nt.links.new(sep.outputs["Z"], mz.inputs[0])
