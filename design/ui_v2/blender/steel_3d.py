@@ -68,7 +68,7 @@ def mat(name, base, metal=0.0, rough=0.5, coat=0.0, spec=None):
 FINISH = os.environ.get("STEEL_FINISH", "rosewood")
 # (darkest, middle, lightest) of the grain, lacquer roughness
 WOODS = {"rosewood": ((0.008, 0.003, 0.002), (0.055, 0.011, 0.004), (0.30, 0.042, 0.010)),
-         "maple": ((0.36, 0.20, 0.07), (0.62, 0.40, 0.17), (0.82, 0.60, 0.30)),
+         "maple": ((0.50, 0.30, 0.11), (0.74, 0.50, 0.22), (0.88, 0.66, 0.34)),
          "koa": ((0.06, 0.018, 0.006), (0.28, 0.10, 0.025), (0.62, 0.28, 0.07))}
 
 
@@ -102,7 +102,21 @@ def wood_mat():
     cr.elements[0].position = 0.42; cr.elements[0].color = (*wd[0], 1)
     cr.elements[1].position = 0.68; cr.elements[1].color = (*wd[2], 1)
     e = cr.elements.new(0.54); e.color = (*wd[1], 1)
-    nt.links.new(mix.outputs[0], ramp.inputs[0]); nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
+    nt.links.new(mix.outputs[0], ramp.inputs[0])
+    fig = None
+    if FINISH == "maple":                     # birdseye: small dark eyes scattered through pale, softly figured maple
+        v = nt.nodes.new("ShaderNodeTexVoronoi"); v.inputs["Scale"].default_value = 150.0; nt.links.new(tc.outputs["Object"], v.inputs["Vector"])
+        fig = nt.nodes.new("ShaderNodeMapRange"); fig.inputs[1].default_value = 0.02; fig.inputs[2].default_value = 0.16
+        fig.inputs[3].default_value = 0.50; fig.inputs[4].default_value = 1.0; nt.links.new(v.outputs["Distance"], fig.inputs[0])
+    elif FINISH == "koa":                     # curl: soft bands across the grain that catch the light
+        w = nt.nodes.new("ShaderNodeTexWave"); w.inputs["Scale"].default_value = 26.0; w.inputs["Distortion"].default_value = 5.0
+        w.inputs["Detail"].default_value = 2.0; nt.links.new(tc.outputs["Object"], w.inputs["Vector"])
+        fig = nt.nodes.new("ShaderNodeMapRange"); fig.inputs[3].default_value = 0.62; fig.inputs[4].default_value = 1.25
+        nt.links.new(w.outputs["Fac"], fig.inputs[0])
+    if fig is None: nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
+    else:
+        fm = nt.nodes.new("ShaderNodeMix"); fm.data_type = "RGBA"; fm.blend_type = "MULTIPLY"; fm.inputs[0].default_value = 1.0
+        nt.links.new(ramp.outputs[0], fm.inputs[6]); nt.links.new(fig.outputs[0], fm.inputs[7]); nt.links.new(fm.outputs[2], b.inputs["Base Color"])
     # the lacquer is not factory-new: fine swirls and dull patches in the gloss
     mp4 = nt.nodes.new("ShaderNodeMapping"); mp4.inputs["Scale"].default_value = (14.0, 14.0, 14.0); nt.links.new(tc.outputs["Object"], mp4.inputs[0])
     n4 = nt.nodes.new("ShaderNodeTexNoise"); n4.inputs["Scale"].default_value = 3.0; n4.inputs["Detail"].default_value = 6.0
@@ -116,17 +130,23 @@ def wood_mat():
 def flake_mat(name, base, cell, lo, hi, metal):
     """sparkle / pearloid top coats: small cells of varying brightness under a clear coat"""
     m = mat(name, base, metal, 0.25, coat=1.0); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
-    tc = nt.nodes.new("ShaderNodeTexCoord"); v = nt.nodes.new("ShaderNodeTexVoronoi"); v.inputs["Scale"].default_value = cell
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    if metal > 0:                              # sparkle: tiny hard flakes
+        v = nt.nodes.new("ShaderNodeTexVoronoi"); v.inputs["Scale"].default_value = cell; src = "Color"
+    else:                                      # pearloid: soft swirled clouds, not cells
+        v = nt.nodes.new("ShaderNodeTexNoise"); v.inputs["Scale"].default_value = cell; v.inputs["Detail"].default_value = 2.5
+        v.inputs["Distortion"].default_value = 3.0; src = "Fac"; mr0 = (0.30, 0.70)
     nt.links.new(tc.outputs["Object"], v.inputs["Vector"])
     mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[3].default_value = lo; mr.inputs[4].default_value = hi
-    nt.links.new(v.outputs["Color"], mr.inputs[0])
+    nt.links.new(v.outputs[src], mr.inputs[0])
+    if metal <= 0: mr.inputs[1].default_value, mr.inputs[2].default_value = mr0
     mx_ = nt.nodes.new("ShaderNodeMix"); mx_.data_type = "RGBA"; mx_.blend_type = "MULTIPLY"; mx_.inputs[0].default_value = 1.0
     mx_.inputs[6].default_value = (*base, 1); nt.links.new(mr.outputs[0], mx_.inputs[7]); nt.links.new(mx_.outputs[2], b.inputs["Base Color"])
     return m
 
 
-M_WOOD = (flake_mat("RedSparkle", (0.55, 0.012, 0.012), 900.0, 0.35, 1.6, 0.7) if FINISH == "redsparkle" else
-          flake_mat("Pearloid", (0.86, 0.82, 0.74), 55.0, 0.72, 1.05, 0.0) if FINISH == "pearloid" else wood_mat())
+M_WOOD = (flake_mat("RedSparkle", (0.40, 0.006, 0.008), 1500.0, 0.20, 2.6, 0.75) if FINISH == "redsparkle" else
+          flake_mat("Pearloid", (0.88, 0.85, 0.78), 22.0, 0.66, 1.08, 0.0) if FINISH == "pearloid" else wood_mat())
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
 M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal bar
 M_CHROME = mat("Chrome", (0.74, 0.73, 0.72), 1.0, 0.04)
