@@ -6,21 +6,21 @@ namespace UiLayout {
     inline constexpr float sp_slider_thumb[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
     inline constexpr float sp_slider_fill[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
     inline constexpr float sp_midi_on[4] = { 1345.00f, 897.50f, 183.50f, 61.50f };   // x, y, w, h
-    inline constexpr float sp_tone_bar[4] = { 800.00f, 146.00f, 49.00f, 180.00f };   // x, y, w, h
-    inline constexpr float sp_tone_bar_home[4] = { 799.00f, 146.00f, 51.00f, 180.00f };   // x, y, w, h
+    inline constexpr float sp_tone_bar[4] = { 792.00f, 130.50f, 51.00f, 141.50f };   // x, y, w, h
+    inline constexpr float sp_tone_bar_home[4] = { 800.00f, 200.00f, 4.00f, 4.00f };   // x, y, w, h
     inline constexpr float sp_small_deck[4] = { 69.00f, 683.50f, 1489.50f, 271.50f };   // x, y, w, h
     inline constexpr float sp_small_top[4] = { 1166.00f, 5.50f, 433.50f, 67.00f };   // x, y, w, h
-    inline constexpr float f3d_bar[4] = { 533.00f, 600.50f, 472.00f, 64.00f };   // x, y, w, h
+    inline constexpr float f3d_bar[4] = { 800.00f, 600.00f, 4.00f, 4.00f };   // x, y, w, h
     inline constexpr int f3dFrames_bar = 1;
-    inline constexpr float f3d_knee_L[4] = { 519.00f, 350.00f, 450.50f, 276.50f };   // x, y, w, h
+    inline constexpr float f3d_knee_L[4] = { 464.00f, 410.00f, 112.00f, 148.00f };   // x, y, w, h
     inline constexpr int f3dFrames_knee_L = 7;
-    inline constexpr float f3d_knee_R[4] = { 730.00f, 350.00f, 239.50f, 276.50f };   // x, y, w, h
+    inline constexpr float f3d_knee_R[4] = { 950.00f, 417.50f, 109.50f, 143.50f };   // x, y, w, h
     inline constexpr int f3dFrames_knee_R = 7;
-    inline constexpr float f3d_pedal_A[4] = { 603.00f, 350.00f, 164.00f, 320.00f };   // x, y, w, h
+    inline constexpr float f3d_pedal_A[4] = { 615.00f, 410.00f, 118.50f, 261.50f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_A = 7;
-    inline constexpr float f3d_pedal_B[4] = { 701.50f, 350.00f, 165.50f, 320.00f };   // x, y, w, h
+    inline constexpr float f3d_pedal_B[4] = { 717.50f, 410.00f, 108.50f, 261.50f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_B = 7;
-    inline constexpr float f3d_pedal_C[4] = { 796.00f, 350.00f, 209.00f, 320.00f };   // x, y, w, h
+    inline constexpr float f3d_pedal_C[4] = { 807.50f, 410.00f, 109.00f, 261.50f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_C = 7;
     inline constexpr float d3d_pedal_A[4] = { 980.00f, 750.00f, 119.00f, 126.50f };   // x, y, w, h
     inline constexpr int d3dFrames_pedal_A = 7;
@@ -38,7 +38,7 @@ namespace UiLayout {
     inline constexpr int d3dFrames_lamp_B = 1;
     inline constexpr float d3d_lamp_C[4] = { 1158.50f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
     inline constexpr int d3dFrames_lamp_C = 1;
-    inline constexpr float skinBodyY[5] = { 405.5f, 413.5f, 404.5f, 376.5f, 404.5f };   // UI px: bottom edge of each instrument's body (walnut, maple, redsparkle, pearloid, koa)
+    inline constexpr float skinBodyY[5] = { 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };   // UI px: bottom edge of each instrument's body (walnut, maple, redsparkle, pearloid, koa)
     inline constexpr int meterSegments = 15;
     inline constexpr int meterSegEnd[15] = { 28, 49, 69, 90, 109, 129, 148, 168, 189, 208, 229, 249, 269, 290, 310 };   // sprite px (2x) where each lit segment ends
     inline constexpr float sliderX0 = 793.25f, sliderX1 = 1161.25f;   // handle centre at value 0 and 1 (UI px) = first/last tick
@@ -107,13 +107,13 @@ namespace UiLayout {
     inline constexpr float displayBox[4] = { 604.00f, 38.00f, 390.00f, 45.50f };   // x, y, w, h
     inline constexpr float dispPitchX = 5.3750f, dispPitchY = 6.3000f, dispOriginY = 24.100f, dispCentreX = 381.527f;   // 2x px, relative to displayBox
     inline constexpr float dispKernelMax = 223.3483f;   // display_dot.png value 255 == this much added per channel
-    inline constexpr int numFretAnchors = 12;
-    inline constexpr float fretAnchor[12][2] = { { 0.0f, 495.00f }, { 3.0f, 574.00f }, { 5.0f, 654.50f }, { 7.0f, 729.00f }, { 9.0f, 795.25f }, { 10.0f, 823.00f }, { 12.0f, 881.00f }, { 15.0f, 952.00f }, { 17.0f, 997.00f }, { 19.0f, 1041.00f }, { 21.0f, 1066.50f }, { 24.0f, 1108.00f } };   // (fret, x UI px)
-    inline constexpr float stringY[10] = { 192.50f, 200.35f, 208.50f, 216.50f, 225.00f, 233.85f, 242.00f, 251.00f, 259.50f, 267.85f };   // UI px, string 1 (top) .. 10
-    inline constexpr float stringEndX = 1330.00f;    // where the vibrating length ends (changer side), UI px
-    inline constexpr float barRefCx = 823.00f, barRefFret = 10.0f;   // sp_tone_bar is drawn for the bar at this x
-    inline constexpr float hitFretboard[4] = { 492.00f, 180.00f, 678.00f, 94.00f };   // x, y, w, h
-    inline constexpr float hitPluck[4] = { 1170.00f, 180.00f, 160.00f, 94.00f };   // x, y, w, h
+    inline constexpr int numFretAnchors = 25;
+    inline constexpr float fretAnchor[25][2] = { { 0.0f, 481.54f }, { 1.0f, 529.22f }, { 2.0f, 574.23f }, { 3.0f, 616.72f }, { 4.0f, 656.81f }, { 5.0f, 694.66f }, { 6.0f, 730.38f }, { 7.0f, 764.10f }, { 8.0f, 795.92f }, { 9.0f, 825.97f }, { 10.0f, 854.32f }, { 11.0f, 881.08f }, { 12.0f, 906.34f }, { 13.0f, 930.18f }, { 14.0f, 952.68f }, { 15.0f, 973.92f }, { 16.0f, 993.98f }, { 17.0f, 1012.90f }, { 18.0f, 1030.76f }, { 19.0f, 1047.62f }, { 20.0f, 1063.54f }, { 21.0f, 1078.56f }, { 22.0f, 1092.73f }, { 23.0f, 1106.11f }, { 24.0f, 1118.74f } };   // (fret, x UI px)
+    inline constexpr float stringY[10] = { 186.58f, 194.09f, 201.63f, 209.21f, 216.81f, 224.45f, 232.12f, 239.81f, 247.53f, 255.29f };   // UI px, string 1 (top) .. 10
+    inline constexpr float stringEndX = 1331.14f;    // where the vibrating length ends (changer side), UI px
+    inline constexpr float barRefCx = 817.13f, barRefFret = 8.70f;   // sp_tone_bar is drawn for the bar at this x
+    inline constexpr float hitFretboard[4] = { 478.54f, 178.58f, 660.20f, 84.71f };   // x, y, w, h
+    inline constexpr float hitPluck[4] = { 1138.74f, 178.58f, 192.40f, 84.71f };   // x, y, w, h
     inline constexpr float hitPrev[4] = { 542.86f, 40.88f, 51.02f, 39.88f };   // x, y, w, h
     inline constexpr float hitNext[4] = { 1005.10f, 40.88f, 51.02f, 39.88f };   // x, y, w, h
     inline constexpr float hitMode[4] = { 186.73f, 909.27f, 284.69f, 37.89f };   // x, y, w, h

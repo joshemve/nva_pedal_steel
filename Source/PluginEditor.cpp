@@ -46,7 +46,7 @@ const char* panelLabel(int c) {
 }
 juce::Point<float> ptrCentre(const float* o, int px) { return { o[0] + px * 0.25f, o[1] + px * 0.25f }; }
 
-const juce::Rectangle<float> kSteelArea{ 470.0f, 60.0f, 900.0f, 620.0f };   // bar, strings, floor pedals, knee levers
+const juce::Rectangle<float> kSteelArea{ 120.0f, 80.0f, 1360.0f, 600.0f };   // bar, strings, floor pedals, knee levers
 } // namespace
 
 PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioProcessor& p)
@@ -589,7 +589,7 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
         for (int s = 0; s < 10; ++s) {
             const float b = juce::jlimit(-2.0f, 2.0f, stringBend[(size_t) s]);
             if (std::abs(b) < 0.05f) continue;
-            const float ysC = stringY[s] * 2.0f, xsC = 2680.0f + (ysC - 385.0f) * 0.2f;     // finger at the string's end (2x px)
+            const float ysC = stringY[s] * 2.0f, xsC = stringEndX * 2.0f + 6.0f;            // finger at the string's end (2x px)
             const float dx = b * 1.0f;   // UI px at the top of the hook
             const juce::Image& src = (skin > 0 && skinImg[skin].isValid()) ? skinImg[skin] : bg;
             const float ox = (skin > 0 && skinImg[skin].isValid()) ? skinBoxes[skin][0] * 2.0f : 0.0f;
@@ -659,12 +659,7 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
     }
 
     // the tone bar, wherever it is (drawn for the reference position, shifted along the neck)
-    if (skin == 0) drawSprite(g, spBar, sp_tone_bar, barX - barRefCx);
-    else {   // other bodies: the bar without its reflection on walnut
-        juce::Graphics::ScopedSaveState bs(g);
-        g.reduceClipRegion(juce::Rectangle<float>(0, 0, kDesignW, 289.0f).toNearestInt());
-        drawSprite(g, spBar, sp_tone_bar, barX - barRefCx);
-    }
+    drawSprite(g, spBar, sp_tone_bar, barX - barRefCx);   // a rendered bar with its own soft shadow: the same on every finish
 }
 
 void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {

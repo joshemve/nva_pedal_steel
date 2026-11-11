@@ -1,3 +1,4 @@
+#include "../../Source/UiLayout.h"
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
@@ -162,18 +163,20 @@ int main(int argc, char* argv[]) {
         auto run = [&](int blocks) { for (int i = 0; i < blocks; ++i) processor.processBlock(audioBuf, midiBuf); };
         auto pv = [&](const char* id) { return processor.apvts.getParameter(id)->getValue(); };
         std::cout << "interaction tests:" << std::endl;
-        // fretboard: click string 4 at fret 12 (x 881), drag to fret 15 (x 952), release
-        editor->mouseDown(ev({ 885.0f, 216.5f })); run(40);   // a little right of fret 12
+        // fretboard: click string 4 a little right of fret 12, drag to fret 15, release (positions from the generated layout)
+        const float nx12 = UiLayout::fretAnchor[12][1] + 4.0f, nx15 = UiLayout::fretAnchor[15][1];
+        const float ny4 = UiLayout::stringY[3], ny6 = UiLayout::stringY[5];
+        editor->mouseDown(ev({ nx12, ny4 })); run(40);
         auto st = processor.getLiveStatus();
         check(st.activeVoiceCount >= 1 && st.stringEnergy[3] > 0.05f, "click on the neck plays the string under the mouse");
         check(std::abs(st.barPositionFret - 12.0f) < 0.05f, "...in tune: snapped to fret 12 (" + std::to_string(st.barPositionFret) + ")");
-        editor->mouseDrag(ev({ 952.0f, 216.5f })); run(40);
+        editor->mouseDrag(ev({ nx15, ny4 })); run(40);
         st = processor.getLiveStatus();
         check(std::abs(st.barPositionFret - 15.0f) < 0.8f, "dragging along the neck slides the bar");
-        editor->mouseDrag(ev({ 952.0f, 233.85f })); run(4);
+        editor->mouseDrag(ev({ nx15, ny6 })); run(4);
         st = processor.getLiveStatus();
         check(st.stringEnergy[5] > 0.05f, "dragging across strings strums them");
-        editor->mouseUp(ev({ 952.0f, 233.85f })); run(4);
+        editor->mouseUp(ev({ nx15, ny6 })); run(4);
         // pedal C toggles on and off; knee lever LKR
         const float c0 = pv(ParamIDs::pedalC);
         editor->mouseDown(ev({ 1202.0f, 800.0f })); editor->mouseUp(ev({ 1202.0f, 800.0f }));

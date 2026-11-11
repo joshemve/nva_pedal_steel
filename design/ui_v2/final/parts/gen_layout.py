@@ -18,7 +18,7 @@ def refrect(name, x0, y0, x1, y1): rect(name, x0 * RX, y0 * RY, x1 * RX, y1 * RY
 # background (JPEG keeps the plugin small; photo content)
 import floor_3d   # the rug under the steel: one pedal-free plate; the pedal assembly is drawn live from Blender renders
 import sys; sys.path.insert(0, os.path.join(H, "..", "deck3d")); import deck_pack   # deck switches/toggles: same idea
-Image.fromarray(np.clip(deck_pack.apply(floor_3d.apply(np.asarray(Image.open("bg_clean.png").convert("RGB"), np.float32), "walnut")), 0, 255)
+Image.fromarray(np.clip(deck_pack.apply(np.asarray(Image.open("bg_steel3d.png").convert("RGB"), np.float32)), 0, 255)
                 .astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 # sprites (canvas boxes -> UI rects)
 for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states are replaced by the 3D layers
@@ -109,14 +109,16 @@ L("inline constexpr float dispPitchX = %.4ff, dispPitchY = %.4ff, dispOriginY = 
   % (D["pitch"], D["pitch_y"], D["origin"][1], D["text_centre_x"]))
 L("inline constexpr float dispKernelMax = %.4ff;   // display_dot.png value 255 == this much added per channel" % km)
 # the steel: fret -> x (piecewise through the printed fret numbers' centres; fret 0 = start of the grid), strings, bar
-FRETS = [(0, 990), (3, 1148), (5, 1309), (7, 1458), (9, 1590.5), (10, S["tone_bar"]["bar_cx"]), (12, 1762), (15, 1904), (17, 1994), (19, 2082), (21, 2133), (24, 2216)]
+SL = json.load(open("steel_layout.json"))                 # the 3D steel's own geometry (blender/steel_3d.py -> steel_pack.py)
+FRETS = [(f, x) for f, x in SL["frets"]]
 L("inline constexpr int numFretAnchors = %d;" % len(FRETS))
 L("inline constexpr float fretAnchor[%d][2] = { %s };   // (fret, x UI px)" % (len(FRETS), ", ".join("{ %.1ff, %.2ff }" % (f, x / 2) for f, x in FRETS)))
-STR = [385, 400.7, 417, 433, 450, 467.7, 484, 502, 519, 535.7]   # canvas rows, string 1 (far side, top) .. string 10
+STR = SL["stringY"]   # canvas rows, string 1 (far side, top) .. string 10
 L("inline constexpr float stringY[10] = { %s };   // UI px, string 1 (top) .. 10" % ", ".join("%.2ff" % (y / 2) for y in STR))
-L("inline constexpr float stringEndX = %.2ff;    // where the vibrating length ends (changer side), UI px" % (2660 / 2))
-L("inline constexpr float barRefCx = %.2ff, barRefFret = 10.0f;   // sp_tone_bar is drawn for the bar at this x" % (S["tone_bar"]["bar_cx"] / 2))
-rect("hitFretboard", 984 / 2, 360 / 2, 2340 / 2, 548 / 2); rect("hitPluck", 2340 / 2, 360 / 2, 2660 / 2, 548 / 2)
+L("inline constexpr float stringEndX = %.2ff;    // where the vibrating length ends (changer side), UI px" % (SL["bridgeX"] / 2))
+L("inline constexpr float barRefCx = %.2ff, barRefFret = %.2ff;   // sp_tone_bar is drawn for the bar at this x" % (S["tone_bar"]["bar_cx"] / 2, SL["bar_fret"]))
+fbx1 = SL["frets"][24][1] + 40; sy0, sy1 = STR[0] - 16, STR[9] + 16
+rect("hitFretboard", (SL["frets"][0][1] - 6) / 2, sy0 / 2, fbx1 / 2, sy1 / 2); rect("hitPluck", fbx1 / 2, sy0 / 2, SL["bridgeX"] / 2, sy1 / 2)
 # hit areas (reference px)
 refrect("hitPrev", 532, 41, 582, 81); refrect("hitNext", 985, 41, 1035, 81)
 refrect("hitMode", 183, 912, 462, 950); refrect("hitMidiLearn", 1332, 912, 1483, 950)

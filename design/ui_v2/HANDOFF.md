@@ -274,3 +274,18 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   His notes: headstock must be narrow at the LEFT and widen toward the nut; metal bars and wood were "hazed" -> cast parts
   satin (M_ALU 0.30 rough), bars/rollers/legs polished, dome dark where flat tops reflect and bright at the zenith and the
   sides, glossy black fretboard with a grid, dark blotchy rosewood. Comparisons: `final/steel3d/blender_vs_ref_v*.png`.
+
+## 2026-11-10: the 3D steel is in the plugin
+- `STEEL_MODE=layers blender ... steel_3d.py -- final/steel3d/layers 160` renders `static.png` (no moving parts), 7 eased
+  poses per moving layer as cropped border renders (`pedal_A/B/C`: tread + yoke + clevis turn 15 deg about the pedal rod,
+  pull rod drops 5 mm; `knee_L/R`: swing 15 deg outward), `bar.png` (tone bar alone, everything else holdout) and
+  `layers.json`. `STEEL_MODE=static STEEL_FINISH=maple|koa|redsparkle|pearloid` renders another finish's plate.
+- `final/steel3d/steel_pack.py package layers` -> `parts/sprites/f3d_*` (each frame = its difference against the static
+  plate, so occlusion and shadows are exact), `floor3d.json`, `tone_bar.png` + its `sprites.json` entry,
+  `parts/steel_layout.json` (fret x, string rows, bridge) and `parts/bg_steel3d.png`. `skins maple=<dir> ...` -> skins.
+  `gen_layout.py` now builds `ui_bg.jpg` from bg_steel3d.png and takes frets/strings/hit areas from steel_layout.json.
+  Do NOT re-run build_ui.py / skins.py without re-running steel_pack afterwards (they rewrite sprites.json / skins).
+- All five presets' instruments are the same 3D model with a different finish for now (maple, koa procedural wood;
+  red sparkle and pearloid flake coats). Their own designs are still to be modelled. "brass" hardware = the chrome set.
+- Editor: bar drawn the same on every finish, changer rocking at stringEndX, kSteelArea widened; ShotMain neck tests use
+  the generated layout.

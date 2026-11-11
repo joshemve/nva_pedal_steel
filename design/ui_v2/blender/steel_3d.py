@@ -65,6 +65,13 @@ def mat(name, base, metal=0.0, rough=0.5, coat=0.0, spec=None):
     return m
 
 
+FINISH = os.environ.get("STEEL_FINISH", "rosewood")
+# (darkest, middle, lightest) of the grain, lacquer roughness
+WOODS = {"rosewood": ((0.008, 0.003, 0.002), (0.055, 0.011, 0.004), (0.30, 0.042, 0.010)),
+         "maple": ((0.36, 0.20, 0.07), (0.62, 0.40, 0.17), (0.82, 0.60, 0.30)),
+         "koa": ((0.06, 0.018, 0.006), (0.28, 0.10, 0.025), (0.62, 0.28, 0.07))}
+
+
 def wood_mat():
     """rosewood: dark brown with long reddish and near-black streaks along the cabinet, satin lacquer"""
     m = mat("Rosewood", (0.1, 0.04, 0.02), 0.0, 0.22, coat=0.8); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
@@ -91,9 +98,10 @@ def wood_mat():
     mix = nt.nodes.new("ShaderNodeMath"); mix.operation = "ADD"; mix.inputs[1].default_value = 0.0
     nt.links.new(lin(n3.outputs["Fac"], 0.40, lin(n1.outputs["Fac"], 0.40, lin(n2.outputs["Fac"], 0.20))), mix.inputs[0])
     ramp = nt.nodes.new("ShaderNodeValToRGB"); cr = ramp.color_ramp
-    cr.elements[0].position = 0.42; cr.elements[0].color = (0.008, 0.003, 0.002, 1)
-    cr.elements[1].position = 0.68; cr.elements[1].color = (0.30, 0.042, 0.010, 1)
-    e = cr.elements.new(0.54); e.color = (0.055, 0.011, 0.004, 1)
+    wd = WOODS.get(FINISH, WOODS["rosewood"])
+    cr.elements[0].position = 0.42; cr.elements[0].color = (*wd[0], 1)
+    cr.elements[1].position = 0.68; cr.elements[1].color = (*wd[2], 1)
+    e = cr.elements.new(0.54); e.color = (*wd[1], 1)
     nt.links.new(mix.outputs[0], ramp.inputs[0]); nt.links.new(ramp.outputs[0], b.inputs["Base Color"])
     # the lacquer is not factory-new: fine swirls and dull patches in the gloss
     mp4 = nt.nodes.new("ShaderNodeMapping"); mp4.inputs["Scale"].default_value = (14.0, 14.0, 14.0); nt.links.new(tc.outputs["Object"], mp4.inputs[0])
@@ -105,7 +113,20 @@ def wood_mat():
     return m
 
 
-M_WOOD = wood_mat()
+def flake_mat(name, base, cell, lo, hi, metal):
+    """sparkle / pearloid top coats: small cells of varying brightness under a clear coat"""
+    m = mat(name, base, metal, 0.25, coat=1.0); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
+    tc = nt.nodes.new("ShaderNodeTexCoord"); v = nt.nodes.new("ShaderNodeTexVoronoi"); v.inputs["Scale"].default_value = cell
+    nt.links.new(tc.outputs["Object"], v.inputs["Vector"])
+    mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[3].default_value = lo; mr.inputs[4].default_value = hi
+    nt.links.new(v.outputs["Color"], mr.inputs[0])
+    mx_ = nt.nodes.new("ShaderNodeMix"); mx_.data_type = "RGBA"; mx_.blend_type = "MULTIPLY"; mx_.inputs[0].default_value = 1.0
+    mx_.inputs[6].default_value = (*base, 1); nt.links.new(mr.outputs[0], mx_.inputs[7]); nt.links.new(mx_.outputs[2], b.inputs["Base Color"])
+    return m
+
+
+M_WOOD = (flake_mat("RedSparkle", (0.55, 0.012, 0.012), 900.0, 0.35, 1.6, 0.7) if FINISH == "redsparkle" else
+          flake_mat("Pearloid", (0.86, 0.82, 0.74), 55.0, 0.72, 1.05, 0.0) if FINISH == "pearloid" else wood_mat())
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
 M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal bar
 M_CHROME = mat("Chrome", (0.74, 0.73, 0.72), 1.0, 0.04)
@@ -352,7 +373,7 @@ if BAR_FRET >= 0:
     bx_ = fret_x(BAR_FRET); br = 0.0148
     cyl("ToneBar", (bx_, 0.004, Z_STR + br), br, 0.112, M_CHROME, "Y", 48, bevel=0.003)
     bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=br, location=(bx_, 0.060, Z_STR + br))
-    finish(bpy.context.object, M_CHROME)
+    finish(bpy.context.object, M_CHROME).name = "ToneBarNose"
 
 # ---- floor (shadow catcher) and what the metal reflects
 bpy.ops.mesh.primitive_plane_add(size=8, location=(0, 0.5, Z_FLOOR)); fl_ = bpy.context.object; fl_.name = "Floor"
@@ -421,6 +442,81 @@ meta = {"frets": [[n, round(proj((fret_x(n) if n else X_NUT, 0, Z_STR))[0], 2)] 
         "camera": {"pitch_deg": math.degrees(TH), "dist": DIST, "px_per_m": PXM}}
 (out / "steel.json").write_text(json.dumps(meta, indent=1))
 print("LAYOUT", json.dumps({k: meta[k] for k in ("stringY", "bridgeX", "body", "floorFrontY")}))
-sc.render.filepath = str(out / "steel.png")
-bpy.ops.render.render(write_still=True)
-bpy.ops.wm.save_as_mainfile(filepath=str(out / "steel_3d.blend"))
+
+# ---- what moves in the plugin: floor pedals (with clevis, yoke, pull rod), knee levers, the tone bar
+MODE = os.environ.get("STEEL_MODE", "still")
+FRAMES = 7
+def named(*prefixes): return [o for o in bpy.data.objects if o.name.split(".")[0] in prefixes]
+LAYERS = {}
+for k, px in zip("ABC", PEDAL_X):
+    LAYERS["pedal_" + k] = {"turn": named("Pedal_" + k, "PedalRib_" + k, "Yoke_" + k, "RodClevis_" + k, "ClevisPin_" + k),
+                            "slide": named("PullRod_" + k), "pivot": Vector((px, BAR_Y, BAR_Z)), "axis": "X", "angle": math.radians(15.0)}
+for k, kx, sgn in (("L", -0.1905, 1), ("R", 0.1366, -1)):
+    LAYERS["knee_" + k] = {"turn": named("KneeArm_" + k, "KneePad_" + k, "KneeRib_" + k, "KneePivot_" + k), "slide": [],
+                           "pivot": Vector((kx, -BODY_D / 2, -APRON - 0.012)), "axis": "Y", "angle": sgn * math.radians(15.0)}
+BAR_OBJS = named("ToneBar", "ToneBarNose")
+MOVING = [o for L in LAYERS.values() for o in L["turn"] + L["slide"]] + BAR_OBJS
+REST = {o.name: o.matrix_world.copy() for o in MOVING}
+from mathutils import Matrix
+
+
+def pose(L, t):
+    R = Matrix.Translation(L["pivot"]) @ Matrix.Rotation(L["angle"] * t, 4, L["axis"]) @ Matrix.Translation(-L["pivot"])
+    for o in L["turn"]: o.matrix_world = R @ REST[o.name]
+    for o in L["slide"]: o.matrix_world = Matrix.Translation((0, 0, -0.005 * t)) @ REST[o.name]
+
+
+def region_of(objs, margin=70):
+    """canvas box around these objects' bounds (all poses are applied by the caller), with room for their shadows"""
+    xs, ys = [], []
+    for o in objs:
+        for c in o.bound_box:
+            x, y = proj(o.matrix_world @ Vector(c)); xs.append(x); ys.append(y)
+    return [max(0, int(min(xs)) - margin), max(0, int(min(ys)) - margin), min(CW, int(max(xs)) + margin), min(CH, int(max(ys)) + margin)]
+
+
+def render(path, region=None):
+    sc.render.use_border = region is not None; sc.render.use_crop_to_border = region is not None
+    if region:
+        sc.render.border_min_x = region[0] / CW; sc.render.border_max_x = region[2] / CW
+        sc.render.border_min_y = 1 - region[3] / CH; sc.render.border_max_y = 1 - region[1] / CH
+    sc.render.filepath = str(path); bpy.ops.render.render(write_still=True)
+
+
+if MODE == "still":
+    render(out / "steel.png")
+    bpy.ops.wm.save_as_mainfile(filepath=str(out / "steel_3d.blend"))
+elif MODE == "static":                         # the instrument without its moving parts (one finish's background plate)
+    for o in MOVING: o.hide_render = True
+    render(out / "static.png")
+else:                                          # "layers": static plate, each moving layer's poses, the tone bar alone
+    info = {"frames": FRAMES, "layers": {}, "bar": {}}
+    for o in MOVING: o.hide_render = True
+    render(out / "static.png")
+    ONLY = [x for x in os.environ.get("STEEL_LAYERS", "").split(",") if x]
+    for name, L in LAYERS.items():
+        objs = L["turn"] + L["slide"]
+        pose(L, 1.0); bpy.context.view_layer.update(); r1 = region_of(objs)
+        pose(L, 0.0); bpy.context.view_layer.update(); r0 = region_of(objs)
+        reg = [min(r0[0], r1[0]), min(r0[1], r1[1]), max(r0[2], r1[2]), max(r0[3], r1[3])]
+        info["layers"][name] = {"region": reg}
+        if ONLY and name not in ONLY: continue
+        for o in objs: o.hide_render = False
+        for f in range(FRAMES):
+            t = f / (FRAMES - 1); t = t * t * (3 - 2 * t)
+            pose(L, t); bpy.context.view_layer.update()
+            render(out / ("%s_%02d.png" % (name, f)), reg)
+        pose(L, 0.0)
+        for o in objs: o.hide_render = True
+    # the tone bar: everything else holds out, no floor, so only the bar's own pixels (and what hides it) remain
+    for o in bpy.data.objects:
+        if o.type in ("MESH", "FONT") and o not in BAR_OBJS and o.name not in ("RoomDome",):
+            o.is_holdout = True
+    for o in BAR_OBJS: o.hide_render = False
+    bpy.data.objects["Floor"].hide_render = True
+    bpy.context.view_layer.update()
+    reg = region_of(BAR_OBJS, 24)
+    render(out / "bar.png", reg)
+    info["bar"] = {"region": reg, "cx": round(proj((fret_x(BAR_FRET), 0, Z_STR))[0], 2), "fret": BAR_FRET}
+    old = json.loads((out / "layers.json").read_text()) if (out / "layers.json").exists() else {}
+    (out / "layers.json").write_text(json.dumps(info, indent=1))

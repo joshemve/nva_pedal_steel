@@ -6,7 +6,7 @@
    3063,
    1346
   ],
-  "job": "model_maple_1"
+  "job": "steel3d:maple"
  },
  "redsparkle": {
   "box": [
@@ -15,7 +15,7 @@
    3063,
    1346
   ],
-  "job": "model_redsparkle_1"
+  "job": "steel3d:redsparkle"
  },
  "pearloid": {
   "box": [
@@ -24,7 +24,7 @@
    3063,
    1346
   ],
-  "job": "model_pearloid_1"
+  "job": "steel3d:pearloid"
  },
  "koa": {
   "box": [
@@ -33,6 +33,6 @@
    3063,
    1346
   ],
-  "job": "model_koa_2"
+  "job": "steel3d:koa"
  }
 }
