@@ -303,3 +303,13 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
   (gear box on the rail, capstan inside, sideways shaft with flat oval key); curved-lever changer fingers (`prism_xz`);
   pickup pole pieces; thicker tone bar (r 16.2 mm); pedal treads 74 mm; reflection-only light panels (`glint`) so the
   apron and neck catch soft highlights, floor hidden from glossy rays; no neck screws by the pickup.
+
+## 2026-11-10: maple and red sparkle modelled to their approved references
+- Joshua approved `final/steel3d/gen/p3d_maple_1_1.png` and `p3d_redsparkle_1_1.png`; rejected pearloid 1/2 and koa 1/2
+  (gold koa "super fake"). Re-takes `p3d_koa_3..5`, `p3d_pearloid_3..5` (aluminium hardware, `jobs_presets2.json`) await his pick.
+- steel_3d.py per finish: maple = real birdseye veneer `textures/wood/maple_1_1.png` (ChatGPT, `jobs_maple.json`; hue/sat/
+  scale via MAPLE_*), dark inlay stripe (INLAY_Z/H), cream keys, chrome endplates; red sparkle = flakes with their own
+  tilted normals under the clear coat (FLAKE_TILT), chrome front trim strip (TRIM_Z/H), chrome endplates.
+- `UNDER_FILL` (default 0): optional low light under the cabinet for the knee levers. Changing it means re-rendering
+  layers, layers_brass and every finish_* plate together, or the sprite boxes show.
+- Rebuilt: `steel_pack.py skins ...`, `cards ...`, gen_layout, build; 67 UI tests pass.

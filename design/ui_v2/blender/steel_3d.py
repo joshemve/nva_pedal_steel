@@ -140,21 +140,31 @@ def flake_mat(name, base, cell, lo, hi, metal):
     mr = nt.nodes.new("ShaderNodeMapRange"); mr.inputs[3].default_value = lo; mr.inputs[4].default_value = hi
     nt.links.new(v.outputs[src], mr.inputs[0])
     if metal <= 0: mr.inputs[1].default_value, mr.inputs[2].default_value = mr0
+    else:                                      # each flake tilted its own way under the smooth clear coat, so they glint
+        geo = nt.nodes.new("ShaderNodeNewGeometry")
+        sub = nt.nodes.new("ShaderNodeVectorMath"); sub.operation = "SUBTRACT"; sub.inputs[1].default_value = (0.5, 0.5, 0.5)
+        nt.links.new(v.outputs["Color"], sub.inputs[0])
+        scl = nt.nodes.new("ShaderNodeVectorMath"); scl.operation = "SCALE"; scl.inputs["Scale"].default_value = E("FLAKE_TILT", 0.9)
+        nt.links.new(sub.outputs[0], scl.inputs[0])
+        add = nt.nodes.new("ShaderNodeVectorMath"); add.operation = "ADD"
+        nt.links.new(geo.outputs["Normal"], add.inputs[0]); nt.links.new(scl.outputs[0], add.inputs[1])
+        nrm = nt.nodes.new("ShaderNodeVectorMath"); nrm.operation = "NORMALIZE"; nt.links.new(add.outputs[0], nrm.inputs[0])
+        nt.links.new(nrm.outputs[0], b.inputs["Normal"]); b.inputs["Roughness"].default_value = 0.18
     mx_ = nt.nodes.new("ShaderNodeMix"); mx_.data_type = "RGBA"; mx_.blend_type = "MULTIPLY"; mx_.inputs[0].default_value = 1.0
     mx_.inputs[6].default_value = (*base, 1); nt.links.new(mr.outputs[0], mx_.inputs[7]); nt.links.new(mx_.outputs[2], b.inputs["Base Color"])
     return m
 
 
-def photo_wood(path):
+def photo_wood(path, sat=0.92, val=0.78, hue=0.5, scale=1.0):
     """a real veneer photo (textures/wood) box-projected in object space, grain along X, under a gloss coat"""
-    m = mat("RosewoodVeneer", (0.1, 0.04, 0.02), 0.0, 0.30, coat=0.7); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
+    m = mat("Veneer", (0.1, 0.04, 0.02), 0.0, 0.30, coat=0.7); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
     b.inputs["Coat Roughness"].default_value = 0.05
     tc = nt.nodes.new("ShaderNodeTexCoord"); mp = nt.nodes.new("ShaderNodeMapping")
-    mp.inputs["Scale"].default_value = (1.55, 2.3, 2.3); mp.inputs["Location"].default_value = (0.13, 0.31, 0.47)
+    mp.inputs["Scale"].default_value = (1.55 * scale, 2.3 * scale, 2.3 * scale); mp.inputs["Location"].default_value = (0.13, 0.31, 0.47)
     nt.links.new(tc.outputs["Object"], mp.inputs[0])
     tx = nt.nodes.new("ShaderNodeTexImage"); tx.image = bpy.data.images.load(path); tx.projection = "BOX"; tx.projection_blend = 0.2
     tx.extension = "MIRROR"; nt.links.new(mp.outputs[0], tx.inputs["Vector"])
-    hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = 0.92; hs.inputs["Value"].default_value = 0.78
+    hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = sat; hs.inputs["Value"].default_value = val; hs.inputs["Hue"].default_value = hue
     nt.links.new(tx.outputs["Color"], hs.inputs["Color"]); nt.links.new(hs.outputs["Color"], b.inputs["Base Color"])
     # pores and grain lines catch the light a little differently from the flat lacquer
     bw = nt.nodes.new("ShaderNodeRGBToBW"); nt.links.new(tx.outputs["Color"], bw.inputs[0])
@@ -163,9 +173,12 @@ def photo_wood(path):
     return m
 
 
-WOOD_TEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "wood", "rosewood_1_1.png")
+WOOD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "wood")
+WOOD_TEX = os.path.join(WOOD_DIR, "rosewood_1_1.png")
+MAPLE_TEX = os.path.join(WOOD_DIR, "maple_1_1.png")       # approved ref p3d_maple_1: honey birdseye/burl maple
 M_WOOD = (photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_TEX) else
-          flake_mat("RedSparkle", (0.40, 0.006, 0.008), 1500.0, 0.20, 2.6, 0.75) if FINISH == "redsparkle" else
+          photo_wood(MAPLE_TEX, E("MAPLE_SAT", 0.95), E("MAPLE_VAL", 1.05), E("MAPLE_HUE", 0.525), E("MAPLE_SCALE", 1.8)) if FINISH == "maple" and os.path.exists(MAPLE_TEX) else
+          flake_mat("RedSparkle", (0.42, 0.005, 0.007), 1100.0, 0.70, 1.45, 0.90) if FINISH == "redsparkle" else
           flake_mat("Pearloid", (0.88, 0.85, 0.78), 22.0, 0.66, 1.08, 0.0) if FINISH == "pearloid" else wood_mat())
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
 M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal bar
@@ -185,6 +198,10 @@ M_RUBBER = mat("Rubber", (0.022, 0.022, 0.022), 0.0, 0.55, spec=0.35)
 M_FLOOR = mat("Floor", (0.16, 0.06, 0.035), 0.0, 0.8)
 COL = {"red": (0.75, 0.05, 0.03), "cream": (0.86, 0.72, 0.52), "blue": (0.05, 0.25, 0.80), "yellow": (0.95, 0.65, 0.04)}
 M_MARK = {k: mat("Mark_" + k, v, 0.0, 0.45) for k, v in COL.items()}
+# per-model trim (approved refs p3d_maple_1 / p3d_redsparkle_1): mirror-chrome endplates, cream keys on the maple
+M_END = M_CHROME if FINISH in ("maple", "redsparkle") else M_ALU
+M_KEY = mat("CreamKey", (0.80, 0.70, 0.50), 0.0, 0.25, coat=0.6) if FINISH == "maple" else M_ALU
+M_INLAY = mat("Inlay", (0.020, 0.008, 0.004), 0.0, 0.35, coat=0.8)
 
 
 # ---- helpers
@@ -272,13 +289,18 @@ box("TopTrim", (0, -BODY_D / 2 + 0.0012, 0.0004), (BODY_L - 0.004, 0.0020, 0.001
 EP_T = 0.025
 for sx in (-1, 1):                                                           # endplates: polished cast aluminium, proud of the cabinet
     xe = sx * (BODY_L / 2 + EP_T / 2 - 0.004)
-    box("Endplate", (xe, 0, -APRON / 2 - 0.004), (EP_T, BODY_D + 0.014, APRON + 0.022), M_ALU, bevel=0.006, seg=5)
-    box("EndLip", (sx * (BODY_L / 2 - 0.004), 0, 0.0025), (0.026, BODY_D + 0.014, 0.005), M_ALU, bevel=0.002, seg=3)
+    box("Endplate", (xe, 0, -APRON / 2 - 0.004), (EP_T, BODY_D + 0.014, APRON + 0.022), M_END, bevel=0.006, seg=5)
+    box("EndLip", (sx * (BODY_L / 2 - 0.004), 0, 0.0025), (0.026, BODY_D + 0.014, 0.005), M_END, bevel=0.002, seg=3)
     for z in (-0.016, -APRON + 0.006):                                       # screws on the front face
         cyl("Screw", (xe, -BODY_D / 2 - 0.0072, z), 0.0048, 0.0018, M_CHROME, "Y", 20, bevel=0.0006)
         box("ScrewSlot", (xe, -BODY_D / 2 - 0.0082, z), (0.0070, 0.0006, 0.0010), M_BLACK, rot=(0, math.radians(35), 0))
     for sy in (-1, 1):
         cyl("LipScrew", (sx * (BODY_L / 2 - 0.006), sy * (BODY_D / 2 - 0.016), 0.0052), 0.0030, 0.0012, M_CHROME, "Z", 16)
+
+if FINISH == "maple":                                                         # dark inlaid stripe low on the front
+    box("Inlay", (0, -BODY_D / 2 - 0.0002, -APRON * E("INLAY_Z", 0.62)), (BODY_L - 0.002, 0.0012, E("INLAY_H", 0.0055)), M_INLAY)
+if FINISH == "redsparkle":                                                    # chrome trim strip along the front
+    box("FrontTrim", (0, -BODY_D / 2 - 0.0008, -APRON * E("TRIM_Z", 0.42)), (BODY_L - 0.002, 0.0026, E("TRIM_H", 0.0060)), M_CHROME, bevel=0.0010, seg=3)
 
 # ---- neck plate (runs from the keyhead to the changer), fretboard
 FB_W = 0.122
@@ -355,7 +377,7 @@ for i, y in enumerate(SY):
     cyl("KeyBushing", (rp.x, yo + s * 0.0010, KH_Z + 0.0045), 0.0042, 0.0025, M_CHROME, "Y", 20, bevel=0.0006)
     bpy.ops.mesh.primitive_cylinder_add(vertices=40, radius=1, depth=1, location=(rp.x, yo + s * 0.025, KH_Z + 0.0045))
     kb = bpy.context.object; kb.name = "KeyButton"; kb.scale = (0.0076, 0.0104, 0.0056); kb.rotation_euler = (0, math.pi / 2, 0)
-    finish(kb, M_ALU, 0.0014, 3)
+    finish(kb, M_KEY, 0.0014, 3)
     rod("String", (X_GUIDE, y, Z_STR), (X_BR + 0.002, y, Z_STR), GA[i] * SR, M_STEEL, 12)
     # changer finger: a long curved lever the string wraps over, then its square nut and coil spring in the tray
     fo = prism_xz("Finger", [(X_BR + 0.003 + fx, Z_STR - 0.0004 + fz) for fx, fz in FINGER], y - 0.0033, y + 0.0033, M_POL)
@@ -469,6 +491,9 @@ KP = E("STEEL_LIGHT", 1.0)
 area("Key", (-1.2, -0.7, 1.5), (0.35, 0.30), 60 * KP, (1.0, 0.84, 0.66))
 area("Top", (0.2, 0.3, 1.9), (1.6, 0.5), 9 * KP, (1.0, 0.90, 0.78))
 area("Fill", (0.6, -1.6, 0.5), (1.6, 0.8), 5 * KP, (1.0, 0.86, 0.72))
+# low soft light from the player's side under the cabinet: the knee levers and pedal hardware were in the apron's
+# shadow, darker than the reference (Joshua)
+area("UnderFill", (0.0, -1.3, -0.13), (1.4, 0.25), E("UNDER_FILL", 0.0) * KP, (1.0, 0.86, 0.70), target=(0, -0.10, -0.17))
 
 # soft bright shapes in the room that only reflections see (the reference's light patches): in front and low for the
 # glossy front apron, behind and high for the fretboard and the neck plate
