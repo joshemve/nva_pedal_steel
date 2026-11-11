@@ -1,0 +1,108 @@
+{
+ "name": "feel_claude",
+ "label": "FEEL, Claude's match",
+ "style": "scallop",
+ "status": "draft",
+ "notes": "",
+ "radius_m": 0.0444,
+ "frame_px": 118,
+ "pointer": {
+  "start": 0.36,
+  "end": 0.84,
+  "width": 0.12,
+  "color": [
+   0.003,
+   0.0025,
+   0.002
+  ],
+  "roughness": 0.85
+ },
+ "material": {
+  "color": [
+   0.68,
+   0.34,
+   0.11
+  ],
+  "roughness": 0.27,
+  "coat": 0.2,
+  "coat_roughness": 0.19
+ },
+ "light": {
+  "key_power": 4.6,
+  "key_pos": [
+   0,
+   0.23,
+   0.27
+  ],
+  "key_size": [
+   0.42,
+   0.035
+  ],
+  "rim_power": 1.5,
+  "rim_pos": [
+   0,
+   0.26,
+   0.06
+  ],
+  "rim_size": [
+   0.3,
+   0.05
+  ],
+  "ambient": 0.3,
+  "exposure": -0.7
+ },
+ "view": {
+  "size": 0.98,
+  "tilt": 13,
+  "offset_y": -0.002
+ },
+ "panel": {
+  "image": "final/strips/plate_walnut.png",
+  "scale": 2,
+  "cx": 441.9,
+  "cy": 775.3
+ },
+ "references": [
+  {
+   "label": "ChatGPT original",
+   "image": "APPROVED_main.png",
+   "scale": 0.98,
+   "cx": 441.9,
+   "cy": 793.5
+  },
+  {
+   "label": "Current plugin knob",
+   "strip": "final/strips/knob_scallop_orig.png",
+   "frame_px": 236,
+   "frames": 128
+  }
+ ],
+ "saved_at": "2026-11-11 09:46:51",
+ "parts": {
+  "base": {
+   "on": false,
+   "width": 1.07,
+   "height": 0.3,
+   "taper": 0,
+   "bevel": 0.05,
+   "grip": {
+    "style": "smooth"
+   }
+  },
+  "top": {
+   "width": 1.03,
+   "height": 0.5,
+   "taper": 0.076,
+   "round": 0.12,
+   "dome": 0.012,
+   "grip": {
+    "style": "wave",
+    "count": 9,
+    "depth": 0.097,
+    "sharpness": 1,
+    "phase": 0.75,
+    "fade": 0
+   }
+  }
+ }
+}

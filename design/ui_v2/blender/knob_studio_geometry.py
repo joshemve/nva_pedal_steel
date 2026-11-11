@@ -71,7 +71,13 @@ def params(style):
 
 
 def lathe(name, prof, R, H, lobes=0, depth=0.0, sharp=1.0, n=None, z0=0.0, crease=None, phase=0.0, axial_flutes=0.0):
-    n = n or max(128, lobes * 48)
+    n = n or max(128, lobes * (12 if lobes > 30 else 48))   # knurls (many teeth) need fewer samples per tooth
+    if lobes and sharp == -4:   # diamond knurl (knob_workshop): the pattern needs rings close together up the wall
+        dense, gap = [], 2 * math.pi * R / lobes / 4
+        for (ra, za, wa), (rb, zb, wb) in zip(prof, prof[1:]):
+            k = max(1, int(abs(zb - za) * H / gap))
+            dense += [(ra + (rb - ra) * j / k, za + (zb - za) * j / k, wa + (wb - wa) * j / k) for j in range(k)]
+        prof = dense + [prof[-1]]
     bm = bmesh.new(); uv = bm.loops.layers.uv.new()
     rings = []
     for rf, zf, w in prof:
@@ -82,7 +88,10 @@ def lathe(name, prof, R, H, lobes=0, depth=0.0, sharp=1.0, n=None, z0=0.0, creas
             t = 2 * math.pi * i / n
             tl = t + phase * 2 * math.pi / max(1, lobes)   # flute phase relative to the pointer (+X)
             r = R * rf
-            if lobes and sharp == -3 and w > 0:
+            if lobes and sharp == -4 and w > 0:   # two crossing 45-degree sets of V grooves
+                u = lobes * t / (2 * math.pi); v = lobes * zf * H / R / (2 * math.pi)
+                r *= 1 - depth * w * max(abs(2 * ((u + v) % 1) - 1), abs(2 * ((u - v) % 1) - 1))
+            elif lobes and sharp == -3 and w > 0:
                 # Exact circular finger scallops cut into a cylindrical blank.
                 # Unlike a radial sine wave, each recess has a concave circular wall.
                 pitch = 2 * math.pi / lobes
@@ -160,6 +169,19 @@ def build(coll, M, R, style, parent=None):
     tilt = bpy.data.objects.new("Tilt", None); coll.objects.link(tilt); tilt.parent = root
     tilt.rotation_euler = (math.radians(-TILT), 0, 0)
     spin = bpy.data.objects.new("Spin", None); coll.objects.link(spin); spin.parent = tilt
+    if P.get("parts"):   # knob_workshop recipe: stacked lathes (Base, Top), each with its own outline and grip
+        z = 0.0
+        for part in P["parts"]:
+            globals()["LAND"] = part.get("land", LAND)
+            last = (part["prof"], R * part["width"], R * part["height"], z)
+            _obj(coll, "KnobBody " + part["name"], lathe("body_%s_%s" % (style, part["name"]), last[0], last[1], last[2],
+                 part["lobes"], part["depth"], part["sharp"], z0=z, phase=part.get("phase", 0.0)), M[bm_], spin)
+            z += last[2]
+        pointer = _obj(coll, "Pointer", pointer_mesh("ptr_" + style, last[0], last[1], last[2], r0, r1, pw, last[3],
+                       cap_round=1.0 if pm_ == "ptr_light" else 0.2), M[pm_], spin)   # r0/r1/pw are fractions of the Top part
+        bevel = pointer.modifiers.new("Rounded painted inlay edges", "BEVEL")
+        bevel.width = last[1] * 0.015; bevel.segments = 3
+        return root
     z0 = 0.0
     if skirt:   # fine-knurled black skirt the dome sits on
         _obj(coll, "Skirt", lathe("skirt", SKIRT, R * P.get("skirt_radius", 1.12), R * P.get("skirt_hr", .24), lobes=72, depth=P.get("skirt_depth", .018), sharp=1.0, n=576),

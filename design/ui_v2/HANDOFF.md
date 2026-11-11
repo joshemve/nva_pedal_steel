@@ -351,3 +351,15 @@ numbers: Blender/Figma/Houdini; configurator camera guidance). All in `app.js` /
 - Rosewood cabinet: ChatGPT painted the concept's wood straight onto the cabinet's UV layout (`blender/cabinet_uv.py`,
   `textures/cabinet/uv_layout.png`, jobs `textures/cabinet/jobs_rosewood.json`, chosen take `cab_rosewood.png`);
   steel_3d.py maps `textures/cabinet/cab_<finish>.png` when it exists, satin coat (CAB_COAT .22, CAB_SAT 1.35).
+  - Line across the flutes (Joshua circled it in the angle view): the straight wall met a quarter-circle shoulder, a sudden
+    change of curvature at the same height where the grip started fading, which raking light showed as a crease. The
+    wall now runs into the shoulder through a zero-end-curvature quintic blend (`wallAndShoulder()` in app.js, mirrored
+    by `wall_and_shoulder()` in recipe_to_studio.py), grip strength eases the same way, and ring counts went up
+    (ARC 16, WALL 8). Joshua: "much better".
+- 2026-11-11, first knob through the whole workshop loop (FEEL, Joshua's own `recipes/feel.json`, Finished 10:40):
+  `recipe_to_studio.py` -> `final/knobs/workshop_feel.json` (room light kept at native_v2's 0.18 because ambient is
+  global in knob_studio.py and SPACE shares the render; his recipe says 0.16) -> `blender/knob_studio.py` (128 frames,
+  6.5 min; the new `parts` branch of `build()` rendered first time) -> `knob_workshop/install_strip.py
+  final/knobs/workshop_feel scallop` (crops only that style, runs `fix_knob_halo.py`, copies to `Source/ui_assets/`).
+  The SPACE strip came out byte-identical. Previous strips: `final/strips/knob_scallop*_before_workshop.png`.
+  The recipe as rendered: `final/knobs/workshop_feel_recipe.json`.

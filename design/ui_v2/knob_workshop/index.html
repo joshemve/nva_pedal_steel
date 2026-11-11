@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Knob Workshop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="importmap">
+{"imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+}}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Knob <i>Workshop</i></h1>
+  <select id="recipeSel" title="Choose a knob"></select>
+  <button class="tool" id="openShapes" title="Start from a ready-made knob shape"><b>◆</b> Starting shapes</button>
+  <button class="tool" id="openVars" title="See nine variations of this knob and pick one"><b>▦</b> Variations</button>
+  <button class="tool" id="match" title="Fit this knob's outline to the target automatically"><b>◎</b> Match outline</button>
+  <span class="spacer"></span>
+  <span id="save" role="status"></span>
+  <button id="undo" title="Undo (Ctrl+Z)">Undo</button>
+  <button id="redo" title="Redo (Ctrl+Y)">Redo</button>
+  <button id="reset" title="Throw away every change made since the page opened">Start over</button>
+</header>
+<main>
+  <section id="left">
+    <div class="cmpbar">
+      <span class="grp"><span class="lead">View</span>
+        <span class="seg" id="viewSeg"><button data-v="plugin" title="Exactly as the plugin shows it">Plugin</button><button data-v="angle">Angle</button><button data-v="side">Side</button></span></span>
+      <span class="grp"><span class="lead">Compare</span>
+        <span class="seg" id="cmpSeg"><button data-m="mine">Off</button><button data-m="outline" title="Target's outline drawn over yours">Outline</button><button data-m="diff" title="Where your silhouette and the target's differ">Difference</button><button data-m="fade">Fade</button><button data-m="wipe">Wipe</button></span></span>
+    </div>
+    <div class="stages">
+      <div>
+        <div class="stage" id="stage">
+          <canvas id="bg"></canvas>
+          <canvas id="gl"></canvas>
+          <canvas id="refOver"></canvas>
+          <canvas id="diffOver"></canvas>
+          <svg class="handles" id="handles" viewBox="0 0 1000 1000" aria-label="Drag handles"></svg>
+          <span class="tag" id="stageTag"></span>
+          <span id="score"></span>
+        </div>
+      </div>
+      <div>
+        <div class="stage"><canvas id="target"></canvas><span class="tag">Target</span></div>
+      </div>
+    </div>
+    <div id="cmpRow"><span id="cmpWord"></span><input type="range" id="cmp" min="0" max="100" step="1" value="50" aria-label="Compare amount"></div>
+    <div class="under">
+      <div class="thumb"><canvas id="actual"></canvas>Actual size</div>
+      <div class="turn"><span>Turn the knob <button id="sweep" title="Sweep through the full range">Sweep</button></span><input type="range" id="turn" min="-135" max="135" step="1" value="30" aria-label="Turn the knob"><output id="turnOut"></output></div>
+    </div>
+    <div id="versions" aria-label="Kept versions"><button id="keep" title="Keep a copy of the knob as it is now">Keep this version</button></div>
+    <div class="keytip">Drag the dots to reshape. Drag the knob to look around it. Hold <kbd>Space</kbd> to flick to the target. <select id="refSel" title="Which target to compare against"></select></div>
+  </section>
+  <aside id="right">
+    <div id="tabs" role="tablist" aria-label="Parameter groups"></div>
+    <div id="panel"></div>
+    <div id="foot">
+      <details id="noteBox"><summary>Add a note for Claude</summary>
+        <textarea id="notes" placeholder="Anything the parameters could not do, e.g. 'edges should look more worn'"></textarea></details>
+      <button id="done">Finished, hand it to Claude</button>
+      <div id="doneMsg"></div>
+    </div>
+  </aside>
+</main>
+<div id="sheet" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="cardhead"><h2 id="sheetTitle"></h2><span class="spacer"></span><button id="sheetClose">Done</button></div>
+    <div class="small" id="sheetHint"></div>
+    <div id="sheetBar"></div>
+    <div id="sheetGrid"></div>
+  </div>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

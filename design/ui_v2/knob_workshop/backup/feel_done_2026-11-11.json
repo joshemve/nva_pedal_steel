@@ -1,0 +1,109 @@
+{
+ "name": "feel",
+ "label": "FEEL (GLIDE / SWELL)",
+ "style": "scallop",
+ "status": "finished",
+ "notes": "",
+ "radius_m": 0.0444,
+ "frame_px": 118,
+ "pointer": {
+  "start": 0.452,
+  "end": 0.945,
+  "width": 0.12,
+  "color": [
+   0.003,
+   0.0025,
+   0.002
+  ],
+  "roughness": 0.85
+ },
+ "material": {
+  "color": [
+   0.68,
+   0.34,
+   0.11
+  ],
+  "roughness": 0.2,
+  "coat": 0.6,
+  "coat_roughness": 0.08
+ },
+ "light": {
+  "key_power": 6.5,
+  "key_pos": [
+   0,
+   0.22,
+   0.13
+  ],
+  "key_size": [
+   0.42,
+   0.035
+  ],
+  "rim_power": 0.8,
+  "rim_pos": [
+   0,
+   0.26,
+   0.06
+  ],
+  "rim_size": [
+   0.3,
+   0.05
+  ],
+  "ambient": 0.16,
+  "exposure": -0.7
+ },
+ "view": {
+  "size": 0.93,
+  "tilt": 0,
+  "offset_y": -0.002
+ },
+ "panel": {
+  "image": "final/strips/plate_walnut.png",
+  "scale": 2,
+  "cx": 441.9,
+  "cy": 775.3
+ },
+ "references": [
+  {
+   "label": "ChatGPT original",
+   "image": "APPROVED_main.png",
+   "scale": 0.98,
+   "cx": 441.9,
+   "cy": 793.5
+  },
+  {
+   "label": "Current plugin knob",
+   "strip": "final/strips/knob_scallop_orig.png",
+   "frame_px": 236,
+   "frames": 128
+  }
+ ],
+ "saved_at": "2026-11-11 10:40:29",
+ "parts": {
+  "base": {
+   "on": true,
+   "width": 1.065,
+   "height": 0.455,
+   "bevel": 0.085,
+   "grip": {
+    "style": "smooth"
+   },
+   "taper": 0
+  },
+  "top": {
+   "width": 1.03,
+   "height": 0.46,
+   "round": 0.225,
+   "dome": -0.01,
+   "grip": {
+    "style": "wave",
+    "count": 7,
+    "depth": 0.137,
+    "sharpness": 0.85,
+    "phase": 0,
+    "land": 0.1,
+    "fade": 0.24
+   },
+   "taper": 0.135
+  }
+ }
+}

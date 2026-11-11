@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "knob-workshop",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["design/ui_v2/knob_workshop/server.py", "8765"],
+      "port": 8765
+    }
+  ]
+}
