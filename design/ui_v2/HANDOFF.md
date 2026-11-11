@@ -313,3 +313,7 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
 - `UNDER_FILL` (default 0): optional low light under the cabinet for the knee levers. Changing it means re-rendering
   layers, layers_brass and every finish_* plate together, or the sprite boxes show.
 - Rebuilt: `steel_pack.py skins ...`, `cards ...`, gen_layout, build; 67 UI tests pass.
+- Follow-up (Joshua): the three front glint panels made blurry blotches on the apron -> one long soft `GlintFront`
+  (FRONT_W/H/GLINT); pull rods bright satin steel r 2.4 mm (`M_PULL`, chrome showed only the dark room); maple colour
+  measured against the reference (MAPLE_SAT .86 / VAL 1.17 / HUE .532 / SCALE 1.3); koa uses real veneer
+  `textures/wood/koa_1_1.png` (procedural curl read as stripes). Layers, layers_brass and every finish plate re-rendered.

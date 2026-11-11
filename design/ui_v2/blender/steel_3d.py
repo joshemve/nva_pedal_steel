@@ -175,9 +175,11 @@ def photo_wood(path, sat=0.92, val=0.78, hue=0.5, scale=1.0):
 
 WOOD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "wood")
 WOOD_TEX = os.path.join(WOOD_DIR, "rosewood_1_1.png")
+KOA_TEX = os.path.join(WOOD_DIR, "koa_1_1.png")           # real figured koa (the procedural curl read as stripes: Joshua)
 MAPLE_TEX = os.path.join(WOOD_DIR, "maple_1_1.png")       # approved ref p3d_maple_1: honey birdseye/burl maple
 M_WOOD = (photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_TEX) else
-          photo_wood(MAPLE_TEX, E("MAPLE_SAT", 0.95), E("MAPLE_VAL", 1.05), E("MAPLE_HUE", 0.525), E("MAPLE_SCALE", 1.8)) if FINISH == "maple" and os.path.exists(MAPLE_TEX) else
+          photo_wood(KOA_TEX, E("KOA_SAT", 0.85), E("KOA_VAL", 0.82), 0.5, E("KOA_SCALE", 1.2)) if FINISH == "koa" and os.path.exists(KOA_TEX) else
+          photo_wood(MAPLE_TEX, E("MAPLE_SAT", 0.86), E("MAPLE_VAL", 1.17), E("MAPLE_HUE", 0.532), E("MAPLE_SCALE", 1.3)) if FINISH == "maple" and os.path.exists(MAPLE_TEX) else
           flake_mat("RedSparkle", (0.42, 0.005, 0.007), 1100.0, 0.70, 1.45, 0.90) if FINISH == "redsparkle" else
           flake_mat("Pearloid", (0.88, 0.85, 0.78), 22.0, 0.66, 1.08, 0.0) if FINISH == "pearloid" else wood_mat())
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
@@ -185,6 +187,8 @@ M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal 
 M_CHROME = mat("Chrome", (0.74, 0.73, 0.72), 1.0, 0.04)
 # pedal rod, pull rods and collars: brass on the koa steel (STEEL_METAL=brass)
 M_ROD = mat("RodBrass", (0.78, 0.56, 0.24), 1.0, 0.10) if os.environ.get("STEEL_METAL") == "brass" else M_CHROME
+# pull rods: bright satin steel, not mirror chrome (chrome only showed the dark room: darker than the reference, Joshua)
+M_PULL = M_ROD if os.environ.get("STEEL_METAL") == "brass" else mat("PullSteel", (0.86, 0.85, 0.83), 1.0, E("PULL_ROUGH", 0.32))
 M_SPRING = mat("Spring", (0.02, 0.02, 0.02), 1.0, 0.5)
 M_COIL = mat("Coil", (0.32, 0.31, 0.30), 1.0, 0.30)
 M_POL = mat("PolishedAlu", (0.80, 0.79, 0.78), 1.0, 0.12)
@@ -439,7 +443,7 @@ for k, px in zip("ABC", PEDAL_X):
     for sgn in (-1, 1):
         box("Yoke_" + k, (px + sgn * 0.011, BAR_Y - 0.006, BAR_Z + 0.018), (0.005, 0.012, 0.032), M_ALU, bevel=0.002)
     cyl("ClevisPin_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.032), 0.0030, 0.016, M_CHROME, "X", 12)
-    rod("PullRod_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.036), (px, -BODY_D / 2 + 0.012, -APRON), 0.0020, M_ROD, 16)
+    rod("PullRod_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.036), (px, -BODY_D / 2 + 0.012, -APRON), E("PULL_R", 0.0024), M_PULL, 16)
 for k, kx in (("L", -0.1905), ("R", 0.1366)):
     box("KneeBracket_" + k, (kx, -BODY_D / 2 + 0.008, -APRON - 0.005), (0.046, 0.020, 0.010), M_ALU, bevel=0.002)
     for bx in (-0.015, 0.015):
@@ -518,8 +522,9 @@ GL = E("STEEL_GLINT", 1.0)
 d_front = Vector((0, -math.cos(TH), -math.sin(TH)))        # where the front apron's mirror direction points
 d_top = Vector((0, math.cos(TH), math.sin(TH)))            # where the flat tops' mirror direction points
 for i, gx in enumerate((-0.42, 0.02, 0.40)):
-    glint("GlintFront%d" % i, d_front * 3.0 + Vector((gx * 1.0, 0, 0)), 0.55, 1.1, 3.5 * GL)
     glint("GlintTop%d" % i, d_top * 3.0 + Vector((gx * 1.0, 0, 0)), 0.55, 1.4, 1.6 * GL)
+# the front apron: one long soft sheen running past both ends (three panels read as blurry blotches: Joshua)
+glint("GlintFront", d_front * 3.0, E("FRONT_W", 9.0), E("FRONT_H", 1.3), E("FRONT_GLINT", 2.2) * GL)
 
 bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, radius=9, location=(0, 0, 0))
 dome = bpy.context.object; dome.name = "RoomDome"
