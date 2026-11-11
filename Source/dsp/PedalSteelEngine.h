@@ -160,19 +160,9 @@ private:
         float slideSvfLow  = 0.0f;
         float lastOutput = 0.0f;
 
-        // Per-string Roland VG-8 HRM VIO GUITAR / D62 BowedPad state (fxCharacter == 17)
-        double vg8PhaseA = 0.0;
-        double vg8PhaseB = 0.0;
-        double vg8SubPhase = 0.0;
-        float vg8AgcEnv = 0.06f;
-        float vg8BowEnv = 0.0f;
-        float vg8TouchEnv = 0.0f;
-        float vg8DcL = 0.0f;
-        float vg8DcR = 0.0f;
-        float vg8Svf1Ic1L = 0.0f, vg8Svf1Ic2L = 0.0f;
-        float vg8Svf2Ic1L = 0.0f, vg8Svf2Ic2L = 0.0f;
-        float vg8Svf1Ic1R = 0.0f, vg8Svf1Ic2R = 0.0f;
-        float vg8Svf2Ic1R = 0.0f, vg8Svf2Ic2R = 0.0f;
+        // Per-string Scheerhorn Spider-Cone Dobro bronze saddle & cone state (fxCharacter == 17)
+        float dobroHpState = 0.0f;
+        float dobroLpState = 0.0f;
     };
 
     // Warm Stereo Echoplex / BBD Tape Delay with Capstan Modulation & Dynamic Ducking
@@ -226,7 +216,7 @@ private:
         float process(float input, float amount);
     };
 
-    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..22; Mode 0 = bit-transparent bypass)
+    // First-Principles Modern Producer & Vintage Hardware Character Circuits (Modes 1..27; Mode 0 = bit-transparent bypass)
     struct ModernCharacterProcessor {
         std::vector<float> modBufL, modBufR;
         int modWritePos = 0;
@@ -237,12 +227,13 @@ private:
         double tremPhase = 0.0;
         float cassetteSagEnv = 0.0f;
 
-        // Sample-rate-adaptive dual-grain C1 Hann-windowed +12st/-12st Shimmer/Organ, Leslie 147 & Gated Diode Room Tank
+        // Sample-rate-adaptive dual-grain C1 Hann-windowed +12st/-12st Shimmer/Organ, Leslie 147, Microcosm & Gated Diode Room Tank
         std::vector<float> shimBufL, shimBufR;
         int shimWritePos = 0;
         int shimMaxLen = 1;
         double shimPhasor = 0.0;
         double subPhasor = 0.0;
+        double auxPhasor = 0.0;
         float shimLpL = 0.0f, shimLpR = 0.0f;
         float gateEnv = 0.0f;
 
@@ -344,7 +335,7 @@ private:
     float tweedSagEnv = 0.0f;
     float rackBellSmooth = 0.0f;
     float organRankSmooth = 0.0f;
-    float vg8BowedSmooth = 0.0f;
+    float dobroConeSmooth = 0.0f;
     float jawariSmooth = 0.0f;
     float cs80BrassSmooth = 0.0f;
 

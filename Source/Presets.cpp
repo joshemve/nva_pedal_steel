@@ -1101,39 +1101,39 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
             }()
         },
         {
-            "31 - Two Star VG-8 Bowed Steel",
-            "Alt-Indie / VG-8",
-            "100% real-string Roland VG-8 D62 BowedPad + parallel Baritone/Tascam 424 rig (A1 & C1 hardware reference): wave-reshaped real string HRM + deep-to-explosive 24 dB/oct ZDF touch-filter + Boss CE-2 chorus/flanger jet + ducked Reverb-X wash.",
+            "31 - Scheerhorn Spider-Cone Dobro",
+            "Bluegrass / Acoustic",
+            "Close-mic'd Tim Scheerhorn squareneck acoustic resophonic Dobro (Jerry Douglas / Union Station): phosphor-bronze Dunlop thumbpick bark, 128 Hz mahogany air cavity, 485 Hz 8-leg spider notch, and 1.68 kHz spun-aluminum cone cry.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
-                p.playMode      = 1; // Crying Lead Gliss + Open-Shell Polyphony
-                p.fxCharacter   = 17; // Two Star VG-8 Bowed
+                p.playMode      = 0; // Poly Copedent: lightning bluegrass fingerpicking rolls + expressive tonebar slants!
+                p.fxCharacter   = 17; // Spider-Cone Dobro
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.02f; // Concert-locked VG-8 chord intonation
-                p.pedalSpeed    = 65.0f; // Crisp guitar hammer-on / pull-off / bend articulation
-                p.barGlide      = 9.0f;  // Instant 9ms fretted guitar hammer-on / pull-off snap (use pitchWheel for smooth bends!)
-                p.barSlideNoise = 0.08f;
-                p.vibratoDepth  = 0.06f; // Rock-solid chords; solo lead notes auto-boost to singing bowed vibrato!
-                p.vibratoRate   = 5.75f; // Expressive 5.75 Hz left-hand cello/violin finger vibrato matching C1 & A1
-                p.autoSwell     = 0.02f; // Direct GK-2A string up front while per-string VG-8 BowedPad HRM blooms behind it!
-                p.swellTime     = 90.0f;
-                p.sampleBlend   = 0.94f; // Pure real studio string core (zero synthetic sine oscillators!)
-                p.pickSnap      = 0.54f;
-                p.pickupPos     = 2.35f;
-                p.coilPeakFreq  = 2750.0f;
-                p.coilResonance = 0.74f; // Neutral Studio Bus coil curve (0.0 dB cut!) so full VG-8 ZDF sweeps shine!
-                p.sustainTime   = 9.8f;
-                p.cabinetDrop   = 0.0f;
-                p.stereoWidth   = 1.12f; // Lush Boss CE-2 / VG-8 dimensional width with strong mono phase coherence
-                p.ampDrive      = 0.24f; // Warm parallel preamp saturation
-                p.toneWarmth    = 0.28f; // Open analog console clarity + full 4 kHz+ AD filter sweeps
-                p.delayMix      = 0.07f;
-                p.delayTime     = 315.0f;
+                p.scoopDepth    = 0.36f;
+                p.pedalSpeed    = 115.0f;
+                p.barGlide      = 110.0f;
+                p.barSlideNoise = 0.28f;
+                p.vibratoDepth  = 0.22f;
+                p.vibratoRate   = 5.35f;
+                p.autoSwell     = 0.0f;
+                p.swellTime     = 65.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.86f; // Crisp Dunlop thumbpick + metal fingerpicks over split maple saddle
+                p.pickupPos     = 1.95f;
+                p.coilPeakFreq  = 2420.0f;
+                p.coilResonance = 0.66f;
+                p.sustainTime   = 3.6f;  // Authentic acoustic resophonic cone energy radiation & woody taper
+                p.cabinetDrop   = 0.0f;  // Squareneck acoustic Dobro has zero pedal-rod cabinet sag
+                p.stereoWidth   = 1.18f; // Natural ORTF stereo condenser pair in a wooden Nashville room
+                p.ampDrive      = 0.08f; // Unamplified acoustic resonator body into studio condenser pair!
+                p.toneWarmth    = 0.44f;
+                p.delayMix      = 0.0f;
+                p.delayTime     = 280.0f;
                 p.tempoSync     = false;
-                p.reverbMix     = 0.24f; // Blends seamlessly with Mode 17's ducked Rainger Reverb-X hall wash
-                p.reverbDecay   = 0.60f;
-                p.outputLevel   = 0.0f;
+                p.reverbMix     = 0.18f;
+                p.reverbDecay   = 0.38f;
+                p.outputLevel   = 1.6f;
                 return p;
             }()
         },
@@ -1319,6 +1319,191 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.reverbMix     = 0.48f;
                 p.reverbDecay   = 0.84f;
                 p.outputLevel   = -0.4f;
+                return p;
+            }()
+        },
+        {
+            "37 - Loveless SPX90 Reverse-Glide",
+            "90s Shoegaze",
+            "Kevin Shields (My Bloody Valentine 'To Here Knows When' / Slowdive / Japancakes): floating Jazzmaster tremolo-arm pitch glide into a 12-bit 1985 Yamaha SPX90 'Reverse Gate (ER-2)' rising reflection cluster BEFORE warm tube-fuzz overdrive.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 1; // Harmonic-rich Bootgaze steel voice
+                p.playMode      = 1;
+                p.fxCharacter   = 23; // SPX90 Reverse-Glide
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.56f;
+                p.pedalSpeed    = 185.0f;
+                p.barGlide      = 195.0f;
+                p.barSlideNoise = 0.18f;
+                p.vibratoDepth  = 0.26f;
+                p.vibratoRate   = 4.35f;
+                p.autoSwell     = 0.14f;
+                p.swellTime     = 120.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.52f;
+                p.pickupPos     = 2.35f;
+                p.coilPeakFreq  = 2150.0f;
+                p.coilResonance = 0.60f;
+                p.sustainTime   = 9.8f;
+                p.cabinetDrop   = 0.10f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.34f;
+                p.toneWarmth    = 0.58f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 500.0f; // 1/8D
+                p.tempoSync     = true;
+                p.reverbMix     = 0.46f;
+                p.reverbDecay   = 0.82f;
+                p.outputLevel   = -0.2f;
+                return p;
+            }()
+        },
+        {
+            "38 - King Tubby Kingston Dub-Tank",
+            "70s Roots Dub",
+            "1974 Dromilly Ave Kingston dub console (King Tubby / Augustus Pablo / Scientist): woody Jamaican roots channel alongside an Altec 9069B resonant high-pass filter crashing into a thunderbolt spring tank and regenerating Roland RE-201 Space Echo.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0;
+                p.fxCharacter   = 24; // Kingston Dub-Tank
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.28f;
+                p.pedalSpeed    = 130.0f;
+                p.barGlide      = 135.0f;
+                p.barSlideNoise = 0.22f;
+                p.vibratoDepth  = 0.18f;
+                p.vibratoRate   = 4.80f;
+                p.autoSwell     = 0.0f; // Crisp skank chops trigger the Altec HPF sweep & thunderbolt spring splash!
+                p.swellTime     = 65.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.76f;
+                p.pickupPos     = 2.45f;
+                p.coilPeakFreq  = 1960.0f;
+                p.coilResonance = 0.58f;
+                p.sustainTime   = 6.8f;
+                p.cabinetDrop   = 0.06f;
+                p.stereoWidth   = 1.30f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.68f;
+                p.delayMix      = 0.10f;
+                p.delayTime     = 500.0f; // 1/8D
+                p.tempoSync     = true;
+                p.reverbMix     = 0.32f;
+                p.reverbDecay   = 0.64f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "39 - Microcosm Crystal Granular",
+            "Boutique Granular",
+            "Modern ambient tabletop pedalboard (Chuck Johnson / Hologram Microcosm 'Mosaic' + Chase Bliss MOOD MKII): tactile felt-warm steel surrounded by polyrhythmic 1/16 & 3/16 +12st crystal droplets over a warm -12st half-speed micro-loop bed.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0;
+                p.fxCharacter   = 25; // Microcosm Crystal
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.34f;
+                p.pedalSpeed    = 160.0f;
+                p.barGlide      = 155.0f;
+                p.barSlideNoise = 0.16f;
+                p.vibratoDepth  = 0.14f;
+                p.vibratoRate   = 4.55f;
+                p.autoSwell     = 0.10f;
+                p.swellTime     = 95.0f;
+                p.sampleBlend   = 0.92f;
+                p.pickSnap      = 0.48f;
+                p.pickupPos     = 2.48f;
+                p.coilPeakFreq  = 2040.0f;
+                p.coilResonance = 0.54f;
+                p.sustainTime   = 9.4f;
+                p.cabinetDrop   = 0.04f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.16f;
+                p.toneWarmth    = 0.64f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 500.0f; // 1/8D
+                p.tempoSync     = true;
+                p.reverbMix     = 0.48f;
+                p.reverbDecay   = 0.84f;
+                p.outputLevel   = 0.0f;
+                return p;
+            }()
+        },
+        {
+            "40 - Laurel Canyon Dumble Lead",
+            "70s Cali Slide",
+            "David Lindley on Jackson Browne's 'Running on Empty' (Sunset Sound 1977): Howard Dumble Overdrive Special #2 cascaded dual-triode vocal bloom through a 12\" EVM12L speaker and an Eventide H910 +/-8.5-cent stereo micro-pitch widener.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0; // Pure singing E9th core -> Dumble ODS #2 dual-triode stage handles all vocal overdrive!
+                p.playMode      = 1;
+                p.fxCharacter   = 26; // Dumble H910 Lead
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.44f;
+                p.pedalSpeed    = 140.0f;
+                p.barGlide      = 155.0f;
+                p.barSlideNoise = 0.22f;
+                p.vibratoDepth  = 0.20f;
+                p.vibratoRate   = 5.15f;
+                p.autoSwell     = 0.06f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.56f;
+                p.pickupPos     = 2.38f;
+                p.coilPeakFreq  = 1980.0f;
+                p.coilResonance = 0.62f;
+                p.sustainTime   = 10.6f;
+                p.cabinetDrop   = 0.08f;
+                p.stereoWidth   = 1.28f;
+                p.ampDrive      = 0.16f;
+                p.toneWarmth    = 0.62f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 370.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.32f;
+                p.reverbDecay   = 0.58f;
+                p.outputLevel   = 3.6f;
+                return p;
+            }()
+        },
+        {
+            "41 - '66 Cinecitta Western Twang",
+            "Spaghetti Western",
+            "Ennio Morricone & Alessandro Alessandroni ('The Good, the Bad and the Ugly', Rome 1966): 1962 Fender Bass VI bridge-saddle pick ricochet into an outboard Fender 6G15 spring tank BEFORE a cranked Blackface Twin and 168 ms studio tape slap.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 5; // Baritone Canyon B6 (F#2..C#4 Fender Bass VI / Tic-Tac register!)
+                p.playMode      = 1;
+                p.fxCharacter   = 27; // Cinecitta Twang
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.32f;
+                p.pedalSpeed    = 125.0f;
+                p.barGlide      = 120.0f;
+                p.barSlideNoise = 0.40f;
+                p.vibratoDepth  = 0.26f;
+                p.vibratoRate   = 5.50f;
+                p.autoSwell     = 0.0f;
+                p.swellTime     = 60.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.92f; // Razor-sharp flatwound bridge-pickup outlaw snap!
+                p.pickupPos     = 1.72f;
+                p.coilPeakFreq  = 2680.0f;
+                p.coilResonance = 0.72f;
+                p.sustainTime   = 7.6f;
+                p.cabinetDrop   = 0.12f;
+                p.stereoWidth   = 1.24f;
+                p.ampDrive      = 0.36f;
+                p.toneWarmth    = 0.42f;
+                p.delayMix      = 0.06f;
+                p.delayTime     = 170.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.38f;
+                p.reverbDecay   = 0.68f;
+                p.outputLevel   = 1.8f;
                 return p;
             }()
         }

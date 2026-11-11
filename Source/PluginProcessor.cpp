@@ -194,12 +194,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
             "Abbey Road Tape ADT",
             "Dimension D Chorus",
             "Poly-Octave Organ",
-            "Two Star VG-8 Bowed",
+            "Spider-Cone Dobro",
             "Revolver Reverse Tape",
             "Mohan Veena Jawari",
             "Neo-Soul CE-1 Syrup",
             "Binson Echorec Drum",
-            "CS-80 Synth-Steel"
+            "CS-80 Synth-Steel",
+            "SPX90 Reverse-Glide",
+            "Kingston Dub-Tank",
+            "Microcosm Crystal",
+            "Dumble H910 Lead",
+            "Cinecitta Twang"
         }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
