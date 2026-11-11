@@ -12,7 +12,7 @@ namespace UiLayout {
     inline constexpr float sp_small_top[4] = { 1166.00f, 5.50f, 433.50f, 67.00f };   // x, y, w, h
     inline constexpr float f3d_bar[4] = { 800.00f, 600.00f, 4.00f, 4.00f };   // x, y, w, h
     inline constexpr int f3dFrames_bar = 1;
-    inline constexpr float f3d_knee_L[4] = { 478.50f, 390.00f, 110.00f, 160.00f };   // x, y, w, h
+    inline constexpr float f3d_knee_L[4] = { 479.00f, 390.00f, 109.50f, 160.00f };   // x, y, w, h
     inline constexpr int f3dFrames_knee_L = 7;
     inline constexpr float f3d_knee_R[4] = { 960.50f, 408.00f, 80.00f, 142.00f };   // x, y, w, h
     inline constexpr int f3dFrames_knee_R = 7;

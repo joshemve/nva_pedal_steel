@@ -1,0 +1,26 @@
+[
+ {
+  "name": "cab_rosewood_1",
+  "images": [
+   "final/steel3d/gen/ref_rosewood_1_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's wooden cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the rosewood exactly as it appears on the cabinet in image 1 - the same dark reddish-brown colour, the same figure, the same streaks, pores and grain scale, grain running along the length. The FRONT panel should look like image 1's front face flattened out. Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: wood only."
+ },
+ {
+  "name": "cab_rosewood_2",
+  "images": [
+   "final/steel3d/gen/ref_rosewood_1_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's wooden cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the rosewood exactly as it appears on the cabinet in image 1 - the same dark reddish-brown colour, the same figure, the same streaks, pores and grain scale, grain running along the length. The FRONT panel should look like image 1's front face flattened out. Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: wood only."
+ },
+ {
+  "name": "cab_rosewood_3",
+  "images": [
+   "final/steel3d/gen/ref_rosewood_1_1.png",
+   "textures/cabinet/uv_layout.png"
+  ],
+  "prompt": "Image 1 is the approved concept of a pedal steel guitar plugin. Image 2 is the UV layout template of that instrument's wooden cabinet: the cabinet box unfolded into labelled grey panels on a black sheet (FRONT = the front face you see in image 1, TOP = the top surface around the metal neck plate, BACK, BOTTOM, END LEFT and END RIGHT). Left in every long panel is the keyhead end (left in image 1), right is the changer end. Task: output ONE image, exactly 1536x1024, with EXACTLY the same layout as image 2: every panel in exactly the same position and size, each panel filled edge to edge with the rosewood exactly as it appears on the cabinet in image 1 - the same dark reddish-brown colour, the same figure, the same streaks, pores and grain scale, grain running along the length. The FRONT panel should look like image 1's front face flattened out. Keep the black background outside the panels, remove the white outlines and all text labels. Material-source image, orthographic straight-on presentation, neutral white balance, uniform diffuse illumination, minimal specular reflection, no directional shading, no cast shadows, no highlights, no ambient-occlusion darkening, no vignette, no depth of field, no labels, no background objects, no metal parts, no neck plate, no strings: wood only."
+ }
+]

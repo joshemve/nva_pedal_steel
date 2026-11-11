@@ -301,7 +301,44 @@ def text(name, s, loc, size, material):
 wear(M_ALU, 0.11, 30.0); wear(M_ALU_B, 0.06, 60.0); wear(M_CHROME, 0.025, 45.0)
 
 # ---- cabinet
-box("Cabinet", (0, 0, -APRON / 2), (BODY_L, BODY_D, APRON), M_WOOD, bevel=0.003, seg=3)
+# a finish painted by ChatGPT straight onto the cabinet's UV layout from the approved reference (blender/cabinet_uv.py,
+# textures/cabinet/cab_<finish>.png): the reference's own wood, placed panel by panel, under a satin coat
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cabinet_uv
+CAB_TEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "cabinet",
+                       os.environ.get("CAB_TEX", "cab_%s.png" % FINISH))
+
+
+def uv_mat(path):
+    m = mat("CabinetUV", (0.1, 0.04, 0.02), 0.0, E("CAB_ROUGH", 0.42), coat=E("CAB_COAT", 0.22)); nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]; b.inputs["Coat Roughness"].default_value = E("CAB_COAT_ROUGH", 0.16)
+    tc = nt.nodes.new("ShaderNodeTexCoord"); tx = nt.nodes.new("ShaderNodeTexImage"); tx.image = bpy.data.images.load(path)
+    tx.interpolation = "Cubic"; nt.links.new(tc.outputs["UV"], tx.inputs["Vector"])
+    hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = E("CAB_SAT", 1.35)
+    hs.inputs["Value"].default_value = E("CAB_VAL", 1.0); hs.inputs["Hue"].default_value = E("CAB_HUE", 0.5)
+    nt.links.new(tx.outputs["Color"], hs.inputs["Color"]); nt.links.new(hs.outputs["Color"], b.inputs["Base Color"])
+    bw = nt.nodes.new("ShaderNodeRGBToBW"); nt.links.new(tx.outputs["Color"], bw.inputs[0])
+    bm = nt.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = 0.05; bm.inputs["Distance"].default_value = 0.0003
+    nt.links.new(bw.outputs[0], bm.inputs["Height"]); nt.links.new(bm.outputs["Normal"], b.inputs["Normal"])
+    return m
+
+
+def cabinet_uvs(o):
+    import bmesh
+    bm_ = bmesh.new(); bm_.from_mesh(o.data); uvl = bm_.loops.layers.uv.new("UVMap")
+    for f in bm_.faces:
+        n = f.normal
+        face = ("FRONT" if n.y < -0.5 else "BACK" if n.y > 0.5 else "TOP" if n.z > 0.5 else "BOTTOM" if n.z < -0.5
+                else "END_LEFT" if n.x < 0 else "END_RIGHT")
+        for lp in f.loops: lp[uvl].uv = cabinet_uv.uv_for(face, o.matrix_world @ lp.vert.co)
+    bm_.to_mesh(o.data); bm_.free()
+
+
+USE_UV = os.path.exists(CAB_TEX) and os.environ.get("CAB_UV", "1") == "1"
+cab = box("Cabinet", (0, 0, -APRON / 2), (BODY_L, BODY_D, APRON), uv_mat(CAB_TEX) if USE_UV else M_WOOD, bevel=0.003, seg=3)
+if USE_UV:
+    cab.data.uv_layers.remove(cab.data.uv_layers[0]) if cab.data.uv_layers else None
+    cabinet_uvs(cab)
 box("TopTrim", (0, -BODY_D / 2 + 0.0012, 0.0004), (BODY_L - 0.004, 0.0020, 0.0014), M_ALU, bevel=0.0005)       # front top edge strip
 EP_T = 0.025
 for sx in (-1, 1):                                                           # endplates: polished cast aluminium, proud of the cabinet

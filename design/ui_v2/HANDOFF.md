@@ -323,3 +323,31 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
 - Hardware options in steel_3d.py: HW_KEYHEAD satin|polished|black, HW_KEYS alu|chrome|ivory|pearl|ebony,
   HW_PICKUP black|chrome|ring, HW_END satin|chrome|nickel (unset = current). `final/steel3d/hw_variants.sh` renders
   three options per model for Joshua to pick visually.
+
+## 2026-11-11: Knob Workshop redesign (Joshua: "UI is so basic, UX not well thought out, research and 100x it")
+Research-led rebuild of `knob_workshop/` (direct manipulation: Autodesk/Blender; Design Galleries, SIGGRAPH 1997; scrub
+numbers: Blender/Figma/Houdini; configurator camera guidance). All in `app.js` / `index.html` / `server.py`:
+- Drag handles: dots on the knob (any view) and on a side-section in the Top/Base tabs change width, height, taper,
+  rounding, bevel, grip depth, pointer start/end. One `HANDLES` table; screen direction per parameter is measured
+  numerically, so a handle hides itself in views where it could not move. Hovering a row highlights its part and dot.
+- Header tools: Starting shapes (6 rendered presets, `SHAPES`), Variations (3x3 grid, mixed or two-setting sweep, click to
+  adopt and regenerate), Match outline (coordinate search maximising silhouette overlap with the target; moves size,
+  position, tilt, proportions, grip depth/rotation; never the flute count, which the outline cannot see).
+- Target shown at full size beside yours; Compare = Outline / Difference / Fade / Wipe, plus an "Outline match N%" score.
+  The target silhouette is found by thresholding the photo (Otsu, capped by `ref.threshold`), so it is rough at the
+  shadowed bottom edge.
+- Numbers scrub by dragging (Shift fine, Ctrl coarse), double-click a name to reset. Views glide. Kept versions with
+  thumbnails live in `knob_workshop/versions/<name>.json` (auto-kept before a shape, before a match, on Finished).
+  Save pill turns red and retries every 3 s on failure; leaving with unsaved changes warns.
+- Not done: the Cycles proof, wear layers, building a knob from a brand-new photo. Nothing rendered in Cycles yet.
+- 2026-11-11 later (Joshua: "colour scheme feels basic", "bugs between top and base"):
+  - Look moved to `knob_workshop/style.css`: warm near-black, cream as the only accent (no orange, no teal chrome), Fraunces
+    serif wordmark/tabs/primary button, matte wells, custom cream sliders, framed stages. Sage is only for match data.
+  - Bug: at Tilt 0 any flat face square-on to the camera (Base top, a Dome-0 cap) lost its direct light and went dark.
+    Cause: three.js RectAreaLight (LTC) is degenerate when the normal is parallel to the view direction (ortho camera).
+    `shoot()` now never tilts less than 0.3 degrees. Live view only; Cycles is unaffected.
+  - Live-view-only contact shading via vertex colours (4th profile value): foot of each wall and a soft ring on the Base
+    top around the Top. Lathes now have a closed underside. Base width dot moved off the Top width dot.
+- Rosewood cabinet: ChatGPT painted the concept's wood straight onto the cabinet's UV layout (`blender/cabinet_uv.py`,
+  `textures/cabinet/uv_layout.png`, jobs `textures/cabinet/jobs_rosewood.json`, chosen take `cab_rosewood.png`);
+  steel_3d.py maps `textures/cabinet/cab_<finish>.png` when it exists, satin coat (CAB_COAT .22, CAB_SAT 1.35).
