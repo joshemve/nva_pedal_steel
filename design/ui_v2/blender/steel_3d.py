@@ -102,7 +102,9 @@ M_WOOD = wood_mat()
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
 M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal bar
 M_CHROME = mat("Chrome", (0.74, 0.73, 0.72), 1.0, 0.04)
-M_SPRING = mat("Spring", (0.10, 0.10, 0.10), 1.0, 0.35)
+M_SPRING = mat("Spring", (0.02, 0.02, 0.02), 1.0, 0.5)
+M_COIL = mat("Coil", (0.32, 0.31, 0.30), 1.0, 0.30)
+M_POL = mat("PolishedAlu", (0.80, 0.79, 0.78), 1.0, 0.12)
 M_BRASS = mat("Brass", (0.75, 0.60, 0.32), 1.0, 0.25)
 M_STEEL = mat("StringSteel", (0.62, 0.61, 0.58), 1.0, 0.28)
 M_BLACK = mat("Black", (0.014, 0.014, 0.014), 0.0, 0.42, spec=0.4)
@@ -231,10 +233,17 @@ for xb, r_ in ((X_NUT, 0.0058), (X_GUIDE, 0.0062)):
 KH_X0 = XL + 0.012; KH_Z = 0.015                                             # keyhead: a cast frame, slightly wider at the left
 RAIL0 = lambda s: Vector((X_GUIDE - 0.002, s * (NECK_W / 2 - 0.006), KH_Z / 2))
 RAIL1 = lambda s: Vector((KH_X0 + 0.010, s * 0.036, KH_Z / 2))       # narrow at the left end, widening toward the nut (reference)
-for s in (1, -1):
-    a_, b_ = RAIL0(s), RAIL1(s); v = b_ - a_
-    box("KeyRail", (a_ + b_) / 2, (v.length + 0.012, 0.0220, KH_Z), M_ALU, bevel=0.0060, seg=6, rot=(0, 0, math.atan2(v.y, v.x)))
-box("KeyEnd", (KH_X0 + 0.007, 0, KH_Z / 2), (0.022, 0.092, KH_Z), M_ALU, bevel=0.0075, seg=6)
+# one casting: a tapered plate with a rounded left end and the window cut out of it
+WR = 0.021                                                                   # rail width
+yL, yR = 0.036 + WR / 2, NECK_W / 2 - 0.006 + WR / 2
+xl, xr = KH_X0 - 0.002, X_GUIDE + 0.004
+outer = [(xl + 0.012, -yL), (xr, -yR), (xr, yR), (xl + 0.012, yL), (xl + 0.003, yL - 0.010), (xl, yL - 0.024), (xl, -yL + 0.024), (xl + 0.003, -yL + 0.010)]
+kh = prism("Keyhead", outer, 0.0, KH_Z, M_ALU)
+inner = [(xl + WR + 0.006, -yL + WR + 0.004), (xr - 0.012, -yR + WR), (xr - 0.012, yR - WR), (xl + WR + 0.006, yL - WR - 0.004), (xl + WR, yL - WR - 0.012), (xl + WR, -yL + WR + 0.012)]
+cut = prism("KeyheadWindow", inner, -0.01, KH_Z + 0.01, M_ALU); cut.hide_render = True; cut.display_type = "WIRE"
+bo = kh.modifiers.new("window", "BOOLEAN"); bo.operation = "DIFFERENCE"; bo.object = cut; bo.solver = "EXACT"
+bv = kh.modifiers.new("bevel", "BEVEL"); bv.width = 0.0045; bv.segments = 6; bv.limit_method = "ANGLE"; bv.angle_limit = math.radians(40)
+for pl in kh.data.polygons: pl.use_smooth = True
 for i, y in enumerate(SY):
     far = i < 5; k = i if far else 9 - i; s = 1 if far else -1                # outer strings' tuners nearest the nut
     t = 0.16 + k * 0.165
@@ -253,14 +262,14 @@ for i, y in enumerate(SY):
         cyl("KeyButton", (post.x - 0.004, post.y - 0.029, KH_Z * 0.35), 0.0090, 0.0056, M_ALU, "Z", 36, bevel=0.0024)
     rod("String", (X_GUIDE, y, Z_STR), (X_BR + 0.006, y, Z_STR), GA[i] * SR, M_STEEL, 12)
     # changer finger: a long humped lever the string hooks into, then its square nut and coil spring in the tray
-    ecyl("Finger", (X_BR + 0.014, y, Z_STR - 0.0130), 0.0200, 0.0130, 0.0068, M_ALU)
-    cyl("FingerEye", (X_BR - 0.006, y, Z_STR - 0.0150), 0.0052, 0.0070, M_ALU, "Y", 24, bevel=0.0008)
-    cyl("FingerEyeHole", (X_BR - 0.006, y, Z_STR - 0.0150), 0.0022, 0.0074, M_BLACK, "Y", 12)
-    box("FingerTail", (X_BR + 0.037, y, Z_STR - 0.0170), (0.012, 0.0060, 0.0090), M_ALU, bevel=0.002)
-    box("TuneNut", (X_BR + 0.0465, y, Z_STR - 0.0165), (0.0075, 0.0078, 0.0085), M_CHROME, bevel=0.0012)
+    ecyl("Finger", (X_BR + 0.010, y, Z_STR - 0.0130), 0.0150, 0.0130, 0.0068, M_POL)
+    box("FingerArm", (X_BR + 0.030, y, Z_STR - 0.0120), (0.030, 0.0062, 0.0075), M_POL, bevel=0.002, rot=(0, math.radians(14), 0))
+    cyl("FingerEye", (X_BR - 0.0085, y, Z_STR - 0.0125), 0.0060, 0.0070, M_POL, "Y", 24, bevel=0.0008)
+    cyl("FingerEyeHole", (X_BR - 0.0085, y, Z_STR - 0.0125), 0.0026, 0.0074, M_BLACK, "Y", 12)
+    box("TuneNut", (X_BR + 0.0470, y, Z_STR - 0.0165), (0.0080, 0.0080, 0.0090), M_POL, bevel=0.0012)
     cyl("Spring", (X_BR + 0.0605, y, Z_STR - 0.0170), 0.0030, 0.0200, M_SPRING, "X", 14)
-    for q in range(6):
-        cyl("Coil", (X_BR + 0.0520 + q * 0.0034, y, Z_STR - 0.0170), 0.0038, 0.0013, M_CHROME, "X", 14)
+    for q in range(8):
+        cyl("Coil", (X_BR + 0.0525 + q * 0.0025, y, Z_STR - 0.0170), 0.0037, 0.0011, M_COIL, "X", 14)
     cyl("Pole", (X_BR - 0.038, y, NECK_H + 0.0100), 0.0027, 0.002, M_BRASS, "Z", 16)
 box("Pickup", (X_BR - 0.038, 0, NECK_H + 0.0048), (0.026, FB_W - 0.004, 0.0100), M_BLACK, bevel=0.0035, seg=5)
 box("ChangerTray", (X_BR + 0.038, 0, 0.004), (0.074, NECK_W - 0.006, 0.008), M_BLACK)
@@ -317,6 +326,8 @@ for k, kx in (("L", -0.1905), ("R", 0.1366)):
     box("KneeArm_" + k, (kx, -BODY_D / 2 + 0.002, -APRON - 0.026), (0.010, 0.006, 0.040), M_ALU, bevel=0.0015)
     cyl("KneePivot_" + k, (kx, -BODY_D / 2 - 0.002, -APRON - 0.040), 0.0042, 0.004, M_CHROME, "Y", 16)
     box("KneePad_" + k, (kx, -BODY_D / 2 - 0.002, -APRON - 0.086), (0.021, 0.013, 0.082), M_RUBBER, bevel=0.0055, seg=4)
+    for q in range(9):
+        box("KneeRib_" + k, (kx, -BODY_D / 2 - 0.0088, -APRON - 0.056 - q * 0.0075), (0.017, 0.0016, 0.0026), M_RUBBER, bevel=0.0006)
 
 # ---- tone bar: polished steel bullet bar lying across the strings (a separate live layer later)
 BAR_FRET = E("STEEL_BARFRET", 8.7)
