@@ -2647,66 +2647,81 @@ int main(int argc, char* argv[]) {
     }
 
     // =========================================================================
-    // Preset 43: '98 Generation VHS-Drift (78 BPM, Db Major — Chase Bliss Gen Loss MKII x Boards of Canada 'Olson' / 'Endless')
+    // Preset 43: '98 Generation VHS-Drift (82 BPM, F Major — Frank Ocean 'Rushes / Wither' x Dijon x Chase Bliss Gen Loss MKII)
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev;
         ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        // Phrase 1: Glowing nostalgic Dbmaj9 swell blooming into EP-mode VHS compander, azimuth drift & oxide-crease dropout!
-        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 49, 0.84f) }); // Db3
-        ev.push_back({ 0.15, juce::MidiMessage::noteOn(1, 56, 0.85f) }); // Ab3
-        ev.push_back({ 0.20, juce::MidiMessage::noteOn(1, 65, 0.87f) }); // F4
-        ev.push_back({ 0.25, juce::MidiMessage::noteOn(1, 72, 0.88f) }); // C5 (maj7)
-        ev.push_back({ 0.32, juce::MidiMessage::noteOn(3, 75, 0.91f) }); // Eb5 (9th) -> F5 -> Eb5 nostalgic sigh!
-        addPitchWheelRamp(ev, 3, 0.95, 1.55, 0.0f, +2.0f / 12.0f);       // Eb5 -> F5
-        addPitchWheelRamp(ev, 3, 2.25, 2.85, +2.0f / 12.0f, 0.0f);       // F5 -> Eb5
-        for (int n : { 49, 56, 65, 72 }) ev.push_back({ 3.85, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 3.85, juce::MidiMessage::noteOff(3, 75) });
-        ev.push_back({ 3.92, juce::MidiMessage::pitchWheel(3, 8192) });
+        // Phrase 1: Intimate bedroom thumb-and-finger E9th Fsus2 -> Fmaj9 oblique A/B bend ('Wither' / 'Rushes' tactile clarity!)
+        // Right at ~1.38s while holding the glowing Fmaj9 chord, a physical VHS capstan snag & L->R helical oxide flicker kisses the strings!
+        ev.push_back({ 0.08, juce::MidiMessage::noteOn(1, 53, 0.86f) }); // F3 warm thumb pluck
+        ev.push_back({ 0.20, juce::MidiMessage::noteOn(1, 60, 0.88f) }); // C4
+        ev.push_back({ 0.32, juce::MidiMessage::noteOn(3, 67, 0.92f) }); // G4 (sus2) -> A4 (3rd) intimate pedal bloom!
+        ev.push_back({ 0.44, juce::MidiMessage::noteOn(1, 72, 0.90f) }); // C5 bell chime
+        addPitchWheelRamp(ev, 3, 0.62, 0.94, 0.0f, +2.0f / 12.0f);       // G4 -> A4 oblique E9th A-pedal lift!
+        // Delicate high melodic answer (E5 -> F5 -> D5 -> C5)
+        ev.push_back({ 2.15, juce::MidiMessage::noteOn(4, 76, 0.91f) }); // E5 (maj7) -> F5 -> D5
+        addPitchWheelRamp(ev, 4, 2.28, 2.48, 0.0f, +1.0f / 12.0f);       // E5 -> F5
+        addPitchWheelRamp(ev, 4, 2.70, 2.98, +1.0f / 12.0f, -2.0f / 12.0f); // F5 -> D5
+        ev.push_back({ 3.45, juce::MidiMessage::noteOff(4, 76) });
+        for (int n : { 53, 60, 72 }) ev.push_back({ 3.45, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 3.45, juce::MidiMessage::noteOff(3, 67) });
+        ev.push_back({ 3.50, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 3.50, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        // Phrase 2: Heart-melting Gbmaj7(#11) ('Olson' / 'Endless' Lydian tape memory) -> Ebm11!
-        ev.push_back({ 4.10, juce::MidiMessage::noteOn(1, 42, 0.84f) }); // Gb2
-        ev.push_back({ 4.15, juce::MidiMessage::noteOn(1, 54, 0.85f) }); // Gb3
-        ev.push_back({ 4.20, juce::MidiMessage::noteOn(1, 58, 0.87f) }); // Bb3
-        ev.push_back({ 4.25, juce::MidiMessage::noteOn(1, 65, 0.88f) }); // F4 (maj7)
-        ev.push_back({ 4.32, juce::MidiMessage::noteOn(3, 72, 0.91f) }); // C5 (#11!) -> Db5!
-        addPitchWheelRamp(ev, 3, 4.95, 5.55, 0.0f, +1.0f / 12.0f);       // C5 -> Db5
-        for (int n : { 42, 54, 58, 65 }) ev.push_back({ 6.55, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 6.55, juce::MidiMessage::noteOff(3, 72) });
-        ev.push_back({ 6.62, juce::MidiMessage::pitchWheel(3, 8192) });
+        // Phrase 2: Dijon / Endless Dm9 -> Bbmaj7(#11) exposed finger-picked chord-melody (snag #2 kisses the sustained Bbmaj7#11 at ~4.85s!)
+        ev.push_back({ 3.68, juce::MidiMessage::noteOn(1, 50, 0.85f) }); // D3
+        ev.push_back({ 3.82, juce::MidiMessage::noteOn(1, 65, 0.88f) }); // F4
+        ev.push_back({ 3.94, juce::MidiMessage::noteOn(3, 72, 0.93f) }); // C5 -> D5 -> A4 crying vocal slide!
+        addPitchWheelRamp(ev, 3, 4.08, 4.28, 0.0f, +2.0f / 12.0f);       // C5 -> D5
+        ev.push_back({ 4.48, juce::MidiMessage::noteOff(1, 50) });
+        ev.push_back({ 4.48, juce::MidiMessage::noteOff(1, 65) });
+        ev.push_back({ 4.48, juce::MidiMessage::noteOff(3, 72) });
+        ev.push_back({ 4.52, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Ebm9 warm tape-warbled inner movement
-        ev.push_back({ 6.78, juce::MidiMessage::noteOn(1, 51, 0.84f) }); // Eb3
-        ev.push_back({ 6.83, juce::MidiMessage::noteOn(1, 58, 0.85f) }); // Bb3
-        ev.push_back({ 6.88, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // Gb4
-        ev.push_back({ 6.95, juce::MidiMessage::noteOn(3, 73, 0.90f) }); // Db5 -> F5 (9th)!
-        addPitchWheelRamp(ev, 3, 7.45, 8.05, 0.0f, +4.0f / 12.0f);       // Db5 -> F5
-        for (int n : { 51, 58, 66 }) ev.push_back({ 8.85, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 8.85, juce::MidiMessage::noteOff(3, 73) });
-        ev.push_back({ 8.92, juce::MidiMessage::pitchWheel(3, 8192) });
+        // Bbmaj7(#11) luminous bedroom soul bloom
+        ev.push_back({ 4.58, juce::MidiMessage::noteOn(1, 46, 0.86f) }); // Bb2
+        ev.push_back({ 4.70, juce::MidiMessage::noteOn(1, 58, 0.87f) }); // Bb3
+        ev.push_back({ 4.82, juce::MidiMessage::noteOn(1, 69, 0.90f) }); // A4 (maj7)
+        ev.push_back({ 4.94, juce::MidiMessage::noteOn(3, 74, 0.93f) }); // D5 -> E5 (#11!) -> D5!
+        addPitchWheelRamp(ev, 3, 5.25, 5.62, 0.0f, +2.0f / 12.0f);       // D5 -> E5 Lydian sigh
+        addPitchWheelRamp(ev, 3, 6.00, 6.38, +2.0f / 12.0f, 0.0f);       // E5 -> D5
+        for (int n : { 46, 58, 69 }) ev.push_back({ 6.95, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 6.95, juce::MidiMessage::noteOff(3, 74) });
+        ev.push_back({ 7.00, juce::MidiMessage::pitchWheel(3, 8192) });
 
-        // Phrase 3: Ab9sus4 -> Wide luminous Db6/9 resolving into dusty 1998 VHS camcorder sunset
-        ev.push_back({ 9.08, juce::MidiMessage::noteOn(1, 44, 0.84f) }); // Ab2
-        ev.push_back({ 9.13, juce::MidiMessage::noteOn(1, 56, 0.85f) }); // Ab3
-        ev.push_back({ 9.18, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // Gb4
-        ev.push_back({ 9.25, juce::MidiMessage::noteOn(3, 70, 0.90f) }); // Bb4 -> C5 -> Bb4
-        addPitchWheelRamp(ev, 3, 9.65, 10.10, 0.0f, +2.0f / 12.0f);
-        for (int n : { 44, 56, 66 }) ev.push_back({ 10.55, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 10.55, juce::MidiMessage::noteOff(3, 70) });
-        ev.push_back({ 10.60, juce::MidiMessage::pitchWheel(3, 8192) });
+        // Phrase 3: Exposed Gm9 -> C13sus4 parallel sixth slide (snag #3 at ~8.15s!) -> warm finger-rolled F6/9 homeward resolution!
+        ev.push_back({ 7.18, juce::MidiMessage::noteOn(1, 43, 0.85f) }); // G2
+        ev.push_back({ 7.30, juce::MidiMessage::noteOn(4, 65, 0.89f) }); // F4
+        ev.push_back({ 7.33, juce::MidiMessage::noteOn(3, 74, 0.94f) }); // D5 (F4+D5 sixth) -> G4+E5 -> F4+D5!
+        addPitchWheelRamp(ev, 4, 7.68, 8.02, 0.0f, +2.0f / 12.0f);       // F4 -> G4
+        addPitchWheelRamp(ev, 3, 7.68, 8.02, 0.0f, +2.0f / 12.0f);       // D5 -> E5
+        addPitchWheelRamp(ev, 4, 8.48, 8.82, +2.0f / 12.0f, 0.0f);       // G4 -> F4
+        addPitchWheelRamp(ev, 3, 8.48, 8.82, +2.0f / 12.0f, 0.0f);       // E5 -> D5
+        ev.push_back({ 9.35, juce::MidiMessage::noteOff(1, 43) });
+        ev.push_back({ 9.35, juce::MidiMessage::noteOff(4, 65) });
+        ev.push_back({ 9.35, juce::MidiMessage::noteOff(3, 74) });
+        ev.push_back({ 9.40, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 9.40, juce::MidiMessage::pitchWheel(4, 8192) });
 
-        ev.push_back({ 10.72, juce::MidiMessage::noteOn(1, 49, 0.85f) }); // Db3
-        ev.push_back({ 10.77, juce::MidiMessage::noteOn(1, 56, 0.86f) }); // Ab3
-        ev.push_back({ 10.82, juce::MidiMessage::noteOn(1, 65, 0.88f) }); // F4
-        ev.push_back({ 10.87, juce::MidiMessage::noteOn(1, 70, 0.88f) }); // Bb4 (6th)
-        ev.push_back({ 10.94, juce::MidiMessage::noteOn(3, 75, 0.92f) }); // Eb5 (9th) -> F5 -> Eb5
-        addPitchWheelRamp(ev, 3, 11.40, 11.95, 0.0f, +2.0f / 12.0f);
-        addPitchWheelRamp(ev, 3, 12.25, 12.80, +2.0f / 12.0f, 0.0f);
-        for (int n : { 49, 56, 65, 70 }) ev.push_back({ 13.40, juce::MidiMessage::noteOff(1, n) });
-        ev.push_back({ 13.40, juce::MidiMessage::noteOff(3, 75) });
+        // C9sus4 -> F6/9 intimate homeward sigh (snag #4 kisses the final decaying F6/9 around ~11.6s!)
+        ev.push_back({ 9.55, juce::MidiMessage::noteOn(1, 48, 0.86f) }); // C3
+        ev.push_back({ 9.66, juce::MidiMessage::noteOn(1, 65, 0.88f) }); // F4
+        ev.push_back({ 9.76, juce::MidiMessage::noteOn(1, 70, 0.90f) }); // Bb4
+        for (int n : { 48, 65, 70 }) ev.push_back({ 10.35, juce::MidiMessage::noteOff(1, n) });
 
-        renderSequenceToWav(42, 14.8, 78.0, ev, presetsDir.getChildFile("43_98_generation_vhs_drift.wav"));
+        ev.push_back({ 10.48, juce::MidiMessage::noteOn(1, 53, 0.87f) }); // F3
+        ev.push_back({ 10.58, juce::MidiMessage::noteOn(1, 60, 0.88f) }); // C4
+        ev.push_back({ 10.68, juce::MidiMessage::noteOn(1, 62, 0.89f) }); // D4 (6th)
+        ev.push_back({ 10.78, juce::MidiMessage::noteOn(3, 67, 0.94f) }); // G4 (9th) -> A4 (3rd) classic E9th A-pedal home resolve!
+        ev.push_back({ 10.88, juce::MidiMessage::noteOn(1, 72, 0.91f) }); // C5
+        addPitchWheelRamp(ev, 3, 11.05, 11.42, 0.0f, +2.0f / 12.0f);     // G4 -> A4 tender bedroom resolve!
+        for (int n : { 53, 60, 62, 72 }) ev.push_back({ 13.30, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 13.30, juce::MidiMessage::noteOff(3, 67) });
+
+        renderSequenceToWav(42, 14.5, 82.0, ev, presetsDir.getChildFile("43_98_generation_vhs_drift.wav"));
     }
 
     // =========================================================================

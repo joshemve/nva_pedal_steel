@@ -518,7 +518,7 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         shimWritePos = 0;
         shimPhasor = 0.0;
         subPhasor = 0.0;
-        auxPhasor = 0.0;
+        auxPhasor = (mode == 29) ? 0.56 : 0.0;
         std::fill(shimBufL.begin(), shimBufL.end(), 0.0f);
         std::fill(shimBufR.begin(), shimBufR.end(), 0.0f);
         for (int i = 0; i < 4; ++i) {
@@ -730,13 +730,13 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         charFilter4.setPeak(sr, 2380.0f, 1.45f, 4.4f);
         subLpFilter.setLowpass(sr, 2450.0f, 0.74f);
     } else if (mode == 29) {
-        // 43: '98 Generation VHS-Drift (VHS Hi-Fi Compander + Wallace Oxide-Crease Dropouts + Helical Snag Flutter + 2.42 kHz EP Oxide)
-        dimHpFilter.setHighpass(sr, 118.0f, 0.707f);
-        charFilter1.setPeak(sr, 198.0f, 0.78f, 3.0f);
-        charFilter2.setPeak(sr, 890.0f, 0.98f, 3.2f);
-        charFilter3.setLowpass(sr, 2420.0f, 0.86f);
-        charFilter4.setLowpass(sr, 2620.0f, 0.70f);
-        subLpFilter.setLowpass(sr, 1720.0f, 0.74f);
+        // 43: '98 Generation VHS-Drift (Gen Loss MKII VHS Head-Gap Resonance @ 2.55 kHz -> Steep 4-Pole 3.45 kHz Oxide Knee + AGC Compander)
+        dimHpFilter.setHighpass(sr, 132.0f, 0.72f);
+        charFilter1.setPeak(sr, 2450.0f, 1.15f, 4.4f);  // VHS playback-head gap inductance peak + Dolby pre-emphasis BEFORE ferrite drive!
+        charFilter2.setPeak(sr, 205.0f, 0.80f, 2.8f);   // Warm CRT / consumer VHS deck chest
+        charFilter3.setLowpass(sr, 3450.0f, 0.88f);     // Steep 4-pole consumer VHS head-gap roll-off (Stage 1: papery nostalgic ceiling!)
+        charFilter4.setLowpass(sr, 3650.0f, 0.68f);     // Steep 4-pole consumer VHS head-gap roll-off (Stage 2)
+        subLpFilter.setLowpass(sr, 1950.0f, 0.74f);     // Degraded camcorder AGC tape-memory bloom LPF
     }
 }
 
@@ -2427,103 +2427,103 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         outExtraRevL = (springWetL * 0.60f + tapeEchoL * 0.40f) * 0.28f;
         outExtraRevR = (springWetR * 0.60f + tapeEchoR * 0.40f) * 0.28f;
     } else if (mode == 29 && shimMaxLen > 64) {
-        // 43: '98 Generation VHS-Drift (Chase Bliss Generation Loss MKII x Boards of Canada / Frank Ocean Endless:
-        //     EP-Mode VHS Hi-Fi Compander + Wallace Oxide-Spacing Crease Dropouts + Helical Snag Flutter + 2.42 kHz Camcorder Memory)
-        lfoPhase1  += 0.46 * dt; if (lfoPhase1  >= 1.0) lfoPhase1  -= 1.0; // Eccentric VHS supply-reel wow
-        lfoPhase2  += 6.45 * dt; if (lfoPhase2  >= 1.0) lfoPhase2  -= 1.0; // Helical pinch-roller flutter
-        lfoPhase3  += 0.22 * dt; if (lfoPhase3  >= 1.0) lfoPhase3  -= 1.0; // Stereo head-azimuth spread
-        auxPhasor  += 0.43 * dt; if (auxPhasor  >= 1.0) auxPhasor  -= 1.0; // Continuous-time tape-crease gen 1
-        shimPhasor += 0.79 * dt; if (shimPhasor >= 1.0) shimPhasor -= 1.0; // Continuous-time tape-crease gen 2
-        subPhasor  += 1.31 * dt; if (subPhasor  >= 1.0) subPhasor  -= 1.0; // Continuous-time tape-crease gen 3
-        tremPhase  += 18.5 * dt; if (tremPhase  >= 1.0) tremPhase  -= 1.0; // 18.5 Hz helical head-snag crinkle burst
+        // 43: '98 Generation VHS-Drift (Frank Ocean 'Endless' / Dijon x Chase Bliss Generation Loss MKII:
+        //     3-Wave Organic Non-Periodic VHS Wow/Flutter + Discrete Tape-Catch Snags + L/R Helical Oxide Dropouts + Camcorder AGC Bloom!)
+        lfoPhase1  += 0.37 * dt; if (lfoPhase1  >= 1.0) lfoPhase1  -= 1.0; // Irrational VHS supply-reel drift 1
+        lfoPhase2  += 0.89 * dt; if (lfoPhase2  >= 1.0) lfoPhase2  -= 1.0; // Irrational VHS takeup-reel drift 2
+        lfoPhase3  += 2.17 * dt; if (lfoPhase3  >= 1.0) lfoPhase3  -= 1.0; // Capstan eccentricity wobble 3
+        shimPhasor += 9.15 * dt; if (shimPhasor >= 1.0) shimPhasor -= 1.0; // Tactile 9.15 Hz pinch-roller flutter grain!
+        subPhasor  += 0.41 * dt; if (subPhasor  >= 1.0) subPhasor  -= 1.0; // Alternates Left-vs-Right helical head dropout bias
+        tremPhase  += 22.5 * dt; if (tremPhase  >= 1.0) tremPhase  -= 1.0; // 22.5 Hz tape-edge crinkle shiver during snags
 
-        // 1. Sample-Rate-Invariant Stochastic VHS Tape-Crease, Crinkle Snag & Azimuth Dropout Generator
-        // Fires organic, unmistakable physical VHS tape creases right across Phrase 1 (~1.5s), Phrase 2 (~5.1s, ~7.8s) & Phrase 3 (~11.4s)!
-        const float crSumL = 0.5f * (static_cast<float>(std::sin(kTwoPi * (auxPhasor + 0.14)))
-                                   + static_cast<float>(std::sin(kTwoPi * (shimPhasor + 0.22))))
-                           * static_cast<float>(std::sin(kTwoPi * (subPhasor + 0.08)));
-        const float crSumR = 0.5f * (static_cast<float>(std::sin(kTwoPi * (auxPhasor + 0.175)))
-                                   + static_cast<float>(std::sin(kTwoPi * (shimPhasor + 0.29))))
-                           * static_cast<float>(std::sin(kTwoPi * (subPhasor + 0.19)));
+        const double snagRate = 0.415 + 0.115 * std::sin(kTwoPi * subPhasor); // Irregular ~2.0..2.9s physical snag intervals
+        auxPhasor += snagRate * dt;
+        if (auxPhasor >= 1.0) auxPhasor -= 1.0;
 
-        const float crTargetL = juce::jlimit(0.0f, 1.0f, (std::abs(crSumL) - 0.36f) * (1.0f / 0.34f));
-        const float crTargetR = juce::jlimit(0.0f, 1.0f, (std::abs(crSumR) - 0.36f) * (1.0f / 0.34f));
+        // 1. Discrete Gen Loss MKII 'SNAG + FAILURE' Envelope (~230 ms physical tape catch & stereo head dropout every ~2.4s!)
+        auto calcSnagPulse = [](double ph) -> float {
+            constexpr float kWin = 0.092f;
+            if (ph >= static_cast<double>(kWin)) return 0.0f;
+            const float u = static_cast<float>(ph) * (1.0f / kWin);
+            const float s = std::sin(static_cast<float>(kPi) * std::pow(u, 0.54f));
+            return s * s;
+        };
+        const double auxR = (auxPhasor >= 0.016) ? (auxPhasor - 0.016) : (auxPhasor + 0.984); // 40 ms helical Head-A -> Head-B offset!
+        const float snagL = calcSnagPulse(auxPhasor);
+        const float snagR = calcSnagPulse(auxR);
 
-        const float crAtkL = static_cast<float>(1.0 - std::exp(-dt / ((crTargetL > gateEnv)     ? 0.010 : 0.055)));
-        const float crAtkR = static_cast<float>(1.0 - std::exp(-dt / ((crTargetR > drumBeamLpL) ? 0.010 : 0.055)));
-        gateEnv     += crAtkL * (crTargetL - gateEnv);
-        drumBeamLpL += crAtkR * (crTargetR - drumBeamLpL);
-        const float creaseL = gateEnv     * gateEnv     * (3.0f - 2.0f * gateEnv);
-        const float creaseR = drumBeamLpL * drumBeamLpL * (3.0f - 2.0f * drumBeamLpL);
+        const float headBias   = static_cast<float>(std::sin(kTwoPi * subPhasor));
+        const float dropDepthL = snagL * (0.76f + 0.20f * headBias);
+        const float dropDepthR = snagR * (0.76f - 0.20f * headBias);
 
-        // 2. Dual-Deck EP-Mode VHS Transport (Deck A Worn Main + Deck B 'Gen Loss Classic' Desynced Voice + Helical Snag!)
-        const float wowL  = static_cast<float>(std::sin(kTwoPi * lfoPhase1) + 0.40 * std::sin(kTwoPi * lfoPhase1 * 2.0 + 0.6));
-        const float wowR  = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.21)) + 0.40 * std::sin(kTwoPi * (lfoPhase1 + 0.21) * 2.0 + 0.6));
-        const float fltL  = static_cast<float>(std::sin(kTwoPi * lfoPhase2));
-        const float fltR  = static_cast<float>(std::cos(kTwoPi * lfoPhase2));
-        const float snag  = static_cast<float>(std::sin(kTwoPi * tremPhase)); // Rapid crinkle shiver ONLY during a tape crease!
-        const float azm   = static_cast<float>(std::sin(kTwoPi * lfoPhase3));
+        // 2. Organic 3-Wave Non-Periodic VHS Wow (~+/-12c nostalgic drift, never a seasick sine!) + 9.15 Hz Flutter + Snag Tug!
+        const float wowL = 0.24f * static_cast<float>(std::sin(kTwoPi * lfoPhase1))
+                         + 0.13f * static_cast<float>(std::sin(kTwoPi * lfoPhase2 + 0.8))
+                         + 0.055f * static_cast<float>(std::sin(kTwoPi * lfoPhase3 + 1.9));
+        const float wowR = 0.24f * static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.14)))
+                         + 0.13f * static_cast<float>(std::sin(kTwoPi * (lfoPhase2 + 0.27) + 0.8))
+                         - 0.055f * static_cast<float>(std::sin(kTwoPi * (lfoPhase3 + 0.19) + 1.9));
+        const float fltL = 0.078f * static_cast<float>(std::sin(kTwoPi * shimPhasor));
+        const float fltR = 0.078f * static_cast<float>(std::cos(kTwoPi * shimPhasor));
+        const float crinkle = 0.20f * static_cast<float>(std::sin(kTwoPi * tremPhase));
 
         const float maxModDel = static_cast<float>(modMaxLen - 6);
-        const float dMainL  = juce::jlimit(2.0f, maxModDel, (5.8f + 0.85f * wowL + 0.15f * fltL + 0.52f * azm + (1.35f + 0.30f * snag) * creaseL) * srMs);
-        const float dMainR  = juce::jlimit(2.0f, maxModDel, (8.3f + 0.85f * wowR + 0.15f * fltR - 0.52f * azm + (1.35f - 0.30f * snag) * creaseR) * srMs);
-        const float dGhostL = juce::jlimit(2.0f, maxModDel, (7.4f - 0.44f * wowR - 0.38f * azm) * srMs);
-        const float dGhostR = juce::jlimit(2.0f, maxModDel, (6.3f - 0.44f * wowL + 0.38f * azm) * srMs);
+        const float dL = juce::jlimit(2.0f, maxModDel, (4.8f + wowL + fltL + (1.32f + crinkle) * snagL) * srMs);
+        const float dR = juce::jlimit(2.0f, maxModDel, (5.9f + wowR + fltR + (1.22f - crinkle) * snagR) * srMs);
 
-        const float deckL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dMainL) * 0.80f
-                                               + readFloatBufHermite(modBufL, modWritePos, dGhostL) * 0.28f);
-        const float deckR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dMainR) * 0.80f
-                                               + readFloatBufHermite(modBufR, modWritePos, dGhostR) * 0.28f);
+        const float deckL = dimHpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dL));
+        const float deckR = dimHpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dR));
 
-        // 3. Wallace Spacing-Loss Frequency-Dependent Oxide Dropout (highs drop -19 dB & mids dip -7.5 dB as wrinkle lifts tape off drum!)
-        const float spaceAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 390.0 / sr));
+        // 3. Wallace Spacing-Loss Frequency-Dependent Oxide Dropout (highs > 440 Hz dip -18 dB during a crease!)
+        const float spaceAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 440.0 / sr));
         xoverLp1L += spaceAlpha * (deckL - xoverLp1L);
         xoverLp1R += spaceAlpha * (deckR - xoverLp1R);
         const float hiBandL = deckL - xoverLp1L;
         const float hiBandR = deckR - xoverLp1R;
 
-        const float oxideL = xoverLp1L * (1.0f - 0.58f * creaseL) + hiBandL * (1.0f - 0.90f * creaseL);
-        const float oxideR = xoverLp1R * (1.0f - 0.58f * creaseR) + hiBandR * (1.0f - 0.90f * creaseR);
+        const float oxideL = xoverLp1L * (1.0f - 0.44f * dropDepthL) + hiBandL * (1.0f - 0.90f * dropDepthL);
+        const float oxideR = xoverLp1R * (1.0f - 0.44f * dropDepthR) + hiBandR * (1.0f - 0.90f * dropDepthR);
 
-        // 4. VHS Hi-Fi 2:1 Compander Breathing + Soft 12-Bit VHS PCM Grain + Ferrite Head Saturation + 2.42 kHz EP Oxide
-        const float pk = std::max(std::abs(oxideL), std::abs(oxideR));
-        const float compAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.0060 : 0.230)));
+        // 4. Camcorder AGC CompanderSquish + Papery VHS Ferrite-Head Saturation -> Steep 3.45 kHz 4-Pole VHS Oxide Ceiling!
+        const float preEmpL = charFilter1.processL(oxideL);
+        const float preEmpR = charFilter1.processR(oxideR);
+
+        const float pk = std::max(std::abs(preEmpL), std::abs(preEmpR));
+        const float compAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.0038 : 0.215)));
         cassetteSagEnv += compAlpha * (pk - cassetteSagEnv);
-        const float compDrive = juce::jlimit(0.88f, 2.15f, 1.58f / (0.58f + 0.98f * cassetteSagEnv));
+        const float compGain = juce::jlimit(0.62f, 2.25f, 1.54f / (0.42f + 1.38f * cassetteSagEnv));
 
-        // Subtle envelope-gated FM carrier dust + helical head-switching crinkle whisper (strictly 0 when silent!)
-        const float fmDust = static_cast<float>(std::sin(kTwoPi * (tremPhase * 37.0 + lfoPhase2 * 13.0))
-                                              * std::cos(kTwoPi * (subPhasor * 83.0))) * cassetteSagEnv * (0.014f + 0.036f * creaseL);
-        const float uL = juce::jlimit(-2.8f, 2.8f, oxideL * compDrive + fmDust);
-        const float uR = juce::jlimit(-2.8f, 2.8f, oxideR * compDrive - fmDust);
-        const float satL = (fastTanh(uL + 0.24f * uL * uL) - 0.12f * fastTanh(uL * uL)) * 0.74f;
-        const float satR = (fastTanh(uR + 0.24f * uR * uR) - 0.12f * fastTanh(uR * uR)) * 0.74f;
+        const float uL = juce::jlimit(-2.8f, 2.8f, preEmpL * compGain);
+        const float uR = juce::jlimit(-2.8f, 2.8f, preEmpR * compGain);
+        const float satL = (fastTanh(uL + 0.22f * uL * uL) - 0.11f * fastTanh(uL * uL)) * 0.72f;
+        const float satR = (fastTanh(uR + 0.22f * uR * uR) - 0.11f * fastTanh(uR * uR)) * 0.72f;
 
         const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 24.0 / sr));
         leslieDcL += dcAlpha * (satL - leslieDcL);
         leslieDcR += dcAlpha * (satR - leslieDcR);
 
-        const float vhsTapeL = charFilter4.processL(charFilter3.processL(charFilter2.processL(charFilter1.processL(satL - leslieDcL))));
-        const float vhsTapeR = charFilter4.processR(charFilter3.processR(charFilter2.processR(charFilter1.processR(satR - leslieDcR))));
+        const float vhsTapeL = charFilter4.processL(charFilter3.processL(charFilter2.processL(satL - leslieDcL)));
+        const float vhsTapeR = charFilter4.processR(charFilter3.processR(charFilter2.processR(satR - leslieDcR)));
 
-        // 5. Generation-2 Degraded VHS Memory Halo (158 ms L / 228 ms R dark nostalgic tape cloud)
+        // 5. Ducked Camcorder AGC Tape-Memory Bloom (ducks cleanly under finger plucks, swells up nostalgically in the spaces!)
         const float maxShimDel = static_cast<float>(shimMaxLen - 16);
-        const float memRawL = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, (158.0f + 1.05f * wowL) * srMs));
-        const float memRawR = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, (228.0f + 1.05f * wowR) * srMs));
-        const float memHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 225.0 / sr));
+        const float memRawL = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, (134.0f + 0.95f * wowL) * srMs));
+        const float memRawR = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, (192.0f + 0.95f * wowR) * srMs));
+        const float memHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 255.0 / sr));
         hornBeamLpL += memHpAlpha * (memRawL - hornBeamLpL);
         hornBeamLpR += memHpAlpha * (memRawR - hornBeamLpR);
         const float vhsMemL = subLpFilter.processL(memRawL - hornBeamLpL);
         const float vhsMemR = subLpFilter.processR(memRawR - hornBeamLpR);
 
-        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(vhsTapeL * 0.74f + vhsMemR * 0.38f);
-        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(vhsTapeR * 0.74f + vhsMemL * 0.38f);
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(vhsTapeL * 0.74f + vhsMemR * 0.30f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(vhsTapeR * 0.74f + vhsMemL * 0.30f);
         if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
 
-        ioL = (vhsTapeL * 0.88f + vhsMemL * 0.34f) * 0.82f;
-        ioR = (vhsTapeR * 0.88f + vhsMemR * 0.34f) * 0.82f;
-        outExtraRevL = (vhsTapeL * 0.30f + vhsMemL * 0.70f) * 0.28f;
-        outExtraRevR = (vhsTapeR * 0.30f + vhsMemR * 0.70f) * 0.28f;
+        const float agcBloom = 1.0f / (1.0f + 2.2f * cassetteSagEnv); // Ducks during transient, blooms as chord decays!
+        ioL = vhsTapeL * 0.88f + vhsMemL * (0.16f + 0.22f * agcBloom);
+        ioR = vhsTapeR * 0.88f + vhsMemR * (0.16f + 0.22f * agcBloom);
+        outExtraRevL = (vhsTapeL * 0.22f + vhsMemL * 0.62f) * 0.25f;
+        outExtraRevR = (vhsTapeR * 0.22f + vhsMemR * 0.62f) * 0.25f;
     }
 
     if (wetGain < 0.9999f) {

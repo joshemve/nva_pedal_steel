@@ -1546,38 +1546,38 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         },
         {
             "43 - '98 Generation VHS-Drift",
-            "Lo-Fi VHS / Tape Memory",
-            "Chase Bliss Generation Loss MKII x Boards of Canada / Frank Ocean ('Endless'): EP-mode VHS Hi-Fi compander breathing, Wallace spacing-loss oxide-crease dropouts, dual-deck head-azimuth spread, and 2.85 kHz nostalgic camcorder memory.",
+            "Lo-Fi VHS / Bedroom Soul",
+            "Frank Ocean ('Endless' / 'Rushes') & Dijon x Chase Bliss Generation Loss MKII: intimate finger-plucked E9th steel into Dolby VHS Hi-Fi pre/de-emphasis ferrite saturation, fine capstan flutter, discrete physical tape-catch snags, and stereo helical-drum oxide dropouts.",
             [] {
                 PedalSteelParams p;
-                p.presetStyle   = 3; // Montana Swell warm harmonic foundation
-                p.playMode      = 2; // Lush Swell Pad
+                p.presetStyle   = 0; // Sweet Georgia E9 intimate tactile studio strings!
+                p.playMode      = 0; // Smart Auto-Pedal E9 (expressive oblique A/B bends + crisp finger plucks!)
                 p.fxCharacter   = 29; // VHS Generation-Drift
                 p.volumePedal   = 0.96f;
-                p.scoopDepth    = 0.48f;
-                p.pedalSpeed    = 190.0f;
-                p.barGlide      = 170.0f;
-                p.barSlideNoise = 0.24f;
-                p.vibratoDepth  = 0.26f;
-                p.vibratoRate   = 4.35f;
-                p.autoSwell     = 0.54f; // Pillowy volume-pedal swell into worn EP-mode VHS tape!
-                p.swellTime     = 230.0f;
+                p.scoopDepth    = 0.56f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 125.0f;
+                p.barSlideNoise = 0.36f; // Tactile chrome bar winding whisper right in the room!
+                p.vibratoDepth  = 0.22f;
+                p.vibratoRate   = 4.65f;
+                p.autoSwell     = 0.0f;  // Zero organ wash — real upfront thumb & finger plucks!
+                p.swellTime     = 90.0f;
                 p.sampleBlend   = 0.90f;
-                p.pickSnap      = 0.36f;
-                p.pickupPos     = 2.65f;
-                p.coilPeakFreq  = 1920.0f;
-                p.coilResonance = 0.60f;
-                p.sustainTime   = 10.2f;
-                p.cabinetDrop   = 0.36f;
-                p.stereoWidth   = 1.32f;
-                p.ampDrive      = 0.22f;
-                p.toneWarmth    = 0.70f;
-                p.delayMix      = 0.14f;
-                p.delayTime     = 410.0f;
+                p.pickSnap      = 0.64f; // Warm flesh/fingerpick snap pushing into Dolby VHS pre-emphasis!
+                p.pickupPos     = 2.48f;
+                p.coilPeakFreq  = 2080.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 8.6f;
+                p.cabinetDrop   = 0.38f;
+                p.stereoWidth   = 1.26f;
+                p.ampDrive      = 0.18f;
+                p.toneWarmth    = 0.54f;
+                p.delayMix      = 0.06f;
+                p.delayTime     = 365.0f;
                 p.tempoSync     = false;
-                p.reverbMix     = 0.48f;
-                p.reverbDecay   = 0.82f;
-                p.outputLevel   = 0.0f;
+                p.reverbMix     = 0.26f; // Intimate bedroom close-mic space!
+                p.reverbDecay   = 0.62f;
+                p.outputLevel   = -0.6f;
                 return p;
             }()
         }
