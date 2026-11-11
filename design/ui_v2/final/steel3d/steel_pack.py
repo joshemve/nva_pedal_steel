@@ -20,6 +20,17 @@ LAYERS = ["knee_L", "knee_R", "pedal_A", "pedal_B", "pedal_C"]
 _room = None
 
 
+def grade(rgb):
+    """the reference's crisp, deep look: a little local sharpening, deeper shadows, firmer contrast"""
+    import cv2 as _cv
+    x = rgb.astype(np.float32)
+    x = x + 0.55 * (x - _cv.GaussianBlur(x, (0, 0), 1.3))
+    x = np.clip(x, 0, 255) / 255.0
+    x = x ** 1.12
+    x = np.clip((x - 0.5) * 1.10 + 0.5 + 0.015, 0, 1)
+    return x * 255.0
+
+
 def room():
     global _room
     if _room is None:
@@ -35,6 +46,7 @@ def room():
 def over(base, rgba, x0=0, y0=0):
     """a render (straight alpha, shadow-catcher pixels black) over a canvas image; returns the composited region"""
     h, w = rgba.shape[:2]; st = rgba.astype(np.float32); a = room()[1][y0:y0 + h, x0:x0 + w]
+    st[..., :3] = grade(st[..., :3])
     sh = np.clip(1 - st[..., :3].max(2, keepdims=True) / 6.0, 0, 1)
     al = st[..., 3:] / 255 * (1 - (1 - SHADOW) * sh) * a
     return st[..., :3] * al + base[y0:y0 + h, x0:x0 + w] * (1 - al)

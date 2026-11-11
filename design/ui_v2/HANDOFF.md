@@ -297,3 +297,9 @@ VOLUME PEDAL=volumePedal, A/B/C/LKL/LKR toggles, MODE popup, preset arrows.
 - On-screen host test re-run with the 3D steel: 13 passes; bar follows notes, MIDI pedals press (renders/_host_win*.png).
 - Reference proposals for the four other presets' own designs (made from the 3D render): `final/steel3d/gen/p3d_*`,
   sheet `final/steel3d/presets_refs_sheet.png`. Waiting for Joshua's pick before modelling them.
+- Same day, Joshua's detail notes on the 3D steel: legs straight down from the endplate corners and slimmer (upper r 9 mm);
+  real rosewood veneer photo (`textures/wood/rosewood_1_1.png`, ChatGPT, box-projected) instead of procedural grain;
+  less fill + `grade()` (sharpen, deeper shadows, firmer contrast) in steel_pack/comp against the haze; real keyhead tuners
+  (gear box on the rail, capstan inside, sideways shaft with flat oval key); curved-lever changer fingers (`prism_xz`);
+  pickup pole pieces; thicker tone bar (r 16.2 mm); pedal treads 74 mm; reflection-only light panels (`glint`) so the
+  apron and neck catch soft highlights, floor hidden from glossy rays; no neck screws by the pickup.
