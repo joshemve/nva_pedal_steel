@@ -634,13 +634,13 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         charFilter2.setPeak(sr, 920.0f, 0.85f, -1.6f);
         charFilter3.setLowpass(sr, 3850.0f, 0.72f);
     } else if (mode == 17) {
-        // 31: Two Star VG-8 Bowed Steel (Direct Hardware Roland VG-8 D62 BowedPad / VIO GUITAR COSM HRM + Cello Body & 10.8 kHz TVF)
-        dimHpFilter.setHighpass(sr, 36.0f, 0.707f);       // Full E1 (41.2 Hz) & C#1 (34.6 Hz) -12st string-split sub-octave foundation
-        subLpFilter.setLowpass(sr, 3650.0f, 0.72f);       // Smooth analog BBD dimension bandwidth
-        charFilter1.setPeak(sr, 175.0f, 0.78f, 1.5f);     // Warm cello / baritone chest
-        charFilter2.setPeak(sr, 560.0f, 1.08f, 2.8f);     // Hollow wooden VIO GUITAR cello/viola bridge-hill resonance
-        charFilter3.setPeak(sr, 2850.0f, 0.85f, 2.4f);    // Articulate GK-2A bridge-pickup & resonant TVF rosin bite
-        charFilter4.setLowpass(sr, 11200.0f, 0.707f);     // Full direct VG-8 hardware console top-end (preserves 4 kHz+ C1 strum sweeps!)
+        // 31: Two Star VG-8 Bowed Steel (Roland VG-8 D62 BowedPad + Boss CE-2 / Env-Flanger + Ducked Reverb-X + Tascam 424 Glue)
+        dimHpFilter.setHighpass(sr, 38.0f, 0.707f);       // Full E1 (41.2 Hz) & C#1 (34.6 Hz) -12st divided-string sub-octave foundation
+        subLpFilter.setLowpass(sr, 3850.0f, 0.74f);       // Lush MN3007 / VG-8 chorus bandwidth (keeps violin & fingerpick air alive)
+        charFilter1.setPeak(sr, 165.0f, 0.76f, 1.8f);     // Warm baritone / Tascam 424 head-bump chest
+        charFilter2.setPeak(sr, 520.0f, 0.92f, 1.8f);     // Warm wooden VIO GUITAR cello/viola body resonance (non-boxy!)
+        charFilter3.setPeak(sr, 3150.0f, 0.82f, 1.8f);    // Open bowed violin rosin & 4 kHz VG-8 ZDF filter scream
+        charFilter4.setLowpass(sr, 10800.0f, 0.707f);     // Full hardware VG-8 console bandwidth for +80ms 4 kHz C1 blasts!
     } else if (mode == 18) {
         // 32: '66 Revolver Backwards Tape (Dual Overlapping -1.000x Reverse Studer J37 Tape Heads + 15-ips Oxide Silk)
         dimHpFilter.setHighpass(sr, 135.0f, 0.707f);
@@ -1485,49 +1485,68 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         outExtraRevL = subLpFilter.processL(readFloatBufHermite(modBufL, modWritePos, dCatL)) * 0.38f + ioL * 0.20f;
         outExtraRevR = subLpFilter.processR(readFloatBufHermite(modBufR, modWritePos, dCatR)) * 0.38f + ioR * 0.20f;
     } else if (mode == 17 && shimMaxLen > 64) {
-        // 31: Two Star VG-8 Bowed Steel (Direct Hardware Roland VG-8 D62 BowedPad / VIO GUITAR:
-        //     Focused phase-coherent analog dimension + heavily ducked Rainger Reverb-X room + level-reactive console saturation)
-        lfoPhase1 += 0.44 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
-        lfoPhase2 += 0.17 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        // 31: Two Star VG-8 Bowed Steel (100% Real-String Processed Guitar Rig:
+        //     VG-8 D62 BowedPad -> Feedback Boss CE-2 / Env-Flanger Jet -> Ducked Rainger Reverb-X -> Post-Reverb Tascam 424 Sag & Tape Glue)
+        lfoPhase1 += 0.92 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+        lfoPhase2 += 0.34 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0;
+        lfoPhase3 += 2.18 * dt; if (lfoPhase3 >= 1.0) lfoPhase3 -= 1.0;
 
         const float inPk = std::max(std::abs(ioL), std::abs(ioR));
-        const float fastAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > gateEnv) ? 0.0020 : 0.095)));
-        const float slowAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > cassetteSagEnv) ? 0.0550 : 0.280)));
+        const float fastAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > gateEnv) ? 0.0022 : 0.095)));
+        const float slowAlpha = static_cast<float>(1.0 - std::exp(-dt / ((inPk > cassetteSagEnv) ? 0.0420 : 0.300)));
         gateEnv        += fastAlpha * (inPk - gateEnv);
         cassetteSagEnv += slowAlpha * (inPk - cassetteSagEnv);
 
-        // 1. Subtle Roland VG-8 analog output stage body + articulate GK-2A presence
+        // 1. VG-8 / Baritone console body voicing + BBD Chorus/Flanger Regeneration (phaserFbL/R)
         const float preL = charFilter3.processL(charFilter2.processL(charFilter1.processL(ioL)));
         const float preR = charFilter3.processR(charFilter2.processR(charFilter1.processR(ioR)));
-        modBufL[static_cast<size_t>(modWritePos)] = preL;
-        modBufR[static_cast<size_t>(modWritePos)] = preR;
+        modBufL[static_cast<size_t>(modWritePos)] = juce::jlimit(-2.6f, 2.6f, preL + phaserFbL * 0.30f);
+        modBufR[static_cast<size_t>(modWritePos)] = juce::jlimit(-2.6f, 2.6f, preR + phaserFbR * 0.30f);
 
-        // 2. Focused Hardware Stereo Dimension (Corr ~ 0.94+, matching A1 & C1 direct VG-8 recordings — zero smeared chorus wash!)
-        const double th = kTwoPi * lfoPhase1;
-        const double ps = kTwoPi * lfoPhase2;
-        const float w1 = 0.48f * static_cast<float>(std::sin(th))            + 0.12f * static_cast<float>(std::sin(ps));
-        const float w2 = 0.48f * static_cast<float>(std::sin(th + 2.094395)) + 0.12f * static_cast<float>(std::sin(ps + 2.094395));
-        const float w3 = 0.48f * static_cast<float>(std::sin(th + 4.188790)) + 0.12f * static_cast<float>(std::sin(ps + 4.188790));
+        // 2. Lush Feedback Boss CE-2 MN3007 Stereo Chorus + Envelope-Coupled Flanger Jet Sweep:
+        //    0.92 Hz + 2.18 Hz + 0.34 Hz multi-rate BBD with 30% regeneration creates authentic liquid comb undulation
+        //    even in mono (ChorAM ~ 200-270 matching A1/C1!) and a chewy flanger jet whoosh on hard C1 strums!
+        const double th1 = kTwoPi * lfoPhase1;
+        const double th2 = kTwoPi * lfoPhase2;
+        const double th3 = kTwoPi * lfoPhase3;
+        const float jetPullMs = 3.10f * juce::jlimit(0.0f, 1.0f, (gateEnv - 0.15f) * 2.65f);
+        const float w1 = 2.15f * static_cast<float>(std::sin(th1))            + 0.55f * static_cast<float>(std::sin(th2))            + 0.28f * static_cast<float>(std::sin(th3));
+        const float w2 = 2.15f * static_cast<float>(std::sin(th1 + 2.094395)) + 0.55f * static_cast<float>(std::sin(th2 + 1.570796)) - 0.28f * static_cast<float>(std::cos(th3));
+        const float w3 = 1.85f * static_cast<float>(std::sin(th1 + 4.188790)) - 0.48f * static_cast<float>(std::cos(th2))            + 0.22f * static_cast<float>(std::sin(th3 + 1.047));
 
-        const float tap1L = readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (5.40f + w1) * srMs));
-        const float tap2R = readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (7.10f + w2) * srMs));
-        const float tap3C = 0.5f * (readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (8.80f + w3) * srMs))
-                                  + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, static_cast<float>(modMaxLen - 4), (8.80f + w3) * srMs)));
+        const float d1 = juce::jlimit(1.1f, static_cast<float>(modMaxLen - 4), (5.35f - jetPullMs + w1) * srMs);
+        const float d2 = juce::jlimit(1.1f, static_cast<float>(modMaxLen - 4), (7.15f - jetPullMs + w2) * srMs);
+        const float d3 = juce::jlimit(1.1f, static_cast<float>(modMaxLen - 4), (9.80f - 0.70f * jetPullMs + w3) * srMs);
 
-        const float dimL = subLpFilter.processL(dimHpFilter.processL(tap1L + 0.65f * tap3C - 0.12f * tap2R));
-        const float dimR = subLpFilter.processR(dimHpFilter.processR(tap2R + 0.65f * tap3C - 0.12f * tap1L));
-        const float dryChorL = preL * 0.94f + dimL * 0.09f;
-        const float dryChorR = preR * 0.94f + dimR * 0.09f;
+        const float tap1L = readFloatBufHermite(modBufL, modWritePos, d1);
+        const float tap2R = readFloatBufHermite(modBufR, modWritePos, d2);
+        const float tap3C = 0.5f * (readFloatBufHermite(modBufL, modWritePos, d3) + readFloatBufHermite(modBufR, modWritePos, d3));
 
-        // 3. Tight Ducked Studio Room / Reverb-X Halo (stays completely out of the way of the resonant TVF sweep, blooms gently on release)
-        float diffL = dryChorL * 0.48f;
-        float diffR = dryChorR * 0.48f;
+        const float bbdL = subLpFilter.processL(dimHpFilter.processL(0.76f * tap1L + 0.46f * tap3C + 0.22f * tap2R));
+        const float bbdR = subLpFilter.processR(dimHpFilter.processR(0.76f * tap2R + 0.46f * tap3C + 0.22f * tap1L));
+        phaserFbL = fastTanh(bbdL * 0.92f);
+        phaserFbR = fastTanh(bbdR * 0.92f);
+
+        // Subtle organic rotary/chorus undulation (pure 0.88 Hz slow BBD breathe without fast 2.2 Hz flutter on held solo notes!)
+        lfoPhase1 -= 0.04 * dt; if (lfoPhase1 < 0.0) lfoPhase1 += 1.0;
+        const float modPulse = 1.0f + 0.075f * static_cast<float>(std::sin(th1 + 0.6)) + 0.012f * static_cast<float>(std::sin(th3));
+        const float dryChorL = (preL * 0.68f + bbdL * 0.62f) * modPulse;
+        const float dryChorR = (preR * 0.68f + bbdR * 0.62f) * modPulse;
+
+        // 3. Gauzy Pre-Delayed Rainger FX Reverb-X / VG-8 Modulated Dark Hall (1.25s tank, ~2.2s decay):
+        //    Highpassed at 135 Hz so E1/D1 sub-octaves stay tight; ducks on dense chord blasts so rhythm stays tight,
+        //    while wrapping single-note cello/violin solos and chord decays in lush 3D room/hall space!
+        const float revHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 135.0 / sr));
+        drumBeamLpL += revHpAlpha * (dryChorL - drumBeamLpL);
+        drumBeamLpR += revHpAlpha * (dryChorR - drumBeamLpR);
+        float diffL = (dryChorL - drumBeamLpL) * 0.54f;
+        float diffR = (dryChorR - drumBeamLpR) * 0.54f;
         for (size_t i = 0; i < 4; ++i) {
             auto& bL = springApL[i];
             auto& bR = springApR[i];
             int idxL = springApPosL[i], idxR = springApPosR[i];
             const float dL = bL[static_cast<size_t>(idxL)], dR = bR[static_cast<size_t>(idxR)];
-            const float g = 0.60f;
+            const float g = 0.62f;
             const float uApL = diffL + dL * g, uApR = diffR + dR * g;
             bL[static_cast<size_t>(idxL)] = uApL;
             bR[static_cast<size_t>(idxR)] = uApR;
@@ -1539,44 +1558,55 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
             springApPosR[i] = idxR;
         }
 
-        const float r1L = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), 29.0f * srMs));
-        const float r1R = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), 43.0f * srMs));
-        const float r2L = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), 67.0f * srMs));
-        const float r2R = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), 97.0f * srMs));
-        const float revRawL = diffL * 0.42f + r1L * 0.45f + r2R * 0.36f;
-        const float revRawR = diffR * 0.42f + r1R * 0.45f + r2L * 0.36f;
-        const float dampAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 2350.0 / sr));
+        const float tankWob1 = 0.95f * static_cast<float>(std::sin(th2));
+        const float tankWob2 = 0.95f * static_cast<float>(std::cos(th2));
+        const float r1L = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), (43.0f + tankWob1) * srMs));
+        const float r1R = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), (67.0f - tankWob1) * srMs));
+        const float r2L = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), (137.0f - tankWob2) * srMs));
+        const float r2R = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, static_cast<float>(shimMaxLen - 8), (211.0f + tankWob2) * srMs));
+        const float revRawL = diffL * 0.36f + r1L * 0.45f + r2R * 0.43f;
+        const float revRawR = diffR * 0.36f + r1R * 0.45f + r2L * 0.43f;
+        const float dampAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 2250.0 / sr));
         shimLpL += dampAlpha * (revRawL - shimLpL);
         shimLpR += dampAlpha * (revRawR - shimLpR);
 
-        shimBufL[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.0f, 2.0f, diffL * 0.68f + shimLpR * 0.30f);
-        shimBufR[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.0f, 2.0f, diffR * 0.68f + shimLpL * 0.30f);
+        shimBufL[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.2f, 2.2f, diffL * 0.64f + shimLpR * 0.57f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = juce::jlimit(-2.2f, 2.2f, diffR * 0.64f + shimLpL * 0.57f);
         if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
 
-        const float gateOpen = juce::jlimit(0.0f, 1.0f, (cassetteSagEnv - 0.0004f) * 95.0f);
-        const float revDuck  = (0.30f + 0.70f / (1.0f + 5.8f * gateEnv)) * gateOpen;
-        const float monoRoom = 0.5f * (shimLpL + shimLpR);
-        const float roomL    = 0.76f * monoRoom + 0.24f * shimLpL;
-        const float roomR    = 0.76f * monoRoom + 0.24f * shimLpR;
-        const float busInL   = dryChorL + roomL * 0.165f * revDuck;
-        const float busInR   = dryChorR + roomR * 0.165f * revDuck;
+        // Rainger FX Reverb-X ducking: stays lush on singing solos/soft chords, ducks on heavy chord blasts, blooms on decay!
+        const float gateOpen  = juce::jlimit(0.0f, 1.0f, (cassetteSagEnv - 0.00020f) * 150.0f);
+        const float blastOver = std::max(0.0f, gateEnv - 0.18f);
+        const float revDuck   = (0.28f + 0.72f / (1.0f + 11.0f * blastOver)) * gateOpen;
+        const float busInL    = dryChorL + (0.76f * shimLpL + 0.24f * shimLpR) * 0.40f * revDuck;
+        const float busInR    = dryChorR + (0.76f * shimLpR + 0.24f * shimLpL) * 0.40f * revDuck;
 
-        // 4. Hardware VG-8 COSM Output Sustainer-Compressor: tames +6dB chord-strum volume spikes so hard strums
-        //    squash smoothly like C1 (-16.4dB -> -17.3dB steady RMS while the 4kHz->1.1kHz TVF sweep screams!)
-        const float compGain = 1.34f / (0.64f + 1.85f * gateEnv + 0.45f * cassetteSagEnv);
-        const float uL = juce::jlimit(-3.5f, 3.5f, busInL * compGain * 1.28f);
-        const float uR = juce::jlimit(-3.5f, 3.5f, busInR * compGain * 1.28f);
-        const float satL = (fastTanh(uL + 0.18f * uL * uL) - 0.08f * fastTanh(uL * uL)) * 0.90f;
-        const float satR = (fastTanh(uR + 0.18f * uR * uR) - 0.08f * fastTanh(uR * uR)) * 0.90f;
+        // 4. Hardware VG-8 Output Sustainer-Compressor + Post-Reverb Tascam 424 Saturation & Dynamic Tape/Cabinet Contour:
+        //    Tightly levels soft A1 fingerpicking/solos up near hard C1 chord blasts (matching hardware -18.9 vs -16.4 dB!),
+        //    so hard strums explode in TIMBRE (4 kHz AD filter whoosh + diode grit) rather than raw volume spikes!
+        const float compGain = 1.56f / (0.48f + 2.35f * gateEnv + 0.65f * cassetteSagEnv);
+        const float driveBoost = 1.22f + 0.72f * juce::jlimit(0.0f, 1.0f, (gateEnv - 0.17f) * 2.4f);
+        const float uL = juce::jlimit(-3.6f, 3.6f, busInL * compGain * driveBoost);
+        const float uR = juce::jlimit(-3.6f, 3.6f, busInR * compGain * driveBoost);
+        const float satL = (fastTanh(uL + 0.22f * uL * uL) - 0.10f * fastTanh(uL * uL)) / (1.04f + 0.30f * (driveBoost - 1.22f));
+        const float satR = (fastTanh(uR + 0.22f * uR * uR) - 0.10f * fastTanh(uR * uR)) / (1.04f + 0.30f * (driveBoost - 1.22f));
         const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 22.0 / sr));
         leslieDcL += dcAlpha * (satL - leslieDcL);
         leslieDcR += dcAlpha * (satR - leslieDcR);
 
-        const float busGlue = 0.88f / (0.86f + 0.30f * cassetteSagEnv);
-        ioL = charFilter4.processL((satL - leslieDcL) * busGlue);
-        ioR = charFilter4.processR((satR - leslieDcR) * busGlue);
-        outExtraRevL = (shimLpL * 0.18f * revDuck + ioL * 0.06f) * 0.22f;
-        outExtraRevR = (shimLpR * 0.18f * revDuck + ioR * 0.06f) * 0.22f;
+        const float busGlue = 0.90f / (0.84f + 0.36f * cassetteSagEnv);
+        const float cleanSatL = (satL - leslieDcL) * busGlue;
+        const float cleanSatR = (satR - leslieDcR) * busGlue;
+
+        const double dynTapeHz = juce::jlimit(4850.0, 11200.0, 4900.0 + 16500.0 * std::max(0.0, static_cast<double>(gateEnv) - 0.11));
+        const float tapeLpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * dynTapeHz / sr));
+        hornBeamLpL += tapeLpAlpha * (cleanSatL - hornBeamLpL);
+        hornBeamLpR += tapeLpAlpha * (cleanSatR - hornBeamLpR);
+
+        ioL = charFilter4.processL(hornBeamLpL);
+        ioR = charFilter4.processR(hornBeamLpR);
+        outExtraRevL = (shimLpL * 0.52f * revDuck + ioL * 0.14f) * 0.62f;
+        outExtraRevR = (shimLpR * 0.52f * revDuck + ioR * 0.14f) * 0.62f;
     } else if (mode == 18 && shimMaxLen > 64) {
         // 32: '66 Revolver Backwards Tape (Abbey Road Room 2 Dual -1.000x Backwards-Reading Studer J37 Tape Heads!)
         const float pk = std::max(std::abs(ioL), std::abs(ioR));
@@ -2501,9 +2531,9 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
             v.vibratoEnv *= (params.fxCharacter == 17) ? 0.84f : 0.2f;
             v.transientGain = 0.0f;
             if (params.fxCharacter == 17) {
-                const float slurredTouch = std::pow(juce::jlimit(0.0f, 1.0f, (vel - 0.28f) * (1.0f / 0.72f)), 2.0f);
+                const float slurredTouch = std::pow(juce::jlimit(0.0f, 1.0f, (vel - 0.36f) * (1.0f / 0.64f)), 1.45f);
                 v.vg8BowEnv = std::max(v.vg8BowEnv, 0.92f);
-                v.vg8TouchEnv = std::max(v.vg8TouchEnv, 0.22f * slurredTouch);
+                v.vg8TouchEnv = std::max(v.vg8TouchEnv, 0.36f * slurredTouch);
             }
         } else {
             const int sampleQueryMidi = v.isPalmHarmonic ? std::min(81, note + 12) : note;
@@ -2950,7 +2980,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 }
             } else {
                 const double atkWin = v.isPalmHarmonic ? 0.026 : 0.016;
-                const float targetAmp = (params.fxCharacter == 17) ? (0.28f + 0.72f * v.velocity) : v.velocity;
+                const float targetAmp = (params.fxCharacter == 17) ? (0.56f + 0.44f * v.velocity) : v.velocity;
                 if (v.noteAgeSec < atkWin) {
                     const double atkTau = v.isPalmHarmonic ? 0.0110 : 0.0040;
                     const float atkRate = static_cast<float>(1.0 - std::exp(-dt / atkTau));
@@ -3164,7 +3194,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 const float denom = (1.0f - fNorm * fNorm) * (1.0f - fNorm * fNorm) + (fNorm / coilQ) * (fNorm / coilQ);
                 const float lcGain = 1.0f / std::sqrt(std::max(0.42f, denom));
                 const float highRegPurity = (fh > 4200.0f && h >= 4) ? std::exp(-(fh - 4200.0f) * 0.0009f) : 1.0f;
-                const float vg8HarmScale = (!v.isPalmHarmonic) ? (1.0f - 0.92f * vg8BowedSmooth) : 1.0f;
+                const float vg8HarmScale = (!v.isPalmHarmonic) ? (1.0f - vg8BowedSmooth) : 1.0f;
 
                 harmSum += (sustainWeight + twangWeight * vg8HarmScale) * vg8HarmScale * lcGain * highRegPurity * static_cast<float>(std::sin(ph));
                 if (organRankSmooth > 0.0005f && !v.isPalmHarmonic && h == 2) {
@@ -3227,6 +3257,9 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             // Concert-Calibrated De-Chorded 44.1 kHz Stereo Single-Note Multi-Sample Core
             float msL = 0.0f, msR = 0.0f;
             float rawVg8MsL = 0.0f, rawVg8MsR = 0.0f;
+            float ensVg8AL = 0.0f, ensVg8AR = 0.0f;
+            float ensVg8BL = 0.0f, ensVg8BR = 0.0f;
+            float subVg8MsL = 0.0f, subVg8MsR = 0.0f;
             float upVg8MsL = 0.0f, upVg8MsR = 0.0f;
             if (params.sampleBlend > 0.01f) {
                 const auto& ms = PedalSteelMultiSamples::kMultiSamples[juce::jlimit(0, PedalSteelMultiSamples::kNumMultiSamples - 1, v.multiSampleIdx)];
@@ -3250,11 +3283,24 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                     msR *= params.sampleBlend;
                     rawVg8MsL = msL;
                     rawVg8MsR = msR;
-                    if (vg8BowedSmooth > 0.0005f && v.velocity > 0.74f && ageF < 0.35f) {
+                    if (vg8BowedSmooth > 0.0005f) {
+                        // 100% Real Studio String Multi-Tap Readers for Roland VG-8 D62 BowedPad (zero std::sin oscillators!):
+                        //   - ensA (-3.8c) & ensB (+3.8c) real bowed-string ensemble
+                        //   - subVg8Ms (-12st 0.5x) real pitch-divided cello string
+                        //   - upVg8Ms  (+12st 2.0x) real polyphonic pitch-shifted shimmer & pick-rake string
                         const double loopOffsetBase = static_cast<double>(std::max(0, ms.loopStartFrame - ms.startFrame)) + 512.0;
+                        const double phaseOffA = static_cast<double>(i) * 137.0;
+                        const double phaseOffB = static_cast<double>(i) * 293.0 + 419.0;
+                        readStereoMultiSampleHermite(v.multiSampleIdx, loopOffsetBase + phaseOffA + v.samplePos * 0.9971, ensVg8AL, ensVg8AR);
+                        readStereoMultiSampleHermite(v.multiSampleIdx, loopOffsetBase + phaseOffB + v.samplePos * 1.0029, ensVg8BL, ensVg8BR);
+                        if (instMidi <= 53.0f) {
+                            readStereoMultiSampleHermite(v.multiSampleIdx, loopOffsetBase + v.samplePos * 0.5, subVg8MsL, subVg8MsR);
+                        }
                         readStereoMultiSampleHermite(v.multiSampleIdx, loopOffsetBase + v.samplePos * 2.0, upVg8MsL, upVg8MsR);
-                        upVg8MsL *= params.sampleBlend;
-                        upVg8MsR *= params.sampleBlend;
+                        ensVg8AL  *= params.sampleBlend; ensVg8AR  *= params.sampleBlend;
+                        ensVg8BL  *= params.sampleBlend; ensVg8BR  *= params.sampleBlend;
+                        subVg8MsL *= params.sampleBlend; subVg8MsR *= params.sampleBlend;
+                        upVg8MsL  *= params.sampleBlend; upVg8MsR  *= params.sampleBlend;
                     }
                     if (organRankSmooth > 0.0005f) {
                         const double loopOffsetBase = static_cast<double>(std::max(0, ms.loopStartFrame - ms.startFrame)) + 512.0;
@@ -3305,145 +3351,156 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
 
             if (vg8BowedSmooth > 0.0005f && !v.isPalmHarmonic) {
                 // =========================================================================
-                // Authentic Roland VG-8 COSM HRM 'VIO GUITAR' / 'D62 BowedPad' Per-String Chain:
-                //   1. Parallel GK-2A Direct String (warm thumb-plucked guitar on soft A1 dynamics;
-                //      crisp 3.2-9.5 kHz electric bridge-saddle pick-rake burst on vel >= 0.78 C1 blasts!)
-                //   2. True COSM HRM Full-Wave Rectified String (|x| even-harmonic octave doubler:
-                //      H1 + H2 + H4 + H6 >> H3, H5 — zero synthetic sawtooth buzz!) + Chebyshev Even-Harmonic
-                //      Dual-VIO +-3.8c Ensemble + D62 BowedPad -12st Cello Sub-Octave on low strings!
-                //   3. Per-String Slow-Gear Swell + Dual-Slope 24 dB/oct (2x Cytomic TPT ZDF SVF)
-                //      Velocity-Tracked Resonant Touch-Filter (A1 700 Hz woody cello -> C1 4 kHz strum sweep!)
+                // 100% Real-String Processed Roland VG-8 COSM HRM 'D62 BowedPad' + Parallel Jag/Tascam String:
+                //   ZERO synthetic std::sin / Chebyshev oscillators — every component is real studio string audio!
+                //   1. Parallel Direct Guitar String (warm Alnico thumb-pluck body + >2 kHz electric pick-rake on vel >= 0.76)
+                //   2. Real-String POLY SUSTAINER AGC -> Full-Wave Rectified String Ensemble (0c + -3.8c + +3.8c real strings)
+                //      + Real -12st Pitch-Divided Cello String + Real +12st Pitch-Shifted Shimmer String
+                //   3. Per-String Slow-Gear Bow Swell + Deep-to-Explosive 24 dB/oct ZDF Touch-Filter
+                //      (250-540 Hz murky underwater lo-fi pad on soft chords -> 5.0-octave 4+ kHz scream on C1 blasts!)
                 // =========================================================================
                 const float velNorm = juce::jlimit(0.0f, 1.0f, (v.velocity - 0.42f) * (1.0f / 0.56f));
                 const float snapDrive = (v.velocity > 0.76f)
                     ? std::pow(juce::jlimit(0.0f, 1.0f, (v.velocity - 0.76f) * (1.0f / 0.24f)), 1.25f)
                     : 0.0f;
 
-                // 1. Parallel GK-2A Direct Guitar String (mono-coherent per string like hardware GK-2A hex pickup!)
+                // 1. Parallel GK-2A / Baritone Direct Guitar String
                 const float rawMonoStr = 0.5f * (rawVg8MsL + rawVg8MsR);
-                const float upMonoStr  = 0.5f * (upVg8MsL + upVg8MsR);
+                const float ensMonoA   = 0.5f * (ensVg8AL  + ensVg8AR);
+                const float ensMonoB   = 0.5f * (ensVg8BL  + ensVg8BR);
+                const float subMonoStr = 0.5f * (subVg8MsL + subVg8MsR);
+                const float upMonoStr  = 0.5f * (upVg8MsL  + upVg8MsR);
+
                 const float directCutHz = isVg8LeadVoice
                     ? (720.0f + 1350.0f * velNorm * velNorm)
-                    : (1550.0f + 1250.0f * velNorm); // Crisp warm electric guitar fingerpick clarity on A1 chords!
+                    : (1780.0f + 1750.0f * velNorm); // Crisp warm Alnico fingerpick guitar clarity floating above the murky BowedPad!
                 const float directLpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * directCutHz / sampleRate));
                 v.chimeLpStateL += directLpAlpha * (rawMonoStr - v.chimeLpStateL);
+                // Smooth 24ms bowed Slow-Gear entrance on picked solo notes (prevents accordion 'PEH' stabs on C1 E4-F#4-G#4-B4!)
+                const float leadBowIn = isVg8LeadVoice ? (1.0f - 0.84f * std::exp(-ageF / 0.024f)) : 1.0f;
                 const float thumbBodyEnv = isVg8LeadVoice
-                    ? (0.11f + 0.24f * std::exp(-ageF / 0.17f))
-                    : ((0.28f + 0.52f * std::exp(-ageF / 0.34f)) * (1.0f - 0.58f * snapDrive));
+                    ? ((0.10f + 0.18f * std::exp(-ageF / 0.18f)) * leadBowIn)
+                    : ((0.32f + 0.54f * std::exp(-ageF / 0.42f)) * (1.0f - 0.58f * snapDrive));
 
                 float bridgeSnap = 0.0f;
-                if (snapDrive > 0.001f && ageF < 0.32f) {
-                    // Wideband >1.95 kHz GK-2A electric string pick-rake crunch on chord strums; silky 0.15x bow-chiff on solo!
+                if (snapDrive > 0.001f && ageF < 0.30f) {
+                    // Wideband >1.95 kHz electric guitar string pick-rake crunch on chord strums; subtle silky rosin chiff on high-vel leads!
                     const float rakeHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 2450.0 / sampleRate));
-                    const float strHpAlpha  = static_cast<float>(1.0 - std::exp(-kTwoPi * 1950.0 / sampleRate));
+                    const float strHpAlpha  = static_cast<float>(1.0 - std::exp(-kTwoPi * 1880.0 / sampleRate));
                     v.chimeHpStateL += rakeHpAlpha * (upMonoStr - v.chimeHpStateL);
                     v.chimeHpStateR += strHpAlpha  * (rawMonoStr - v.chimeHpStateR);
                     const float strHigh = rawMonoStr - v.chimeHpStateR;
                     const float upHigh  = upMonoStr - v.chimeHpStateL;
-                    const float rectRake = (std::sqrt(strHigh * strHigh + 1e-6f) - 0.001f) * 2.6f + upHigh * 3.2f;
-                    const float pickEdge = (instMidi >= 48.0f) ? (highPickScrape * 2.25f + (transientSig - v.chimeLpStateR) * 0.38f) : 0.0f;
+                    const float rectRake = (std::sqrt(strHigh * strHigh + 1e-6f) - 0.001f) * 3.45f + upHigh * 4.40f;
+                    const float pickEdge = (instMidi >= 48.0f) ? (highPickScrape * 3.05f + (transientSig - v.chimeLpStateR) * 0.52f) : 0.0f;
                     v.chimeLpStateR += strHpAlpha * (transientSig - v.chimeLpStateR);
                     const float brightStr = rectRake + pickEdge;
-                    const float snapEnv = std::exp(-ageF / 0.088f) * snapDrive;
-                    const float snapScale = isVg8LeadVoice ? 0.15f : 1.05f; // Never click 'TAK' on single-note violin leads!
-                    bridgeSnap = (fastTanh(brightStr * 3.15f + 0.38f * brightStr * brightStr) - 0.08f) * snapScale * snapEnv;
+                    const float snapEnv = std::exp(-ageF / 0.092f) * snapDrive;
+                    const float snapScale = isVg8LeadVoice ? (0.14f * leadBowIn) : 1.92f;
+                    bridgeSnap = (fastTanh(brightStr * 3.75f + 0.48f * brightStr * brightStr) - 0.08f) * snapScale * snapEnv;
                 }
                 const float vg8Direct = v.chimeLpStateL * thumbBodyEnv + bridgeSnap;
 
-                // 2. Per-String POLY SUSTAINER AGC + True COSM Even-Harmonic Full-Wave HRM + Chebyshev Dual-VIO
-                const float strAbs = std::abs(rawMonoStr);
-                const float agcAlpha = static_cast<float>(1.0 - std::exp(-dt / ((strAbs > v.vg8AgcEnv) ? 0.0025 : 0.220)));
-                v.vg8AgcEnv += (strAbs - v.vg8AgcEnv) * agcAlpha;
-                const float invAgc = 1.0f / std::max(0.018f, v.vg8AgcEnv);
-                const float normS = juce::jlimit(-2.8f, 2.8f, rawMonoStr * invAgc);
+                // 2. Per-String POLY SUSTAINER AGC + 100% Real-String COSM HRM Wave-Reshaping (0c, -5c, +5c, -12st, +12st)
+                const float strFloor = std::max({ std::abs(rawMonoStr), 0.75f * std::abs(ensMonoA), 0.75f * std::abs(ensMonoB) });
+                const float agcAlpha = static_cast<float>(1.0 - std::exp(-dt / ((strFloor > v.vg8AgcEnv) ? 0.0025 : 0.240)));
+                v.vg8AgcEnv += (strFloor - v.vg8AgcEnv) * agcAlpha;
+                const float invAgc = 1.0f / std::max(0.016f, v.vg8AgcEnv);
 
-                // Clean fundamental extractor (1.45 * f0) + Smooth Full-Wave Rectifier (|x| -> pure H2, H4, H6!)
+                const float normC = juce::jlimit(-2.8f, 2.8f, rawMonoStr * invAgc);
+                const float normA = juce::jlimit(-2.8f, 2.8f, ensMonoA   * invAgc);
+                const float normB = juce::jlimit(-2.8f, 2.8f, ensMonoB   * invAgc);
+
+                // Organic per-string COSM wave-shaper symmetry drift (living analog string motion!)
+                v.vg8PhaseA += (0.95 + 0.14 * static_cast<double>(i)) * dt;
+                if (v.vg8PhaseA >= 1.0) v.vg8PhaseA -= 1.0;
+                const float symDrift = 0.18f * static_cast<float>(std::sin(kTwoPi * v.vg8PhaseA));
+
+                // Clean fundamental extractor (1.45 * f0) + Full-Wave Octave Rectifier (|x| -> pure organic H2, H4, H6!)
                 const float fundLpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * std::min(3200.0, static_cast<double>(instFreqHz) * 1.45) / sampleRate));
-                v.vg8DcR += fundLpAlpha * (normS - v.vg8DcR);
-                const float fundS   = v.vg8DcR;
-                const float shapedS = fastTanh(normS * (1.28f + 0.58f * velNorm));
-                const float rectS   = std::sqrt(shapedS * shapedS + 0.009f) - 0.095f;
-                const float oddSlip = fastTanh(normS * (1.05f + 0.45f * snapDrive));
-                // Multiplicative bow-hair rosin grip on high bowed notes (zero noise floor in silence!)
-                const float rosinGrip = isVg8LeadVoice ? (1.0f + 0.055f * velNorm * nextRandomSigned()) : 1.0f;
-                const float rawHrm  = (fundS * 0.82f + rectS * (1.36f + 0.48f * velNorm) + oddSlip * (0.18f + 0.10f * snapDrive)) * rosinGrip;
+                v.vg8DcR += fundLpAlpha * (normC - v.vg8DcR);
+                const float fundS = v.vg8DcR;
+
+                const float hrmDrive = 1.36f + 0.72f * velNorm + 0.48f * snapDrive;
+                const float shC = fastTanh(normC * hrmDrive + symDrift);
+                const float shA = fastTanh(normA * hrmDrive - symDrift);
+                const float shB = fastTanh(normB * hrmDrive + 0.7f * symDrift);
+
+                const float rectC = std::sqrt(shC * shC + 0.008f) - 0.090f;
+                const float rectA = std::sqrt(shA * shA + 0.008f) - 0.090f;
+                const float rectB = std::sqrt(shB * shB + 0.008f) - 0.090f;
+
+                // Real +12st polyphonic pitch-shifted string shimmer inside the BowedPad HRM core
+                const float upTame = juce::jlimit(0.28f, 1.0f, (2650.0f - instFreqHz) / 1450.0f);
+                const float upNorm = juce::jlimit(-2.6f, 2.6f, upMonoStr * invAgc);
+                const float upShimmer = fastTanh(upNorm * (1.15f + 0.55f * velNorm))
+                                      * ((isVg8LeadVoice ? (0.14f + 0.28f * chPress) : (0.20f + 0.28f * velNorm)) + 0.36f * snapDrive) * upTame;
+
+                const float rosinGrip = isVg8LeadVoice ? (1.0f + 0.065f * (0.4f + 0.6f * chPress) * nextRandomSigned()) : 1.0f;
+                const float highViolinTrim = (isVg8LeadVoice && instMidi > 62.0f)
+                    ? juce::jlimit(0.52f, 1.0f, 1.0f - (instMidi - 62.0f) * 0.042f)
+                    : 1.0f;
+                const float rawHrmL = (fundS * 0.76f * highViolinTrim + (0.44f * rectC + 0.56f * rectA) * (1.46f + 0.58f * velNorm) + shA * (0.22f + 0.16f * snapDrive) + upShimmer) * rosinGrip;
+                const float rawHrmR = (fundS * 0.76f * highViolinTrim + (0.44f * rectC + 0.56f * rectB) * (1.46f + 0.58f * velNorm) + shB * (0.22f + 0.16f * snapDrive) + upShimmer) * rosinGrip;
+
                 const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 24.0 / sampleRate));
-                v.vg8DcL += dcAlpha * (rawHrm - v.vg8DcL);
-                const float hrmStr = (rawHrm - v.vg8DcL) * 0.68f;
+                v.vg8DcL += dcAlpha * (0.5f * (rawHrmL + rawHrmR) - v.vg8DcL);
+                const float hrmStrL = (rawHrmL - v.vg8DcL) * 0.74f;
+                const float hrmStrR = (rawHrmR - v.vg8DcL) * 0.74f;
 
-                // Alias-free COSM Even-Harmonic Dual-VIO Ensemble (+-3.8c, H1 + H2 + H4 + H6 >> H3, H5!)
-                v.vg8PhaseA += static_cast<double>(instFreqHz) * 0.99780 * dt;
-                if (v.vg8PhaseA >= 1.0) v.vg8PhaseA -= std::floor(v.vg8PhaseA);
-                v.vg8PhaseB += static_cast<double>(instFreqHz) * 1.00220 * dt;
-                if (v.vg8PhaseB >= 1.0) v.vg8PhaseB -= std::floor(v.vg8PhaseB);
-
-                const float h4Allow = juce::jlimit(0.0f, 1.0f, (nyquistLimit - instFreqHz * 4.0f) * 0.002f);
-                const float h6Allow = juce::jlimit(0.0f, 1.0f, (nyquistLimit - instFreqHz * 6.0f) * 0.002f);
-                const float h8Allow = juce::jlimit(0.0f, 1.0f, (nyquistLimit - instFreqHz * 8.0f) * 0.002f);
-                auto evalCosmVio = [&](double ph) noexcept -> float {
-                    const float s1 = static_cast<float>(std::sin(kTwoPi * ph));
-                    const float c2 = 1.0f - 2.0f * s1 * s1;
-                    const float s3 = s1 * (2.0f * c2 + 1.0f);
-                    const float c4 = 2.0f * c2 * c2 - 1.0f;
-                    const float c6 = c2 * (4.0f * c2 * c2 - 3.0f);
-                    const float c8 = 2.0f * c4 * c4 - 1.0f;
-                    return 0.62f * s1
-                         + (0.52f + 0.24f * velNorm) * c2
-                         + (0.11f + 0.09f * snapDrive) * s3
-                         + (0.22f + 0.22f * velNorm) * h4Allow * c4
-                         + (0.10f + 0.16f * velNorm) * h6Allow * c6
-                         + (0.05f + 0.12f * snapDrive) * h8Allow * c8;
-                };
-                const float vioA = evalCosmVio(v.vg8PhaseA);
-                const float vioB = evalCosmVio(v.vg8PhaseB);
-                const float ensVioL = 0.53f * vioA + 0.47f * vioB;
-                const float ensVioR = 0.47f * vioA + 0.53f * vioB;
-
-                // 3. Per-String Slow-Gear Swell & Dual-Slope 24 dB/oct ZDF Velocity-Tracked Resonant Touch-Filter
-                //    Even on vel=1.0 C1 strums, D62 BowedPad swells over ~52ms BEHIND the instant GK-2A guitar pick-rake
-                //    (eliminating synth-brass stabs and matching C1's +0ms pick-rake -> +80ms bowed-wah bloom!)
+                // 3. True Fast-Plunging Hardware Roland VG-8 AD Envelope-Follower Swell & 24 dB/oct ZDF Touch-Filter:
+                //    Whips up from 0..72ms ("chk -> WWOOOOAAAHH" ~4000 Hz at +80ms!) and plunges rapidly by +380ms (~1450 Hz)
+                //    down into the deep 245-480 Hz murky underwater pad in groove pockets (5x C1 groove contrast!)
                 const double bowTau = isVg8LeadVoice
-                    ? (0.068 - 0.036 * static_cast<double>(velNorm))
-                    : (0.098 - 0.046 * static_cast<double>(snapDrive));
+                    ? (0.052 - 0.022 * static_cast<double>(velNorm))
+                    : (0.082 - 0.042 * static_cast<double>(snapDrive));
                 v.vg8BowEnv += (1.0f - v.vg8BowEnv) * static_cast<float>(1.0 - std::exp(-dt / bowTau));
                 const float bowSwell = v.vg8BowEnv * v.vg8BowEnv * (1.5f - 0.5f * v.vg8BowEnv);
 
-                v.vg8TouchEnv *= static_cast<float>(std::exp(-dt / 0.64));
-                const float fastCrack  = v.vg8TouchEnv * v.vg8TouchEnv * v.vg8TouchEnv; // tau = 213ms initial sweep!
-                const float touchMod   = 0.46f * v.vg8TouchEnv + 0.54f * fastCrack;
-                const float touchCurve = std::pow(juce::jlimit(0.0f, 1.0f, (v.velocity - 0.34f) * (1.0f / 0.66f)), 1.90f);
+                const double touchDecayTau = isVg8LeadVoice ? 0.32 : 0.225;
+                v.vg8TouchEnv *= static_cast<float>(std::exp(-dt / touchDecayTau));
+                const float riseTau   = isVg8LeadVoice ? 0.028f : (0.036f - 0.011f * snapDrive);
+                const float touchRise = 1.0f - std::exp(-ageF / riseTau);
+                const float warmTail  = (!isVg8LeadVoice) ? (0.14f * std::exp(-ageF / 0.65f) * touchRise) : 0.0f;
+                const float touchAd   = std::min(1.16f, 1.46f * touchRise * v.vg8TouchEnv + warmTail);
+                const float fastPeak  = touchAd * touchAd;
+                const float touchMod  = isVg8LeadVoice ? (0.65f * touchAd) : (0.46f * touchAd + 0.54f * fastPeak);
+                const float touchCurve = isVg8LeadVoice
+                    ? std::pow(juce::jlimit(0.0f, 1.0f, (v.velocity - 0.56f) * (1.0f / 0.44f)), 1.65f)
+                    : std::pow(juce::jlimit(0.0f, 1.0f, (v.velocity - 0.48f) * (1.0f / 0.52f)), 1.45f);
 
+                // Real -12st pitch-divided cello string (replaces synthetic std::sin vg8SubPhase!)
                 float subCello = 0.0f;
-                const float subTransDuck = 1.0f - 0.88f * snapDrive * fastCrack;
-                const float subVelScale  = 0.56f + 0.44f * velNorm; // Keeps soft A1 fingerpicking open & balanced!
-                const float subWeight = ((!isVg8LeadVoice && instMidi <= 50.5f)
+                const float subTransDuck = 1.0f - 0.90f * snapDrive * fastPeak;
+                const float subVelScale  = 0.54f + 0.46f * velNorm;
+                const float subWeight = ((!isVg8LeadVoice && instMidi <= 51.5f)
                     ? (0.36f * subVelScale)
-                    : ((isVg8LeadVoice && instMidi <= 52.0f) ? 0.14f : 0.0f)) * subTransDuck;
-                if (subWeight > 0.001f && instFreqHz * 0.5f >= 24.0f) {
-                    v.vg8SubPhase += static_cast<double>(instFreqHz) * 0.5 * dt;
-                    if (v.vg8SubPhase >= 1.0) v.vg8SubPhase -= std::floor(v.vg8SubPhase);
-                    const float sSub = static_cast<float>(std::sin(kTwoPi * v.vg8SubPhase));
-                    const float c2Sub = 1.0f - 2.0f * sSub * sSub;
-                    subCello = (0.72f * sSub + 0.42f * c2Sub) * subWeight;
+                    : ((isVg8LeadVoice && instMidi <= 52.5f) ? 0.16f : 0.0f)) * subTransDuck;
+                if (subWeight > 0.001f) {
+                    const float subNorm = juce::jlimit(-2.5f, 2.5f, subMonoStr * invAgc);
+                    const float subShaped = fastTanh(subNorm * 1.35f);
+                    const float subOct = std::sqrt(subShaped * subShaped + 0.01f) - 0.10f;
+                    subCello = (0.76f * subShaped + 0.34f * subOct) * subWeight;
                 }
 
-                // Smooth low-mid duck on hard strums so the 4 kHz->1.1 kHz TVF sweep breathes organically!
-                const float strumBodyClear = 1.0f - 0.48f * snapDrive * fastCrack;
-                const float strMix = 0.60f - 0.10f * snapDrive;
-                const float bowInL = (hrmStr * strMix + ensVioL * (1.0f - strMix)) * strumBodyClear + subCello;
-                const float bowInR = (hrmStr * strMix + ensVioR * (1.0f - strMix)) * strumBodyClear + subCello;
+                const float strumBodyClear = 1.0f - 0.54f * snapDrive * fastPeak;
+                const float bowInL = hrmStrL * strumBodyClear + subCello;
+                const float bowInR = hrmStrR * strumBodyClear + subCello;
 
-                // Warm cello-pad chord floor (~550-1020 Hz) + chewy Q=2.12 4.3-octave hard-strum TVF sweep (zero laser whistle!)
-                const float octSpan = 0.16f + 4.30f * touchCurve + 0.32f * chPress + 0.14f * barGlideSheen;
+                // Solo: open woody 700 Hz cello on A1 (vel~0.68, chPress~0.14) -> singing 1720 Hz violin on C1 (vel~0.91, chPress~0.85)!
+                // Chords: deep 240-540 Hz underwater lo-fi pad floor -> explosive 5.9-octave 11.4 kHz AD filter scream on C1 blasts!
+                const float octSpan = isVg8LeadVoice
+                    ? (0.28f + 1.25f * touchCurve + 0.52f * chPress + 0.16f * barGlideSheen)
+                    : (0.20f + 5.90f * touchCurve + 0.36f * chPress + 0.15f * barGlideSheen);
                 const float fFloor = isVg8LeadVoice
-                    ? juce::jlimit(385.0f, 1960.0f, 215.0f + instFreqHz * (1.76f + 1.32f * velNorm * velNorm))
-                    : juce::jlimit(330.0f, 1020.0f, 195.0f + instFreqHz * (1.26f + 0.28f * velNorm));
-                const float vibFilterShimmer = isVg8LeadVoice ? (1.0f + 0.15f * barVibratoSin * v.vibratoEnv) : 1.0f;
-                const float maxFc = std::min(9600.0f, fSr * 0.44f);
+                    ? juce::jlimit(460.0f, 2950.0f, 215.0f + instFreqHz * (1.62f + 1.75f * velNorm * velNorm + 1.55f * chPress))
+                    : juce::jlimit(235.0f, 540.0f, 120.0f + instFreqHz * (0.78f + 0.26f * velNorm));
+                const float vibFilterShimmer = isVg8LeadVoice ? (1.0f + 0.16f * barVibratoSin * v.vibratoEnv) : 1.0f;
+                const float maxFc = std::min(11600.0f, fSr * 0.45f);
                 const float fc = juce::jlimit(85.0f, maxFc, fFloor * std::pow(2.0f, octSpan * touchMod) * vibFilterShimmer);
 
                 const float g = std::tan(static_cast<float>(kPi) * fc / fSr);
-                const float k1 = 0.92f;
+                const float k1 = isVg8LeadVoice ? 0.94f : 0.78f;
                 const float a1_1 = 1.0f / (1.0f + g * (g + k1));
                 const float a2_1 = g * a1_1;
                 const float a3_1 = g * a2_1;
@@ -3461,12 +3518,13 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 v.vg8Svf1Ic2R = 2.0f * v2_1R - v.vg8Svf1Ic2R;
 
                 // Chewy COSM inter-stage hex-fuzz saturation when driven hard by velocity strums!
-                const float tvfDrive = 1.24f + 1.45f * snapDrive * (0.30f + 0.70f * touchMod);
-                const float tvfComp  = 1.0f / (1.08f + 0.50f * snapDrive * (0.30f + 0.70f * touchMod));
-                const float lp1L = (fastTanh(v2_1L * tvfDrive + 0.16f * v2_1L * v2_1L) - 0.05f) * tvfComp;
-                const float lp1R = (fastTanh(v2_1R * tvfDrive + 0.16f * v2_1R * v2_1R) - 0.05f) * tvfComp;
+                const float tvfDrive = 1.32f + 1.95f * snapDrive * (0.25f + 0.75f * touchMod);
+                const float tvfComp  = 1.0f / (1.08f + 0.62f * snapDrive * (0.25f + 0.75f * touchMod));
+                const float lp1L = (fastTanh(v2_1L * tvfDrive + 0.22f * v2_1L * v2_1L) - 0.06f) * tvfComp;
+                const float lp1R = (fastTanh(v2_1R * tvfDrive + 0.22f * v2_1R * v2_1R) - 0.06f) * tvfComp;
 
-                const float q2 = isVg8LeadVoice ? (1.55f + 0.65f * velNorm) : (1.45f + 0.68f * touchCurve);
+                // Broad, silky Q=1.05 on single-string cello/violin leads (zero nasal harmonica formant!); chewy Q=2.65 on chord sweeps!
+                const float q2 = isVg8LeadVoice ? (0.98f + 0.22f * chPress) : (1.65f + 1.02f * touchCurve);
                 const float k2 = 1.0f / q2;
                 const float a1_2 = 1.0f / (1.0f + g * (g + k2));
                 const float a2_2 = g * a1_2;
@@ -3484,13 +3542,14 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 v.vg8Svf2Ic1R = 2.0f * v1_2R - v.vg8Svf2Ic1R;
                 v.vg8Svf2Ic2R = 2.0f * v2_2R - v.vg8Svf2Ic2R;
 
-                // Chewy non-whistling COSM TVF sweep (broad Q=2.12 vocal formants, zero synthetic laser resonance!)
-                const float bpPeak = (isVg8LeadVoice ? 0.06f : 0.20f) * snapDrive * fastCrack;
-                const float hpAir  = (isVg8LeadVoice ? 0.0f  : 0.09f) * snapDrive * fastCrack * fastCrack;
-                const float tvfOutL = v2_2L * (1.0f - 0.16f * snapDrive * fastCrack) + v1_2L * bpPeak + (lp1L - v2_2L - k2 * v1_2L) * hpAir;
-                const float tvfOutR = v2_2R * (1.0f - 0.16f * snapDrive * fastCrack) + v1_2R * bpPeak + (lp1R - v2_2R - k2 * v1_2R) * hpAir;
+                const float bpPeak = (isVg8LeadVoice ? 0.06f : 0.48f) * (0.22f * touchCurve + 0.78f * snapDrive) * fastPeak;
+                const float hpAir  = isVg8LeadVoice
+                    ? (0.14f * chPress * (0.45f + 0.55f * fastPeak))
+                    : (0.46f * snapDrive * fastPeak);
+                const float tvfOutL = v2_2L * (1.0f - 0.22f * snapDrive * fastPeak) + v1_2L * bpPeak + (lp1L - v2_2L - k2 * v1_2L) * hpAir;
+                const float tvfOutR = v2_2R * (1.0f - 0.22f * snapDrive * fastPeak) + v1_2R * bpPeak + (lp1R - v2_2R - k2 * v1_2R) * hpAir;
 
-                const float bowLevel = (isVg8LeadVoice ? 0.40f : (0.31f + 0.10f * touchCurve)) * bowSwell;
+                const float bowLevel = (isVg8LeadVoice ? 0.56f : (0.38f + 0.18f * touchCurve)) * bowSwell;
                 const float vg8TotalL = vg8Direct + tvfOutL * bowLevel;
                 const float vg8TotalR = vg8Direct + tvfOutR * bowLevel;
 
@@ -3504,7 +3563,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             const float sCurveFloor = (vg8BowedSmooth > 0.0005f && ageF < 0.0034f)
                 ? (0.5f * (1.0f - std::cos(static_cast<float>(kPi) * (ageF / 0.0034f))))
                 : 1.0f;
-            const float vg8LeadGain = (vg8BowedSmooth > 0.0005f && isVg8LeadVoice) ? (1.0f + 0.56f * vg8BowedSmooth) : 1.0f;
+            const float vg8LeadGain = (vg8BowedSmooth > 0.0005f && isVg8LeadVoice) ? (1.0f + 1.45f * vg8BowedSmooth) : 1.0f;
             const float envGain = v.ampEnv * swellShape * (1.0f + vg8BowedSmooth * (sCurveFloor - 1.0f)) * vg8LeadGain;
             const float pan = (static_cast<float>(i) - 4.5f) * 0.045f * (1.0f - 0.90f * vg8BowedSmooth);
 
@@ -3578,31 +3637,29 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                                 + (subMsR * 0.46f + ct.chimeHpStateR * 0.44f * upTame) * params.sampleBlend * organRankSmooth;
                         } else if (vg8BowedSmooth > 0.0005f) {
                             const bool isCtLead = (ct.channel >= 3);
-                            ct.vg8PhaseA += static_cast<double>(instFreqHz) * 0.99780 * dt;
-                            if (ct.vg8PhaseA >= 1.0) ct.vg8PhaseA -= std::floor(ct.vg8PhaseA);
-                            ct.vg8PhaseB += static_cast<double>(instFreqHz) * 1.00220 * dt;
-                            if (ct.vg8PhaseB >= 1.0) ct.vg8PhaseB -= std::floor(ct.vg8PhaseB);
-                            const float sA = static_cast<float>(std::sin(kTwoPi * ct.vg8PhaseA));
-                            const float c2A = 1.0f - 2.0f * sA * sA;
-                            const float sB = static_cast<float>(std::sin(kTwoPi * ct.vg8PhaseB));
-                            const float c2B = 1.0f - 2.0f * sB * sB;
-                            const float vioA = 0.65f * sA + 0.55f * c2A;
-                            const float vioB = 0.65f * sB + 0.55f * c2B;
-                            float subCello = 0.0f;
-                            const float subW = (!isCtLead && instMidi <= 50.5f) ? 0.38f : ((isCtLead && instMidi <= 52.0f) ? 0.14f : 0.0f);
-                            if (subW > 0.001f && instFreqHz * 0.5f >= 24.0f) {
-                                ct.vg8SubPhase += static_cast<double>(instFreqHz) * 0.5 * dt;
-                                if (ct.vg8SubPhase >= 1.0) ct.vg8SubPhase -= std::floor(ct.vg8SubPhase);
-                                const float sSub = static_cast<float>(std::sin(kTwoPi * ct.vg8SubPhase));
-                                subCello = (0.72f * sSub + 0.42f * (1.0f - 2.0f * sSub * sSub)) * subW;
+                            const double loopOffsetBase = static_cast<double>(std::max(0, ms.loopStartFrame - ms.startFrame)) + 512.0;
+                            float ctSubL = 0.0f, ctSubR = 0.0f;
+                            if (instMidi <= 52.5f) {
+                                readStereoMultiSampleHermite(ct.multiSampleIdx, loopOffsetBase + ct.samplePos * 0.5, ctSubL, ctSubR);
+                                ctSubL *= params.sampleBlend;
+                                ctSubR *= params.sampleBlend;
                             }
-                            const float bowInL = 0.53f * vioA + 0.47f * vioB + subCello;
-                            const float bowInR = 0.47f * vioA + 0.53f * vioB + subCello;
-                            const float touchCurve = std::pow(juce::jlimit(0.0f, 1.0f, (ct.velocity - 0.34f) * (1.0f / 0.66f)), 1.85f);
+                            const float invAgc = 1.0f / std::max(0.018f, ct.vg8AgcEnv);
+                            const float nL = juce::jlimit(-2.6f, 2.6f, msL * invAgc);
+                            const float nR = juce::jlimit(-2.6f, 2.6f, msR * invAgc);
+                            const float shL = fastTanh(nL * 1.45f);
+                            const float shR = fastTanh(nR * 1.45f);
+                            const float rectL = std::sqrt(shL * shL + 0.008f) - 0.09f;
+                            const float rectR = std::sqrt(shR * shR + 0.008f) - 0.09f;
+                            const float subW = (!isCtLead && instMidi <= 51.5f) ? 0.36f : ((isCtLead && instMidi <= 52.5f) ? 0.14f : 0.0f);
+                            const float subCello = (subW > 0.001f) ? (fastTanh(0.5f * (ctSubL + ctSubR) * invAgc * 1.3f) * subW) : 0.0f;
+                            const float bowInL = (0.55f * shL + 1.15f * rectL) * 0.72f + subCello;
+                            const float bowInR = (0.55f * shR + 1.15f * rectR) * 0.72f + subCello;
+                            const float touchCurve = std::pow(juce::jlimit(0.0f, 1.0f, (ct.velocity - 0.36f) * (1.0f / 0.64f)), 2.05f);
                             const float fFloor = isCtLead
-                                ? juce::jlimit(340.0f, 1550.0f, 155.0f + instFreqHz * 1.85f)
-                                : juce::jlimit(320.0f, 1280.0f, 195.0f + instFreqHz * 1.65f);
-                            const float fc = juce::jlimit(75.0f, std::min(7600.0f, fSr * 0.42f), fFloor * std::pow(2.0f, (0.16f + 3.50f * touchCurve) * ct.vg8TouchEnv));
+                                ? juce::jlimit(340.0f, 1650.0f, 185.0f + instFreqHz * 1.65f)
+                                : juce::jlimit(245.0f, 660.0f, 130.0f + instFreqHz * 0.98f);
+                            const float fc = juce::jlimit(75.0f, std::min(7600.0f, fSr * 0.42f), fFloor * std::pow(2.0f, (0.20f + 4.20f * touchCurve) * ct.vg8TouchEnv));
                             const float g = std::tan(static_cast<float>(kPi) * fc / fSr);
                             const float a1 = 1.0f / (1.0f + g * (g + 0.85f));
                             const float a2 = g * a1, a3 = g * a2;
@@ -3616,7 +3673,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                             const float v2R = ct.vg8Svf2Ic2R + a2 * ct.vg8Svf2Ic1R + a3 * v3R;
                             ct.vg8Svf2Ic1R = 2.0f * v1R - ct.vg8Svf2Ic1R;
                             ct.vg8Svf2Ic2R = 2.0f * v2R - ct.vg8Svf2Ic2R;
-                            const float bowLvl = (isCtLead ? 0.38f : (0.28f + 0.09f * touchCurve)) * ct.vg8BowEnv * ct.vg8BowEnv;
+                            const float bowLvl = (isCtLead ? 0.42f : (0.34f + 0.10f * touchCurve)) * ct.vg8BowEnv * ct.vg8BowEnv;
                             msL = msL + vg8BowedSmooth * ((ct.chimeLpStateL * 0.14f + v2L * bowLvl) - msL);
                             msR = msR + vg8BowedSmooth * ((ct.chimeLpStateR * 0.14f + v2R * bowLvl) - msR);
                         }
@@ -3644,7 +3701,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                     if (ph >= kTwoPi) ph -= kTwoPi;
                     ct.harmPhases[static_cast<size_t>(h - 1)] = ph;
                     const float w = ct.isPalmHarmonic ? ((h == 2) ? 1.15f : ((h >= 3) ? 0.40f : 0.08f))
-                                                      : (((h <= 2) ? 0.80f : 0.25f) * (1.0f - 0.92f * vg8BowedSmooth));
+                                                      : (((h <= 2) ? 0.80f : 0.25f) * (1.0f - vg8BowedSmooth));
                     harmTail += w * static_cast<float>(std::sin(ph));
                     if (organRankSmooth > 0.0005f && !ct.isPalmHarmonic && h == 2) {
                         organPipeTail += 0.045f * organRankSmooth * static_cast<float>(std::sin(ph));
@@ -3656,7 +3713,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 }
 
                 const float swellShape = (params.autoSwell > 0.3f) ? (ct.swellEnv * ct.swellEnv) : ct.swellEnv;
-                const float ctVg8Lead = (vg8BowedSmooth > 0.0005f && ct.channel >= 3) ? (1.0f + 0.56f * vg8BowedSmooth) : 1.0f;
+                const float ctVg8Lead = (vg8BowedSmooth > 0.0005f && ct.channel >= 3) ? (1.0f + 1.45f * vg8BowedSmooth) : 1.0f;
                 const float envGain = ct.ampEnv * swellShape * chokeGain * ctVg8Lead;
                 const float pan = (static_cast<float>(ct.stringIndex) - 4.5f) * 0.045f * (1.0f - 0.65f * vg8BowedSmooth);
 

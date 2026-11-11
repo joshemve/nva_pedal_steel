@@ -1103,7 +1103,7 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
         {
             "31 - Two Star VG-8 Bowed Steel",
             "Alt-Indie / VG-8",
-            "Direct Roland VG-8 D62 BowedPad & VIO GUITAR hardware COSM HRM rig (A1 & C1 reference): parallel GK-2A guitar string + per-string full-wave even-harmonic HRM + 24 dB/oct ZDF resonant touch-filter sweep & monophonic legato solo.",
+            "100% real-string Roland VG-8 D62 BowedPad + parallel Baritone/Tascam 424 rig (A1 & C1 hardware reference): wave-reshaped real string HRM + deep-to-explosive 24 dB/oct ZDF touch-filter + Boss CE-2 chorus/flanger jet + ducked Reverb-X wash.",
             [] {
                 PedalSteelParams p;
                 p.presetStyle   = 0;
@@ -1118,22 +1118,22 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.vibratoRate   = 5.75f; // Expressive 5.75 Hz left-hand cello/violin finger vibrato matching C1 & A1
                 p.autoSwell     = 0.02f; // Direct GK-2A string up front while per-string VG-8 BowedPad HRM blooms behind it!
                 p.swellTime     = 90.0f;
-                p.sampleBlend   = 0.90f;
-                p.pickSnap      = 0.52f;
+                p.sampleBlend   = 0.94f; // Pure real studio string core (zero synthetic sine oscillators!)
+                p.pickSnap      = 0.54f;
                 p.pickupPos     = 2.35f;
                 p.coilPeakFreq  = 2750.0f;
                 p.coilResonance = 0.74f; // Neutral Studio Bus coil curve (0.0 dB cut!) so full VG-8 ZDF sweeps shine!
                 p.sustainTime   = 9.8f;
                 p.cabinetDrop   = 0.0f;
-                p.stereoWidth   = 1.00f; // Direct hardware VG-8 stereo coherence matching A1 & C1
-                p.ampDrive      = 0.16f;
-                p.toneWarmth    = 0.22f; // Un-muffled open console top-end
-                p.delayMix      = 0.01f;
-                p.delayTime     = 260.0f;
-                p.tempoSync     = true;
-                p.reverbMix     = 0.04f; // Direct VG-8 focus (avoids stereo plate wash)
-                p.reverbDecay   = 0.28f;
-                p.outputLevel   = 0.4f;
+                p.stereoWidth   = 1.12f; // Lush Boss CE-2 / VG-8 dimensional width with strong mono phase coherence
+                p.ampDrive      = 0.24f; // Warm parallel preamp saturation
+                p.toneWarmth    = 0.28f; // Open analog console clarity + full 4 kHz+ AD filter sweeps
+                p.delayMix      = 0.07f;
+                p.delayTime     = 315.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.24f; // Blends seamlessly with Mode 17's ducked Rainger Reverb-X hall wash
+                p.reverbDecay   = 0.60f;
+                p.outputLevel   = 0.0f;
                 return p;
             }()
         },
