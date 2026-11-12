@@ -79,7 +79,7 @@ Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin 
 
 **Open now (2026-11-12, night):** nothing Joshua asked for is unfinished. Waiting on him: his look at the new instruments
 and the MORE deck in the standalone, and permission to push ui-v2-design. Verified: 79 UI tests (PedalSteelShot), the
-VST3 host test, and the hosted editor on screen (renders/host_onscreen.png).
+VST3 host test, the hosted editor on screen (renders/host_onscreen.png) and the standalone app (renders/standalone_onscreen.png).
 **Status (2026-11-12, late):** hardware answered and rendered; MORE deck built; MIDI Learn kept as built; shapes built
 (bullnose maple uses textures/wood/flamemaple_1_1.png, generated from jobs_flame.json). The preset editor's STEEL FINISH
 now offers all eight instruments (box x5 + Blonde Bullnose, Rosewood Bullnose, Double Neck; swatches from
