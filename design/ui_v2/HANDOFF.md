@@ -81,8 +81,11 @@ Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin 
 (bullnose maple uses textures/wood/flamemaple_1_1.png, generated from jobs_flame.json). The preset editor's STEEL FINISH
 now offers all eight instruments (box x5 + Blonde Bullnose, Rosewood Bullnose, Double Neck; swatches from
 `steel_pack.py swatches ...`, left-end crops) and opens on the instrument showing. 77 UI tests pass.
-Possible refinements, none asked for: the double neck's extra pedals are static (only A B C move); the far neck has no
-playable strings; real double necks often show white diamond inlays (ours keep the plugin's coloured markers).
+Refined after: the bullnose parts get their rotation/location baked (object-space veneer ran vertical on the nose);
+bullnose maple matched to s3_1 by HSV (MAPLE_SAT 1.18 / VAL 0.90 / HUE 0.5: apron H 0.10 S 0.40 V 0.72 vs concept
+0.08 / 0.45 / 0.72); the double neck uses textures/wood/walnut_1_1.png (jobs_walnut.json) and pearl diamonds, as s6_3.
+By design (the engine is one 10-string neck with A B C + LKL LKR): the double neck's back neck and its five extra pedals
+are scenery; only the front neck, A B C and the knee levers play.
 
 ## Where it stands
 
