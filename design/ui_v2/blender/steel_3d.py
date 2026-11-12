@@ -197,6 +197,9 @@ WOOD_TEX = os.path.join(WOOD_DIR, "rosewood_1_1.png")
 PEARL_TEX = os.path.join(WOOD_DIR, "pearloid_2_1.png")    # real mother-of-pearl celluloid (approved ref p3d_pearloid_4)
 KOA_TEX = os.path.join(WOOD_DIR, "koa_1_1.png")           # real figured koa (the procedural curl read as stripes: Joshua)
 MAPLE_TEX = os.path.join(WOOD_DIR, "maple_1_1.png")       # approved ref p3d_maple_1: honey birdseye/burl maple
+if SHAPE == "bullnose":   # the 60s blonde (round29 s3_1) is flamed maple, not burl
+    MAPLE_TEX = os.path.join(WOOD_DIR, "flamemaple_1_1.png")
+    for _k, _v in dict(MAPLE_SAT=0.95, MAPLE_VAL=1.0, MAPLE_HUE=0.5, MAPLE_SCALE=1.0).items(): os.environ.setdefault(_k, str(_v))
 M_WOOD = (photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_TEX) else
           photo_wood(KOA_TEX, E("KOA_SAT", 1.12), E("KOA_VAL", 0.93), E("KOA_HUE", 0.515), E("KOA_SCALE", 1.8)) if FINISH == "koa" and os.path.exists(KOA_TEX) else
           photo_wood(PEARL_TEX, E("PEARL_SAT", 0.42), E("PEARL_VAL", 1.08), E("PEARL_HUE", 0.512), E("PEARL_SCALE", 2.2)) if FINISH == "pearloid" and os.path.exists(PEARL_TEX) else

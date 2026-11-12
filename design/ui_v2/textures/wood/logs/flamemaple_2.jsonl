@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1d164-200d-7c12-b811-d97f727b1d57"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless-looking, edge-to-edge blonde flamed maple texture using the image generation tool."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"1536×1024 blonde flamed maple texture with horizontal grain and fine vertical tiger stripes, filling the frame edge to edge."}}
+{"type":"turn.completed","usage":{"input_tokens":45745,"cached_input_tokens":33536,"cache_write_input_tokens":0,"output_tokens":331,"reasoning_output_tokens":0}}

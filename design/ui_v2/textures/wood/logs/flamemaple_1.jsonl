@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1d164-200d-7862-8a2d-8c60b35d8d63"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one maple veneer texture from your description; the reference image wasn’t accessible.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"1536×1024 honey-blonde flamed maple veneer texture with horizontal grain and fine vertical tiger stripes."}}
+{"type":"turn.completed","usage":{"input_tokens":46801,"cached_input_tokens":42624,"cache_write_input_tokens":0,"output_tokens":325,"reasoning_output_tokens":0}}
