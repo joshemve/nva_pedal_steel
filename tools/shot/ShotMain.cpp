@@ -449,6 +449,17 @@ int main(int argc, char* argv[]) {
                 editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
                 check((pv(ParamIDs::pedalC) > 0.5f) != (c0 > 0.5f), "double neck: pedal C answers where it is drawn");
                 editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
+                {   // the double neck in the small window and with the MORE deck open
+                    editor->setSize(1000, 625); pe5->refreshVisualizer();
+                    auto a = editor->createComponentSnapshot(editor->getLocalBounds());
+                    editor->setSize(1600, 1000); pe5->openMore(true); pe5->refreshVisualizer();
+                    auto b = editor->createComponentSnapshot(editor->getLocalBounds()).rescaled(1000, 625, juce::Graphics::highResamplingQuality);
+                    pe5->openMore(false); pe5->refreshVisualizer();
+                    juce::Image sh(juce::Image::RGB, 2000, 625, true, juce::SoftwareImageType());
+                    { juce::Graphics g4(sh); g4.drawImageAt(a, 0, 0); g4.drawImageAt(b, 1000, 0); }
+                    auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_doubleneck_small_more.png");
+                    f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(sh, os);
+                }
                 processor.loadPreset(0); pe5->refreshVisualizer();
             }
             auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_instruments.png");
