@@ -6,7 +6,7 @@ namespace UiLayout {
     inline constexpr float sp_slider_thumb[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
     inline constexpr float sp_slider_fill[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
     inline constexpr float sp_midi_on[4] = { 1244.00f, 897.50f, 183.50f, 61.50f };   // x, y, w, h
-    inline constexpr float sp_tone_bar[4] = { 790.00f, 127.00f, 55.00f, 145.00f };   // x, y, w, h
+    inline constexpr float sp_tone_bar[4] = { 794.50f, 135.00f, 45.50f, 137.00f };   // x, y, w, h
     inline constexpr float sp_tone_bar_home[4] = { 800.00f, 200.00f, 4.00f, 4.00f };   // x, y, w, h
     inline constexpr float sp_small_deck[4] = { 69.00f, 683.50f, 1489.50f, 271.50f };   // x, y, w, h
     inline constexpr float sp_small_top[4] = { 1166.00f, 5.50f, 433.50f, 67.00f };   // x, y, w, h

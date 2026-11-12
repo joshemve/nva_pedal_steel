@@ -669,7 +669,7 @@ for k, kx, _sg in KNEES:
 # ---- tone bar: polished steel bullet bar lying across the strings (a separate live layer later)
 BAR_FRET = E("STEEL_BARFRET", 8.7)
 if BAR_FRET >= 0:
-    bx_ = fret_x(BAR_FRET); br = 0.0162
+    bx_ = fret_x(BAR_FRET); br = E("BAR_R", 0.0130)   # slimmer than the first 0.0162 (Joshua 2026-11-12: "a little skinnier")
     cyl("ToneBar", (bx_, 0.004, Z_STR + br), br, 0.112, M_CHROME, "Y", 48, bevel=0.003)
     bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=br, location=(bx_, 0.060, Z_STR + br))
     finish(bpy.context.object, M_CHROME).name = "ToneBarNose"
@@ -839,6 +839,18 @@ def render(path, region=None):
     sc.render.filepath = str(path); bpy.ops.render.render(write_still=True)
 
 
+if MODE == "bar":   # only the tone bar (its own pixels), into an existing layers dir's bar.png + layers.json
+    for o in bpy.data.objects:
+        if o.type in ("MESH", "FONT") and o not in BAR_OBJS and o.name not in ("RoomDome",):
+            o.is_holdout = True
+    bpy.data.objects["Floor"].hide_render = True
+    bpy.context.view_layer.update()
+    reg = region_of(BAR_OBJS, 24)
+    render(out / "bar.png", reg)
+    info = json.loads((out / "layers.json").read_text())
+    info["bar"] = {"region": reg, "cx": round(proj((fret_x(BAR_FRET), 0, Z_STR))[0], 2), "fret": BAR_FRET}
+    (out / "layers.json").write_text(json.dumps(info, indent=1))
+    sys.exit(0)
 if MODE == "still":
     render(out / "steel.png")
     bpy.ops.wm.save_as_mainfile(filepath=str(out / "steel_3d.blend"))
