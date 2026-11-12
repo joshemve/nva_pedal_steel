@@ -1,7 +1,7 @@
 """Export everything the JUCE editor needs: assets (Source/ui_assets/) and Source/UiLayout.h (all geometry in
 1600x1000 UI px, assets at 2x). Run after build_ui.py, fit_text.py, fit_display.py, matcap/stitch."""
 import json, os, shutil
-import numpy as np
+import numpy as np, cv2
 from PIL import Image
 H = os.path.dirname(os.path.abspath(__file__)); os.chdir(H)
 ROOT = os.path.abspath("../../../..")                       # repo root
@@ -41,6 +41,15 @@ for k, v in S.items():
         else:
             y_ = MD.STRIP_Y[0] - b[1]; x_ = MD.MOVE_X[0] - b[0]
             mv = a_[y_:, x_:].copy(); a_[y_:, x_ - _SH:] = 0; a_[y_:, x_ - _SH:a_.shape[1] - _SH] = mv
+            # small_1 had pedals A and B lit: their labels carry a baked amber glow blob that doubled the live lamp
+            # (Joshua: "this light is glitched"). Keep each letter with a thin dark outline, as C has; the rest clear.
+            for c0, c1 in ((1850, 1985), (2025, 2160)):
+                reg = a_[0:92, c0:c1]
+                letter = ((reg[..., :3].mean(2) > 170) & (reg[..., 3] > 128)).astype(np.uint8)
+                keep = cv2.dilate(letter, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))) > 0
+                edge = keep & (letter == 0)
+                reg[edge, :3] = (38, 26, 20)                       # C's outline colour (dark plate)
+                reg[..., 3] = np.where(keep, reg[..., 3], 0)
         Image.fromarray(np.clip(a_, 0, 255).astype(np.uint8)).save(os.path.join(OUT, "sp_%s.png" % k))
     rect("sp_" + k, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
 # the 3D floor pedal assembly (floor_3d.py package): per layer one vertical strip per metal

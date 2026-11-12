@@ -150,6 +150,17 @@ int main(int argc, char* argv[]) {
         auto img = editor->createComponentSnapshot(editor->getLocalBounds());
         auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_small.png");
         f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
+        {   // the A B C lamps in the small window with A and B lit (a baked glow once doubled them)
+            auto lampShot = [&](float a, float b2) {
+                processor.setLivePedalState(0, a); processor.setLivePedalState(1, b2); processor.setLivePedalState(2, 0.0f);
+                if (auto* e = dynamic_cast<PedalSteelAudioProcessorEditor*>(editor.get())) e->refreshVisualizer();
+                return editor->createComponentSnapshot({ 590, 420, 200, 90 });
+            };
+            auto sh = lampShot(1.0f, 1.0f);
+            auto f2 = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_small_lamps.png");
+            f2.deleteFile(); juce::FileOutputStream os2(f2); if (os2.openedOk()) juce::PNGImageFormat().writeImageToStream(sh, os2);
+            processor.setLivePedalState(0, 0.0f); processor.setLivePedalState(1, 0.0f);
+        }
         editor->setSize(1600, 1000);
         if (auto* e = dynamic_cast<PedalSteelAudioProcessorEditor*>(editor.get())) e->refreshVisualizer();
     }
