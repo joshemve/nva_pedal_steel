@@ -6,7 +6,7 @@ C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\steel_3d.py:731: Depr
   m = bpy.data.materials.new(name); m.use_nodes = True; nt_ = m.node_tree; nt_.nodes.clear()
 C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\steel_3d.py:764: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
   dm = bpy.data.materials.new("RoomDome"); dm.use_nodes = True; nt = dm.node_tree; nt.nodes.clear()
-00:42.594  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\shapes\bullnose_rosewood\static.png'
+00:29.250  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\shapes\bullnose_rosewood\static.png'
 LAYOUT {"stringY": [373.16, 388.19, 403.27, 418.42, 433.63, 448.9, 464.23, 479.62, 495.07, 510.59], "bridgeX": 2662.28, "body": [327.7, 328.7, 2872.3, 827.4], "floorFrontY": 1274.8}
 Blender 5.0.1 (hash a3db93c5b259 built 2025-12-16 01:32:30)
 

@@ -76,7 +76,7 @@ if SHAPE != "box":
 TUNED = {
     "koa": dict(CAB_SAT=0.95, CAB_VAL=1.02, CAB_HUE=0.524, CAB_GAMMA=1.35, CAB_COAT=0.10, FRONT_GLINT=0.6, HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.45, HL_TB=0.15),   # red sparkle's gloss (Joshua)
     "maple": dict(HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.75, HL_TB=0.45),
-    "rosewood": dict(HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.35, HL_TB=0.2),
+    "rosewood": dict(HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.35, HL_TB=0.2, FRONT_GLINT=0.6, BIG_LIGHT_GLOSSY=0),   # less haze on the wood (Joshua 2026-11-12)
     "redsparkle": dict(RS_DARK=0.38, RS_HI=3.4, RS_SCALE=1900, FLAKE_COAT=0.0, TOP_GLINT=1.6, FRONT_GLINT=0.0, FLAKE_EDGE_TINT=1, HL=9.0, HL_CORE=2.2, HL_GAMMA=1.0, TOP_TRIM=0,
                        BOTTOM_BAR=0, TRIM_ROUGH=0.04),   # one mirror band in the middle of the front only (Joshua)
     "pearloid": dict(CAB_SAT=0.56, CAB_VAL=1.08, CAB_HUE=0.52, CAB_GAMMA=1.25, CAB_TOP_VAL=0.55, HL=1.5, TOP_TRIM=0, EDGE_TRIM=1, HL_GAMMA=1.0, HL_TEXP=6, TILE_GLINT=2.0,

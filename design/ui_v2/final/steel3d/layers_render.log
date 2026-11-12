@@ -1,0 +1,49 @@
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\steel_3d.py:53: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world = bpy.data.worlds.new("Room"); sc.world = world; world.use_nodes = True
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\steel_3d.py:59: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m = bpy.data.materials.new(name); m.use_nodes = True
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\steel_3d.py:731: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m = bpy.data.materials.new(name); m.use_nodes = True; nt_ = m.node_tree; nt_.nodes.clear()
+C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\blender\steel_3d.py:764: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  dm = bpy.data.materials.new("RoomDome"); dm.use_nodes = True; nt = dm.node_tree; nt.nodes.clear()
+00:32.516  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\static.png'
+00:33.891  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_A_00.png'
+00:35.172  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_A_01.png'
+00:36.453  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_A_02.png'
+00:37.750  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_A_03.png'
+00:39.047  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_A_04.png'
+00:40.328  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_A_05.png'
+00:41.641  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_A_06.png'
+00:42.969  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_B_00.png'
+00:44.219  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_B_01.png'
+00:45.485  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_B_02.png'
+00:46.750  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_B_03.png'
+00:48.016  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_B_04.png'
+00:49.266  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_B_05.png'
+00:50.547  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_B_06.png'
+00:51.813  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_C_00.png'
+00:53.078  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_C_01.png'
+00:54.344  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_C_02.png'
+00:55.610  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_C_03.png'
+00:56.860  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_C_04.png'
+00:58.125  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_C_05.png'
+00:59.391  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\pedal_C_06.png'
+01:00.391  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_L_00.png'
+01:01.391  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_L_01.png'
+01:02.391  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_L_02.png'
+01:03.453  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_L_03.png'
+01:04.422  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_L_04.png'
+01:05.328  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_L_05.png'
+01:06.344  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_L_06.png'
+01:07.313  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_R_00.png'
+01:08.235  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_R_01.png'
+01:09.172  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_R_02.png'
+01:10.110  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_R_03.png'
+01:11.016  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_R_04.png'
+01:11.922  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_R_05.png'
+01:12.813  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\knee_R_06.png'
+01:13.344  render           | Saved: 'C:\Users\Joshua\Documents\pedal_steel\design\ui_v2\final\steel3d\layers\bar.png'
+LAYOUT {"stringY": [373.16, 388.19, 403.27, 418.42, 433.63, 448.9, 464.23, 479.62, 495.07, 510.59], "bridgeX": 2662.28, "body": [327.7, 328.7, 2872.3, 827.4], "floorFrontY": 1274.8}
+Blender 5.0.1 (hash a3db93c5b259 built 2025-12-16 01:32:30)
+
+Blender quit

@@ -1179,7 +1179,8 @@ void PedalSteelAudioProcessorEditor::timerCallback() {
         const float na = snap ? target : juce::jlimit(0.0f, 1.0f, hintAlpha + (target > hintAlpha ? 1.0f : -1.0f) / (0.4f * kFps));
         if (na != hintAlpha) { hintAlpha = na; repaint((hintBounds().expanded(8) * scale).getSmallestIntegerContainer()); }
     }
-    if (skinFade < 1.0f) { skinFade = juce::jmin(1.0f, skinFade + 1.0f / (0.35f * kFps)); dirty = true; if (skinFade >= 1.0f) bgScaledPrev = {}; }
+    // instrument crossfade on a preset change: 120 ms (350 ms felt sluggish, Joshua)
+    if (skinFade < 1.0f) { skinFade = juce::jmin(1.0f, skinFade + 1.0f / (0.12f * kFps)); dirty = true; if (skinFade >= 1.0f) bgScaledPrev = {}; }
     {   // marquee for names longer than the glass: hold 1.5 s, one dot column per 50 ms, hold, back to the start
         const auto text = displayText();
         int cols = 0; for (int i = 0; i < text.length(); ++i) cols += 6;
