@@ -574,6 +574,7 @@ void PedalSteelAudioProcessor::getStateInformation(juce::MemoryBlock& destData) 
         xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
         xml->setAttribute("midiMap", midiLearn.toString());
         xml->setAttribute("editorWidth", editorWidth);
+        xml->setAttribute("showMore", showMore);
         const juce::String userName = getActiveUserPresetName();
         if (userName.isNotEmpty()) {
             xml->setAttribute("userPresetName", userName);
@@ -595,6 +596,8 @@ void PedalSteelAudioProcessor::setStateInformation(const void* data, int sizeInB
         xmlState->removeAttribute("midiMap");
         editorWidth = juce::jlimit(800, 2400, xmlState->getIntAttribute("editorWidth", editorWidth));
         xmlState->removeAttribute("editorWidth");
+        showMore = xmlState->getBoolAttribute("showMore", showMore);
+        xmlState->removeAttribute("showMore");
         apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
         // switches and choices hold whatever raw value a host last sent (e.g. 0.3 for "off"); replaceState leaves those
         // alone when the meaning doesn't change, so snap them to their legal value, and hosts read back what they saved

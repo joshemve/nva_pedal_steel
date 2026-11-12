@@ -18,14 +18,26 @@ def refrect(name, x0, y0, x1, y1): rect(name, x0 * RX, y0 * RY, x1 * RX, y1 * RY
 # background (JPEG keeps the plugin small; photo content)
 import floor_3d   # the rug under the steel: one pedal-free plate; the pedal assembly is drawn live from Blender renders
 import sys; sys.path.insert(0, os.path.join(H, "..", "deck3d")); import deck_pack   # deck switches/toggles: same idea
-Image.fromarray(np.clip(deck_pack.apply(np.asarray(Image.open("bg_steel3d.png").convert("RGB"), np.float32)), 0, 255)
-                .astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
+import more_deck as MD   # the MORE state: taller deck (row 2) + the bottom strip with the MORE / LESS button
+_bg = deck_pack.apply(np.asarray(Image.open("bg_steel3d.png").convert("RGB"), np.float32))
+Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
+_more, _minfo = MD.build_more(_bg)
+Image.fromarray(np.clip(_more, 0, 255).astype(np.uint8)).save(os.path.join(OUT, "deck_more.jpg"), quality=95, subsampling=0)
+_SH = MD.SHIFT; S["midi_on"]["box"][0] -= _SH; S["midi_on"]["box"][2] -= _SH   # MIDI LEARN moved left
+T["vol"]["ink_cx"] -= _SH; T["vol"]["ink_left"] -= _SH
 # sprites (canvas boxes -> UI rects)
 for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states are replaced by the 3D layers
     if f_.startswith(("sp_floor_", "sp_kl_", "f3d_", "d3d_", "sp_pedal_", "sp_lever_")): os.remove(os.path.join(OUT, f_))
 for k, v in S.items():
     if k.startswith(("floor_", "kl_", "pedal_", "lever_")): continue   # pedal_/lever_: the deck controls are 3D (deck3d/)
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
+    if k in ("slider_fill", "small_deck"):   # follow the shorter slider / moved strip controls
+        a_ = np.asarray(Image.open(os.path.join(OUT, "sp_%s.png" % k)).convert("RGBA"), np.float32)
+        if k == "slider_fill": a_ = MD.remap_groove(a_, b[0])
+        else:
+            y_ = MD.STRIP_Y[0] - b[1]; x_ = MD.MOVE_X[0] - b[0]
+            mv = a_[y_:, x_:].copy(); a_[y_:, x_ - _SH:] = 0; a_[y_:, x_ - _SH:a_.shape[1] - _SH] = mv
+        Image.fromarray(np.clip(a_, 0, 255).astype(np.uint8)).save(os.path.join(OUT, "sp_%s.png" % k))
     rect("sp_" + k, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
 # the 3D floor pedal assembly (floor_3d.py package): per layer one vertical strip per metal
 F3 = json.load(open("sprites/floor3d.json"))
@@ -59,7 +71,7 @@ band = cl[tb[1]:tb[3], tb[0]:tb[2]].mean(2); rows = band.mean(1)
 tick_row = int(np.argmax(np.where(np.arange(len(rows)) > (ys.max() + ys.min()) / 2 + 4, band.max(1) - np.median(band, 1), 0)))
 prof = band[tick_row]; on = prof > (prof.max() + np.median(prof)) / 2; e2 = np.flatnonzero(np.diff(on.astype(int)))
 ticks = [(e2[i] + e2[i + 1]) / 2 + 1 + tb[0] for i in range(0, len(e2) - 1, 2)]
-x0s, x1s = ticks[0], ticks[-1]
+x0s, x1s = ticks[0], ticks[-1] - MD.SHIFT   # the strip's slider is shorter (more_deck.py)
 L("inline constexpr float sliderX0 = %.2ff, sliderX1 = %.2ff;   // handle centre at value 0 and 1 (UI px) = first/last tick" % (x0s / 2, x1s / 2))
 L("inline constexpr float sliderThumbCx = %.2ff;               // handle centre as drawn in sp_slider_thumb" % (tcx / 2))
 print("slider ticks:", len(ticks), "from %.0f to %.0f canvas; handle drawn at %.0f" % (x0s, x1s, tcx))
@@ -90,6 +102,7 @@ for k, t in T.items():
 if os.path.exists("text_small.json"):
     for k, t in json.load(open("text_small.json")).items():
         c = t["colour"]
+        if k == "vol": t["ink_cx"] -= _SH; t["ink_left"] -= _SH
         L("inline constexpr float txtS_%s[4] = { %.2ff, %.2ff, %.2ff, %.2ff };   // small window: ink cx, cy, ink width of txtRef, ink left" %
           (k, t["ink_cx"] / 2, t["ink_cy"] / 2, t["ink_w"] / 2, t["ink_left"] / 2))
         L("inline constexpr unsigned int txtSColour_%s = 0xff%02x%02x%02x;" % (k, *[int(round(min(255, max(0, v)))) for v in c]))
@@ -121,8 +134,16 @@ fbx1 = SL["frets"][24][1] + 40; sy0, sy1 = STR[0] - 16, STR[9] + 16
 rect("hitFretboard", (SL["frets"][0][1] - 6) / 2, sy0 / 2, fbx1 / 2, sy1 / 2); rect("hitPluck", fbx1 / 2, sy0 / 2, SL["bridgeX"] / 2, sy1 / 2)
 # hit areas (reference px)
 refrect("hitPrev", 532, 41, 582, 81); refrect("hitNext", 985, 41, 1035, 81)
-refrect("hitMode", 183, 912, 462, 950); refrect("hitMidiLearn", 1332, 912, 1483, 950)
-refrect("hitSlider", 752, 915, 1168, 958)
+refrect("hitMode", 183, 912, 462, 950); rect("hitMidiLearn", 1332 * RX - _SH / 2, 912 * RY, 1483 * RX - _SH / 2, 950 * RY)
+rect("hitSlider", 752 * RX, 915 * RY, 1168 * RX - _SH / 2, 958 * RY)
+# the MORE state (more_deck.py): row 1 moves up by moreD, row 2 sits where row 1 was
+ML = MD.layout(); bx, by, bw, bh = ML["btn"]
+rect("hitMore", bx, by, bx + bw, by + bh)
+L("inline constexpr float moreD = %.2ff, moreDeckTop = %.2ff;   // UI px: row-1 lift; deck_more.jpg starts here (to 1000)" % (ML["D_ui"], ML["deckTop_ui"]))
+L("inline constexpr float row2X[7] = { %s };   // VIBRATO RATE SLIDE (scallop) DRIVE WIDTH (dome) DELAY DECAY (space)" % ", ".join("%.1ff" % cx for _, _, cx in ML["row2"]))
+L("inline constexpr float charCentre[2] = { %.2ff, %.2ff }, charScale = %.3ff, charDotR = %.1ff;" % (*ML["char_c"], ML["char_scale"], ML["char_r"]))
+L("inline constexpr float charAngle[11] = { %s };   // deg clockwise from 12 o'clock, STUDIO..ROOM" % ", ".join("%.1ff" % a for a in ML["char_ang"]))
+L("inline constexpr float syncCentre[2] = { %.2ff, %.2ff }, lampACentre[2] = { %.2ff, %.2ff };" % (*ML["sync_c"], *ML["lampA_c"]))
 pb = json.load(open("aligned/pedals_unlit.json"))["part_box_canvas"]; cw = (pb[2] - pb[0]) / 3
 for i, k in enumerate("ABC"): rect("hitPedal" + k, (pb[0] + i * cw) / 2, pb[1] / 2, (pb[0] + (i + 1) * cw) / 2, pb[3] / 2)
 for k_, n_ in (("hitLKL", "lever_L"), ("hitLKR", "lever_R")):   # the 3D levers' own boxes (all frames), not the old reference spots

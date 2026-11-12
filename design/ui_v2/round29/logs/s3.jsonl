@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1d079-8910-77e0-a007-5fd76a5a13f2"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two blonde-maple pedal steel photographs, using your reference only for camera framing."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Aged blonde maple pedal steel with chrome hardware and a tone bar on a warm grey backdrop.\nImage 2: Blonde maple variation with an unobstructed cream fretboard and softly lit chrome legs."}}
+{"type":"turn.completed","usage":{"input_tokens":79758,"cached_input_tokens":64768,"cache_write_input_tokens":0,"output_tokens":719,"reasoning_output_tokens":0}}

@@ -1,0 +1,26 @@
+[
+ {
+  "name": "c1",
+  "prompt": "Image 1 is our pedal steel plugin in its MORE state (Northern Valley Audio). Keep EVERYTHING exactly as in image 1: the top bar, the steel on the rug, the walnut-framed deck, row 1, row 2's MOTION (VIBRATO, RATE, SLIDE), AMP (DRIVE, WARMTH), TIME (DELAY, DECAY), the section rules, value boxes, fonts, the bottom strip with MODE, VOLUME PEDAL, MIDI LEARN and LESS. Image 2 is the plugin's normal state, for knob styles. ONLY redesign the CHARACTER control at the right of row 2: the owner says the current rotary selector with words printed around it does not fit in with the other knobs. Make CHARACTER a knob identical in size, style and tick ring to the black ECHO / REVERB knobs, sitting on the same row baseline as the other row-2 knobs, with the label CHARACTER under it and a value box under that reading 'STUDIO' exactly like the other value boxes (it is a stepped knob, 11 settings, no words printed around it). Next to it the SYNC toggle with its label, aligned. No orange accents (amber only for LEDs), matte, calm, legible, not cheesy. 1600x1000. Generate 2 images.",
+  "images": [
+   "round28/m2_1.png",
+   "../../renders/ui_screenshot.png"
+  ]
+ },
+ {
+  "name": "c2",
+  "prompt": "Image 1 is our pedal steel plugin in its MORE state (Northern Valley Audio). Keep EVERYTHING exactly as in image 1: the top bar, the steel on the rug, the walnut-framed deck, row 1, row 2's MOTION (VIBRATO, RATE, SLIDE), AMP (DRIVE, WARMTH), TIME (DELAY, DECAY), the section rules, value boxes, fonts, the bottom strip with MODE, VOLUME PEDAL, MIDI LEARN and LESS. Image 2 is the plugin's normal state, for knob styles. ONLY redesign the CHARACTER control at the right of row 2: the owner says the current rotary selector with words printed around it does not fit in with the other knobs. Make CHARACTER a knob identical in size, style and tick ring to the cream TONE / PICK knobs, on the same baseline as the other row-2 knobs, with 11 small tick dots for its stepped positions, label CHARACTER and a value box reading 'STUDIO' like the others. Next to it the SYNC toggle with its label and a WIDTH knob in the same cream style with value box '100 %'. No orange accents (amber only for LEDs), matte, calm, legible, not cheesy. 1600x1000. Generate 2 images.",
+  "images": [
+   "round28/m2_1.png",
+   "../../renders/ui_screenshot.png"
+  ]
+ },
+ {
+  "name": "c3",
+  "prompt": "Image 1 is our pedal steel plugin in its MORE state (Northern Valley Audio). Keep EVERYTHING exactly as in image 1: the top bar, the steel on the rug, the walnut-framed deck, row 1, row 2's MOTION (VIBRATO, RATE, SLIDE), AMP (DRIVE, WARMTH), TIME (DELAY, DECAY), the section rules, value boxes, fonts, the bottom strip with MODE, VOLUME PEDAL, MIDI LEARN and LESS. Image 2 is the plugin's normal state, for knob styles. ONLY redesign the CHARACTER control at the right of row 2: the owner says the current rotary selector with words printed around it does not fit in with the other knobs. Make CHARACTER a small amber LED-font readout window (same LED style as the preset name in the top bar, smaller) reading 'STUDIO', with two small black arrow buttons either side matching the preset arrows, centred in that section, with the label CHARACTER above in the same engraved section-title style as MOTION/AMP/TIME. Next to it the SYNC toggle with its label, aligned to the knob baseline. No orange accents (amber only for LEDs), matte, calm, legible, not cheesy. 1600x1000. Generate 2 images.",
+  "images": [
+   "round28/m2_1.png",
+   "../../renders/ui_screenshot.png"
+  ]
+ }
+]

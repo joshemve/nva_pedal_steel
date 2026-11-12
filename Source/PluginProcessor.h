@@ -37,6 +37,7 @@ public:
     juce::MidiKeyboardState keyboardState;
     MidiLearn midiLearn;   // CC -> parameter (the editor's MIDI LEARN button)
     int editorWidth = 1280;   // the window size the user last chose (kept while the plugin instance lives, and in its state)
+    bool showMore = false;    // the MORE deck (second knob row) is open; kept like editorWidth
 
     void loadPreset(int index);
     void stepPreset(int delta);

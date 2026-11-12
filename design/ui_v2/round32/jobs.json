@@ -1,0 +1,9 @@
+[
+ {
+  "name": "k11",
+  "prompt": "Image 1 is our approved pedal steel plugin MORE state. Keep EVERYTHING exactly as it is: every knob, colour, label, value box, section, the steel, the top bar and the bottom strip. ONLY change the CHARACTER selector's printed positions: it must have 11 lock positions instead of 6, each with a tiny engraved cream label, evenly spaced around the same black knob over a 300 degree arc, in this order clockwise from lower left: STUDIO, TAPE, VELVET, PHASER, SPRING, R&B, WARBLE, SHIMMER, ROTARY, BLOOM, CHAMBER. Each label sits next to its own small engraved dot; labels are small but crisp and readable, never overlapping, the section may widen slightly into the gap before SYNC. Pointer on STUDIO. No orange, matte, calm, legible. 1600x1000. Generate 3 images.",
+  "images": [
+   "round31/r3_2.png"
+  ]
+ }
+]

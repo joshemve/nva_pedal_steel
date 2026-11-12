@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1d079-8a1f-70c2-a87a-990bdb80d126"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two studio photographs using your reference for camera framing only."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Dark lacquered wood and polished chrome with colorful fret markers against warm grey.\nImage 2: Figured walnut and lightly worn chrome with understated cream and copper fret markers."}}
+{"type":"turn.completed","usage":{"input_tokens":79762,"cached_input_tokens":51584,"cache_write_input_tokens":0,"output_tokens":704,"reasoning_output_tokens":0}}

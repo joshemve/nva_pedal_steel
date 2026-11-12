@@ -47,11 +47,19 @@ public:
     AccessibleControl* getAccessibleControl(int i) { return i >= 0 && i < (int) a11y.size() ? a11y[(size_t) i].get() : nullptr; }
     void openBrowser();
     void openSaveDialog();
+    void openMore(bool on) { setMore(on); }   // the MORE deck (also used by the snapshot tool)
+    bool isMoreOpen() const { return proc.showMore; }
     void closeOverlays();
 
 private:
-    enum Ctl { None = -1, Tone, Pick, Glide, Swell, Echo, Reverb, Trim, Volume, PedA, PedB, PedC, LKL, LKR, Mode,
-               Prev, Next, Display, MidiLearnBtn, Fretboard, Pluck, NumCtl };
+    // order matters: knobs (Tone..Character) and Trim are round, Tone..Volume are continuous, Tone..Mode learnable
+    enum Ctl { None = -1, Tone, Pick, Glide, Swell, Echo, Reverb,
+               Vibrato, Rate, Slide, Drive, Width, Delay, Decay, Character,   // the MORE row
+               Trim, Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode,
+               Prev, Next, Display, MidiLearnBtn, MoreBtn, Fretboard, Pluck, NumCtl };
+public:   // control ids for the tests' applyTypedValue / openValueEditorForTest
+    static constexpr int kCtlTone = Tone, kCtlEcho = Echo, kCtlTrim = Trim, kCtlVolume = Volume;
+private:
 
     struct Strip { juce::Image img; int frames = 1, px = 1; };
     struct TextItem {
@@ -105,6 +113,20 @@ private:
     TextItem txt[9];   // TONE PICK GLIDE SWELL ECHO REVERB vol mode db
     TextItem txtS[9];  // the same in the small-window variant (small_1: bolder, larger)
     juce::Image spSmallDeck, spSmallTop;
+    // the MORE deck (design/ui_v2/final/parts/more_deck.py): row 1 lifts by moreD, row 2 takes its place
+    juce::Image deckMore;
+    TextItem txt2[8];   // VIBRATO RATE SLIDE DRIVE WIDTH DELAY DECAY values, SYNC on/off
+    bool more() const { return proc.showMore; }
+    void setMore(bool on);
+    static bool isRow1(Ctl c) { return (c >= Tone && c <= Reverb) || (c >= PedA && c <= LKR); }
+    static bool isRow2(Ctl c) { return (c >= Vibrato && c <= Character) || c == Sync; }
+    float lift(Ctl c) const { return more() && isRow1(c) ? -moreLift() : 0.0f; }
+    float moreLift() const;
+    juce::Point<float> charDot(int i, float extra = 0.0f) const;   // CHARACTER position i (dot), design px
+    int charAt(juce::Point<float> d) const;                         // CHARACTER position under a click, or -1
+    void stepChoice(Ctl c, int delta);
+    void toggleSync();
+    juce::Rectangle<float> ctlBoundsRow(Ctl c) const;   // row-1 / strip / top-bar bounds before the MORE lift
     // per-preset instruments: 0 walnut (the plate), 1 maple, 2 red sparkle, 3 pearloid, 4 koa
     juce::Image skinImg[5], bgScaledPrev;
     int skin = 0; float skinFade = 1.0f;
@@ -158,6 +180,7 @@ private:
     std::unique_ptr<juce::TextEditor> valueEditor; Ctl editingCtl = None;
     Ctl pillAt(juce::Point<float> d) const;
     juce::Rectangle<float> pillBounds(Ctl c) const;
+    const TextItem* valueItem(Ctl c) const;   // the value-box text for a control, or nullptr
     void startValueEdit(Ctl c);
     void finishValueEdit(bool apply);
 public:

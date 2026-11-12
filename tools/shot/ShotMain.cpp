@@ -188,10 +188,11 @@ int main(int argc, char* argv[]) {
         editor->mouseDown(ev({ 133.0f, 778.0f })); editor->mouseDrag(ev({ 133.0f, 728.0f })); editor->mouseUp(ev({ 133.0f, 728.0f }));
         check(std::abs(pv(ParamIDs::toneWarmth) - juce::jmin(1.0f, t0 + 0.2f)) < 0.01f, "dragging TONE up raises it");
         // volume slider: click at the right end -> 100 %
-        editor->mouseDown(ev({ 1180.0f, 935.0f })); editor->mouseUp(ev({ 1180.0f, 935.0f }));
+        editor->mouseDown(ev({ UiLayout::sliderX1 + 4.0f, 935.0f })); editor->mouseUp(ev({ UiLayout::sliderX1 + 4.0f, 935.0f }));
         check(pv(ParamIDs::volumePedal) > 0.98f, "clicking the slider's far end sets 100 %");
         // MIDI LEARN: button on, click REVERB, send CC 21 -> mapped; then CC 21 = 127 moves REVERB to 100 %
-        editor->mouseDown(ev({ 1437.0f, 931.0f })); editor->mouseUp(ev({ 1437.0f, 931.0f }));
+        const juce::Point<float> midiBtn { UiLayout::hitMidiLearn[0] + UiLayout::hitMidiLearn[2] * 0.5f, UiLayout::hitMidiLearn[1] + UiLayout::hitMidiLearn[3] * 0.5f };
+        editor->mouseDown(ev(midiBtn)); editor->mouseUp(ev(midiBtn));
         check(processor.midiLearn.learnMode, "MIDI LEARN button switches learn mode on");
         editor->mouseDown(ev({ 878.0f, 779.0f })); editor->mouseUp(ev({ 878.0f, 779.0f }));
         check(processor.midiLearn.armedParam() == ParamIDs::reverbMix, "clicking REVERB in learn mode arms it");
@@ -204,7 +205,7 @@ int main(int argc, char* argv[]) {
         juce::MemoryBlock blob; processor.getStateInformation(blob); processor.midiLearn.clearAll();
         processor.setStateInformation(blob.getData(), (int) blob.getSize());
         check(processor.midiLearn.ccFor(ParamIDs::reverbMix) == 21, "the assignment is saved with the session");
-        editor->mouseDown(ev({ 1437.0f, 931.0f })); editor->mouseUp(ev({ 1437.0f, 931.0f }));
+        editor->mouseDown(ev(midiBtn)); editor->mouseUp(ev(midiBtn));
         check(! processor.midiLearn.learnMode, "MIDI LEARN button switches learn mode off");
         // preset arrows
         const int pr0 = processor.getCurrentProgram();
@@ -369,6 +370,50 @@ int main(int argc, char* argv[]) {
             for (int i = 0; i < 90; ++i) ae->refreshVisualizer();
             check(! ae->isHintShowing(), "...and never again once it was dismissed");
         }
+        // MORE: the button opens the second row (row 1 lifts, the steel's floor pedals go under the deck); its knobs,
+        // CHARACTER's engraved names and SYNC work; LESS folds it away; the choice is kept with the session
+        {
+            auto* pm = dynamic_cast<PedalSteelAudioProcessorEditor*>(editor.get());
+            processor.loadPreset(0); pm->refreshVisualizer();
+            const juce::Point<float> moreBtn { UiLayout::hitMore[0] + UiLayout::hitMore[2] * 0.5f, UiLayout::hitMore[1] + UiLayout::hitMore[3] * 0.5f };
+            editor->mouseDown(ev(moreBtn)); editor->mouseUp(ev(moreBtn)); pm->refreshVisualizer();
+            check(pm->isMoreOpen(), "MORE opens the second row");
+            {
+                auto img = editor->createComponentSnapshot(editor->getLocalBounds());
+                auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_more.png");
+                f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
+            }
+            const float vx = UiLayout::row2X[0], vy = UiLayout::scallopCentre0[1];
+            const float v0 = pv(ParamIDs::vibratoDepth);
+            editor->mouseDown(ev({ vx, vy })); editor->mouseDrag(ev({ vx, vy - 50.0f })); editor->mouseUp(ev({ vx, vy - 50.0f }));
+            check(pv(ParamIDs::vibratoDepth) > v0 + 0.1f, "dragging VIBRATO up raises the bar vibrato");
+            const float gy = UiLayout::scallopCentre0[1] - UiLayout::moreD;   // GLIDE has moved up with row 1
+            const float g0 = pv(ParamIDs::barGlide);
+            editor->mouseDown(ev({ UiLayout::scallopCentre0[0], gy })); editor->mouseDrag(ev({ UiLayout::scallopCentre0[0], gy - 40.0f }));
+            editor->mouseUp(ev({ UiLayout::scallopCentre0[0], gy - 40.0f }));
+            check(pv(ParamIDs::barGlide) > g0 + 0.05f, "GLIDE still turns where row 1 now sits");
+            auto* fx = dynamic_cast<juce::AudioParameterChoice*>(processor.apvts.getParameter(ParamIDs::fxCharacter));
+            const float a8 = juce::degreesToRadians(UiLayout::charAngle[8]);
+            const juce::Point<float> rotary { UiLayout::charCentre[0] + (UiLayout::charDotR + 34.0f) * std::sin(a8),
+                                              UiLayout::charCentre[1] - (UiLayout::charDotR + 34.0f) * std::cos(a8) };
+            editor->mouseDown(ev(rotary)); editor->mouseUp(ev(rotary));
+            check(fx != nullptr && fx->getIndex() == 8, "clicking ROTARY on the CHARACTER dial picks the Leslie rotary");
+            const bool s0 = pv(ParamIDs::tempoSync) > 0.5f;
+            editor->mouseDown(ev({ UiLayout::syncCentre[0], UiLayout::syncCentre[1] })); editor->mouseUp(ev({ UiLayout::syncCentre[0], UiLayout::syncCentre[1] }));
+            check((pv(ParamIDs::tempoSync) > 0.5f) != s0, "SYNC switches host tempo sync");
+            {
+                pm->refreshVisualizer();
+                auto img = editor->createComponentSnapshot(editor->getLocalBounds());
+                auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_more_set.png");
+                f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
+            }
+            juce::MemoryBlock blob; processor.getStateInformation(blob); processor.showMore = false;
+            processor.setStateInformation(blob.getData(), (int) blob.getSize());
+            check(processor.showMore, "the MORE row stays open with the session");
+            editor->mouseDown(ev(moreBtn)); editor->mouseUp(ev(moreBtn)); pm->refreshVisualizer();
+            check(! pm->isMoreOpen(), "LESS folds the second row away");
+            processor.loadPreset(0); pm->refreshVisualizer();
+        }
         std::cout << (fails == 0 ? "all interaction tests passed" : "SOME INTERACTION TESTS FAILED") << std::endl;
         // per-preset instruments: 04 maple, 06 red sparkle, 13 pearloid, 18 koa, the rest walnut; user presets keep their finish
         {
@@ -524,13 +569,13 @@ int main(int argc, char* argv[]) {
                 te->setText("200 ms"); te->onReturnKey();
             }
             check(std::abs(plain(ParamIDs::barGlide) - 200.0f) < 0.6f && pe4->getValueEditor() == nullptr, "typing 200 ms + Enter sets GLIDE to 200 ms");
-            pe4->applyTypedValue(0, "42 %");
+            pe4->applyTypedValue(PedalSteelAudioProcessorEditor::kCtlTone, "42 %");
             check(std::abs(plain(ParamIDs::toneWarmth) - 0.42f) < 0.002f, "TONE accepts '42 %'");
-            pe4->applyTypedValue(6, "-6.5 dB");
+            pe4->applyTypedValue(PedalSteelAudioProcessorEditor::kCtlTrim, "-6.5 dB");
             check(std::abs(plain(ParamIDs::outputLevel) + 6.5f) < 0.06f, "TRIM accepts '-6.5 dB'");
-            pe4->applyTypedValue(7, "150");
+            pe4->applyTypedValue(PedalSteelAudioProcessorEditor::kCtlVolume, "150");
             check(plain(ParamIDs::volumePedal) > 0.999f, "out-of-range input is clamped (150 % -> 100 %)");
-            check(! pe4->applyTypedValue(4, "abc"), "nonsense input is ignored");
+            check(! pe4->applyTypedValue(PedalSteelAudioProcessorEditor::kCtlEcho, "abc"), "nonsense input is ignored");
             juce::MessageManager::getInstance()->runDispatchLoopUntil(20);
         }
                 // a long user preset name scrolls through the display

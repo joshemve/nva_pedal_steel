@@ -5,7 +5,7 @@ namespace UiLayout {
     inline constexpr float sp_meter_on[4] = { 1257.00f, 42.00f, 163.50f, 22.00f };   // x, y, w, h
     inline constexpr float sp_slider_thumb[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
     inline constexpr float sp_slider_fill[4] = { 767.50f, 909.50f, 424.50f, 49.50f };   // x, y, w, h
-    inline constexpr float sp_midi_on[4] = { 1345.00f, 897.50f, 183.50f, 61.50f };   // x, y, w, h
+    inline constexpr float sp_midi_on[4] = { 1244.00f, 897.50f, 183.50f, 61.50f };   // x, y, w, h
     inline constexpr float sp_tone_bar[4] = { 790.00f, 127.00f, 55.00f, 145.00f };   // x, y, w, h
     inline constexpr float sp_tone_bar_home[4] = { 800.00f, 200.00f, 4.00f, 4.00f };   // x, y, w, h
     inline constexpr float sp_small_deck[4] = { 69.00f, 683.50f, 1489.50f, 271.50f };   // x, y, w, h
@@ -41,7 +41,7 @@ namespace UiLayout {
     inline constexpr float skinBodyY[5] = { 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };   // UI px: bottom edge of each instrument's body (walnut, maple, redsparkle, pearloid, koa)
     inline constexpr int meterSegments = 15;
     inline constexpr int meterSegEnd[15] = { 28, 49, 69, 90, 109, 129, 148, 168, 189, 208, 229, 249, 269, 290, 310 };   // sprite px (2x) where each lit segment ends
-    inline constexpr float sliderX0 = 793.25f, sliderX1 = 1161.25f;   // handle centre at value 0 and 1 (UI px) = first/last tick
+    inline constexpr float sliderX0 = 793.25f, sliderX1 = 1060.25f;   // handle centre at value 0 and 1 (UI px) = first/last tick
     inline constexpr float sliderThumbCx = 1063.75f;               // handle centre as drawn in sp_slider_thumb
     inline constexpr int ptrTONEFrames = 128, ptrTONEFramePx = 134;
     inline constexpr float ptrTONEOrigin[2] = { 97.00f, 737.50f };   // UI px, top-left of each frame
@@ -76,7 +76,7 @@ namespace UiLayout {
     inline constexpr float txt_mode[4] = { 303.12f, 929.50f, 188.25f, 209.00f };   // ink centre x, ink centre y, ink width of txtRef, ink left
     inline constexpr const char* txtRef_mode = "Smart Auto-Pedal E9";
     inline constexpr unsigned int txtColour_mode = 0xfffaf7f5;   // font Inter-w500-o14
-    inline constexpr float txt_vol[4] = { 1241.62f, 927.50f, 39.25f, 1222.00f };   // ink centre x, ink centre y, ink width of txtRef, ink left
+    inline constexpr float txt_vol[4] = { 1140.62f, 927.50f, 39.25f, 1121.00f };   // ink centre x, ink centre y, ink width of txtRef, ink left
     inline constexpr const char* txtRef_vol = "72 %";
     inline constexpr unsigned int txtColour_vol = 0xfff8f6f2;   // font Poppins-Medium
     inline constexpr float txt_db[4] = { 1554.31f, 53.50f, 50.62f, 1529.00f };   // ink centre x, ink centre y, ink width of txtRef, ink left
@@ -96,7 +96,7 @@ namespace UiLayout {
     inline constexpr unsigned int txtSColour_val_REVERB = 0xffe2e2e1;
     inline constexpr float txtS_mode[4] = { 308.00f, 928.50f, 206.00f, 205.00f };   // small window: ink cx, cy, ink width of txtRef, ink left
     inline constexpr unsigned int txtSColour_mode = 0xffdbdad8;
-    inline constexpr float txtS_vol[4] = { 1244.25f, 927.00f, 49.50f, 1219.50f };   // small window: ink cx, cy, ink width of txtRef, ink left
+    inline constexpr float txtS_vol[4] = { 1143.25f, 927.00f, 49.50f, 1118.50f };   // small window: ink cx, cy, ink width of txtRef, ink left
     inline constexpr unsigned int txtSColour_vol = 0xffe3e2e1;
     inline constexpr float txtS_db[4] = { 1551.25f, 54.50f, 59.50f, 1521.50f };   // small window: ink cx, cy, ink width of txtRef, ink left
     inline constexpr unsigned int txtSColour_db = 0xff1d1712;
@@ -117,8 +117,14 @@ namespace UiLayout {
     inline constexpr float hitPrev[4] = { 542.86f, 40.88f, 51.02f, 39.88f };   // x, y, w, h
     inline constexpr float hitNext[4] = { 1005.10f, 40.88f, 51.02f, 39.88f };   // x, y, w, h
     inline constexpr float hitMode[4] = { 186.73f, 909.27f, 284.69f, 37.89f };   // x, y, w, h
-    inline constexpr float hitMidiLearn[4] = { 1359.18f, 909.27f, 154.08f, 37.89f };   // x, y, w, h
-    inline constexpr float hitSlider[4] = { 767.35f, 912.26f, 424.49f, 42.87f };   // x, y, w, h
+    inline constexpr float hitMidiLearn[4] = { 1258.18f, 909.27f, 154.08f, 37.89f };   // x, y, w, h
+    inline constexpr float hitSlider[4] = { 767.35f, 912.26f, 323.49f, 42.87f };   // x, y, w, h
+    inline constexpr float hitMore[4] = { 1428.00f, 908.50f, 87.00f, 39.50f };   // x, y, w, h
+    inline constexpr float moreD = 218.00f, moreDeckTop = 421.00f;   // UI px: row-1 lift; deck_more.jpg starts here (to 1000)
+    inline constexpr float row2X[7] = { 135.0f, 270.0f, 405.0f, 562.0f, 706.0f, 882.0f, 1030.0f };   // VIBRATO RATE SLIDE (scallop) DRIVE WIDTH (dome) DELAY DECAY (space)
+    inline constexpr float charCentre[2] = { 1282.00f, 790.00f }, charScale = 1.040f, charDotR = 52.0f;
+    inline constexpr float charAngle[11] = { -135.0f, -108.0f, -81.0f, -54.0f, -27.0f, 0.0f, 27.0f, 54.0f, 81.0f, 108.0f, 135.0f };   // deg clockwise from 12 o'clock, STUDIO..ROOM
+    inline constexpr float syncCentre[2] = { 1508.00f, 780.00f }, lampACentre[2] = { 1028.00f, 733.50f };
     inline constexpr float hitPedalA[4] = { 981.50f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
     inline constexpr float hitPedalB[4] = { 1070.00f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
     inline constexpr float hitPedalC[4] = { 1158.50f, 688.00f, 88.50f, 184.50f };   // x, y, w, h

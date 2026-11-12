@@ -35,6 +35,36 @@ A Mix node's colour sockets are inputs[6]/[7], output[2] in Blender 5. Don't kil
 with SendUserFile, not text. When colour is off, measure and tune, or give him a masked slider page; never several rounds
 of guesses. He circles problems on screenshots; fix exactly what's circled, then show the result.
 
+**Open picks page (2026-11-11 night):** https://claude.ai/artifact/B4q5wc6zjsvXGAyEoLb8Pb walks Joshua through every open
+decision below, one visual question per screen; answers land in its db collection `picks` (doc per step: more, midi, shape,
+shape_<finish>, hw_<finish>; fields pick, note). Read them with ArtifactData list before starting design work.
+Hardware option letters A/B/C = `final/steel3d/hw_variants.sh` (A = the old default).
+Answers so far (2026-11-12): more = d4 (taller deck on MORE); midi = keep as built; hardware rosewood C, maple B, red sparkle C,
+pearloid A, koa A (now the defaults in `steel_3d.py` HW_PICKS; re-rendered, packed, 67 tests pass; sheet
+renders/hw_picks_before_after.jpg); shape = undecided ("I'd have to see shapes and styles I approve of first").
+**Superseded same day:** Joshua re-answered hardware: rosewood A, maple B, red sparkle B, pearloid B, koa A (in HW_PICKS,
+re-rendered, packed, 67 tests pass; renders/hw_picks_in_plugin.jpg). more_layout = none ("SLIDE + rotary closest, but the
+knob doesn't fit"); round30 c1-c3 also none: he wants the m2 rotary WITH marked lock positions, and a smart knob colour/shape
+system -> round31 r1-r3 (MOTION = FEEL scalloped cream, AMP = VOICE dome cream, TIME = SPACE black, CHARACTER black stepped).
+Shape targets: s3_1 (60s blonde bullnose) and s6_3 (double neck). Not every preset gets its own shape, only special ones; he
+asked Claude to choose (several presets may share a design). Chosen: bullnose -> 04 Montana (blonde maple, replaces its box),
+05 Nashville 400 and 09 Cryin' In My Beer (in rosewood); double neck E9/C6 -> 23 Western Swing C6th and 11 Manual E9th
+Workstation. Everything else keeps the approved box steel. Next: model both in steel_3d.py at the plugin camera.
+The picker page hides settled questions via SETTLED in its script.
+**MORE deck picked: round31 r3_2** (row 2 MOTION VIBRATO/RATE/SLIDE as FEEL scalloped cream, AMP DRIVE/WARMTH as VOICE domes,
+TIME DELAY/DECAY as SPACE black, CHARACTER black stepped selector with labelled lock positions, SYNC toggle; LESS button).
+All 11 fxCharacter values are used by presets, so the selector needs 11 labelled spots, not r3_2's 6: round32 k11 tests that.
+**Built (2026-11-12):** `final/parts/more_deck.py` (called by gen_layout.py) makes `deck_more.jpg` from the plugin's own
+background: row 1 lifts by moreD (218 UI px), row 2 sits on row 1's old rows on a cleaned panel (tick rings, value boxes,
+dividers, rules copied from row 1; labels in Montserrat Bold fitted to the baked ones), CHARACTER has 11 engraved spots at
+-135..135 deg (the knob strip's range), SYNC is a lamp + value box. The bottom strip (both states) has a shorter slider so
+MORE/LESS fits after MIDI LEARN. Editor: Ctl enum gained Vibrato..Character, Sync, MoreBtn; proc.showMore persists in state.
+Mapping: VIBRATO vibratoDepth, RATE vibratoRate, SLIDE barSlideNoise, DRIVE ampDrive, WIDTH stereoWidth (concept said
+WARMTH, but TONE already is toneWarmth), DELAY delayTime, DECAY reverbDecay, CHARACTER fxCharacter (names STUDIO TAPE OPTO
+PHASER SPRING R&B WARBLE SHIMMER ROTARY GATE ROOM), SYNC tempoSync. 74 UI tests pass (7 new). Sheet: renders/more_deck_vs_concept.jpg.
+Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin with the real Motion/FX params) and
+`targets` (multi-select of round29 s1-s8 real-world steel styles, the shape targets).
+
 **Still open (not started or unanswered):** hardware picker artifact (3f53TJPzbBxYsPc1psGRk7) never answered; the More drawer
 (Motion + Effects) and MIDI Learn designs are unpicked (see "Where it stands" below); each preset's own instrument
 design beyond the finish is still the same 3D model.

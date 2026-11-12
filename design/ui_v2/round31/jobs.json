@@ -1,0 +1,26 @@
+[
+ {
+  "name": "r1",
+  "prompt": "Image 1 is our pedal steel plugin in its MORE state; the owner likes its layout and that CHARACTER is a stepped rotary with marked positions to lock to, but its knob does not fit with the others. Image 2 is the plugin's normal state, the source of truth for knob styles. Keep the top bar, steel, rug, walnut deck frame, row 1, section rules, value boxes, fonts and the bottom strip (MODE, VOLUME PEDAL, MIDI LEARN, LESS) exactly. Redesign row 2 with a deliberate knob system matching row 1's meaning: MOTION (VIBRATO, RATE, SLIDE) uses the cream SCALLOPED knobs exactly like FEEL's GLIDE/SWELL (movement = feel); AMP (DRIVE, WARMTH) uses the small cream DOME knobs exactly like VOICE's TONE/PICK (tone); TIME (DELAY, DECAY) uses the black scalloped knobs exactly like SPACE's ECHO/REVERB (space). All row-2 knobs on one baseline, same sizes as their row-1 twins, each with its tick ring, label and value box. Then CHARACTER (it picks the effects character, so it belongs to the black effects family) at the right with the SYNC toggle: CHARACTER is a black scalloped knob the same size as ECHO, ringed by 11 clearly engraved detent marks (bigger dots than the normal tick ring) so you see it locks into positions; no words around it; its value box below reads 'STUDIO'. No orange accents (amber only for LEDs), matte, calm, legible, not cheesy. 1600x1000. Generate 2 images.",
+  "images": [
+   "round28/m2_1.png",
+   "../../renders/ui_screenshot.png"
+  ]
+ },
+ {
+  "name": "r2",
+  "prompt": "Image 1 is our pedal steel plugin in its MORE state; the owner likes its layout and that CHARACTER is a stepped rotary with marked positions to lock to, but its knob does not fit with the others. Image 2 is the plugin's normal state, the source of truth for knob styles. Keep the top bar, steel, rug, walnut deck frame, row 1, section rules, value boxes, fonts and the bottom strip (MODE, VOLUME PEDAL, MIDI LEARN, LESS) exactly. Redesign row 2 with a deliberate knob system matching row 1's meaning: MOTION (VIBRATO, RATE, SLIDE) uses the cream SCALLOPED knobs exactly like FEEL's GLIDE/SWELL (movement = feel); AMP (DRIVE, WARMTH) uses the small cream DOME knobs exactly like VOICE's TONE/PICK (tone); TIME (DELAY, DECAY) uses the black scalloped knobs exactly like SPACE's ECHO/REVERB (space). All row-2 knobs on one baseline, same sizes as their row-1 twins, each with its tick ring, label and value box. Then CHARACTER (it picks the effects character, so it belongs to the black effects family) at the right with the SYNC toggle: CHARACTER is a black skirted pointer knob (classic stepped selector switch on vintage studio gear) the same diameter as ECHO, with a bold cream pointer line, and 11 engraved short tick marks numbered 1 to 11 around it in tiny cream engraving; value box below reads 'STUDIO'. No orange accents (amber only for LEDs), matte, calm, legible, not cheesy. 1600x1000. Generate 2 images.",
+  "images": [
+   "round28/m2_1.png",
+   "../../renders/ui_screenshot.png"
+  ]
+ },
+ {
+  "name": "r3",
+  "prompt": "Image 1 is our pedal steel plugin in its MORE state; the owner likes its layout and that CHARACTER is a stepped rotary with marked positions to lock to, but its knob does not fit with the others. Image 2 is the plugin's normal state, the source of truth for knob styles. Keep the top bar, steel, rug, walnut deck frame, row 1, section rules, value boxes, fonts and the bottom strip (MODE, VOLUME PEDAL, MIDI LEARN, LESS) exactly. Redesign row 2 with a deliberate knob system matching row 1's meaning: MOTION (VIBRATO, RATE, SLIDE) uses the cream SCALLOPED knobs exactly like FEEL's GLIDE/SWELL (movement = feel); AMP (DRIVE, WARMTH) uses the small cream DOME knobs exactly like VOICE's TONE/PICK (tone); TIME (DELAY, DECAY) uses the black scalloped knobs exactly like SPACE's ECHO/REVERB (space). All row-2 knobs on one baseline, same sizes as their row-1 twins, each with its tick ring, label and value box. Then CHARACTER (it picks the effects character, so it belongs to the black effects family) at the right with the SYNC toggle: CHARACTER is a black scalloped knob the same size as ECHO with 6 engraved lock positions labelled in tiny cream engraved caps around it: STUDIO, TAPE, SPRING, PHASER, ROTARY, SHIMMER (spaced evenly and readable, like the printed positions on a real amp's selector), pointer on STUDIO. No orange accents (amber only for LEDs), matte, calm, legible, not cheesy. 1600x1000. Generate 2 images.",
+  "images": [
+   "round28/m2_1.png",
+   "../../renders/ui_screenshot.png"
+  ]
+ }
+]

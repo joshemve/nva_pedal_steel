@@ -1,0 +1,6 @@
+Reading prompt from stdin...
+{"type":"thread.started","thread_id":"01a1d079-8711-74f0-9faa-e0fac98cbae8"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate two studio photographs with the reference’s camera framing and your specified boutique materials and hardware."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"Image 1: Dark figured walnut pedal steel with brushed nickel hardware and brass-footed wooden legs.\nImage 2: Honey-colored curly maple pedal steel with matching wooden changer cover against warm grey."}}
+{"type":"turn.completed","usage":{"input_tokens":255515,"cached_input_tokens":249344,"cache_write_input_tokens":0,"output_tokens":963,"reasoning_output_tokens":72}}

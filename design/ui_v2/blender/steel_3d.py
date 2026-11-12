@@ -227,10 +227,16 @@ KEYMATS = {"alu": M_ALU, "chrome": M_CHROME,
            "ivory": mat("IvoryKey", (0.80, 0.70, 0.50), 0.0, 0.25, coat=0.6),
            "pearl": mat("PearlKey", (0.86, 0.84, 0.79), 0.0, 0.18, coat=1.0),
            "ebony": mat("EbonyKey", (0.025, 0.018, 0.014), 0.0, 0.30, coat=0.7)}
-M_END = {"satin": M_ALU, "chrome": M_CHROME, "nickel": M_NICKEL}[HW("HW_END", "chrome" if FINISH in ("maple", "redsparkle") else "satin")]
-M_KEY = KEYMATS[HW("HW_KEYS", "ivory" if FINISH == "maple" else "alu")]
-M_KH = {"satin": M_ALU, "polished": M_CHROME, "black": M_BLACKANO}[HW("HW_KEYHEAD", "satin")]
-PICKUP = HW("HW_PICKUP", "black")
+# Joshua's hardware picks (2026-11-12, picker page hw_*, second answer): rosewood A, maple B, red sparkle B,
+# pearloid B, koa A (A = the satin/alu/black/satin default)
+HW_PICKS = {"maple": dict(KEYHEAD="polished", KEYS="ivory", PICKUP="ring", END="chrome"),
+            "redsparkle": dict(KEYHEAD="polished", KEYS="chrome", PICKUP="chrome", END="chrome"),
+            "pearloid": dict(KEYHEAD="polished", KEYS="pearl", PICKUP="ring", END="nickel")}
+_hw = HW_PICKS.get(FINISH, {})
+M_END = {"satin": M_ALU, "chrome": M_CHROME, "nickel": M_NICKEL}[HW("HW_END", _hw.get("END", "satin"))]
+M_KEY = KEYMATS[HW("HW_KEYS", _hw.get("KEYS", "alu"))]
+M_KH = {"satin": M_ALU, "polished": M_CHROME, "black": M_BLACKANO}[HW("HW_KEYHEAD", _hw.get("KEYHEAD", "satin"))]
+PICKUP = HW("HW_PICKUP", _hw.get("PICKUP", "black"))
 M_INLAY = mat("Inlay", (0.020, 0.008, 0.004), 0.0, 0.35, coat=0.8)
 
 

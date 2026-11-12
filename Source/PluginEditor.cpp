@@ -40,10 +40,15 @@ int frameFor(float angleDeg, int frames) {
 }
 // the names printed on the panel (parameters keep their engine names for hosts)
 const char* panelLabel(int c) {
-    static const char* names[] = { "TONE", "PICK", "GLIDE", "SWELL", "ECHO", "REVERB", "TRIM", "VOLUME PEDAL",
-                                   "PEDAL A", "PEDAL B", "PEDAL C", "KNEE LEVER LKL", "KNEE LEVER LKR", "MODE" };
-    return c >= 0 && c < 14 ? names[c] : "";
+    static const char* names[] = { "TONE", "PICK", "GLIDE", "SWELL", "ECHO", "REVERB",
+                                   "VIBRATO", "RATE", "SLIDE", "DRIVE", "WIDTH", "DELAY", "DECAY", "CHARACTER",
+                                   "TRIM", "VOLUME PEDAL", "PEDAL A", "PEDAL B", "PEDAL C", "KNEE LEVER LKL", "KNEE LEVER LKR",
+                                   "SYNC", "MODE" };
+    return c >= 0 && c < (int) (sizeof(names) / sizeof(names[0])) ? names[c] : "";
 }
+// the CHARACTER dial's engraved positions (fxCharacter choices 0..10, in order)
+const char* kCharNames[11] = { "STUDIO", "TAPE", "OPTO", "PHASER", "SPRING", "R&B", "WARBLE", "SHIMMER", "ROTARY", "GATE", "ROOM" };
+constexpr Anchor kLinear{ 0.5f, 0.0f };   // the MORE row has no design reference to match: value -> angle is a straight line
 juce::Point<float> ptrCentre(const float* o, int px) { return { o[0] + px * 0.25f, o[1] + px * 0.25f }; }
 
 const juce::Rectangle<float> kSteelArea{ 120.0f, 80.0f, 1360.0f, 600.0f };   // bar, strings, floor pedals, knee levers
@@ -129,6 +134,10 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     setTxtS(7, poppinsMedium, txtRef_mode, txtS_mode, txtSColour_mode, true);
     setTxtS(8, poppinsSemi, txtRef_db, txtS_db, txtSColour_db);
     spSmallDeck = loadImage(BinaryData::sp_small_deck_png, BinaryData::sp_small_deck_pngSize);
+    deckMore = loadImage(BinaryData::deck_more_jpg, BinaryData::deck_more_jpgSize);
+    for (int i = 0; i < 8; ++i) {   // the MORE row's value boxes sit on row 1's old rows: TONE's text, moved along x
+        txt2[i] = txt[0]; txt2[i].cx = i < 7 ? row2X[i] : syncCentre[0]; prepareText(txt2[i]);
+    }
     skin = skinForCurrentPreset();   // instrument layers load on demand (only the one showing)
     spSmallTop = loadImage(BinaryData::sp_small_top_png, BinaryData::sp_small_top_pngSize);
 
@@ -236,6 +245,73 @@ void PedalSteelAudioProcessorEditor::buildAccessibility() {
         sp.valueText = [this] { return juce::String(proc.midiLearn.learnMode ? "On" : "Off"); };
         add(MidiLearnBtn, sp);
     }
+    // the MORE row (appended so the controls above keep their order)
+    for (Ctl c : { Vibrato, Rate, Slide, Drive, Width, Delay, Decay, Character }) {
+        AccessibleControl::Spec sp; sp.kind = AccessibleControl::Kind::Slider; sp.name = panelLabel(c);
+        if (auto* p = param(c)) sp.help = p->getName(64);
+        sp.param = param(c); sp.valueText = [this, c] { return valueText(c); };
+        add(c, sp);
+    }
+    {
+        AccessibleControl::Spec sp; sp.kind = AccessibleControl::Kind::Toggle; sp.name = "Sync";
+        if (auto* p = param(Sync)) sp.help = p->getName(64);
+        sp.param = param(Sync); sp.valueText = [this] { return valueText(Sync); };
+        sp.press = [this] { toggleSync(); };
+        sp.isOn = [this] { return norm(Sync) > 0.5f; };
+        add(Sync, sp);
+    }
+    button(MoreBtn, "More", "Shows or hides the second row: vibrato, amp, delay time, reverb decay and effect character",
+           [this] { return juce::String(more() ? "Open" : "Closed"); }, [this] { setMore(! more()); });
+    for (size_t i = 0; i < a11y.size(); ++i) a11y[i]->setVisible(! isRow2(a11yCtl[i]) || more());
+}
+
+float PedalSteelAudioProcessorEditor::moreLift() const { return moreD; }
+
+void PedalSteelAudioProcessorEditor::toggleSync() {
+    if (auto* p = param(Sync)) {
+        const float b = p->getValue();
+        p->beginChangeGesture(); p->setValueNotifyingHost(b > 0.5f ? 0.0f : 1.0f); p->endChangeGesture();
+        recordChange(Sync, b); repaint();
+    }
+}
+
+void PedalSteelAudioProcessorEditor::setMore(bool on) {
+    if (on == more()) return;
+    finishValueEdit(true);
+    proc.showMore = on;
+    if (! on && isRow2(focusCtl)) focusCtl = MoreBtn;
+    if (! on && isRow2(hover)) hover = None;
+    for (size_t i = 0; i < a11y.size(); ++i) {
+        a11y[i]->setVisible(! isRow2(a11yCtl[i]) || on);
+        a11y[i]->setBounds((ctlBounds(a11yCtl[i]) * scale).getSmallestIntegerContainer());
+    }
+    rebuildScaledBackground();
+    repaint();
+}
+
+juce::Point<float> PedalSteelAudioProcessorEditor::charDot(int i, float extra) const {
+    const float a = juce::degreesToRadians(charAngle[juce::jlimit(0, 10, i)]), r = charDotR + extra;
+    return { charCentre[0] + r * std::sin(a), charCentre[1] - r * std::cos(a) };
+}
+
+int PedalSteelAudioProcessorEditor::charAt(juce::Point<float> d) const {
+    // a click on an engraved name or its dot picks that character
+    if (! more()) return -1;
+    int best = -1; float bestD = 1e9f;
+    for (int i = 0; i < 11; ++i) {
+        const auto dot = charDot(i), lab = charDot(i, 34.0f);
+        const float dd = juce::jmin(dot.getDistanceFrom(d) * 1.6f, lab.getDistanceFrom(d));
+        if (dd < bestD) { bestD = dd; best = i; }
+    }
+    return bestD < 26.0f && d.getDistanceFrom({ charCentre[0], charCentre[1] }) > charDotR - 8.0f ? best : -1;
+}
+
+void PedalSteelAudioProcessorEditor::stepChoice(Ctl c, int delta) {
+    auto* cp = dynamic_cast<juce::AudioParameterChoice*>(param(c)); if (cp == nullptr || delta == 0) return;
+    const float b = static_cast<juce::RangedAudioParameter*>(cp)->getValue();
+    const int n = juce::jlimit(0, cp->choices.size() - 1, cp->getIndex() + delta);
+    cp->beginChangeGesture(); *cp = n; cp->endChangeGesture();
+    recordChange(c, b); flashValue(c); repaint();
 }
 
 void PedalSteelAudioProcessorEditor::resized() {
@@ -273,6 +349,13 @@ void PedalSteelAudioProcessorEditor::rebuildScaledBackground() {
         const float k = (float) w / kDesignW; const float* b = boxes[skin];
         g.drawImage(skinImg[skin], juce::Rectangle<float>(b[0] * k, b[1] * k, b[2] * k, b[3] * k));
     }
+    if (more() && deckMore.isValid()) {   // the taller deck covers the floor pedals; a soft shadow falls on what's above
+        const float k = (float) w / kDesignW, top = moreDeckTop * k, sh = 14.0f * k;
+        g.setGradientFill(juce::ColourGradient(juce::Colours::black.withAlpha(0.0f), 0.0f, top - sh,
+                                               juce::Colours::black.withAlpha(0.55f), 0.0f, top, false));
+        g.fillRect(juce::Rectangle<float>(0.0f, top - sh, (float) w, sh));
+        g.drawImage(deckMore, juce::Rectangle<float>(0.0f, top, (float) w, (kDesignH - moreDeckTop) * k));
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -280,9 +363,12 @@ void PedalSteelAudioProcessorEditor::rebuildScaledBackground() {
 
 juce::RangedAudioParameter* PedalSteelAudioProcessorEditor::param(Ctl c) const {
     static const char* ids[] = { ParamIDs::toneWarmth, ParamIDs::pickSnap, ParamIDs::barGlide, ParamIDs::autoSwell,
-                                 ParamIDs::delayMix, ParamIDs::reverbMix, ParamIDs::outputLevel, ParamIDs::volumePedal,
+                                 ParamIDs::delayMix, ParamIDs::reverbMix,
+                                 ParamIDs::vibratoDepth, ParamIDs::vibratoRate, ParamIDs::barSlideNoise, ParamIDs::ampDrive,
+                                 ParamIDs::stereoWidth, ParamIDs::delayTime, ParamIDs::reverbDecay, ParamIDs::fxCharacter,
+                                 ParamIDs::outputLevel, ParamIDs::volumePedal,
                                  ParamIDs::pedalA, ParamIDs::pedalB, ParamIDs::pedalC, ParamIDs::leverLKL, ParamIDs::leverLKR,
-                                 ParamIDs::playMode };
+                                 ParamIDs::tempoSync, ParamIDs::playMode };
     return (c >= Tone && c <= Mode) ? proc.apvts.getParameter(ids[c]) : nullptr;
 }
 
@@ -336,9 +422,11 @@ bool PedalSteelAudioProcessorEditor::redo() {
 juce::String PedalSteelAudioProcessorEditor::valueText(Ctl c) const {
     auto* p = param(c); if (p == nullptr) return {};
     const float plain = p->convertFrom0to1(p->getValue());
-    if (c == Glide) return juce::String(juce::roundToInt(plain)) + " ms";
+    if (c == Glide || c == Delay) return juce::String(juce::roundToInt(plain)) + " ms";
+    if (c == Rate) return juce::String(plain, 1) + " Hz";
     if (c == Trim) return juce::String(plain, 1) + " dB";
-    if (c >= PedA && c <= LKR) return plain > 0.5f ? "On" : "Off";
+    if (c == Character) return kCharNames[juce::jlimit(0, 10, juce::roundToInt(plain))];
+    if ((c >= PedA && c <= LKR) || c == Sync) return plain > 0.5f ? "On" : "Off";
     return juce::String(juce::roundToInt(plain * 100.0f)) + " %";
 }
 
@@ -673,8 +761,19 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     g.setImageResamplingQuality(juce::Graphics::highResamplingQuality);
     if (! bgScaled.isValid()) g.drawImage(bg, juce::Rectangle<float>(0, 0, kDesignW, kDesignH));
 
-    if (compact()) { drawSprite(g, spSmallDeck, sp_small_deck); drawSprite(g, spSmallTop, sp_small_top); }   // small_1 labels
-    drawSteel(g);
+    if (compact()) {   // small_1 labels (row 1 lifts with the MORE deck; the strip stays)
+        if (more()) {
+            { juce::Graphics::ScopedSaveState a(g); g.reduceClipRegion(juce::Rectangle<int>(0, 0, (int) kDesignW, juce::roundToInt(900.0f - moreLift())));
+              g.addTransform(juce::AffineTransform::translation(0.0f, -moreLift())); drawSprite(g, spSmallDeck, sp_small_deck); }
+            { juce::Graphics::ScopedSaveState b(g); g.reduceClipRegion(juce::Rectangle<int>(0, 900, (int) kDesignW, 100)); drawSprite(g, spSmallDeck, sp_small_deck); }
+        } else drawSprite(g, spSmallDeck, sp_small_deck);
+        drawSprite(g, spSmallTop, sp_small_top);
+    }
+    {   // with the MORE deck open, the steel ends where the deck begins
+        juce::Graphics::ScopedSaveState ss(g);
+        if (more()) g.reduceClipRegion(juce::Rectangle<int>(0, 0, (int) kDesignW, juce::roundToInt(moreDeckTop)));
+        drawSteel(g);
+    }
 
     // preset display, meter, trim
     g.drawImage(dispImg, R(displayBox));
@@ -684,7 +783,10 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     }
     drawStripFrame(g, ptrTrim, trimFrame(), { ptrTRIMOrigin[0], ptrTRIMOrigin[1], ptrTRIMFramePx * 0.5f, ptrTRIMFramePx * 0.5f });
 
-    // deck knobs
+    // deck knobs (row 1 lifts by moreD when the MORE deck is open)
+    {
+    juce::Graphics::ScopedSaveState rowOne(g);
+    if (more()) g.addTransform(juce::AffineTransform::translation(0.0f, -moreLift()));
     auto knobAngle = [&](Ctl c) {
         const Anchor a = c == Tone ? kTone : c == Pick ? kPick : c == Glide ? kGlide : c == Swell ? kSwell : c == Echo ? kEcho : kReverb;
         return anchored(norm(c), a);
@@ -707,16 +809,48 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     drawSprite(g, d3dLamp[2], d3d_lamp_C, 0, 1e9f, pedalShown(2));
     drawFloorLayer(g, d3dLever[0], d3d_lever_L, d3dFrames_lever_L, pedalShown(3), 0.0f);
     drawFloorLayer(g, d3dLever[1], d3d_lever_R, d3dFrames_lever_R, pedalShown(4), 0.0f);
+    const Ctl vals1[6] = { Tone, Pick, Glide, Swell, Echo, Reverb };
+    const TextItem* T1 = compact() ? txtS : txt;
+    for (int i = 0; i < 6; ++i) if (editingCtl != vals1[i]) drawText(g, T1[i], valueText(vals1[i]));
+    }
+
+    if (more()) {   // the MORE row: MOTION (FEEL's scallops), AMP (VOICE's domes), TIME (SPACE's knobs), CHARACTER, SYNC
+        auto lin = [&](Ctl c) { return anchored(norm(c), kLinear); };
+        auto at = [](float cx, float cy, int px, float k = 1.0f) { const float s = px * 0.5f * k; return juce::Rectangle<float>(cx - s * 0.5f, cy - s * 0.5f, s, s); };
+        const Ctl sc[3] = { Vibrato, Rate, Slide };
+        for (int i = 0; i < 3; ++i) drawStripFrame(g, scallop, frameFor(lin(sc[i]), scallopFrames), at(row2X[i], scallopCentre0[1], scallopFramePx));
+        const float domeOff = ptrTONEFramePx * 0.25f;
+        drawStripFrame(g, ptrTone, frameFor(lin(Drive), ptrTONEFrames), { row2X[3] - domeOff, ptrTONEOrigin[1], ptrTONEFramePx * 0.5f, ptrTONEFramePx * 0.5f });
+        drawStripFrame(g, ptrTone, frameFor(lin(Width), ptrTONEFrames), { row2X[4] - domeOff, ptrTONEOrigin[1], ptrTONEFramePx * 0.5f, ptrTONEFramePx * 0.5f });
+        drawStripFrame(g, space, frameFor(lin(Delay), spaceFrames), at(row2X[5], spaceCentre0[1], spaceFramePx));
+        drawStripFrame(g, space, frameFor(lin(Decay), spaceFrames), at(row2X[6], spaceCentre0[1], spaceFramePx));
+        auto* cp = dynamic_cast<juce::AudioParameterChoice*>(param(Character));
+        const int ci = cp ? juce::jlimit(0, 10, cp->getIndex()) : 0;
+        drawStripFrame(g, space, frameFor(charAngle[ci], spaceFrames), at(charCentre[0], charCentre[1], spaceFramePx, charScale));
+        {   // the chosen position's dot glows like a pilot lamp
+            juce::Graphics::ScopedSaveState ls(g);
+            const auto d = charDot(ci);
+            g.setGradientFill(juce::ColourGradient(kAmber.withAlpha(0.55f), d.x, d.y, kAmber.withAlpha(0.0f), d.x + 9.0f, d.y, true));
+            g.fillEllipse(juce::Rectangle<float>(18.0f, 18.0f).withCentre(d));
+            g.setColour(juce::Colour(0xffffe2b0)); g.fillEllipse(juce::Rectangle<float>(4.6f, 4.6f).withCentre(d));
+        }
+        if (norm(Sync) > 0.5f) {   // SYNC: pedal A's lit lamp, moved onto the SYNC lamp
+            juce::Graphics::ScopedSaveState ls(g);
+            g.drawImage(d3dLamp[0], juce::Rectangle<float>(d3d_lamp_A[0] + syncCentre[0] - lampACentre[0], d3d_lamp_A[1] + syncCentre[1] - lampACentre[1],
+                                                           d3d_lamp_A[2], d3d_lamp_A[3]));
+        }
+        const Ctl vals2[7] = { Vibrato, Rate, Slide, Drive, Width, Delay, Decay };
+        for (int i = 0; i < 7; ++i) if (editingCtl != vals2[i]) drawText(g, txt2[i], valueText(vals2[i]));
+        drawText(g, txt2[7], valueText(Sync).toUpperCase());
+    }
 
     // volume pedal slider: fill up to the handle, then the handle
     const float hx = anchored(norm(Volume), kVolume, sliderX0, sliderX1);
     drawSprite(g, spFill, sp_slider_fill, 0.0f, hx);
     drawSprite(g, spThumb, sp_slider_thumb, hx - sliderThumbCx);
 
-    // live text
-    const Ctl vals[6] = { Tone, Pick, Glide, Swell, Echo, Reverb };
+    // live text (the knob values are drawn with their rows above)
     const TextItem* T = compact() ? txtS : txt;
-    for (int i = 0; i < 6; ++i) if (editingCtl != vals[i]) drawText(g, T[i], valueText(vals[i]));
     if (editingCtl != Volume) drawText(g, T[6], valueText(Volume));
     if (auto* mp = dynamic_cast<juce::AudioParameterChoice*>(param(Mode))) drawText(g, T[7], mp->getCurrentChoiceName());
     if (editingCtl != Trim) drawText(g, T[8], valueText(Trim));
@@ -729,6 +863,21 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
 }
 
 juce::Rectangle<float> PedalSteelAudioProcessorEditor::ctlBounds(Ctl c) const {
+    auto circle = [](juce::Point<float> p, float r) { return juce::Rectangle<float>(p.x - r, p.y - r, 2 * r, 2 * r); };
+    if (isRow2(c) && ! more()) return {};
+    switch (c) {
+        case Vibrato: case Rate: case Slide: return circle({ row2X[c - Vibrato], scallopCentre0[1] }, 46);
+        case Drive: case Width: return circle({ row2X[c - Vibrato], ptrCentre(ptrTONEOrigin, ptrTONEFramePx).y }, 36);
+        case Delay: case Decay: return circle({ row2X[c - Vibrato], spaceCentre0[1] }, 40);
+        case Character: return circle({ charCentre[0], charCentre[1] }, 40.0f * charScale);
+        case Sync: return { syncCentre[0] - 40.0f, syncCentre[1] - 22.0f, 80.0f, 875.0f - (syncCentre[1] - 22.0f) };
+        case MoreBtn: return R(hitMore);
+        default: break;
+    }
+    return ctlBoundsRow(c).translated(0.0f, lift(c));
+}
+
+juce::Rectangle<float> PedalSteelAudioProcessorEditor::ctlBoundsRow(Ctl c) const {
     auto circle = [](juce::Point<float> p, float r) { return juce::Rectangle<float>(p.x - r, p.y - r, 2 * r, 2 * r); };
     switch (c) {
         case Tone:   return circle(ptrCentre(ptrTONEOrigin, ptrTONEFramePx), 36);
@@ -764,7 +913,7 @@ void PedalSteelAudioProcessorEditor::drawLearnOverlay(juce::Graphics& g) {
         const Ctl c = (Ctl) i; auto* p = param(c); if (p == nullptr) continue;
         const int cc = ml.ccFor(p->paramID);
         if (! on && cc < 0) continue;
-        auto b = ctlBounds(c);
+        auto b = ctlBounds(c); if (b.isEmpty()) continue;
         const bool isCircle = c <= Trim, isArmed = on && armed == p->paramID;
         if (on) {
             const float pulse = isArmed ? 0.5f + 0.5f * std::sin((float) animTime * 7.0f) : 0.0f;
@@ -787,7 +936,7 @@ void PedalSteelAudioProcessorEditor::drawLearnOverlay(juce::Graphics& g) {
                                                      : "MIDI LEARN: click a control, then move a controller. Click MIDI LEARN again to finish.";
         juce::Font f(juce::FontOptions(poppinsMedium).withHeight(13.0f));
         const float w = juce::GlyphArrangement::getStringWidth(f, help) + 28.0f;
-        juce::Rectangle<float> r(800.0f - w * 0.5f, 652.0f, w, 26.0f);
+        juce::Rectangle<float> r(800.0f - w * 0.5f, more() ? moreDeckTop - 32.0f : 652.0f, w, 26.0f);
         g.setColour(kInk); g.fillRoundedRectangle(r, 13.0f);
         g.setColour(kAmber.withAlpha(0.8f)); g.drawRoundedRectangle(r, 13.0f, 1.0f);
         g.setFont(f); g.setColour(kCream); g.drawText(help, r, juce::Justification::centred, false);
@@ -811,6 +960,7 @@ juce::String PedalSteelAudioProcessorEditor::tooltipFor(Ctl c) const {
         if (c <= Volume) s << "  " << valueText(c);
         if (c <= Volume && c != Trim) s << "  (double-click its value box to type)";
         s << "  -  " << p->getName(64);
+        if (c == Character) if (auto* cp = dynamic_cast<juce::AudioParameterChoice*>(p)) s << ": " << cp->getCurrentChoiceName();
         if (const int cc = proc.midiLearn.ccFor(p->paramID); cc >= 0) s << "  (MIDI CC " << cc << ")";
         return s;
     }
@@ -819,6 +969,7 @@ juce::String PedalSteelAudioProcessorEditor::tooltipFor(Ctl c) const {
         case Next: return "Next preset";
         case Display: return "Presets: click to browse, right-click for the quick list, scroll to step";
         case MidiLearnBtn: return "MIDI LEARN: assign hardware controllers. Right-click a control for its MIDI options";
+        case MoreBtn: return more() ? "LESS: fold the second row away" : "MORE: vibrato, amp drive and width, delay time, reverb decay, effect character";
         case Fretboard: case Pluck: return neckNoteText(hoverPos);
         default: return {};
     }
@@ -933,8 +1084,9 @@ void PedalSteelAudioProcessorEditor::timerCallback() {
 
 PedalSteelAudioProcessorEditor::Ctl PedalSteelAudioProcessorEditor::hitTest(juce::Point<float> d) const {
     auto inCircle = [&](juce::Rectangle<float> b) { return d.getDistanceFrom(b.getCentre()) <= b.getWidth() * 0.5f + 2.0f; };
-    for (int i = Tone; i <= Trim; ++i) if (inCircle(ctlBounds((Ctl) i))) return (Ctl) i;
-    for (Ctl c : { Volume, PedA, PedB, PedC, LKL, LKR, Mode, Prev, Next, Display, MidiLearnBtn, Fretboard, Pluck })
+    for (int i = Tone; i <= Trim; ++i) { const auto b = ctlBounds((Ctl) i); if (! b.isEmpty() && inCircle(b)) return (Ctl) i; }
+    if (charAt(d) >= 0) return Character;   // CHARACTER's engraved names and dots
+    for (Ctl c : { Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode, Prev, Next, Display, MidiLearnBtn, MoreBtn, Fretboard, Pluck })
         if (ctlBounds(c).contains(d)) return c;
     return None;
 }
@@ -1095,8 +1247,14 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
     if (c == MidiLearnBtn) { ml.learnMode = ! ml.learnMode; if (! ml.learnMode) ml.cancelLearn(); repaint(); return; }
     if (ml.learnMode && isLearnable(c)) { ml.armLearn(param(c)->paramID); repaint(); return; }
 
+    if (c == Character) if (const int ci = charAt(d); ci >= 0) {   // a click on a name picks it
+        if (auto* cp = dynamic_cast<juce::AudioParameterChoice*>(param(Character))) stepChoice(Character, ci - cp->getIndex());
+        return;
+    }
     switch (c) {
         case PedA: case PedB: case PedC: case LKL: case LKR: toggle(c); return;
+        case Sync: toggleSync(); return;
+        case MoreBtn: setMore(! more()); return;
         case Prev: proc.stepPreset(-1); return;
         case Next: proc.stepPreset(+1); return;
         case Display: openBrowser(); return;
@@ -1139,17 +1297,23 @@ void PedalSteelAudioProcessorEditor::mouseUp(const juce::MouseEvent& e) {
     mouseMove(e);
 }
 
+const PedalSteelAudioProcessorEditor::TextItem* PedalSteelAudioProcessorEditor::valueItem(Ctl c) const {
+    if (c >= Tone && c <= Reverb) return &txt[c - Tone];
+    if (c >= Vibrato && c <= Decay) return more() ? &txt2[c - Vibrato] : nullptr;
+    if (c == Volume) return &txt[6];
+    if (c == Trim) return &txt[8];
+    return nullptr;
+}
+
 juce::Rectangle<float> PedalSteelAudioProcessorEditor::pillBounds(Ctl c) const {
     // the outlined value boxes: under each deck knob, next to the volume slider, and the dB readout by TRIM
-    const int i = c == Volume ? 6 : c == Trim ? 8 : (int) c;
-    if (i < 0 || i > 8 || i == 7) return {};
-    const auto& t = txt[i];
+    const auto* t = valueItem(c); if (t == nullptr) return {};
     const float w = c == Trim ? 58.0f : 74.0f, h = c == Trim ? 24.0f : 28.0f;
-    return { t.cx - w * 0.5f, t.cy - h * 0.5f, w, h };
+    return { t->cx - w * 0.5f, t->cy + lift(c) - h * 0.5f, w, h };
 }
 
 PedalSteelAudioProcessorEditor::Ctl PedalSteelAudioProcessorEditor::pillAt(juce::Point<float> d) const {
-    for (Ctl c : { Tone, Pick, Glide, Swell, Echo, Reverb, Volume, Trim })
+    for (Ctl c : { Tone, Pick, Glide, Swell, Echo, Reverb, Vibrato, Rate, Slide, Drive, Width, Delay, Decay, Volume, Trim })
         if (pillBounds(c).contains(d)) return c;
     return None;
 }
@@ -1159,7 +1323,7 @@ bool PedalSteelAudioProcessorEditor::applyTypedValue(int ctl, const juce::String
     auto* p = param((Ctl) ctl); if (p == nullptr) return false;
     const auto t = text.trim(); if (t.isEmpty() || ! t.containsAnyOf("0123456789")) return false;
     float v = t.retainCharacters("0123456789.-+").getFloatValue();
-    const bool percentCtl = ctl != Glide && ctl != Trim;
+    const bool percentCtl = ctl != Glide && ctl != Trim && ctl != Rate && ctl != Delay;
     if (percentCtl) v = (v <= 1.0f && ! t.containsChar('%') && t.containsChar('.')) ? v : v / 100.0f;
     const auto range = p->getNormalisableRange();
     v = juce::jlimit(range.start, range.end, v);
@@ -1214,6 +1378,7 @@ void PedalSteelAudioProcessorEditor::mouseDoubleClick(const juce::MouseEvent& e)
 
 void PedalSteelAudioProcessorEditor::mouseWheelMove(const juce::MouseEvent& e, const juce::MouseWheelDetails& w) {
     const auto c = hitTest(toDesign(e.position));
+    if (c == Character) { if (w.deltaY != 0) stepChoice(c, w.deltaY > 0 ? 1 : -1); return; }
     if (c >= Tone && c <= Volume) {
         if (auto* p = param(c)) { const float b = norm(c); p->beginChangeGesture(); setNorm(c, b + w.deltaY * (e.mods.isShiftDown() ? 0.01f : 0.05f)); p->endChangeGesture(); recordChange(c, b, true); }
     } else if (c == Display || c == Prev || c == Next) {
@@ -1227,8 +1392,10 @@ void PedalSteelAudioProcessorEditor::mouseWheelMove(const juce::MouseEvent& e, c
 }
 
 void PedalSteelAudioProcessorEditor::moveFocus(int dir) {
-    static const Ctl order[] = { Display, Tone, Pick, Glide, Swell, Echo, Reverb, PedA, PedB, PedC, LKL, LKR, Mode, Volume, MidiLearnBtn, Trim };
-    constexpr int n = (int) (sizeof(order) / sizeof(order[0]));
+    std::vector<Ctl> order { Display, Tone, Pick, Glide, Swell, Echo, Reverb, PedA, PedB, PedC, LKL, LKR };
+    if (more()) for (Ctl c : { Vibrato, Rate, Slide, Drive, Width, Delay, Decay, Character, Sync }) order.push_back(c);
+    for (Ctl c : { Mode, Volume, MidiLearnBtn, MoreBtn, Trim }) order.push_back(c);
+    const int n = (int) order.size();
     int i = -1; for (int j = 0; j < n; ++j) if (order[j] == focusCtl) i = j;
     i = i < 0 ? (dir > 0 ? 0 : n - 1) : (i + dir + n) % n;
     focusCtl = order[i]; showFocus = true; repaint();
@@ -1258,7 +1425,11 @@ bool PedalSteelAudioProcessorEditor::keyPressed(const juce::KeyPress& k) {
     if (k.getModifiers().isCommandDown() && (code == 'Z' || code == 'z')) { if (k.getModifiers().isShiftDown()) redo(); else undo(); return true; }
     if (k.getModifiers().isCommandDown() && (code == 'Y' || code == 'y')) { redo(); return true; }
     if (code == juce::KeyPress::tabKey) { moveFocus(k.getModifiers().isShiftDown() ? -1 : 1); return true; }
-    const bool continuous = showFocus && focusCtl >= Tone && focusCtl <= Volume;
+    if (showFocus && focusCtl == Character) {   // arrows step one name
+        if (code == juce::KeyPress::upKey || code == juce::KeyPress::rightKey) { stepChoice(Character, 1); return true; }
+        if (code == juce::KeyPress::downKey || code == juce::KeyPress::leftKey) { stepChoice(Character, -1); return true; }
+    }
+    const bool continuous = showFocus && focusCtl >= Tone && focusCtl <= Volume && focusCtl != Character;
     if (continuous) {   // arrows nudge (shift = fine), page up/down = big steps, home/end = the ends
         const float fine = k.getModifiers().isShiftDown() ? 0.002f : 0.01f;
         float delta = 0.0f, to = 0.0f; bool set = false;
@@ -1279,6 +1450,8 @@ bool PedalSteelAudioProcessorEditor::keyPressed(const juce::KeyPress& k) {
             case Mode: showModeMenu(); return true;
             case Display: openBrowser(); return true;
             case MidiLearnBtn: ml.learnMode = ! ml.learnMode; if (! ml.learnMode) ml.cancelLearn(); repaint(); return true;
+            case MoreBtn: setMore(! more()); return true;
+            case Sync: if (! ml.learnMode) { toggleSync(); return true; } break;
             default:
                 if (ml.learnMode && isLearnable(focusCtl)) { ml.armLearn(param(focusCtl)->paramID); repaint(); return true; }
                 break;

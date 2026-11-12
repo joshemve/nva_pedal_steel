@@ -1,0 +1,18 @@
+[
+ {
+  "name": "m1",
+  "prompt": "Image 1 is our pedal steel plugin exactly as it is now (Northern Valley Audio). Keep EVERYTHING in it the same look, materials, fonts, knob styles, colours and lighting: cream top bar, LED preset name, the 3D steel on the Persian rug, the black walnut-trimmed control deck. Image 2 is the approved LAYOUT idea only (taller deck when MORE is pressed). Show the plugin in its MORE state, 1600x1000: the steel scene moves up and is cropped from below (steel stays the same size, true proportions, never squashed), and the one walnut-framed deck grows taller with a second row of knobs that sits on the exact same column grid, knob sizes and spacing as the first row, so it reads as one designed console, not a pop-up. Row 1 unchanged: VOICE (TONE, PICK), FEEL (GLIDE, SWELL), SPACE (ECHO, REVERB), A B C foot switches, LKL LKR levers. Row 2, same knob styles as the knob above each: MOTION (VIBRATO, RATE), AMP (DRIVE, WARMTH), TIME (DELAY TIME, DECAY); under the pedals/levers columns: a CHARACTER selector (small cream LED-font readout 'STUDIO' with arrows), a SYNC toggle and a WIDTH knob. Each knob has its value box like row 1. Bottom strip keeps MODE, VOLUME PEDAL, MIDI LEARN and gains a LESS button where MORE was. No orange accents (amber only for LEDs), matte panel, calm and legible from across a room, not cheesy. Generate 2 images.",
+  "images": [
+   "../../renders/ui_screenshot.png",
+   "round19/d4_1.png"
+  ]
+ },
+ {
+  "name": "m2",
+  "prompt": "Image 1 is our pedal steel plugin exactly as it is now (Northern Valley Audio). Keep EVERYTHING in it the same look, materials, fonts, knob styles, colours and lighting: cream top bar, LED preset name, the 3D steel on the Persian rug, the black walnut-trimmed control deck. Image 2 is the approved LAYOUT idea only (taller deck when MORE is pressed). Show the plugin in its MORE state, 1600x1000: the steel scene moves up and is cropped from below (steel stays the same size, true proportions, never squashed), and the one walnut-framed deck grows taller with a second row of knobs that sits on the exact same column grid, knob sizes and spacing as the first row, so it reads as one designed console, not a pop-up. Row 1 unchanged: VOICE (TONE, PICK), FEEL (GLIDE, SWELL), SPACE (ECHO, REVERB), A B C foot switches, LKL LKR levers. Row 2, same knob styles: MOTION (VIBRATO, RATE, SLIDE), AMP (DRIVE, WARMTH), TIME (DELAY, DECAY) spanning the knob columns; the pedals/levers columns hold CHARACTER as a small rotary selector with engraved positions and a SYNC toggle. Thin engraved section rules like row 1. Bottom strip keeps MODE, VOLUME PEDAL, MIDI LEARN plus a LESS button. No orange accents (amber only for LEDs), matte panel, calm and legible from across a room, not cheesy. Generate 2 images.",
+  "images": [
+   "../../renders/ui_screenshot.png",
+   "round19/d4_1.png"
+  ]
+ }
+]
