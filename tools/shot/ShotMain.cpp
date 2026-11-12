@@ -452,6 +452,24 @@ int main(int argc, char* argv[]) {
                 editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
                 check((pv(ParamIDs::pedalC) > 0.5f) != (c0 > 0.5f), "double neck: the deck's pedal C switch still answers in place");
                 editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
+                // the back neck plays too, in the other tuning: E9 behind the C6 preset 23, C6 behind the E9 preset 11
+                for (int pi : { 22, 10 }) {
+                    processor.loadPreset(pi); pe5->refreshVisualizer(); midiBuf.clear(); run(400);
+                    const int st = (int) processor.apvts.getRawParameterValue(ParamIDs::presetStyle)->load(), back = st == 4 ? 0 : 4;
+                    const juce::Point<float> p2 { (UiLayout::neck2Fret[4] + UiLayout::neck2Fret[5]) * 0.5f + 2.0f, UiLayout::neck2StringY[2] };
+                    editor->mouseDown(ev(p2)); run(40);
+                    auto s3 = processor.getLiveStatus();
+                    const float want = (float) (PedalSteelEngine::openStringMidi(back, 2) + 5);
+                    check(s3.stringEnergy[2] > 0.05f && std::abs(s3.stringPitchSemis[2] - want) < 0.3f && std::abs(s3.barPositionFret - 5.0f) < 0.1f,
+                          std::string("double neck back neck (") + (back == 4 ? "C6" : "E9") + "): string 3 at fret 5 sounds " + std::to_string(s3.stringPitchSemis[2]) + ", wants " + std::to_string(want));
+                    if (pi == 22) {
+                        pe5->refreshVisualizer();
+                        auto img = editor->createComponentSnapshot({ 200, 100, 1200, 360 });
+                        auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_doubleneck_back.png");
+                        f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
+                    }
+                    editor->mouseUp(ev(p2)); run(4);
+                }
                 {   // the double neck in the small window and with the MORE deck open
                     editor->setSize(1000, 625); pe5->refreshVisualizer();
                     auto a = editor->createComponentSnapshot(editor->getLocalBounds());

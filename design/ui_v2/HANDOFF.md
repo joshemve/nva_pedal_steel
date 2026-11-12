@@ -78,7 +78,7 @@ Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin 
 `targets` (multi-select of round29 s1-s8 real-world steel styles, the shape targets).
 
 **Open now (2026-11-12, night):** nothing Joshua asked for is unfinished. Waiting on him: his look at the new instruments
-and the MORE deck in the standalone, and permission to push ui-v2-design. Verified: 77 UI tests (PedalSteelShot), the
+and the MORE deck in the standalone, and permission to push ui-v2-design. Verified: 79 UI tests (PedalSteelShot), the
 VST3 host test, and the hosted editor on screen (renders/host_onscreen.png).
 **Status (2026-11-12, late):** hardware answered and rendered; MORE deck built; MIDI Learn kept as built; shapes built
 (bullnose maple uses textures/wood/flamemaple_1_1.png, generated from jobs_flame.json). The preset editor's STEEL FINISH
@@ -87,8 +87,11 @@ now offers all eight instruments (box x5 + Blonde Bullnose, Rosewood Bullnose, D
 Refined after: the bullnose parts get their rotation/location baked (object-space veneer ran vertical on the nose);
 bullnose maple matched to s3_1 by HSV (MAPLE_SAT 1.18 / VAL 0.90 / HUE 0.5: apron H 0.10 S 0.40 V 0.72 vs concept
 0.08 / 0.45 / 0.72); the double neck uses textures/wood/walnut_1_1.png (jobs_walnut.json) and pearl diamonds, as s6_3.
-By design (the engine is one 10-string neck with A B C + LKL LKR): the double neck's back neck and its five extra pedals
-are scenery; only the front neck, A B C and the knee levers play.
+The double neck's back neck plays too (2026-11-12, night), in the other tuning: E9 behind a C6 preset (23), C6 behind
+anything else (11). steel_3d writes its projected frets/strings/bridge to steel.json "neck2" (STEEL_MODE=meta writes the
+numbers without rendering); gen_layout emits neck2Fret/neck2StringY/neck2BridgeX/hitNeck2 (design px, not mapped); the
+editor's Neck2 control clicks/slides/strums there with proc.triggerFretboardNote(s, fret, style) (engine voices keep
+fretStyle); the strings shimmer and the bar moves there (barNeck). The five extra C6 pedals stay scenery (the engine has A B C).
 Joshua's notes, same evening, fixed: bullnose end caps are a profile wrapping the round front (front legs meet the cap's
 curved underside); the double neck's knee levers hang by the legs (KNEES in steel_3d, bent chrome arm + flat paddle),
 rendered as their own layers (STEEL_MODE=layers STEEL_LAYERS=knee_L,knee_R) and packed by `steel_pack.py knees doubleneck

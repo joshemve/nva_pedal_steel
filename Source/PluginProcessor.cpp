@@ -283,7 +283,7 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
                     case UiCmdType::Chord:    engine.triggerAuditionChord(cmd.intArg); break;
                     case UiCmdType::Phrase:   engine.triggerPhraseAudition(); break;
                     case UiCmdType::Panic:    engine.allNotesOff(); break;
-                    case UiCmdType::FretDown: engine.triggerFretboardNote(cmd.intArg, cmd.floatArg); break;
+                    case UiCmdType::FretDown: engine.triggerFretboardNote(cmd.intArg, cmd.floatArg, cmd.styleArg); break;
                     case UiCmdType::FretDrag: engine.slideFretboardNote(cmd.intArg, cmd.floatArg); break;
                     case UiCmdType::FretUp:   engine.releaseFretboardNote(cmd.intArg); break;
                     case UiCmdType::Pedal:    engine.setManualPedal(cmd.intArg, cmd.floatArg); break;
@@ -552,9 +552,9 @@ void PedalSteelAudioProcessor::triggerPanic() {
     if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::Panic, 0, 0.0f });
 }
 
-void PedalSteelAudioProcessor::triggerFretboardNote(int stringIdx, float fret) {
+void PedalSteelAudioProcessor::triggerFretboardNote(int stringIdx, float fret, int style) {
     const juce::SpinLock::ScopedLockType lock(uiCmdLock);
-    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::FretDown, stringIdx, fret });
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::FretDown, stringIdx, fret, style });
 }
 
 void PedalSteelAudioProcessor::slideFretboardNote(int stringIdx, float fret) {

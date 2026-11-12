@@ -56,7 +56,7 @@ private:
     enum Ctl { None = -1, Tone, Pick, Glide, Swell, Echo, Reverb,
                Vibrato, Rate, Slide, Drive, Width, Delay, Decay, Character,   // the MORE row
                Trim, Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode,
-               Prev, Next, Display, MidiLearnBtn, MoreBtn, Fretboard, Pluck, NumCtl };
+               Prev, Next, Display, MidiLearnBtn, MoreBtn, Fretboard, Pluck, Neck2, NumCtl };   // Neck2: the double neck's back neck
 public:   // control ids for the tests' applyTypedValue / openValueEditorForTest
     static constexpr int kCtlTone = Tone, kCtlEcho = Echo, kCtlTrim = Trim, kCtlVolume = Volume;
 private:
@@ -99,7 +99,13 @@ private:
     static float fretToX(float fret);
     static float xToFret(float x);
     static int stringAt(float y);
-    void playString(int s, float fret);
+    void playString(int s, float fret, int style = -1);
+    // the double neck's back neck plays in the other tuning (C6 behind an E9 preset, E9 behind a C6 one)
+    int backStyle() const;
+    static float n2FretToX(float fret);
+    static float n2XToFret(float x);
+    static int n2StringAt(float y);
+    int barNeck = 1;   // which neck the bar is on (2 = the double neck's back neck)
     void releaseAllStrings();
 
     PedalSteelAudioProcessor& proc;
@@ -179,7 +185,7 @@ private:
     Ctl focusCtl = None; bool showFocus = false;   // keyboard navigation (Tab / arrows / Space)
     void moveFocus(int dir);
     void drawFocus(juce::Graphics&);
-    juce::String neckNoteText(juce::Point<float> d) const;
+    juce::String neckNoteText(juce::Point<float> d, bool back = false) const;
     static float snapFret(float fret, bool hard);   // clicks land on frets; slides are drawn to them (Shift = locked)
     bool presetModified() const;
     // double-click a value box to type a value

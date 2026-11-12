@@ -118,6 +118,10 @@ namespace UiLayout {
     inline constexpr float skinXf_bullnose_rosewood[3] = { 1.00000f, 0.000f, 0.000f };   // scale, dx, dy
     inline constexpr float skin_doubleneck[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
     inline constexpr float skinXf_doubleneck[3] = { 0.88000f, 96.000f, 82.612f };   // scale, dx, dy
+    inline constexpr float neck2Fret[25] = { 529.06f, 569.63f, 607.92f, 644.07f, 678.18f, 710.38f, 740.77f, 769.46f, 796.53f, 822.09f, 846.21f, 868.98f, 890.47f, 910.75f, 929.90f, 947.98f, 965.03f, 981.13f, 996.33f, 1010.67f, 1024.20f, 1036.98f, 1049.05f, 1060.43f, 1071.17f };   // UI px: x of fret 0 (nut) .. 24 on the double neck's back neck
+    inline constexpr float neck2StringY[10] = { 137.16f, 143.34f, 149.54f, 155.78f, 162.03f, 168.31f, 174.62f, 180.94f, 187.29f, 193.67f };   // UI px: its strings 1..10
+    inline constexpr float neck2BridgeX = 1251.88f;
+    inline constexpr float hitNeck2[4] = { 523.06f, 130.02f, 728.82f, 70.79f };   // x, y, w, h
     inline constexpr float displayBox[4] = { 604.00f, 38.00f, 390.00f, 45.50f };   // x, y, w, h
     inline constexpr float dispPitchX = 5.3750f, dispPitchY = 6.3000f, dispOriginY = 24.100f, dispCentreX = 381.527f;   // 2x px, relative to displayBox
     inline constexpr float dispKernelMax = 223.3483f;   // display_dot.png value 255 == this much added per channel

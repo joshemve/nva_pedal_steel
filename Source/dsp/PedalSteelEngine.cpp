@@ -1437,6 +1437,7 @@ void PedalSteelEngine::startPhraseVoice(int phraseIdx, int midiNote, int channel
     auto& v = voices[strIdx];
     pushVoiceToChokeTail(v, strIdx);
     v.active = true;
+    v.fretStyle = -1;
     v.held = true;
     v.sustainedByPedal = false;
     v.uiTriggered = fromUi;
@@ -1674,6 +1675,7 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
         }
 
         v.active = true;
+        v.fretStyle = -1;
         v.held = true;
         v.sustainedByPedal = false;
         v.uiTriggered = false;
@@ -1874,9 +1876,10 @@ void PedalSteelEngine::triggerPhraseAudition() {
     startPhraseVoice(pIdx, 36 + slot * 2, 1, 0.90f, 0.0f, true);
 }
 
-void PedalSteelEngine::triggerFretboardNote(int stringIndex, float fret) {
+void PedalSteelEngine::triggerFretboardNote(int stringIndex, float fret, int style) {
+    const int st = style >= 0 ? style : params.presetStyle;
     const int s = juce::jlimit(0, kNumStrings - 1, stringIndex);
-    const float openMidi = static_cast<float>(getOpenStringMidiForStyle(params.presetStyle, s));
+    const float openMidi = static_cast<float>(getOpenStringMidiForStyle(st, s));
     const float targetMidi = openMidi + juce::jlimit(0.0f, 24.0f, fret);
     const int nearMidi = juce::jlimit(36, 96, static_cast<int>(std::round(targetMidi)));
 
@@ -1886,6 +1889,7 @@ void PedalSteelEngine::triggerFretboardNote(int stringIndex, float fret) {
     v.held = true;
     v.sustainedByPedal = false;
     v.uiTriggered = true;
+    v.fretStyle = style;
     v.isPhraseSlice = false;
     v.isPalmHarmonic = (params.playMode == 5);
     v.midiNote = nearMidi;
@@ -1894,7 +1898,7 @@ void PedalSteelEngine::triggerFretboardNote(int stringIndex, float fret) {
     v.noteAgeSec = 0.0;
     v.releaseAgeSec = 0.0;
     v.triggerOrder = ++noteCounter;
-    v.multiSampleIdx = selectBestMultiSample(v.isPalmHarmonic ? std::min(81, nearMidi + 12) : nearMidi, params.presetStyle, 0.84f);
+    v.multiSampleIdx = selectBestMultiSample(v.isPalmHarmonic ? std::min(81, nearMidi + 12) : nearMidi, st, 0.84f);
     v.barTargetMidi = targetMidi;
     v.barCurrentMidi = targetMidi;
     v.barVelocity = 0.0f;
@@ -1917,7 +1921,7 @@ void PedalSteelEngine::triggerFretboardNote(int stringIndex, float fret) {
     for (int h = 0; h < kMaxHarmonics; ++h) {
         v.harmPhases[static_cast<size_t>(h)] = std::fmod(kPi * static_cast<double>(h * (h + 1)) / static_cast<double>(kMaxHarmonics) + static_cast<double>(s) * 0.57, kTwoPi);
     }
-    v.transientIdx = (params.presetStyle * 2 + (s % 2)) % PedalSteelAssets::kNumTransients;
+    v.transientIdx = (st * 2 + (s % 2)) % PedalSteelAssets::kNumTransients;
     v.transientPos = 0.0;
     v.transientGain = params.pickSnap * (v.isPalmHarmonic ? 0.22f : 1.0f) * (1.0f - 0.85f * params.autoSwell) * 0.90f;
     reassignChordRoles();
@@ -1927,7 +1931,7 @@ void PedalSteelEngine::slideFretboardNote(int stringIndex, float fret) {
     const int s = juce::jlimit(0, kNumStrings - 1, stringIndex);
     auto& v = voices[static_cast<size_t>(s)];
     if (v.active && v.held && !v.isPhraseSlice) {
-        const float openMidi = static_cast<float>(getOpenStringMidiForStyle(params.presetStyle, s));
+        const float openMidi = static_cast<float>(getOpenStringMidiForStyle(v.fretStyle >= 0 ? v.fretStyle : params.presetStyle, s));
         v.barTargetMidi = openMidi + juce::jlimit(0.0f, 24.0f, fret);
         v.midiNote = juce::jlimit(36, 96, static_cast<int>(std::round(v.barTargetMidi)));
     }
@@ -1966,7 +1970,7 @@ CopedentStatus PedalSteelEngine::getStatus() const {
         st.stringBendSemis[static_cast<size_t>(i)] = v.pedalCurrentSemis + v.scoopOffsetSemis + v.mpePitchSemis;
         if (v.active && v.ampEnv > 0.02f) {
             ++activeCount;
-            const float openMidi = static_cast<float>(getOpenStringMidiForStyle(params.presetStyle, i));
+            const float openMidi = static_cast<float>(getOpenStringMidiForStyle(v.fretStyle >= 0 ? v.fretStyle : params.presetStyle, i));
             barSum += std::max(0.0f, v.barCurrentMidi - openMidi);
         }
     }

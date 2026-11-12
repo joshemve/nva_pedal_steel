@@ -125,6 +125,13 @@ if os.path.exists("skins/skins.json"):
         rect("skin_" + sk, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
         s_, tx, ty = v.get("affine", [1.0, 0.0, 0.0])   # steel_3d STEEL_ZOOM: walnut steel -> this instrument (UI px)
         L("inline constexpr float skinXf_%s[3] = { %.5ff, %.3ff, %.3ff };   // scale, dx, dy" % (sk, s_, tx / 2, ty / 2))
+_dn = os.path.join("..", "steel3d", "shapes", "double_rosewood", "steel.json")   # the double neck's back neck (it plays too)
+N2 = json.load(open(_dn))["neck2"]
+L("inline constexpr float neck2Fret[25] = { %s };   // UI px: x of fret 0 (nut) .. 24 on the double neck's back neck" % ", ".join("%.2ff" % (v / 2) for v in N2["frets"]))
+L("inline constexpr float neck2StringY[10] = { %s };   // UI px: its strings 1..10" % ", ".join("%.2ff" % (v / 2) for v in N2["stringY"]))
+L("inline constexpr float neck2BridgeX = %.2ff;" % (N2["bridgeX"] / 2))
+_sp = (N2["stringY"][9] - N2["stringY"][0]) / 18
+rect("hitNeck2", N2["frets"][0] / 2 - 6, (N2["stringY"][0] - _sp) / 2 - 4, N2["bridgeX"] / 2, (N2["stringY"][9] + _sp) / 2 + 4)
 # dot-matrix display
 K = np.load("display_kernel.npy"); km = float(K.max())
 Image.fromarray(np.clip(K / km * 255, 0, 255).astype(np.uint8)).save(os.path.join(OUT, "display_dot.png"))

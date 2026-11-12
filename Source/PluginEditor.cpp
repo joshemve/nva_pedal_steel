@@ -532,15 +532,38 @@ float PedalSteelAudioProcessorEditor::snapFret(float fret, bool hard) {
     return (hard || std::abs(fret - r) < 0.18f) ? r : fret;   // a magnet around each fret, so slides settle in tune
 }
 
+float PedalSteelAudioProcessorEditor::n2FretToX(float fret) {
+    fret = juce::jlimit(0.0f, 24.0f, fret); const int i = juce::jmin(23, (int) fret);
+    return neck2Fret[i] + (fret - (float) i) * (neck2Fret[i + 1] - neck2Fret[i]);
+}
+
+float PedalSteelAudioProcessorEditor::n2XToFret(float x) {
+    x = juce::jlimit(neck2Fret[0], neck2Fret[24], x);
+    for (int i = 1; i < 25; ++i)
+        if (x <= neck2Fret[i]) return (float) (i - 1) + (x - neck2Fret[i - 1]) / (neck2Fret[i] - neck2Fret[i - 1]);
+    return 24.0f;
+}
+
+int PedalSteelAudioProcessorEditor::n2StringAt(float y) {
+    int best = 0;
+    for (int s = 1; s < 10; ++s) if (std::abs(neck2StringY[s] - y) < std::abs(neck2StringY[best] - y)) best = s;
+    return best;
+}
+
+int PedalSteelAudioProcessorEditor::backStyle() const {
+    const int style = (int) proc.apvts.getRawParameterValue(ParamIDs::presetStyle)->load();
+    return style == 4 ? 0 : 4;   // C6 preset -> E9 back neck; anything else -> C6
+}
+
 int PedalSteelAudioProcessorEditor::stringAt(float y) {
     int best = 0;
     for (int s = 1; s < 10; ++s) if (std::abs(stringY[s] - y) < std::abs(stringY[best] - y)) best = s;
     return best;
 }
 
-void PedalSteelAudioProcessorEditor::playString(int s, float fret) {
+void PedalSteelAudioProcessorEditor::playString(int s, float fret, int style) {
     if (s < 0 || s >= 10) return;
-    proc.triggerFretboardNote(s, fret);
+    proc.triggerFretboardNote(s, fret, style);
     heldStrings[(size_t) s] = true;
     stringEnergy[(size_t) s] = juce::jmax(stringEnergy[(size_t) s], 0.9f);   // visual pluck right away
 }
@@ -728,13 +751,17 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
 
     // strings: the length between the bar and the changer shimmers while it sounds (standing wave + motion blur)
     const float barX = fretToX(barFretShown);
-    const float x0 = barX + 16.0f, x1 = stringEndX;
+    const bool back = barNeck == 2 && skin == 7;
+    const auto inv = steelXf().inverted();   // design px (where the back neck is measured) -> this drawing's space
+    auto toS = [&](float x, float y) { return juce::Point<float>(x, y).transformedBy(inv); };
+    const float x0 = back ? toS(n2FretToX(barFretShown) + 9.0f, 0.0f).x : barX + 16.0f;
+    const float x1 = back ? toS(neck2BridgeX, 0.0f).x : stringEndX;
     {
     juce::Graphics::ScopedSaveState colourState(g);   // the low-alpha colours below must not fade the images drawn later
     for (int s = 0; s < 10; ++s) {
         const float e = stringEnergy[(size_t) s];
         if (e < 0.01f || x1 <= x0) continue;
-        const float y = stringY[s], amp = 0.6f + 2.6f * e;
+        const float y = back ? toS(0.0f, neck2StringY[s]).y : stringY[s], amp = (0.6f + 2.6f * e) * (back ? 0.9f : 1.0f);
         const float ph = (float) (animTime * juce::MathConstants<double>::twoPi * (11.0 + 1.7 * s));
         juce::Path lens, line;
         const int N = 48;
@@ -777,7 +804,30 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
         }
     }
 
+    if (hover == Neck2 && skin == 7 && dragging == None && ! proc.midiLearn.learnMode) {
+        juce::Graphics::ScopedSaveState hs(g);
+        const int s = n2StringAt(hoverPos.y); const float y = toS(0.0f, neck2StringY[s]).y;
+        const float sx0 = toS(neck2Fret[0], 0.0f).x, sx1 = toS(neck2BridgeX, 0.0f).x;
+        juce::ColourGradient sg(kCream.withAlpha(0.0f), sx0, y, kCream.withAlpha(0.0f), sx1, y, false);
+        sg.addColour(0.15, kCream.withAlpha(0.55f)); sg.addColour(0.85, kCream.withAlpha(0.55f));
+        g.setGradientFill(sg); g.fillRect(juce::Rectangle<float>(sx0, y - 0.9f, sx1 - sx0, 1.8f));
+        const float fx = toS(n2FretToX(std::round(n2XToFret(hoverPos.x))), 0.0f).x;
+        const float y0 = toS(0.0f, neck2StringY[0]).y - 6.0f, y1 = toS(0.0f, neck2StringY[9]).y + 6.0f;
+        juce::ColourGradient fg(kAmber.withAlpha(0.0f), fx, y0, kAmber.withAlpha(0.0f), fx, y1, false);
+        fg.addColour(0.5, kAmber.withAlpha(0.65f));
+        g.setGradientFill(fg); g.fillRect(juce::Rectangle<float>(fx - 1.0f, y0, 2.0f, y1 - y0));
+        g.setColour(kAmber.withAlpha(0.9f)); g.fillEllipse(juce::Rectangle<float>(5.0f, 5.0f).withCentre({ fx, y }));
+    }
+
     // the tone bar, wherever it is (drawn for the reference position, shifted along the neck)
+    if (back) {   // on the back neck: moved there and scaled to its (further away) string spread
+        juce::Graphics::ScopedSaveState bs(g);
+        const float yc1 = (stringY[0] + stringY[9]) * 0.5f;
+        const auto pc = toS(n2FretToX(barFretShown), (neck2StringY[0] + neck2StringY[9]) * 0.5f);
+        const float k = (toS(0.0f, neck2StringY[9]).y - toS(0.0f, neck2StringY[0]).y) / (stringY[9] - stringY[0]);
+        g.addTransform(juce::AffineTransform::translation(-barX, -yc1).scaled(k).translated(pc.x, pc.y));
+        drawSprite(g, spBar, sp_tone_bar, barX - barRefCx);
+    } else
     drawSprite(g, spBar, sp_tone_bar, barX - barRefCx);   // a rendered bar with its own soft shadow: the same on every finish
 }
 
@@ -905,6 +955,7 @@ juce::Rectangle<float> PedalSteelAudioProcessorEditor::ctlBounds(Ctl c) const {
         case Character: return circle({ charCentre[0], charCentre[1] }, 40.0f * charScale);
         case Sync: return { syncCentre[0] - 40.0f, syncCentre[1] - 22.0f, 80.0f, 875.0f - (syncCentre[1] - 22.0f) };
         case MoreBtn: return R(hitMore);
+        case Neck2: return skin == 7 ? R(hitNeck2) : juce::Rectangle<float>();
         default: break;
     }
     auto b = ctlBoundsRow(c);
@@ -978,15 +1029,16 @@ void PedalSteelAudioProcessorEditor::drawLearnOverlay(juce::Graphics& g) {
     }
 }
 
-juce::String PedalSteelAudioProcessorEditor::neckNoteText(juce::Point<float> d) const {
+juce::String PedalSteelAudioProcessorEditor::neckNoteText(juce::Point<float> d, bool back) const {
     // "String 3 (G#4) at fret 12 = G#5": open tuning of the current steel voice (pedals/levers bend on top of this)
-    const int s = stringAt(d.y);
-    const float fret = hover == Pluck ? barFret : std::round(xToFret(d.x));
-    const int style = (int) proc.apvts.getRawParameterValue(ParamIDs::presetStyle)->load();
+    const int s = back ? n2StringAt(d.y) : stringAt(d.y);
+    const float fret = hover == Pluck ? barFret : std::round(back ? n2XToFret(d.x) : xToFret(d.x));
+    const int style = back ? backStyle() : (int) proc.apvts.getRawParameterValue(ParamIDs::presetStyle)->load();
     const int open = PedalSteelEngine::openStringMidi(style, s), fr = juce::roundToInt(fret);
     auto name = [](int n) { return juce::MidiMessage::getMidiNoteName(n, true, true, 4); };
     return "String " + juce::String(s + 1) + " (" + name(open) + ")  at fret " + juce::String(fr) + "  =  " + name(open + fr)
-         + (hover == Pluck ? juce::String("   pluck at the bar") : juce::String("   click to play, drag to slide or strum"));
+         + (hover == Pluck ? juce::String("   pluck at the bar") : juce::String("   click to play, drag to slide or strum"))
+         + (back ? juce::String(style == 4 ? "   (back neck: C6)" : "   (back neck: E9)") : juce::String());
 }
 
 juce::String PedalSteelAudioProcessorEditor::tooltipFor(Ctl c) const {
@@ -1006,6 +1058,7 @@ juce::String PedalSteelAudioProcessorEditor::tooltipFor(Ctl c) const {
         case MidiLearnBtn: return "MIDI LEARN: assign hardware controllers. Right-click a control for its MIDI options";
         case MoreBtn: return more() ? "LESS: fold the second row away" : "MORE: vibrato, amp drive and width, delay time, reverb decay, effect character";
         case Fretboard: case Pluck: return neckNoteText(toSteel(hoverPos));
+        case Neck2: return neckNoteText(hoverPos, true);
         default: return {};
     }
 }
@@ -1014,7 +1067,7 @@ void PedalSteelAudioProcessorEditor::drawTooltip(juce::Graphics& g) {
     if (browser || saveDlg || modePanel) return;   // an open overlay has the user's attention
     const bool keyboardTip = hover == None && showFocus && focusCtl != None;
     if ((hover == None && ! keyboardTip) || dragging != None || proc.midiLearn.learnMode) return;
-    const bool neck = hover == Fretboard || hover == Pluck;
+    const bool neck = hover == Fretboard || hover == Pluck || hover == Neck2;
     if (! keyboardTip && juce::Time::getMillisecondCounterHiRes() * 0.001 - hoverSince < (neck ? 0.25 : 0.6)) return;
     const auto s = tooltipFor(keyboardTip ? focusCtl : hover); if (s.isEmpty()) return;
     const auto anchor = keyboardTip ? juce::Point<float>(ctlBounds(focusCtl).getCentreX(), ctlBounds(focusCtl).getBottom() - 18.0f) : hoverPos;
@@ -1067,7 +1120,8 @@ void PedalSteelAudioProcessorEditor::timerCallback() {
         if (std::abs(ne - e) > 1e-3f || ne > 0.01f) steelDirty = true;
         e = ne < 0.005f ? 0.0f : ne; anySounding |= e > 0.0f;
     }
-    if (dragging != Fretboard && st.activeVoiceCount > 0 && st.barPositionFret > 0.25f) barFret = st.barPositionFret;
+    if (dragging != Fretboard && dragging != Neck2 && st.activeVoiceCount > 0 && st.barPositionFret > 0.25f) barFret = st.barPositionFret;
+    if (skin != 7) barNeck = 1;
     if (barFretShown != barFret) {
         barFretShown = snap || std::abs(barFret - barFretShown) < 0.01f ? barFret : barFretShown + (barFret - barFretShown) * 0.35f;
         steelDirty = true;
@@ -1121,7 +1175,7 @@ PedalSteelAudioProcessorEditor::Ctl PedalSteelAudioProcessorEditor::hitTest(juce
     auto inCircle = [&](juce::Rectangle<float> b) { return d.getDistanceFrom(b.getCentre()) <= b.getWidth() * 0.5f + 2.0f; };
     for (int i = Tone; i <= Trim; ++i) { const auto b = ctlBounds((Ctl) i); if (! b.isEmpty() && inCircle(b)) return (Ctl) i; }
     if (charAt(d) >= 0) return Character;   // CHARACTER's engraved names and dots
-    for (Ctl c : { Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode, Prev, Next, Display, MidiLearnBtn, MoreBtn, Fretboard, Pluck })
+    for (Ctl c : { Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode, Prev, Next, Display, MidiLearnBtn, MoreBtn, Neck2, Fretboard, Pluck })
         if (ctlBounds(c).contains(d)) return c;
     return None;
 }
@@ -1131,7 +1185,7 @@ void PedalSteelAudioProcessorEditor::mouseMove(const juce::MouseEvent& e) {
     const auto c = hitTest(hoverPos);
     if (c == None && pillAt(hoverPos) != None) { setMouseCursor(juce::MouseCursor::IBeamCursor); if (hover != None) { hover = None; repaint(); } return; }
     if (c != hover) { hover = c; hoverSince = juce::Time::getMillisecondCounterHiRes() * 0.001; repaint(); }
-    else if (c == Fretboard || c == Pluck) repaint();   // guide line + note tooltip follow the mouse
+    else if (c == Fretboard || c == Pluck || c == Neck2) repaint();   // guide line + note tooltip follow the mouse
     const bool learnClick = proc.midiLearn.learnMode && isLearnable(c);
     setMouseCursor(c == None ? juce::MouseCursor::NormalCursor
                    : (learnClick || c >= PedA) ? juce::MouseCursor::PointingHandCursor
@@ -1297,11 +1351,16 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
         case Mode: showModeMenu(); return;
         case Fretboard: {   // put the bar down here and pick the string under the mouse
             dismissHint();
-            const auto ds = toSteel(d);
+            const auto ds = toSteel(d); barNeck = 1;
             barFret = std::round(xToFret(ds.x)); lastString = stringAt(ds.y);   // a click plays in tune: nearest fret
             playString(lastString, barFret); dragging = Fretboard; return;
         }
-        case Pluck: lastString = stringAt(toSteel(d).y); playString(lastString, barFret); dragging = Pluck; return;
+        case Neck2: {   // the double neck's back neck, in the other tuning
+            dismissHint(); barNeck = 2;
+            barFret = std::round(n2XToFret(d.x)); lastString = n2StringAt(d.y);
+            playString(lastString, barFret, backStyle()); dragging = Neck2; return;
+        }
+        case Pluck: barNeck = 1; lastString = stringAt(toSteel(d).y); playString(lastString, barFret); dragging = Pluck; return;
         case None: case NumCtl: case MidiLearnBtn: return;
         default: break;
     }
@@ -1313,6 +1372,13 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
 void PedalSteelAudioProcessorEditor::mouseDrag(const juce::MouseEvent& e) {
     if (dragging == None) return;
     const auto d = toDesign(e.position);
+    if (dragging == Neck2) {   // slide every held string, strum across the back neck's strings
+        barFret = snapFret(n2XToFret(d.x), e.mods.isShiftDown());
+        for (int s = 0; s < 10; ++s) if (heldStrings[(size_t) s]) proc.slideFretboardNote(s, barFret);
+        const int s = n2StringAt(d.y);
+        if (s != lastString && std::abs(neck2StringY[s] - d.y) < 3.0f) { lastString = s; playString(s, barFret, backStyle()); }
+        return;
+    }
     if (dragging == Fretboard || dragging == Pluck) {
         const auto ds = toSteel(d);
         if (dragging == Fretboard) {   // slide every held string with the bar
@@ -1329,7 +1395,7 @@ void PedalSteelAudioProcessorEditor::mouseDrag(const juce::MouseEvent& e) {
 }
 
 void PedalSteelAudioProcessorEditor::mouseUp(const juce::MouseEvent& e) {
-    if (dragging == Fretboard || dragging == Pluck) releaseAllStrings();
+    if (dragging == Fretboard || dragging == Pluck || dragging == Neck2) releaseAllStrings();
     else if (dragging != None) { if (auto* p = param(dragging)) p->endChangeGesture(); recordChange(dragging, dragStartNorm); }
     dragging = None;
     mouseMove(e);

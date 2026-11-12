@@ -45,7 +45,7 @@ public:
     void triggerChordAudition(int chordIdx);
     void triggerPhraseAudition();
     void triggerPanic();
-    void triggerFretboardNote(int stringIdx, float fret);
+    void triggerFretboardNote(int stringIdx, float fret, int style = -1);   // style: another neck's tuning (double neck)
     void slideFretboardNote(int stringIdx, float fret);
     void releaseFretboardNote(int stringIdx);
 
@@ -73,6 +73,7 @@ private:
         UiCmdType type = UiCmdType::Chord;
         int intArg = 0;
         float floatArg = 0.0f;
+        int styleArg = -1;   // FretDown: the tuning to play in (-1 = the preset's)
     };
 
     PedalSteelEngine engine;

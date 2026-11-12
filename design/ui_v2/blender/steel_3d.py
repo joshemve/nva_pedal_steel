@@ -790,7 +790,13 @@ meta = {"frets": [[n, round(proj((fret_x(n) if n else X_NUT, 0, Z_STR))[0], 2)] 
         "floorFrontY": round(proj((0, fl.y, Z_FLOOR))[1], 1),
         "pedals": {k: [round(v, 1) for v in proj((px, BAR_Y - 0.06, BAR_Z + 0.03))] for k, px in zip("ABC", PEDAL_X)},
         "camera": {"pitch_deg": math.degrees(TH), "dist": DIST, "px_per_m": PXM}, "shape": SHAPE, "affine": AFFINE}
+if SHAPE == "double":   # the back neck plays too (in the other tuning): where its frets, strings and bridge land
+    z2 = Z_STR + DZ
+    meta["neck2"] = {"frets": [round(proj((fret_x(n) if n else X_NUT, DY, z2))[0], 2) for n in range(0, 25)],
+                     "stringY": [round(proj((0, y + DY, z2))[1], 2) for y in SY],
+                     "bridgeX": round(proj((X_BR, DY, z2))[0], 2)}
 (out / "steel.json").write_text(json.dumps(meta, indent=1))
+if os.environ.get("STEEL_MODE") == "meta": sys.exit(0)   # layout numbers only, no render
 print("LAYOUT", json.dumps({k: meta[k] for k in ("stringY", "bridgeX", "body", "floorFrontY")}))
 
 # ---- what moves in the plugin: floor pedals (with clevis, yoke, pull rod), knee levers, the tone bar

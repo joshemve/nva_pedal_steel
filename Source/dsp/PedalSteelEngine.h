@@ -41,7 +41,7 @@ public:
     void allNotesOff();
 
     // Interactive 10-String Fretboard mouse pluck & continuous chrome-bar slide
-    void triggerFretboardNote(int stringIndex, float fret);
+    void triggerFretboardNote(int stringIndex, float fret, int style = -1);   // style: the tuning to play in (-1 = the preset's)
     void slideFretboardNote(int stringIndex, float fret);
     void releaseFretboardNote(int stringIndex);
 
@@ -103,6 +103,7 @@ private:
         bool held = false;
         bool sustainedByPedal = false;
         bool uiTriggered = false;
+        int fretStyle = -1;   // tuning a neck click asked for (the double neck's back neck); -1 = the preset's
         int stringIndex = 0;       // 0..9 (Strings 1..10)
         int midiNote = 60;         // Currently assigned target MIDI note
         int channel = 1;
