@@ -77,9 +77,12 @@ the moving parts by the affine). User presets still save one of the five box fin
 Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin with the real Motion/FX params) and
 `targets` (multi-select of round29 s1-s8 real-world steel styles, the shape targets).
 
-**Still open (not started or unanswered):** hardware picker artifact (3f53TJPzbBxYsPc1psGRk7) never answered; the More drawer
-(Motion + Effects) and MIDI Learn designs are unpicked (see "Where it stands" below); each preset's own instrument
-design beyond the finish is still the same 3D model.
+**Status (2026-11-12, late):** hardware answered and rendered; MORE deck built; MIDI Learn kept as built; shapes built
+(bullnose maple uses textures/wood/flamemaple_1_1.png, generated from jobs_flame.json). The preset editor's STEEL FINISH
+now offers all eight instruments (box x5 + Blonde Bullnose, Rosewood Bullnose, Double Neck; swatches from
+`steel_pack.py swatches ...`, left-end crops) and opens on the instrument showing. 77 UI tests pass.
+Possible refinements, none asked for: the double neck's extra pedals are static (only A B C move); the far neck has no
+playable strings; real double necks often show white diamond inlays (ours keep the plugin's coloured markers).
 
 ## Where it stands
 

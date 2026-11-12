@@ -1196,6 +1196,7 @@ void PedalSteelAudioProcessorEditor::openBrowser() {
 void PedalSteelAudioProcessorEditor::openSaveDialog() {
     modePanel.reset();
     saveDlg = std::make_unique<PresetSaveDialog>(kit, proc);
+    saveDlg->setFinish(skin);   // starts on the instrument showing (skin order = the dialog's finish order)
     saveDlg->onClose = [this] { deferred([](PedalSteelAudioProcessorEditor& e) { e.saveDlg.reset(); e.repaint(); }); };
     saveDlg->onSaved = [this](const juce::File&) { if (browser) browser->refresh(); };
     addAndMakeVisible(*saveDlg); placeOverlays(); saveDlg->toFront(true);

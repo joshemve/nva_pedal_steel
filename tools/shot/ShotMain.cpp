@@ -459,6 +459,11 @@ int main(int argc, char* argv[]) {
             if (auto x = juce::XmlDocument::parse(uf)) { x->setAttribute("finish", "koa"); x->writeTo(uf); }
             processor.loadPreset(0); pe5->refreshVisualizer(); processor.loadUserPreset(uf); pe5->refreshVisualizer();
             check(pe5->getSkin() == 4, "a user preset saved with the koa finish shows the koa steel");
+            if (auto x = juce::XmlDocument::parse(uf)) { x->setAttribute("finish", "doubleneck"); x->writeTo(uf); }
+            processor.loadPreset(0); pe5->refreshVisualizer(); processor.loadUserPreset(uf); pe5->refreshVisualizer();
+            check(pe5->getSkin() == 7, "a user preset saved as the double neck shows the double neck");
+            if (auto x = juce::XmlDocument::parse(uf)) { x->setAttribute("finish", "koa"); x->writeTo(uf); }
+            processor.loadPreset(0); pe5->refreshVisualizer(); processor.loadUserPreset(uf); pe5->refreshVisualizer();
             {   // koa with all pedals and levers engaged: brass rods
                 for (int i = 0; i < 5; ++i) processor.setLivePedalState(i, 1.0f);
                 pe5->refreshVisualizer();

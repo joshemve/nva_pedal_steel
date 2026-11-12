@@ -162,6 +162,15 @@ def cards(dirs):
         for n in num[sk]: c.save(os.path.join(dst, "card_%02d.jpg" % n), quality=92); print("card_%02d" % n, sk)
 
 
+def swatches(dirs):
+    """the preset editor's STEEL FINISH swatches for the shaped instruments: the left end (keyhead, front corner), 108x104"""
+    dst = os.path.join(H, "..", "..", "..", "..", "Source", "ui_assets")
+    for sk, d in dirs.items():
+        im = Image.fromarray(np.clip(rest_image(d), 0, 255).astype(np.uint8))
+        im.crop((250, 200, 250 + 700, 200 + 674)).resize((108, 104), Image.LANCZOS).save(os.path.join(dst, "finish_%s.png" % sk), optimize=True)
+        print("finish_%s.png" % sk)
+
+
 def check(d, outp):
     info = json.load(open(os.path.join(d, "layers.json"))); p0 = background(d); S = json.load(open(os.path.join(P, "sprites", "sprites.json")))
     F = json.load(open(os.path.join(P, "sprites", "floor3d.json")))["layers"]; tiles = []
@@ -183,3 +192,4 @@ if __name__ == "__main__":
     elif sys.argv[1] == "cards": cards(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "skins": skins(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "check": check(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "swatches": swatches(dict(a.split("=") for a in sys.argv[2:]))

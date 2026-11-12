@@ -441,7 +441,7 @@ public:
     std::function<void(const juce::File&)> onSaved;
 
     void setName(const juce::String& s) { name.setText(s, true); }
-    void setFinish(int i) { finish = juce::jlimit(0, 4, i); repaint(); }
+    void setFinish(int i) { finish = juce::jlimit(0, kFinishes - 1, i); repaint(); }
     void setCategory(const juce::String& c) { category = c; repaint(); }
     void setNotes(const juce::String& s) { notes.setText(s, false); }
     bool replaceWithoutAsking = false;   // tests
@@ -490,7 +490,7 @@ public:
         { juce::Path tri; const float x = cb.getRight() - 24.0f, y = cb.getCentreY(); tri.addTriangle(x - 6, y - 3, x + 6, y - 3, x, y + 4); g.fillPath(tri); }
 
         label("STEEL FINISH", 40.0f, 194.0f);
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < kFinishes; ++i) {
             auto sb = swatchBounds(i);
             juce::DropShadow(juce::Colours::black.withAlpha(0.35f), 6, { 0, 2 }).drawForRectangle(g, sb.toNearestInt());
             {
@@ -507,8 +507,8 @@ public:
                 juce::Path tick; tick.startNewSubPath(c.getX() + 6, c.getCentreY()); tick.lineTo(c.getX() + 10, c.getCentreY() + 4); tick.lineTo(c.getRight() - 5, c.getY() + 7);
                 g.setColour(kit.paperInk); g.strokePath(tick, juce::PathStrokeType(2.0f));
             }
-            g.setColour(kit.paperInk); g.setFont(kit.font(15.0f));
-            g.drawText(finishNames[i], juce::Rectangle<float>(sb.getX() - 10, sb.getBottom() + 8, sb.getWidth() + 20, 22), juce::Justification::centred);
+            g.setColour(kit.paperInk); g.setFont(kit.font(13.5f));
+            g.drawFittedText(finishNames[i], juce::Rectangle<float>(sb.getX() - 12, sb.getBottom() + 6, sb.getWidth() + 24, 30).toNearestInt(), juce::Justification::centredTop, 2, 0.9f);
         }
         g.setColour(kit.paperInk.withAlpha(0.25f)); g.fillRect(40.0f, 372.0f, 1010.0f, 1.0f);
         label("NOTES", 40.0f, 390.0f);
@@ -571,16 +571,18 @@ private:
         if (onClose) onClose();
     }
     juce::Rectangle<float> categoryBounds() const { return { 690.0f, 122.0f, 360.0f, 44.0f }; }
-    juce::Rectangle<float> swatchBounds(int i) const { return { 44.0f + i * 136.0f, 222.0f, 108.0f, 104.0f }; }
+    juce::Rectangle<float> swatchBounds(int i) const { return { 44.0f + i * 126.0f, 222.0f, 100.0f, 100.0f }; }
     juce::Rectangle<float> cancelBounds() const { return { 690.0f, 556.0f, 170.0f, 48.0f }; }
     juce::Rectangle<float> saveBounds() const { return { 880.0f, 556.0f, 170.0f, 48.0f }; }
-    int swatchAt(juce::Point<float> p) const { for (int i = 0; i < 5; ++i) if (swatchBounds(i).expanded(4).contains(p)) return i; return -1; }
+    int swatchAt(juce::Point<float> p) const { for (int i = 0; i < kFinishes; ++i) if (swatchBounds(i).expanded(4).contains(p)) return i; return -1; }
 
     UiKit& kit; PedalSteelAudioProcessor& proc;
     juce::TextEditor name, notes;
     juce::String category = "Clean";
     int finish = 0, card = 1, hover = 0;
     bool nameError = false;
-    const char* finishIds[5] = { "walnut", "maple", "redsparkle", "pearloid", "koa" };
-    const char* finishNames[5] = { "Walnut", "Maple", "Red Sparkle", "Pearloid", "Koa" };
+    // the box steel in five finishes, then the shaped instruments (same order as the editor's skins)
+    static constexpr int kFinishes = 8;
+    const char* finishIds[kFinishes] = { "walnut", "maple", "redsparkle", "pearloid", "koa", "bullnose_maple", "bullnose_rosewood", "doubleneck" };
+    const char* finishNames[kFinishes] = { "Walnut", "Maple", "Red Sparkle", "Pearloid", "Koa", "Blonde Bullnose", "Rosewood Bullnose", "Double Neck" };
 };
