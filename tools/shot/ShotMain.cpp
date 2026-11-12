@@ -444,10 +444,10 @@ int main(int argc, char* argv[]) {
                       "double neck: a click on its (smaller) neck plays string 3 at fret 7");
                 editor->mouseUp(ev(at)); run(4);
                 const auto pc = juce::Point<float>(UiLayout::hitPedalC[0] + UiLayout::hitPedalC[2] * 0.5f,
-                                                   UiLayout::hitPedalC[1] + UiLayout::hitPedalC[3] * 0.5f).transformedBy(xf);
+                                                   UiLayout::hitPedalC[1] + UiLayout::hitPedalC[3] * 0.5f);   // the deck switch: not scaled
                 const float c0 = pv(ParamIDs::pedalC);
                 editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
-                check((pv(ParamIDs::pedalC) > 0.5f) != (c0 > 0.5f), "double neck: pedal C answers where it is drawn");
+                check((pv(ParamIDs::pedalC) > 0.5f) != (c0 > 0.5f), "double neck: the deck's pedal C switch still answers in place");
                 editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
                 {   // the double neck in the small window and with the MORE deck open
                     editor->setSize(1000, 625); pe5->refreshVisualizer();

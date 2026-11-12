@@ -106,6 +106,7 @@ private:
     float scale = 1.0f;
 
     juce::Image bg, bgScaled, d3dPedal[3], d3dLamp[3], d3dLever[2], spMeter, spThumb, spFill, dispImg, spMidi, spBar, spBarHome;
+    juce::Image f3dDnKnee[2];   // the double neck's own knee levers (out by the legs), in its own (smaller) canvas
     juce::Image f3d[2][6];   // the 3D floor assembly (Blender): [chrome, brass][bar, knee L, knee R, pedal A, B, C]
     Strip scallop, space, ptrTone, ptrPick, ptrTrim;
     std::vector<float> dotKernel; int dotK = 0;   // RGB, dotK x dotK
@@ -133,7 +134,7 @@ private:
     juce::Image skinImg[kNumSkins], bgScaledPrev;
     juce::AffineTransform steelXf() const;   // walnut steel coordinates (UiLayout) -> this instrument's, design px
     juce::Point<float> toSteel(juce::Point<float> d) const { return d.transformedBy(steelXf().inverted()); }
-    static bool isSteelCtl(Ctl c) { return (c >= PedA && c <= LKR) || c == Fretboard || c == Pluck; }
+    static bool isSteelCtl(Ctl c) { return c == Fretboard || c == Pluck; }   // (A B C / LKL LKR are the deck's switches)
     int skin = 0; float skinFade = 1.0f;
     juce::String cachedUserName; int cachedUserSkin = 0;
 public:

@@ -86,6 +86,14 @@ bullnose maple matched to s3_1 by HSV (MAPLE_SAT 1.18 / VAL 0.90 / HUE 0.5: apro
 0.08 / 0.45 / 0.72); the double neck uses textures/wood/walnut_1_1.png (jobs_walnut.json) and pearl diamonds, as s6_3.
 By design (the engine is one 10-string neck with A B C + LKL LKR): the double neck's back neck and its five extra pedals
 are scenery; only the front neck, A B C and the knee levers play.
+Joshua's notes, same evening, fixed: bullnose end caps are a profile wrapping the round front (front legs meet the cap's
+curved underside); the double neck's knee levers hang by the legs (KNEES in steel_3d, bent chrome arm + flat paddle),
+rendered as their own layers (STEEL_MODE=layers STEEL_LAYERS=knee_L,knee_R) and packed by `steel_pack.py knees doubleneck
+shapes/double_rosewood` into floor3d.json "alt" (drawn in the double neck's own canvas, i.e. without steelXf). Bug fixed:
+A B C / LKL LKR hit areas are the deck switches, so only Fretboard/Pluck go through steelXf. MORE: deck_more is a PNG whose
+rows above the walnut rim are transparent with a soft baked contact shadow (legs, pull rods and knee brackets show down to
+the frame, no dark band; the steel is clipped at moreFrameTop); CHARACTER matched to k11_5 (charScale 1.5, centre y 798,
+spots at the concept's angles/radii charAngle/charRadius, labels LSIZE*0.86). Sheet: renders/more_vs_concept.jpg.
 
 ## Where it stands
 

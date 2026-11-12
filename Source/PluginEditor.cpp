@@ -134,7 +134,9 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     setTxtS(7, poppinsMedium, txtRef_mode, txtS_mode, txtSColour_mode, true);
     setTxtS(8, poppinsSemi, txtRef_db, txtS_db, txtSColour_db);
     spSmallDeck = loadImage(BinaryData::sp_small_deck_png, BinaryData::sp_small_deck_pngSize);
-    deckMore = loadImage(BinaryData::deck_more_jpg, BinaryData::deck_more_jpgSize);
+    deckMore = loadImage(BinaryData::deck_more_png, BinaryData::deck_more_pngSize);
+    f3dDnKnee[0] = loadImage(BinaryData::f3d_doubleneck_knee_L_png, BinaryData::f3d_doubleneck_knee_L_pngSize);
+    f3dDnKnee[1] = loadImage(BinaryData::f3d_doubleneck_knee_R_png, BinaryData::f3d_doubleneck_knee_R_pngSize);
     for (int i = 0; i < 8; ++i) {   // the MORE row's value boxes sit on row 1's old rows: TONE's text, moved along x
         txt2[i] = txt[0]; txt2[i].cx = i < 7 ? row2X[i] : syncCentre[0]; prepareText(txt2[i]);
     }
@@ -290,7 +292,7 @@ void PedalSteelAudioProcessorEditor::setMore(bool on) {
 }
 
 juce::Point<float> PedalSteelAudioProcessorEditor::charDot(int i, float extra) const {
-    const float a = juce::degreesToRadians(charAngle[juce::jlimit(0, 10, i)]), r = charDotR + extra;
+    const int k = juce::jlimit(0, 10, i); const float a = juce::degreesToRadians(charAngle[k]), r = charRadius[k] + extra;
     return { charCentre[0] + r * std::sin(a), charCentre[1] - r * std::cos(a) };
 }
 
@@ -353,11 +355,9 @@ void PedalSteelAudioProcessorEditor::rebuildScaledBackground() {
         const float k = (float) w / kDesignW; const float* b = boxes[skin];
         g.drawImage(skinImg[skin], juce::Rectangle<float>(b[0] * k, b[1] * k, b[2] * k, b[3] * k));
     }
-    if (more() && deckMore.isValid()) {   // the taller deck covers the floor pedals; a soft shadow falls on what's above
-        const float k = (float) w / kDesignW, top = moreDeckTop * k, sh = 14.0f * k;
-        g.setGradientFill(juce::ColourGradient(juce::Colours::black.withAlpha(0.0f), 0.0f, top - sh,
-                                               juce::Colours::black.withAlpha(0.55f), 0.0f, top, false));
-        g.fillRect(juce::Rectangle<float>(0.0f, top - sh, (float) w, sh));
+    if (more() && deckMore.isValid()) {   // the taller deck covers the floor pedals (its top rows are transparent above
+        // the walnut frame, with a soft contact shadow baked in, so the steel's legs and pull rods show down to the frame)
+        const float k = (float) w / kDesignW, top = moreDeckTop * k;
         g.drawImage(deckMore, juce::Rectangle<float>(0.0f, top, (float) w, (kDesignH - moreDeckTop) * k));
     }
 }
@@ -660,8 +660,15 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
         const int m = 0;   // every model has the aluminium/chrome pedal set (approved koa 5 dropped the brass; set 1 kept unused)
         const float top = skinBodyY[juce::jlimit(0, 4, skin)];
         drawFloorLayer(g, f3d[m][0], f3d_bar, f3dFrames_bar, 0.0f, top);
-        drawFloorLayer(g, f3d[m][1], f3d_knee_L, f3dFrames_knee_L, pedalShown(3), top);
-        drawFloorLayer(g, f3d[m][2], f3d_knee_R, f3dFrames_knee_R, pedalShown(4), top);
+        if (skin == 7) {   // the double neck's levers hang out by its legs: drawn in its own canvas, not mapped
+            juce::Graphics::ScopedSaveState ks(g);
+            g.addTransform(steelXf().inverted());
+            drawFloorLayer(g, f3dDnKnee[0], f3d_doubleneck_knee_L, f3dFrames_doubleneck_knee_L, pedalShown(3), top);
+            drawFloorLayer(g, f3dDnKnee[1], f3d_doubleneck_knee_R, f3dFrames_doubleneck_knee_R, pedalShown(4), top);
+        } else {
+            drawFloorLayer(g, f3d[m][1], f3d_knee_L, f3dFrames_knee_L, pedalShown(3), top);
+            drawFloorLayer(g, f3d[m][2], f3d_knee_R, f3dFrames_knee_R, pedalShown(4), top);
+        }
         drawFloorLayer(g, f3d[m][3], f3d_pedal_A, f3dFrames_pedal_A, pedalShown(0), top);
         drawFloorLayer(g, f3d[m][4], f3d_pedal_B, f3dFrames_pedal_B, pedalShown(1), top);
         drawFloorLayer(g, f3d[m][5], f3d_pedal_C, f3dFrames_pedal_C, pedalShown(2), top);
@@ -792,7 +799,7 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     }
     {   // with the MORE deck open, the steel ends where the deck begins
         juce::Graphics::ScopedSaveState ss(g);
-        if (more()) g.reduceClipRegion(juce::Rectangle<int>(0, 0, (int) kDesignW, juce::roundToInt(moreDeckTop)));
+        if (more()) g.reduceClipRegion(juce::Rectangle<int>(0, 0, (int) kDesignW, juce::roundToInt(moreFrameTop)));
         g.addTransform(steelXf());
         drawSteel(g);
     }
@@ -960,7 +967,7 @@ void PedalSteelAudioProcessorEditor::drawLearnOverlay(juce::Graphics& g) {
                                                      : "MIDI LEARN: click a control, then move a controller. Click MIDI LEARN again to finish.";
         juce::Font f(juce::FontOptions(poppinsMedium).withHeight(13.0f));
         const float w = juce::GlyphArrangement::getStringWidth(f, help) + 28.0f;
-        juce::Rectangle<float> r(800.0f - w * 0.5f, more() ? moreDeckTop - 32.0f : 652.0f, w, 26.0f);
+        juce::Rectangle<float> r(800.0f - w * 0.5f, more() ? moreFrameTop - 32.0f : 652.0f, w, 26.0f);
         g.setColour(kInk); g.fillRoundedRectangle(r, 13.0f);
         g.setColour(kAmber.withAlpha(0.8f)); g.drawRoundedRectangle(r, 13.0f, 1.0f);
         g.setFont(f); g.setColour(kCream); g.drawText(help, r, juce::Justification::centred, false);

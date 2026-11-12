@@ -24,6 +24,8 @@ FRAME_TOP = 1278            # walnut frame's top edge (shadow above it)
 ROW_TOP, RULE_Y = 1350, 1782  # row 1 panel content rows, and the rule between the knob row and the strip
 D = RULE_Y + 4 - ROW_TOP    # 436: row 1 moves up by one row height (+ the rule)
 Y0 = FRAME_TOP - D          # the MORE deck image starts here (842)
+TOPBAND = 110               # rows below FRAME_TOP searched for the walnut rim (above it: rug, now transparent)
+RIM_ROW = 1338              # the rim's top in the middle of the deck (measured on ui_bg)
 XI0, XI1 = 46, 3156         # panel interior (between the walnut sides)
 LABEL_Y = (1654, 1679)      # knob labels' cap box (TONE)
 TITLE_Y = (1392, 1420)      # section titles' cap box (VOICE)
@@ -45,12 +47,15 @@ R2 = {   # name: (kind, cx_ui)
     "DRIVE": ("dome", 562), "WIDTH": ("dome", 706),
     "DELAY": ("space", 882), "DECAY": ("space", 1030),
 }
-CHAR_CX_UI, CHAR_SCALE = 1282, 1.04
+CHAR_CX_UI, CHAR_SCALE = 1282, 1.50   # the knob as big as the concept's (k11_5: ~110 UI px across)
+CHAR_CY_UI, CHAR_R_UI = 798, 70.0     # knob centre row, dot radius (measured on k11_5)
 SYNC_CX_UI = 1508
 DIVS_UI = (480, 792, 1120, 1450)
 TITLES = (("MOTION", 65, 470), ("AMP", 492, 772), ("TIME", 812, 1100), ("CHARACTER", 1132, 1432))
 CHARS = ["STUDIO", "TAPE", "OPTO", "PHASER", "SPRING", "R&B", "WARBLE", "SHIMMER", "ROTARY", "GATE", "ROOM"]
-CHAR_ANG = [-135 + 27 * i for i in range(11)]   # degrees clockwise from 12 o'clock (the knob strip's -135..135 range)
+# degrees clockwise from 12 o'clock, measured on k11_5: two columns either side and R&B on top (within the strip's +-135)
+CHAR_ANG = [-131, -103, -81, -59, -32, 0, 32, 59, 81, 103, 131]
+CHAR_RAD = [70.5, 73.0, 72.0, 69.0, 66.7, 65.5, 66.7, 69.0, 72.0, 73.0, 70.5]   # UI px per spot (closer at the top)
 
 # bottom strip: shorten the groove's middle by SHIFT, slide the rest left, MORE/LESS where MIDI LEARN ended
 GROOVE = (1546, 2370); GROOVE_Y = (1830, 1876); TICK_Y = (1878, 1906); TICKS0 = (1586, 2322)
@@ -174,17 +179,17 @@ def build_row2(src):
         canvas[y0:y1, X:X + (x1 - x0)] = src[y0:y1, x0:x1]
     for t, a, b in TITLES: texts.append(title(None, canvas, src, t, a, b))
     # CHARACTER: echo knob tick-free disc area, dots + names around it
-    cc = (CHAR_CX_UI * 2, 1580)
-    small = font(int(LSIZE * 0.62)); str_ = LTR * 0.5
-    R = 104   # dot radius (canvas)
+    cc = (CHAR_CX_UI * 2, CHAR_CY_UI * 2)
+    small = font(int(round(LSIZE * 0.86))); str_ = LTR * 0.7   # the concept's names: cap ~22 canvas px
+    R = int(CHAR_R_UI * 2)   # dot radius (canvas)
     dots = []
-    for name, ang in zip(CHARS, CHAR_ANG):
-        a = np.radians(ang); dx, dy = np.sin(a), -np.cos(a)
+    for name, ang, rad in zip(CHARS, CHAR_ANG, CHAR_RAD):
+        a = np.radians(ang); dx, dy = np.sin(a), -np.cos(a); R = rad * 2
         px, py = cc[0] + R * dx, cc[1] + R * dy; dots.append((px, py))
-        lx, ly = cc[0] + (R + 16) * dx, cc[1] + (R + 16) * dy
+        lx, ly = cc[0] + (R + 19) * dx, cc[1] + (R + 19) * dy
         anchor = "c" if abs(dx) < 0.3 else ("l" if dx > 0 else "r")
         capH = small.getbbox("H")[3] - small.getbbox("H")[1]
-        ty = ly - capH / 2 - (6 if abs(dx) < 0.3 else 0)
+        ty = (py - 16 - capH) if anchor == "c" else ly - capH / 2   # R&B sits just above its dot
         texts.append((name, lx, ty, small, str_, anchor))
     texts.append(("SYNC", SYNC_CX_UI * 2, TITLE_Y[0], font(LSIZE + 3), LTR + 0.6))
     # SYNC lamp (pedal A's unlit lamp) and its label below like a switch
@@ -196,7 +201,7 @@ def build_row2(src):
     img = Image.fromarray(np.clip(canvas, 0, 255).astype(np.uint8))
     d = ImageDraw.Draw(img)
     for (px, py) in dots:
-        d.ellipse((px - 4.5, py - 4.5, px + 4.5, py + 4.5), fill=LABEL_COL)
+        d.ellipse((px - 7, py - 7, px + 7, py + 7), fill=LABEL_COL)
     for t in texts:
         draw_text(img, t[0], t[1], t[2], t[3], t[4], anchor=t[5] if len(t) > 5 else "c")
     out = np.asarray(img, np.float32)
@@ -294,15 +299,25 @@ def build_more(bg):
         y_a, y_b = ROW_TOP - D - Y0, RULE_Y - Y0          # dest rows covered by both rows
         st = cv2.resize(side[:, xs], (side[:, xs].shape[1], y_b - y_a), interpolation=cv2.INTER_CUBIC)
         out[y_a:y_b, xs] = st
-    return np.clip(out, 0, 255), info
+    # the rows above the walnut frame are not deck: transparent (the steel, its legs and pull rods show through), with a
+    # soft contact shadow just above the frame instead of a hard band (Joshua: legs missing, dark line across the rug)
+    alpha = np.full(out.shape[:2], 255.0, np.float32)
+    band = src[FRAME_TOP:FRAME_TOP + TOPBAND]; rim = (band[..., 0] - band[..., 2] > 100) & (band.mean(2) > 70)
+    for x in range(out.shape[1]):
+        ys = np.flatnonzero(rim[:, x]); y_ = int(ys[0]) if len(ys) else TOPBAND
+        alpha[:y_, x] = 0.0
+        sh0 = max(0, y_ - 12); out[sh0:y_, x] = 0.0
+        alpha[sh0:y_, x] = 255.0 * 0.38 * np.linspace(0.0, 1.0, y_ - sh0, endpoint=False) ** 1.5
+    alpha = cv2.GaussianBlur(alpha, (0, 0), 0.8)
+    return np.clip(np.dstack([out, alpha]), 0, 255), info
 
 
 def layout():
     """UI px geometry for the editor"""
-    return dict(D_ui=D / 2, deckTop_ui=Y0 / 2, shift_ui=SHIFT / 2,
+    return dict(D_ui=D / 2, deckTop_ui=Y0 / 2, frameTop_ui=(Y0 + RIM_ROW - FRAME_TOP) / 2, shift_ui=SHIFT / 2,
                 btn=(BTN[0] / 2, BTN_SRC[1] / 2, (BTN[1] - BTN[0]) / 2, (BTN_SRC[3] - BTN_SRC[1]) / 2),
-                row2=[(n, k, cx) for n, (k, cx) in R2.items()], char_c=(CHAR_CX_UI, 790.0), char_scale=CHAR_SCALE,
-                char_ang=CHAR_ANG, char_r=52.0, sync_c=(SYNC_CX_UI, ECHO_C[1] / 2),
+                row2=[(n, k, cx) for n, (k, cx) in R2.items()], char_c=(CHAR_CX_UI, float(CHAR_CY_UI)), char_scale=CHAR_SCALE,
+                char_ang=CHAR_ANG, char_r=min(CHAR_RAD), char_rad=CHAR_RAD, sync_c=(SYNC_CX_UI, ECHO_C[1] / 2),
                 lampA_c=((LAMP_SRC[0] + LAMP_SRC[2]) / 4, (LAMP_SRC[1] + LAMP_SRC[3]) / 4))
 
 
@@ -310,7 +325,7 @@ if __name__ == "__main__":   # preview: python more_deck.py <ui_bg.jpg> <out_dir
     import sys
     bg = np.asarray(Image.open(sys.argv[1]).convert("RGB"), np.float32); od = sys.argv[2]; os.makedirs(od, exist_ok=True)
     nb = apply_strip(bg); Image.fromarray(nb.astype(np.uint8)).save(os.path.join(od, "normal.jpg"), quality=92)
-    more, info = build_more(bg); full = nb.copy(); full[Y0:] = more
-    sh = np.linspace(0.45, 1.0, 24)[:, None, None]; full[Y0 - 24:Y0] *= sh
+    more, info = build_more(bg); full = nb.copy(); a_ = more[..., 3:] / 255
+    full[Y0:] = more[..., :3] * a_ + full[Y0:] * (1 - a_)
     Image.fromarray(full.astype(np.uint8)).save(os.path.join(od, "more.jpg"), quality=92)
     print(_fit_label(), layout())

@@ -93,6 +93,8 @@ def package(d, brass=None):
             Image.fromarray(np.clip(strip, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(P, "sprites", "f3d_%s_%s.png" % (m, name)), optimize=True)
         out["layers"][name] = {"box": [int(x0 + reg[0]), int(y0 + reg[1]), int(x1 + reg[0]), int(y1 + reg[1])], "frames": info["frames"]}
         print(name, out["layers"][name])
+    old = os.path.join(P, "sprites", "floor3d.json")
+    if os.path.exists(old): out["alt"] = json.load(open(old)).get("alt", {})   # per-instrument sets (knees) survive
     json.dump(out, open(os.path.join(P, "sprites", "floor3d.json"), "w"), indent=1)
     # tone bar: its own pixels, cropped; a soft contact shadow under it
     b = info["bar"]; reg = b["region"]
@@ -132,7 +134,7 @@ def skins(dirs):
     json.dump(out, open(os.path.join(P, "skins", "skins.json"), "w"), indent=1)
 
 
-def rest_image(plate_dir, metal="chrome"):
+def rest_image(plate_dir, metal="chrome", name=None):
     """the plate with every moving layer at rest and the tone bar at its reference fret (what the plugin shows idle)"""
     im = background(plate_dir); S = json.load(open(os.path.join(P, "sprites", "sprites.json")))
     F = json.load(open(os.path.join(P, "sprites", "floor3d.json")))["layers"]
@@ -140,15 +142,20 @@ def rest_image(plate_dir, metal="chrome"):
     def put(img, b):
         a = img[..., 3:] / 255; reg = lay[b[1]:b[3], b[0]:b[2]]
         reg[..., :3] = img[..., :3] * a + reg[..., :3] * (1 - a); reg[..., 3:] = 255 * a + reg[..., 3:] * (1 - a)
-    for name in LAYERS:
-        st = np.asarray(Image.open(os.path.join(P, "sprites", "f3d_%s_%s.png" % (metal, name))).convert("RGBA"), np.float32)
-        b = F[name]["box"]; put(st[:b[3] - b[1]], b)
+    alt = json.load(open(os.path.join(P, "sprites", "floor3d.json"))).get("alt", {}).get(name, {})
+    for ln in LAYERS:
+        if ln in alt: continue   # this instrument's own (drawn after the mapping, in its own canvas)
+        st = np.asarray(Image.open(os.path.join(P, "sprites", "f3d_%s_%s.png" % (metal, ln))).convert("RGBA"), np.float32)
+        b = F[ln]["box"]; put(st[:b[3] - b[1]], b)
     put(np.asarray(Image.open(os.path.join(P, "sprites", "tone_bar.png")).convert("RGBA"), np.float32), S["tone_bar"]["box"])
     s_, tx, ty = affine_of(plate_dir)
     if (s_, tx, ty) != (1.0, 0.0, 0.0):
         lay = cv2.warpAffine(lay, np.float32([[s_, 0, tx], [0, s_, ty]]), (CW, CH), flags=cv2.INTER_AREA)
-    a = lay[..., 3:] / 255
-    return lay[..., :3] + im * (1 - a)
+    a = lay[..., 3:] / 255; im = lay[..., :3] + im * (1 - a)
+    for lay_, v in alt.items():
+        b = v["box"]; st = np.asarray(Image.open(os.path.join(P, "sprites", "f3d_%s_%s.png" % (name, lay_))).convert("RGBA"), np.float32)[:b[3] - b[1]]
+        a = st[..., 3:] / 255; im[b[1]:b[3], b[0]:b[2]] = st[..., :3] * a + im[b[1]:b[3], b[0]:b[2]] * (1 - a)
+    return im
 
 
 def cards(dirs):
@@ -157,7 +164,7 @@ def cards(dirs):
            "bullnose_maple": [4], "bullnose_rosewood": [5, 9], "doubleneck": [11, 23]}
     dst = os.path.join(H, "..", "..", "..", "..", "Source", "ui_assets")
     for sk, d in dirs.items():
-        im = rest_image(d, "chrome")   # koa is chrome now too (2026-11-11)
+        im = rest_image(d, "chrome", sk)   # koa is chrome now too (2026-11-11)
         c = Image.fromarray(np.clip(im, 0, 255).astype(np.uint8)).crop((190, 160, 3010, 1386)).resize((726, 316), Image.LANCZOS)
         for n in num[sk]: c.save(os.path.join(dst, "card_%02d.jpg" % n), quality=92); print("card_%02d" % n, sk)
 
@@ -166,9 +173,25 @@ def swatches(dirs):
     """the preset editor's STEEL FINISH swatches for the shaped instruments: the left end (keyhead, front corner), 108x104"""
     dst = os.path.join(H, "..", "..", "..", "..", "Source", "ui_assets")
     for sk, d in dirs.items():
-        im = Image.fromarray(np.clip(rest_image(d), 0, 255).astype(np.uint8))
+        im = Image.fromarray(np.clip(rest_image(d, "chrome", sk), 0, 255).astype(np.uint8))
         im.crop((250, 200, 250 + 700, 200 + 674)).resize((108, 104), Image.LANCZOS).save(os.path.join(dst, "finish_%s.png" % sk), optimize=True)
         print("finish_%s.png" % sk)
+
+
+def knees(name, d):
+    """an instrument's own knee levers (the double neck's hang by the legs): rendered in that instrument's canvas (its
+    lens), so the editor draws them without the steel mapping. -> sprites/f3d_<name>_knee_[LR].png + floor3d.json alt"""
+    info = json.load(open(os.path.join(d, "layers.json"))); p0 = background(d)
+    F = json.load(open(os.path.join(P, "sprites", "floor3d.json"))); F.setdefault("alt", {})[name] = {}
+    for lay in ("knee_L", "knee_R"):
+        reg = info["layers"][lay]["region"]; fs = [frame_sprite(p0, d, lay, f, reg) for f in range(info["frames"])]
+        al = np.max([f[..., 3] for f in fs], 0); ys, xs = np.where(al >= 4)
+        x0, y0, x1, y1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+        strip = np.concatenate([f[y0:y1, x0:x1] for f in fs], 0)
+        Image.fromarray(np.clip(strip, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(P, "sprites", "f3d_%s_%s.png" % (name, lay)), optimize=True)
+        F["alt"][name][lay] = {"box": [int(x0 + reg[0]), int(y0 + reg[1]), int(x1 + reg[0]), int(y1 + reg[1])], "frames": info["frames"]}
+        print(name, lay, F["alt"][name][lay])
+    json.dump(F, open(os.path.join(P, "sprites", "floor3d.json"), "w"), indent=1)
 
 
 def check(d, outp):
@@ -192,4 +215,5 @@ if __name__ == "__main__":
     elif sys.argv[1] == "cards": cards(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "skins": skins(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "check": check(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "knees": knees(sys.argv[2], sys.argv[3])
     elif sys.argv[1] == "swatches": swatches(dict(a.split("=") for a in sys.argv[2:]))

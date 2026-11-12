@@ -22,6 +22,10 @@ namespace UiLayout {
     inline constexpr int f3dFrames_pedal_B = 7;
     inline constexpr float f3d_pedal_C[4] = { 809.50f, 403.50f, 107.00f, 269.00f };   // x, y, w, h
     inline constexpr int f3dFrames_pedal_C = 7;
+    inline constexpr float f3d_doubleneck_knee_L[4] = { 232.50f, 442.00f, 113.50f, 158.00f };   // x, y, w, h
+    inline constexpr int f3dFrames_doubleneck_knee_L = 7;
+    inline constexpr float f3d_doubleneck_knee_R[4] = { 1249.00f, 447.00f, 125.00f, 166.00f };   // x, y, w, h
+    inline constexpr int f3dFrames_doubleneck_knee_R = 7;
     inline constexpr float d3d_pedal_A[4] = { 980.00f, 750.00f, 119.00f, 126.50f };   // x, y, w, h
     inline constexpr int d3dFrames_pedal_A = 7;
     inline constexpr float d3d_pedal_B[4] = { 1071.00f, 750.00f, 117.50f, 126.50f };   // x, y, w, h
@@ -130,10 +134,11 @@ namespace UiLayout {
     inline constexpr float hitMidiLearn[4] = { 1258.18f, 909.27f, 154.08f, 37.89f };   // x, y, w, h
     inline constexpr float hitSlider[4] = { 767.35f, 912.26f, 323.49f, 42.87f };   // x, y, w, h
     inline constexpr float hitMore[4] = { 1428.00f, 908.50f, 87.00f, 39.50f };   // x, y, w, h
-    inline constexpr float moreD = 218.00f, moreDeckTop = 421.00f;   // UI px: row-1 lift; deck_more.jpg starts here (to 1000)
+    inline constexpr float moreD = 218.00f, moreDeckTop = 421.00f, moreFrameTop = 451.00f;   // UI px: row-1 lift; deck_more.png starts here (to 1000); its walnut frame's top
     inline constexpr float row2X[7] = { 135.0f, 270.0f, 405.0f, 562.0f, 706.0f, 882.0f, 1030.0f };   // VIBRATO RATE SLIDE (scallop) DRIVE WIDTH (dome) DELAY DECAY (space)
-    inline constexpr float charCentre[2] = { 1282.00f, 790.00f }, charScale = 1.040f, charDotR = 52.0f;
-    inline constexpr float charAngle[11] = { -135.0f, -108.0f, -81.0f, -54.0f, -27.0f, 0.0f, 27.0f, 54.0f, 81.0f, 108.0f, 135.0f };   // deg clockwise from 12 o'clock, STUDIO..ROOM
+    inline constexpr float charCentre[2] = { 1282.00f, 798.00f }, charScale = 1.500f, charDotR = 65.5f;
+    inline constexpr float charAngle[11] = { -131.0f, -103.0f, -81.0f, -59.0f, -32.0f, 0.0f, 32.0f, 59.0f, 81.0f, 103.0f, 131.0f };   // deg clockwise from 12 o'clock, STUDIO..ROOM
+    inline constexpr float charRadius[11] = { 70.5f, 73.0f, 72.0f, 69.0f, 66.7f, 65.5f, 66.7f, 69.0f, 72.0f, 73.0f, 70.5f };   // UI px from the centre to each spot's dot
     inline constexpr float syncCentre[2] = { 1508.00f, 780.00f }, lampACentre[2] = { 1028.00f, 733.50f };
     inline constexpr float hitPedalA[4] = { 981.50f, 688.00f, 88.50f, 184.50f };   // x, y, w, h
     inline constexpr float hitPedalB[4] = { 1070.00f, 688.00f, 88.50f, 184.50f };   // x, y, w, h

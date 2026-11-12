@@ -22,7 +22,9 @@ import more_deck as MD   # the MORE state: taller deck (row 2) + the bottom stri
 _bg = deck_pack.apply(np.asarray(Image.open("bg_steel3d.png").convert("RGB"), np.float32))
 Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)
-Image.fromarray(np.clip(_more, 0, 255).astype(np.uint8)).save(os.path.join(OUT, "deck_more.jpg"), quality=95, subsampling=0)
+for _f in ("deck_more.jpg", "deck_more.png"):
+    if os.path.exists(os.path.join(OUT, _f)): os.remove(os.path.join(OUT, _f))
+Image.fromarray(np.clip(_more, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "deck_more.png"), optimize=True)   # top rows transparent
 _SH = MD.SHIFT; S["midi_on"]["box"][0] -= _SH; S["midi_on"]["box"][2] -= _SH   # MIDI LEARN moved left
 T["vol"]["ink_cx"] -= _SH; T["vol"]["ink_left"] -= _SH
 # sprites (canvas boxes -> UI rects)
@@ -46,6 +48,11 @@ for name, v in F3["layers"].items():
         shutil.copy("sprites/f3d_%s_%s.png" % (metal, name), os.path.join(OUT, "f3d_%s_%s.png" % (metal, name)))
     b = v["box"]; rect("f3d_" + name, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
     L("inline constexpr int f3dFrames_%s = %d;" % (name, v["frames"]))
+for inst, lays in F3.get("alt", {}).items():   # an instrument's own floor layers (the double neck's outer knee levers)
+    for name, v in lays.items():
+        shutil.copy("sprites/f3d_%s_%s.png" % (inst, name), os.path.join(OUT, "f3d_%s_%s.png" % (inst, name)))
+        b = v["box"]; rect("f3d_%s_%s" % (inst, name), b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
+        L("inline constexpr int f3dFrames_%s_%s = %d;" % (inst, name, v["frames"]))
 # the deck's foot switches and knee-lever toggles (deck3d/deck_pack.py package): frame strips + the A/B/C lamps
 D3 = json.load(open("sprites/d3d.json"))
 for name, v in D3["layers"].items():
@@ -141,10 +148,11 @@ rect("hitSlider", 752 * RX, 915 * RY, 1168 * RX - _SH / 2, 958 * RY)
 # the MORE state (more_deck.py): row 1 moves up by moreD, row 2 sits where row 1 was
 ML = MD.layout(); bx, by, bw, bh = ML["btn"]
 rect("hitMore", bx, by, bx + bw, by + bh)
-L("inline constexpr float moreD = %.2ff, moreDeckTop = %.2ff;   // UI px: row-1 lift; deck_more.jpg starts here (to 1000)" % (ML["D_ui"], ML["deckTop_ui"]))
+L("inline constexpr float moreD = %.2ff, moreDeckTop = %.2ff, moreFrameTop = %.2ff;   // UI px: row-1 lift; deck_more.png starts here (to 1000); its walnut frame's top" % (ML["D_ui"], ML["deckTop_ui"], ML["frameTop_ui"]))
 L("inline constexpr float row2X[7] = { %s };   // VIBRATO RATE SLIDE (scallop) DRIVE WIDTH (dome) DELAY DECAY (space)" % ", ".join("%.1ff" % cx for _, _, cx in ML["row2"]))
 L("inline constexpr float charCentre[2] = { %.2ff, %.2ff }, charScale = %.3ff, charDotR = %.1ff;" % (*ML["char_c"], ML["char_scale"], ML["char_r"]))
 L("inline constexpr float charAngle[11] = { %s };   // deg clockwise from 12 o'clock, STUDIO..ROOM" % ", ".join("%.1ff" % a for a in ML["char_ang"]))
+L("inline constexpr float charRadius[11] = { %s };   // UI px from the centre to each spot's dot" % ", ".join("%.1ff" % r for r in ML["char_rad"]))
 L("inline constexpr float syncCentre[2] = { %.2ff, %.2ff }, lampACentre[2] = { %.2ff, %.2ff };" % (*ML["sync_c"], *ML["lampA_c"]))
 pb = json.load(open("aligned/pedals_unlit.json"))["part_box_canvas"]; cw = (pb[2] - pb[0]) / 3
 for i, k in enumerate("ABC"): rect("hitPedal" + k, (pb[0] + i * cw) / 2, pb[1] / 2, (pb[0] + (i + 1) * cw) / 2, pb[3] / 2)

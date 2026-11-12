@@ -439,6 +439,25 @@ if E("EDGE_TRIM", 0) > 0:   # darker satin-silver strip wrapping the top front e
 EP_T = 0.025
 for sx in (-1, 1):                                                           # endplates: polished cast aluminium, proud of the cabinet
     xe = sx * (BODY_L / 2 + EP_T / 2 - 0.004)
+    if SHAPE == "bullnose":   # the end cap follows the round front and wraps it (s3_1; Joshua: square plates looked pasted on)
+        import bmesh
+        R2 = BN_R + 0.011; cy_, cz_ = YF + BN_R, -APRON / 2 - 0.004; zt, zb = cz_ + R2, cz_ - R2
+        prof = [(YB + 0.007, zt), (YB + 0.007, zb)] + [(cy_ - R2 * math.sin(t), cz_ - R2 * math.cos(t))
+                                                         for t in [i * math.pi / 32 for i in range(33)]]
+        x0_, x1_ = xe - EP_T / 2, xe + EP_T / 2; n_ = len(prof)
+        me = bpy.data.meshes.new("Endplate"); vs = [(x0_, y, z) for y, z in prof] + [(x1_, y, z) for y, z in prof]
+        fs = [tuple(range(n_)), tuple(range(n_, 2 * n_))] + [(i, (i + 1) % n_, n_ + (i + 1) % n_, n_ + i) for i in range(n_)]
+        me.from_pydata(vs, [], fs); bm_ = bmesh.new(); bm_.from_mesh(me); bmesh.ops.recalc_face_normals(bm_, faces=bm_.faces)
+        bm_.to_mesh(me); bm_.free(); ep = bpy.data.objects.new("Endplate", me); sc.collection.objects.link(ep); me.materials.append(M_END)
+        bv_ = ep.modifiers.new("bevel", "BEVEL"); bv_.width = 0.004; bv_.segments = 5; bv_.limit_method = "ANGLE"; bv_.angle_limit = math.radians(30)
+        for pl in me.polygons: pl.use_smooth = True
+        box("EndLip", (sx * (BODY_L / 2 - 0.004), (cy_ + YB) / 2 + 0.002, 0.0025), (0.026, YB - cy_ + 0.010, 0.005), M_END, bevel=0.002, seg=3)
+        for a_ in (math.radians(40), math.radians(-40)):   # two screws on the round front of each cap
+            n3 = Vector((0, -math.cos(a_), math.sin(a_))); p3 = Vector((xe, cy_, cz_)) + n3 * R2
+            rod("Screw", p3 - n3 * 0.0006, p3 + n3 * 0.0014, 0.0046, M_CHROME, 20)
+        for ye in (cy_, YB - 0.016):
+            cyl("LipScrew", (sx * (BODY_L / 2 - 0.006), ye, 0.0052), 0.0030, 0.0012, M_CHROME, "Z", 16)
+        continue
     box("Endplate", (xe, YC, -APRON / 2 - 0.004), (EP_T, DEPTH + 0.014, APRON + 0.022), M_END, bevel=0.006, seg=5)
     box("EndLip", (sx * (BODY_L / 2 - 0.004), YC, 0.0025), (0.026, DEPTH + 0.014, 0.005), M_END, bevel=0.002, seg=3)
     for z in (-0.016, -APRON + 0.006):                                       # screws on the front face
@@ -582,6 +601,8 @@ FEET = {}
 for sx in (-1, 1):
     for sy in (-1, 1):
         top = Vector((sx * (BODY_L / 2 + EP_T / 2 - 0.004), (YF + 0.004) if sy < 0 else (YB - 0.004), -APRON - 0.010))   # under the endplate's corner
+        if SHAPE == "bullnose" and sy < 0:   # the front legs meet the cap's curved underside
+            top.z = cz_ - math.sqrt(max(R2 ** 2 - (cy_ - top.y) ** 2, 0.0)) + 0.004
         foot = Vector((top.x, top.y, Z_FLOOR + 0.012))
         ax = (foot - top).normalized(); mid = top.lerp(foot, 0.70)
         rod("LegSocket", top + ax * -0.006, top + ax * 0.020, 0.0122, M_ALU, 32)
@@ -625,10 +646,20 @@ for k, px in list(zip("ABC", PEDAL_X)) + [("X%d" % i, x) for i, x in enumerate(E
         box("Yoke_" + k, (px + sgn * 0.011, BAR_Y - 0.006, BAR_Z + 0.018), (0.005, 0.012, 0.032), M_ALU, bevel=0.002)
     cyl("ClevisPin_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.032), 0.0030, 0.016, M_CHROME, "X", 12)
     rod("PullRod_" + k, (px, BAR_Y - 0.004, BAR_Z + 0.036), (px, -BODY_D / 2 + 0.012, -APRON), E("PULL_R", 0.0024), M_PULL, 16)
-for k, kx in (("L", -0.1905), ("R", 0.1366)):
+# knee levers: the box steel's sit inboard with ribbed rubber pads; the double neck's hang out by the legs as bent chrome
+# levers with flat chrome paddles (s6_3; Joshua 2026-11-12: "should match reference, moved to outer side")
+KNEES = (("L", -0.392, 1), ("R", 0.392, -1)) if SHAPE == "double" else (("L", -0.1905, 1), ("R", 0.1366, -1))
+for k, kx, _sg in KNEES:
     box("KneeBracket_" + k, (kx, -BODY_D / 2 + 0.008, -APRON - 0.005), (0.046, 0.020, 0.010), M_ALU, bevel=0.002)
     for bx in (-0.015, 0.015):
         cyl("KneeBolt_" + k, (kx + bx, -BODY_D / 2 - 0.0025, -APRON - 0.005), 0.0028, 0.002, M_CHROME, "Y", 6)
+    if SHAPE == "double":
+        kout = -_sg   # toward the nearer leg
+        rod("KneeArm_" + k, (kx, -BODY_D / 2 + 0.002, -APRON - 0.010), (kx + kout * 0.012, -BODY_D / 2 - 0.004, -APRON - 0.050), 0.0040, M_CHROME, 20)
+        cyl("KneePivot_" + k, (kx, -BODY_D / 2 - 0.002, -APRON - 0.014), 0.0042, 0.004, M_CHROME, "Y", 16)
+        rod("KneeArm_" + k, (kx + kout * 0.012, -BODY_D / 2 - 0.004, -APRON - 0.050), (kx + kout * 0.016, -BODY_D / 2 - 0.006, -APRON - 0.075), 0.0040, M_CHROME, 20)
+        box("KneePad_" + k, (kx + kout * 0.016, -BODY_D / 2 - 0.007, -APRON - 0.105), (0.024, 0.005, 0.064), M_POL, bevel=0.0022, seg=4)
+        continue
     box("KneeArm_" + k, (kx, -BODY_D / 2 + 0.002, -APRON - 0.026), (0.010, 0.006, 0.040), M_ALU, bevel=0.0015)
     cyl("KneePivot_" + k, (kx, -BODY_D / 2 - 0.002, -APRON - 0.040), 0.0042, 0.004, M_CHROME, "Y", 16)
     box("KneePad_" + k, (kx, -BODY_D / 2 - 0.002, -APRON - 0.086), (0.021, 0.013, 0.082), M_RUBBER, bevel=0.0055, seg=4)
@@ -770,7 +801,7 @@ LAYERS = {}
 for k, px in zip("ABC", PEDAL_X):
     LAYERS["pedal_" + k] = {"turn": named("Pedal_" + k, "PedalRib_" + k, "Yoke_" + k, "RodClevis_" + k, "ClevisPin_" + k),
                             "slide": named("PullRod_" + k), "pivot": Vector((px, BAR_Y, BAR_Z)), "axis": "X", "angle": math.radians(15.0)}
-for k, kx, sgn in (("L", -0.1905, 1), ("R", 0.1366, -1)):
+for k, kx, sgn in KNEES:
     LAYERS["knee_" + k] = {"turn": named("KneeArm_" + k, "KneePad_" + k, "KneeRib_" + k, "KneePivot_" + k), "slide": [],
                            "pivot": Vector((kx, -BODY_D / 2, -APRON - 0.012)), "axis": "Y", "angle": sgn * math.radians(15.0)}
 BAR_OBJS = named("ToneBar", "ToneBarNose")
