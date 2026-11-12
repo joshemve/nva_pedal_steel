@@ -48,7 +48,7 @@ R2 = {   # name: (kind, cx_ui)
     "DRIVE": ("dome", 562), "WIDTH": ("dome", 706),
     "DELAY": ("space", 882), "DECAY": ("space", 1030),
 }
-CHAR_CX_UI, CHAR_SCALE = 1282, 1.50   # the knob as big as the concept's (k11_5: ~110 UI px across)
+CHAR_CX_UI, CHAR_SCALE = 1282, 1.30   # the knob as big as the concept's (k11_5: ~110 UI px across; the workshop SPACE knob is 42 px in radius)
 CHAR_CY_UI, CHAR_R_UI = 798, 70.0     # knob centre row, dot radius (measured on k11_5)
 SYNC_CX_UI = 1508
 DIVS_UI = (480, 792, 1120, 1450)
