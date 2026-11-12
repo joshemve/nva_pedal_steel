@@ -88,6 +88,7 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     scallop = { loadImage(BinaryData::knob_scallop_png, BinaryData::knob_scallop_pngSize), scallopFrames, scallopFramePx };
     space = { loadImage(BinaryData::knob_space_png, BinaryData::knob_space_pngSize), spaceFrames, spaceFramePx };
     ptrTone = { loadImage(BinaryData::ptr_tone_png, BinaryData::ptr_tone_pngSize), ptrTONEFrames, ptrTONEFramePx };
+    dome = { loadImage(BinaryData::knob_dome_png, BinaryData::knob_dome_pngSize), domeFrames, domeFramePx };
     ptrPick = { loadImage(BinaryData::ptr_pick_png, BinaryData::ptr_pick_pngSize), ptrPICKFrames, ptrPICKFramePx };
     ptrTrim = { loadImage(BinaryData::ptr_trim_png, BinaryData::ptr_trim_pngSize), ptrTRIMFrames, ptrTRIMFramePx };
 
@@ -895,9 +896,10 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
         const Anchor a = c == Tone ? kTone : c == Pick ? kPick : c == Glide ? kGlide : c == Swell ? kSwell : c == Echo ? kEcho : kReverb;
         return anchored(norm(c), a);
     };
-    drawStripFrame(g, ptrTone, frameFor(knobAngle(Tone), ptrTONEFrames), { ptrTONEOrigin[0], ptrTONEOrigin[1], ptrTONEFramePx * 0.5f, ptrTONEFramePx * 0.5f });
-    drawStripFrame(g, ptrPick, frameFor(knobAngle(Pick), ptrPICKFrames), { ptrPICKOrigin[0], ptrPICKOrigin[1], ptrPICKFramePx * 0.5f, ptrPICKFramePx * 0.5f });
     auto centred = [](const float* c, int px) { const float s = px * 0.5f; return juce::Rectangle<float>(c[0] - s * 0.5f, c[1] - s * 0.5f, s, s); };
+    // VOICE: Joshua's workshop dome turns whole (body, skirt and pointer), over the painted one, on its pivot
+    drawStripFrame(g, dome, frameFor(knobAngle(Tone), domeFrames), centred(domeCentre0, domeFramePx));
+    drawStripFrame(g, dome, frameFor(knobAngle(Pick), domeFrames), centred(domeCentre1, domeFramePx));
     drawStripFrame(g, scallop, frameFor(knobAngle(Glide), scallopFrames), centred(scallopCentre0, scallopFramePx));
     drawStripFrame(g, scallop, frameFor(knobAngle(Swell), scallopFrames), centred(scallopCentre1, scallopFramePx));
     drawStripFrame(g, space, frameFor(knobAngle(Echo), spaceFrames), centred(spaceCentre0, spaceFramePx));
@@ -924,8 +926,10 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
         const Ctl sc[3] = { Vibrato, Rate, Slide };
         for (int i = 0; i < 3; ++i) drawStripFrame(g, scallop, frameFor(lin(sc[i]), scallopFrames), at(row2X[i], scallopCentre0[1], scallopFramePx));
         const float domeOff = ptrTONEFramePx * 0.25f;
-        drawStripFrame(g, ptrTone, frameFor(lin(Drive), ptrTONEFrames), { row2X[3] - domeOff, ptrTONEOrigin[1], ptrTONEFramePx * 0.5f, ptrTONEFramePx * 0.5f });
-        drawStripFrame(g, ptrTone, frameFor(lin(Width), ptrTONEFrames), { row2X[4] - domeOff, ptrTONEOrigin[1], ptrTONEFramePx * 0.5f, ptrTONEFramePx * 0.5f });
+        { const float d0[2] = { row2X[3] - domeOff + ptrTONEFramePx * 0.25f, domeCentre0[1] }, d1[2] = { row2X[4] - domeOff + ptrTONEFramePx * 0.25f, domeCentre0[1] };
+          const float s = domeFramePx * 0.5f;
+          drawStripFrame(g, dome, frameFor(lin(Drive), domeFrames), { d0[0] - s * 0.5f, d0[1] - s * 0.5f, s, s });
+          drawStripFrame(g, dome, frameFor(lin(Width), domeFrames), { d1[0] - s * 0.5f, d1[1] - s * 0.5f, s, s }); }
         drawStripFrame(g, space, frameFor(lin(Delay), spaceFrames), at(row2X[5], spaceCentre0[1], spaceFramePx));
         drawStripFrame(g, space, frameFor(lin(Decay), spaceFrames), at(row2X[6], spaceCentre0[1], spaceFramePx));
         auto* cp = dynamic_cast<juce::AudioParameterChoice*>(param(Character));

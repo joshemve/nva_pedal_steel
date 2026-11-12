@@ -175,7 +175,7 @@ def build(coll, M, R, style, parent=None):
             globals()["LAND"] = part.get("land", LAND)
             last = (part["prof"], R * part["width"], R * part["height"], z)
             _obj(coll, "KnobBody " + part["name"], lathe("body_%s_%s" % (style, part["name"]), last[0], last[1], last[2],
-                 part["lobes"], part["depth"], part["sharp"], z0=z, phase=part.get("phase", 0.0)), M[bm_], spin)
+                 part["lobes"], part["depth"], part["sharp"], z0=z, phase=part.get("phase", 0.0)), M[part.get("mat", bm_)], spin)
             z += last[2]
         pointer = _obj(coll, "Pointer", pointer_mesh("ptr_" + style, last[0], last[1], last[2], r0, r1, pw, last[3],
                        cap_round=1.0 if pm_ == "ptr_light" else 0.2), M[pm_], spin)   # r0/r1/pw are fractions of the Top part

@@ -75,6 +75,8 @@ def convert(recipe, base):
     P, p, m, l, v = (recipe[k] for k in ("parts", "pointer", "material", "light", "view"))
     style = recipe["style"]
     parts = ([part("Base", P["base"], base_profile(P["base"]))] if P["base"]["on"] else []) + [part("Top", P["top"], top_profile(P["top"]))]
+    own_base = m.get("base_color") if P["base"]["on"] else None   # Base in its own colour: rendered with knob_skirt
+    if own_base: parts[0]["mat"] = "knob_skirt"
     cfg = dict(base)
     cfg["ambient"] = l["ambient"]; cfg["exposure"] = l["exposure"]
     cfg[style] = {
@@ -88,6 +90,8 @@ def convert(recipe, base):
             PTR[style]: {"Base Color": [*p["color"], 1], "Roughness": p["roughness"]},
         },
     }
+    if own_base:
+        cfg[style]["materials"]["knob_skirt"] = {"Base Color": [*own_base, 1], "Roughness": m.get("base_roughness", m["roughness"])}
     return cfg
 
 

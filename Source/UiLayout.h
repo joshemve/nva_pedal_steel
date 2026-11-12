@@ -69,6 +69,9 @@ namespace UiLayout {
     inline constexpr int spaceFrames = 128, spaceFramePx = 202;   // 2x px, frames stacked vertically
     inline constexpr float spaceCentre0[2] = { 745.90f, 780.00f };
     inline constexpr float spaceCentre1[2] = { 879.30f, 780.10f };
+    inline constexpr int domeFrames = 128, domeFramePx = 154;   // 2x px, frames stacked vertically
+    inline constexpr float domeCentre0[2] = { 130.24f, 770.84f };
+    inline constexpr float domeCentre1[2] = { 270.46f, 770.97f };
     inline constexpr float txt_val_TONE[4] = { 137.31f, 861.75f, 38.62f, 118.00f };   // ink centre x, ink centre y, ink width of txtRef, ink left
     inline constexpr const char* txtRef_val_TONE = "65 %";
     inline constexpr unsigned int txtColour_val_TONE = 0xfffefdfa;   // font Poppins-Medium

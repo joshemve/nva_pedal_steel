@@ -10,11 +10,11 @@ from PIL import Image
 H = os.path.dirname(os.path.abspath(__file__)); os.chdir(H)
 hd = np.asarray(Image.open("parts/bg_hd.png"), np.float32); Lref = hd.mean(2)
 S = json.load(open("strips/strips.json"))
-REF_ANGLE = {"scallop": (61.7, 60.7), "space": (-88.1, -55.5)}   # the design's pointer angles (PluginEditor anchors)
+REF_ANGLE = {"scallop": (61.7, 60.7), "space": (-88.1, -55.5), "dome": (35.0, -50.0)}   # the design's pointer angles (PluginEditor anchors)
 DMAX, NB = 30, 36
 blur = lambda a, s: cv2.GaussianBlur(a, (0, 0), s)
 
-for style in ("scallop", "space"):
+for style in [s_ for s_ in ("scallop", "space", "dome") if s_ != "dome" or os.path.exists("strips/knob_dome_orig.png")]:   # dome: once a workshop dome is installed
     src = "strips/knob_%s.png" % style; orig = "strips/knob_%s_orig.png" % style
     if not os.path.exists(orig): shutil.copy(src, orig)
     strip = np.asarray(Image.open(orig).convert("RGBA"), np.float32)

@@ -21,6 +21,17 @@ import sys; sys.path.insert(0, os.path.join(H, "..", "deck3d")); import deck_pac
 import more_deck as MD   # the MORE state: taller deck (row 2) + the bottom strip with the MORE / LESS button
 _bg = deck_pack.apply(np.asarray(Image.open("bg_steel3d.png").convert("RGB"), np.float32))
 import arrow_buttons; _bg = arrow_buttons.apply(_bg)   # the preset arrows, redrawn clean (no AI texture)
+def _clear_domes(bg):   # the painted TONE / PICK domes go: the workshop dome strip draws the whole knob on its pivot
+    out = bg.copy(); h_, w_ = out.shape[:2]
+    for cx, cy in ((262.6, 1552.6), (541.6, 1552.6)):   # the painted bodies' centres (canvas), a little below the pivot
+        m = np.zeros((h_, w_), np.uint8); cv2.circle(m, (int(round(cx)), int(round(cy))), 74, 255, -1)
+        y0, y1, x0, x1 = int(cy) - 90, int(cy) + 90, int(cx) - 90, int(cx) + 90
+        reg = np.clip(out[y0:y1, x0:x1], 0, 255).astype(np.uint8)
+        fill = cv2.inpaint(reg, m[y0:y1, x0:x1], 9, cv2.INPAINT_TELEA).astype(np.float32)
+        mm = cv2.GaussianBlur(m[y0:y1, x0:x1].astype(np.float32) / 255, (0, 0), 2)[..., None]
+        out[y0:y1, x0:x1] = fill * mm + out[y0:y1, x0:x1] * (1 - mm)   # (the new knob and its shadow cover nearly all of it)
+    return out
+_bg = _clear_domes(_bg)
 Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)
 for _f in ("deck_more.jpg", "deck_more.png", "deck_more_top.png"):
@@ -102,7 +113,7 @@ for K_, p in PS.items():   # cream domes: body is in the background, only the po
     shutil.copy(os.path.join(ST, "ptr_%s.png" % K_), os.path.join(OUT, "ptr_%s.png" % K_.lower()))
     L("inline constexpr int ptr%sFrames = %d, ptr%sFramePx = %d;" % (K_, p["frames"], K_, p["frame_px"]))
     L("inline constexpr float ptr%sOrigin[2] = { %.2ff, %.2ff };   // UI px, top-left of each frame" % (K_, p["origin_canvas"][0] / 2, p["origin_canvas"][1] / 2))
-for st in ("scallop", "space"):
+for st in ("scallop", "space", "dome"):   # dome: the workshop VOICE knob, a whole turning knob like the others
     if st not in strips: continue
     m = strips[st]; shutil.copy(os.path.join(ST, "knob_%s.png" % st), os.path.join(OUT, "knob_%s.png" % st))
     L("inline constexpr int %sFrames = %d, %sFramePx = %d;   // 2x px, frames stacked vertically" % (st, m["frames"], st, m["frame_px"][0]))

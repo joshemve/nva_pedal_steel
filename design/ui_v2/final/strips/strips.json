@@ -14,13 +14,13 @@
   "note": "draw frame centred on the knob centre (UI px, 1600x1000 layout)",
   "instances": [
    {
-    "cx": 131.3,
-    "cy": 776.3,
+    "cx": 130.24,
+    "cy": 770.84,
     "r": 29.0
    },
    {
-    "cx": 270.8,
-    "cy": 776.3,
+    "cx": 270.46,
+    "cy": 770.97,
     "r": 29.0
    }
   ]

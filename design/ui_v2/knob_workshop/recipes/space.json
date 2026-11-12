@@ -2,13 +2,13 @@
  "name": "space",
  "label": "SPACE (ECHO / REVERB)",
  "style": "space",
- "status": "draft",
+ "status": "finished",
  "notes": "",
  "radius_m": 0.038,
  "frame_px": 101,
  "pointer": {
-  "start": 0.06,
-  "end": 0.92,
+  "start": 0.228,
+  "end": 0.867,
   "width": 0.095,
   "color": [
    0.95,
@@ -24,8 +24,8 @@
    0.008
   ],
   "roughness": 0.39,
-  "coat": 0.05,
-  "coat_roughness": 0.25
+  "coat": 0.17,
+  "coat_roughness": 0.53
  },
  "light": {
   "key_power": 4.5,
@@ -80,10 +80,10 @@
  ],
  "parts": {
   "base": {
-   "on": false,
-   "width": 1.07,
-   "height": 0.3,
-   "bevel": 0.05,
+   "on": true,
+   "width": 1.095,
+   "height": 0.5,
+   "bevel": 0.065,
    "grip": {
     "style": "smooth"
    },
@@ -97,14 +97,14 @@
    "grip": {
     "style": "wave",
     "count": 8,
-    "depth": 0.072,
-    "sharpness": 0.7,
+    "depth": 0.137,
+    "sharpness": 1.05,
     "phase": 0,
     "land": 0.1,
-    "fade": 0
+    "fade": 0.01
    },
    "taper": 0.205
   }
  },
- "saved_at": "2026-11-12 14:32:07"
+ "saved_at": "2026-11-12 14:34:59"
 }

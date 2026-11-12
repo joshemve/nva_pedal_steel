@@ -231,8 +231,9 @@ function build(rec) {
 }
 function dress(rec, glow) {
   for (const [m, part] of [[baseMat, 'base'], [topMat, 'top']]) {
-    m.color.setRGB(...rec.material.color); m.roughness = rec.material.roughness;
-    m.clearcoat = rec.material.coat; m.clearcoatRoughness = rec.material.coat_roughness;
+    const own = part === 'base' && rec.material.base_color;   // optional: the Base in its own colour (VOICE: cream dome on a black skirt)
+    m.color.setRGB(...(own || rec.material.color)); m.roughness = own ? rec.material.base_roughness ?? rec.material.roughness : rec.material.roughness;
+    m.clearcoat = own ? 0 : rec.material.coat; m.clearcoatRoughness = rec.material.coat_roughness;
     m.emissive.setRGB(...(glow === part ? [0.05, 0.16, 0.13] : [0, 0, 0]));
   }
   ptrMat.color.setRGB(...rec.pointer.color); ptrMat.roughness = rec.pointer.roughness;
@@ -607,7 +608,10 @@ const TABS = [
       ['Matte', { 'material.roughness': 0.6, 'material.coat': 0, 'material.coat_roughness': 0.3 }],
       ['Satin', { 'material.roughness': 0.35, 'material.coat': 0.15, 'material.coat_roughness': 0.25 }],
       ['Gloss', { 'material.roughness': 0.2, 'material.coat': 0.6, 'material.coat_roughness': 0.08 }]] },
-    C('material.roughness', 'Roughness', 0.02, 1, 0.01), C('material.coat', 'Gloss coat', 0, 1, 0.01), C('material.coat_roughness', 'Coat rough', 0.02, 1, 0.01)] },
+    C('material.roughness', 'Roughness', 0.02, 1, 0.01), C('material.coat', 'Gloss coat', 0, 1, 0.01), C('material.coat_roughness', 'Coat rough', 0.02, 1, 0.01),
+    ...(S.material.base_color ? [{ sub: 'Base' },
+      { path: 'material.base_color', label: 'Colour', chips: [['Black', '#151515'], ['Grey', '#8a8a88'], ['Ivory', '#e9dcc0'], ['Oxblood', '#5a1a16']] },
+      C('material.base_roughness', 'Roughness', 0.02, 1, 0.01)] : [])] },
   { title: 'Light', watch: ['light'], hint: 'The light stays still while the knob turns.', items: () => [
     C('light.key_power', 'Top light', 0, 20, 0.1), C('light.ambient', 'Room light', 0, 0.6, 0.01),
     C('light.key_pos.2', 'Height', 0.03, 0.8, 0.01), C('light.key_pos.1', 'Distance', 0.05, 0.6, 0.01), C('light.key_size.1', 'Softness', 0.01, 0.3, 0.005),

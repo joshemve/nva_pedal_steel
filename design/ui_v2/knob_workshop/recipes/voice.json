@@ -1,0 +1,112 @@
+{
+ "name": "voice",
+ "label": "VOICE (TONE)",
+ "style": "dome",
+ "status": "finished",
+ "notes": "",
+ "radius_m": 0.029,
+ "frame_px": 77,
+ "pointer": {
+  "start": 0.296,
+  "end": 0.957,
+  "width": 0.15,
+  "color": [
+   0.003,
+   0.0025,
+   0.002
+  ],
+  "roughness": 0.85
+ },
+ "material": {
+  "color": [
+   0.68,
+   0.34,
+   0.11
+  ],
+  "roughness": 0.19,
+  "coat": 0.12,
+  "coat_roughness": 0.19,
+  "base_color": [
+   0.0212,
+   0.0137,
+   0.0075
+  ],
+  "base_roughness": 0.25
+ },
+ "light": {
+  "key_power": 5.8,
+  "key_pos": [
+   0,
+   0.26,
+   0.16
+  ],
+  "key_size": [
+   0.42,
+   0.055
+  ],
+  "rim_power": 0,
+  "rim_pos": [
+   0,
+   0.26,
+   0.06
+  ],
+  "rim_size": [
+   0.3,
+   0.05
+  ],
+  "ambient": 0.18,
+  "exposure": -0.7
+ },
+ "view": {
+  "size": 1.05,
+  "tilt": 18,
+  "offset_y": -0.002
+ },
+ "panel": {
+  "image": "final/strips/plate_walnut.png",
+  "scale": 2,
+  "cx": 131.3,
+  "cy": 776.3
+ },
+ "references": [
+  {
+   "label": "ChatGPT original",
+   "image": "APPROVED_main.png",
+   "scale": 0.98,
+   "cx": 133,
+   "cy": 794,
+   "angle": 35
+  },
+  {
+   "label": "Current plugin knob",
+   "strip": "final/strips/knob_dome.png",
+   "frame_px": 154,
+   "frames": 128
+  }
+ ],
+ "parts": {
+  "base": {
+   "on": true,
+   "width": 1.12,
+   "height": 0.8,
+   "bevel": 0.05,
+   "grip": {
+    "style": "ridge",
+    "count": 72,
+    "depth": 0.018
+   },
+   "taper": 0
+  },
+  "top": {
+   "width": 1,
+   "height": 0.345,
+   "round": 0.38,
+   "dome": 0.03,
+   "grip": {
+    "style": "smooth"
+   },
+   "taper": 0
+  }
+ },
+ "saved_at": "2026-11-12 14:43:37"
+}

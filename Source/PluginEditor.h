@@ -117,7 +117,7 @@ private:
     float xPedalNorm(int i) const;
     void toggleXPedal(int i);   // the double neck's own knee levers (out by the legs), in its own (smaller) canvas
     juce::Image f3d[2][6];   // the 3D floor assembly (Blender): [chrome, brass][bar, knee L, knee R, pedal A, B, C]
-    Strip scallop, space, ptrTone, ptrPick, ptrTrim;
+    Strip scallop, space, dome, ptrTone, ptrPick, ptrTrim;   // dome: TONE PICK (and DRIVE WIDTH) turn whole, like FEEL/SPACE
     std::vector<float> dotKernel; int dotK = 0;   // RGB, dotK x dotK
     juce::Typeface::Ptr poppinsMedium, poppinsSemi, interMedium;
     TextItem txt[9];   // TONE PICK GLIDE SWELL ECHO REVERB vol mode db
