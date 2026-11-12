@@ -60,7 +60,7 @@
   "image": "final/strips/plate_walnut.png",
   "scale": 2,
   "cx": 745.9,
-  "cy": 780.0
+  "cy": 780
  },
  "references": [
   {
@@ -68,7 +68,7 @@
    "image": "APPROVED_main.png",
    "scale": 0.98,
    "cx": 746.4,
-   "cy": 796.0,
+   "cy": 796,
    "angle": -100
   },
   {
@@ -90,20 +90,21 @@
    "taper": 0
   },
   "top": {
-   "width": 1,
+   "width": 1.085,
    "height": 0.5,
-   "round": 0.35,
+   "round": 0.155,
    "dome": 0.022,
    "grip": {
     "style": "wave",
     "count": 8,
-    "depth": 0.07,
-    "sharpness": 1.8,
+    "depth": 0.072,
+    "sharpness": 0.7,
     "phase": 0,
     "land": 0.1,
     "fade": 0
    },
-   "taper": 0
+   "taper": 0.205
   }
- }
+ },
+ "saved_at": "2026-11-12 14:32:07"
 }

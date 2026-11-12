@@ -20,6 +20,7 @@ import floor_3d   # the rug under the steel: one pedal-free plate; the pedal ass
 import sys; sys.path.insert(0, os.path.join(H, "..", "deck3d")); import deck_pack   # deck switches/toggles: same idea
 import more_deck as MD   # the MORE state: taller deck (row 2) + the bottom strip with the MORE / LESS button
 _bg = deck_pack.apply(np.asarray(Image.open("bg_steel3d.png").convert("RGB"), np.float32))
+import arrow_buttons; _bg = arrow_buttons.apply(_bg)   # the preset arrows, redrawn clean (no AI texture)
 Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)
 for _f in ("deck_more.jpg", "deck_more.png", "deck_more_top.png"):
