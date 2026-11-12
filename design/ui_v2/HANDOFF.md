@@ -77,6 +77,9 @@ the moving parts by the affine). User presets still save one of the five box fin
 Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin with the real Motion/FX params) and
 `targets` (multi-select of round29 s1-s8 real-world steel styles, the shape targets).
 
+**Open now (2026-11-12, night):** nothing Joshua asked for is unfinished. Waiting on him: his look at the new instruments
+and the MORE deck in the standalone, and permission to push ui-v2-design. Verified: 77 UI tests (PedalSteelShot), the
+VST3 host test, and the hosted editor on screen (renders/host_onscreen.png).
 **Status (2026-11-12, late):** hardware answered and rendered; MORE deck built; MIDI Learn kept as built; shapes built
 (bullnose maple uses textures/wood/flamemaple_1_1.png, generated from jobs_flame.json). The preset editor's STEEL FINISH
 now offers all eight instruments (box x5 + Blonde Bullnose, Rosewood Bullnose, Double Neck; swatches from
@@ -95,7 +98,7 @@ rows above the walnut rim are transparent with a soft baked contact shadow (legs
 the frame, no dark band; the steel is clipped at moreFrameTop); CHARACTER matched to k11_5 (charScale 1.5, centre y 798,
 spots at the concept's angles/radii charAngle/charRadius, labels LSIZE*0.86). Sheet: renders/more_vs_concept.jpg.
 
-## Where it stands
+## Where it stands (history, 2026-11-06..10: kept for the record; the current state is in START HERE above)
 
 - **Knob correction follow-up (2026-11-06):** Joshua rejected the previous knob match and asked for realistic native rotation with correct moving highlights. `final/knobs/studio_rotation/` now contains a separate Cycles studio, an animated `.blend`, 181-frame transparent atlases, a motion preview, and a reference/previous/new comparison. Read its `README.md` for validation and limitations. **Pixel-perfect reference fidelity remains unachieved**, particularly for the Feel contour and shoulder lighting. The earlier “done” label below describes the prior export only, not user acceptance. The new candidate does not overwrite the existing strips or change the JUCE UI.
 
@@ -115,7 +118,7 @@ No orange accents (amber only for LEDs/meter). Matte panels, no gloss. Cream-dom
 - **Choice board artifact:** https://claude.ai/artifact/BkiKx3tPDwjMAp8CBB51Wt. Joshua's picks are in its db collection `choices` (read with ArtifactData list). Source page: scratchpad copy only, so rebuild it from this repo if needed.
 - Images are in Git LFS; `.blend` files are gitignored (scripts regenerate them).
 
-## Next steps (in order)
+## Next steps as of 2026-11-06 (history: all done; see START HERE for what is open)
 
 1. ~~Knobs in Blender~~ **done (2026-11-06), fitted to `APPROVED_main.png`:**
    - `blender/knob_lib.py`: dome (VOICE, cream on knurled skirt), scallop (FEEL: 9 soft concave flutes, flat face, flute phase 0.75), space (black scalloped, also TRIM). Geometry was fitted by `final/fit_knob.py` (render + score loop over size/height/flute depth/phase; IoU ~0.97 vs the reference). Joshua's notes: head-on, soft (not creased) concave edges, top-lit shading; the pointer line need not be exact.
