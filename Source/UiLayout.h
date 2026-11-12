@@ -101,9 +101,19 @@ namespace UiLayout {
     inline constexpr float txtS_db[4] = { 1551.25f, 54.50f, 59.50f, 1521.50f };   // small window: ink cx, cy, ink width of txtRef, ink left
     inline constexpr unsigned int txtSColour_db = 0xff1d1712;
     inline constexpr float skin_maple[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
+    inline constexpr float skinXf_maple[3] = { 1.00000f, 0.000f, 0.000f };   // scale, dx, dy
     inline constexpr float skin_redsparkle[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
+    inline constexpr float skinXf_redsparkle[3] = { 1.00000f, 0.000f, 0.000f };   // scale, dx, dy
     inline constexpr float skin_pearloid[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
+    inline constexpr float skinXf_pearloid[3] = { 1.00000f, 0.000f, 0.000f };   // scale, dx, dy
     inline constexpr float skin_koa[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
+    inline constexpr float skinXf_koa[3] = { 1.00000f, 0.000f, 0.000f };   // scale, dx, dy
+    inline constexpr float skin_bullnose_maple[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
+    inline constexpr float skinXf_bullnose_maple[3] = { 1.00000f, 0.000f, 0.000f };   // scale, dx, dy
+    inline constexpr float skin_bullnose_rosewood[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
+    inline constexpr float skinXf_bullnose_rosewood[3] = { 1.00000f, 0.000f, 0.000f };   // scale, dx, dy
+    inline constexpr float skin_doubleneck[4] = { 91.00f, 96.50f, 1440.50f, 576.50f };   // x, y, w, h
+    inline constexpr float skinXf_doubleneck[3] = { 0.88000f, 96.000f, 82.612f };   // scale, dx, dy
     inline constexpr float displayBox[4] = { 604.00f, 38.00f, 390.00f, 45.50f };   // x, y, w, h
     inline constexpr float dispPitchX = 5.3750f, dispPitchY = 6.3000f, dispOriginY = 24.100f, dispCentreX = 381.527f;   // 2x px, relative to displayBox
     inline constexpr float dispKernelMax = 223.3483f;   // display_dot.png value 255 == this much added per channel

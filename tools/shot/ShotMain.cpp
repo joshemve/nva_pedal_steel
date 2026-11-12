@@ -415,21 +415,42 @@ int main(int argc, char* argv[]) {
             processor.loadPreset(0); pm->refreshVisualizer();
         }
         std::cout << (fails == 0 ? "all interaction tests passed" : "SOME INTERACTION TESTS FAILED") << std::endl;
-        // per-preset instruments: 04 maple, 06 red sparkle, 13 pearloid, 18 koa, the rest walnut; user presets keep their finish
+        // per-preset instruments: 06 red sparkle, 13 pearloid, 18 koa; the shapes: 04 blonde bullnose, 05 / 09 rosewood
+        // bullnose, 11 / 23 double neck; the rest walnut; user presets keep their finish
         {
             auto* pe5 = dynamic_cast<PedalSteelAudioProcessorEditor*>(editor.get());
             editor->mouseExit(ev({ 0.0f, 0.0f }));
-            const int want[] = { 0, 1, 2, 3, 4 }; const int prog[] = { 0, 3, 5, 12, 17 };
+            constexpr int nK = 9;
+            const int want[nK] = { 0, 5, 6, 2, 6, 7, 3, 4, 7 }; const int prog[nK] = { 0, 3, 4, 5, 8, 10, 12, 17, 22 };
             std::vector<juce::Image> shotsK; bool ok = true;
-            for (int i = 0; i < 5; ++i) {
+            for (int i = 0; i < nK; ++i) {
                 processor.loadPreset(prog[i]); pe5->refreshVisualizer();
                 ok &= pe5->getSkin() == want[i];
                 shotsK.push_back(editor->createComponentSnapshot(editor->getLocalBounds()).rescaled(800, 500, juce::Graphics::highResamplingQuality));
             }
-            check(ok, "each preset shows its own instrument (01 walnut, 04 maple, 06 red sparkle, 13 pearloid, 18 koa)");
-            juce::Image sheet(juce::Image::RGB, 1600, 1500, true, juce::SoftwareImageType());
+            check(ok, "each preset shows its own instrument (bullnose 04 05 09, double neck 11 23, 06 red sparkle, 13 pearloid, 18 koa)");
+            juce::Image sheet(juce::Image::RGB, 1600, 2500, true, juce::SoftwareImageType());
             { juce::Graphics g3(sheet); g3.fillAll(juce::Colours::black);
-              for (int i = 0; i < 5; ++i) g3.drawImageAt(shotsK[(size_t) i], (i % 2) * 800, (i / 2) * 500); }
+              for (int i = 0; i < nK; ++i) g3.drawImageAt(shotsK[(size_t) i], (i % 2) * 800, (i / 2) * 500); }
+            {   // the double neck is drawn smaller: its playable neck and pedals still answer where they are drawn
+                processor.loadPreset(22); pe5->refreshVisualizer();
+                midiBuf.clear(); run(400);   // (earlier tests leave notes in the buffer: let every voice die out first)
+                const auto xf = juce::AffineTransform(UiLayout::skinXf_doubleneck[0], 0.0f, UiLayout::skinXf_doubleneck[1],
+                                                      0.0f, UiLayout::skinXf_doubleneck[0], UiLayout::skinXf_doubleneck[2]);
+                const auto at = juce::Point<float>(UiLayout::fretAnchor[7][1] + 3.0f, UiLayout::stringY[2]).transformedBy(xf);
+                editor->mouseDown(ev(at)); run(40);
+                auto st2 = processor.getLiveStatus();
+                check(st2.stringEnergy[2] > 0.05f && std::abs(st2.barPositionFret - 7.0f) < 0.1f,
+                      "double neck: a click on its (smaller) neck plays string 3 at fret 7");
+                editor->mouseUp(ev(at)); run(4);
+                const auto pc = juce::Point<float>(UiLayout::hitPedalC[0] + UiLayout::hitPedalC[2] * 0.5f,
+                                                   UiLayout::hitPedalC[1] + UiLayout::hitPedalC[3] * 0.5f).transformedBy(xf);
+                const float c0 = pv(ParamIDs::pedalC);
+                editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
+                check((pv(ParamIDs::pedalC) > 0.5f) != (c0 > 0.5f), "double neck: pedal C answers where it is drawn");
+                editor->mouseDown(ev(pc)); editor->mouseUp(ev(pc));
+                processor.loadPreset(0); pe5->refreshVisualizer();
+            }
             auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_instruments.png");
             f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(sheet, os);
             // a user preset saved with the koa finish brings the koa steel back

@@ -6,7 +6,12 @@
    3063,
    1346
   ],
-  "job": "steel3d:maple"
+  "job": "steel3d:maple",
+  "affine": [
+   1.0,
+   0.0,
+   0.0
+  ]
  },
  "redsparkle": {
   "box": [
@@ -15,7 +20,12 @@
    3063,
    1346
   ],
-  "job": "steel3d:redsparkle"
+  "job": "steel3d:redsparkle",
+  "affine": [
+   1.0,
+   0.0,
+   0.0
+  ]
  },
  "pearloid": {
   "box": [
@@ -24,7 +34,12 @@
    3063,
    1346
   ],
-  "job": "steel3d:pearloid"
+  "job": "steel3d:pearloid",
+  "affine": [
+   1.0,
+   0.0,
+   0.0
+  ]
  },
  "koa": {
   "box": [
@@ -33,6 +48,53 @@
    3063,
    1346
   ],
-  "job": "steel3d:koa"
+  "job": "steel3d:koa",
+  "affine": [
+   1.0,
+   0.0,
+   0.0
+  ]
+ },
+ "bullnose_maple": {
+  "box": [
+   182,
+   193,
+   3063,
+   1346
+  ],
+  "job": "steel3d:bullnose_maple",
+  "affine": [
+   1.0,
+   0.0,
+   0.0
+  ]
+ },
+ "bullnose_rosewood": {
+  "box": [
+   182,
+   193,
+   3063,
+   1346
+  ],
+  "job": "steel3d:bullnose_rosewood",
+  "affine": [
+   1.0,
+   0.0,
+   0.0
+  ]
+ },
+ "doubleneck": {
+  "box": [
+   182,
+   193,
+   3063,
+   1346
+  ],
+  "job": "steel3d:doubleneck",
+  "affine": [
+   0.88,
+   192.0,
+   165.22488117218018
+  ]
  }
 }

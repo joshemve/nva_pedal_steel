@@ -324,12 +324,15 @@ void PedalSteelAudioProcessorEditor::resized() {
 }
 
 void PedalSteelAudioProcessorEditor::ensureSkinLoaded(int k) {
-    if (k <= 0 || k > 4 || skinImg[k].isValid()) return;
+    if (k <= 0 || k >= kNumSkins || skinImg[k].isValid()) return;
     switch (k) {
         case 1: skinImg[1] = loadImage(BinaryData::skin_maple_jpg, BinaryData::skin_maple_jpgSize); break;
         case 2: skinImg[2] = loadImage(BinaryData::skin_redsparkle_jpg, BinaryData::skin_redsparkle_jpgSize); break;
         case 3: skinImg[3] = loadImage(BinaryData::skin_pearloid_jpg, BinaryData::skin_pearloid_jpgSize); break;
         case 4: skinImg[4] = loadImage(BinaryData::skin_koa_jpg, BinaryData::skin_koa_jpgSize); break;
+        case 5: skinImg[5] = loadImage(BinaryData::skin_bullnose_maple_jpg, BinaryData::skin_bullnose_maple_jpgSize); break;
+        case 6: skinImg[6] = loadImage(BinaryData::skin_bullnose_rosewood_jpg, BinaryData::skin_bullnose_rosewood_jpgSize); break;
+        case 7: skinImg[7] = loadImage(BinaryData::skin_doubleneck_jpg, BinaryData::skin_doubleneck_jpgSize); break;
         default: break;
     }
 }
@@ -344,7 +347,8 @@ void PedalSteelAudioProcessorEditor::rebuildScaledBackground() {
     juce::Graphics g(bgScaled);
     g.setImageResamplingQuality(juce::Graphics::highResamplingQuality);
     g.drawImage(bg, juce::Rectangle<float>(0, 0, (float) w, (float) h));
-    static const float* boxes[5] = { nullptr, skin_maple, skin_redsparkle, skin_pearloid, skin_koa };
+    static const float* boxes[kNumSkins] = { nullptr, skin_maple, skin_redsparkle, skin_pearloid, skin_koa,
+                                             skin_bullnose_maple, skin_bullnose_rosewood, skin_doubleneck };
     if (skin > 0 && skinImg[skin].isValid()) {   // this preset's instrument, baked in
         const float k = (float) w / kDesignW; const float* b = boxes[skin];
         g.drawImage(skinImg[skin], juce::Rectangle<float>(b[0] * k, b[1] * k, b[2] * k, b[3] * k));
@@ -437,8 +441,16 @@ int PedalSteelAudioProcessorEditor::trimFrame() const {
     return frameFor(ang, ptrTRIMFrames);
 }
 
+juce::AffineTransform PedalSteelAudioProcessorEditor::steelXf() const {
+    static const float* xf[kNumSkins] = { nullptr, skinXf_maple, skinXf_redsparkle, skinXf_pearloid, skinXf_koa,
+                                          skinXf_bullnose_maple, skinXf_bullnose_rosewood, skinXf_doubleneck };
+    if (skin <= 0 || skin >= kNumSkins || ! skinImg[skin].isValid()) return {};
+    const float* t = xf[skin];
+    return juce::AffineTransform(t[0], 0.0f, t[1], 0.0f, t[0], t[2]);   // the same camera through a wider lens: scale + offset
+}
+
 int PedalSteelAudioProcessorEditor::skinForCurrentPreset() {
-    static const juce::StringArray ids { "walnut", "maple", "redsparkle", "pearloid", "koa" };
+    static const juce::StringArray ids { "walnut", "maple", "redsparkle", "pearloid", "koa", "bullnose_maple", "bullnose_rosewood", "doubleneck" };
     const auto user = proc.getActiveUserPresetName();
     if (user.isNotEmpty()) {
         if (user != cachedUserName) {
@@ -449,7 +461,12 @@ int PedalSteelAudioProcessorEditor::skinForCurrentPreset() {
         return cachedUserSkin;
     }
     cachedUserName.clear();
-    switch (proc.getCurrentProgram()) { case 3: return 1; case 5: return 2; case 12: return 3; case 17: return 4; default: return 0; }
+    // the box steel in five finishes; the special presets get their own instrument (Joshua 2026-11-12): the 60s blonde
+    // bullnose for 04 Montana, a rosewood bullnose for 05 Nashville 400 and 09 Cryin', the E9/C6 double neck for 11 and 23
+    switch (proc.getCurrentProgram()) {
+        case 3: return 5; case 4: case 8: return 6; case 10: case 22: return 7;
+        case 5: return 2; case 12: return 3; case 17: return 4; default: return 0;
+    }
 }
 
 bool PedalSteelAudioProcessorEditor::presetModified() const {
@@ -673,7 +690,9 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
     // drawn from the current instrument's own pixels, with a small glint on the hook
     {
         juce::Graphics::ScopedSaveState cs(g);
-        static const float* skinBoxes[5] = { nullptr, skin_maple, skin_redsparkle, skin_pearloid, skin_koa };
+        static const float* skinBoxes[kNumSkins] = { nullptr, skin_maple, skin_redsparkle, skin_pearloid, skin_koa,
+                                                     skin_bullnose_maple, skin_bullnose_rosewood, skin_doubleneck };
+        const auto xf = steelXf(); const float zs = xf.mat00;   // the finger's pixels sit where this instrument drew them
         for (int s = 0; s < 10; ++s) {
             const float b = juce::jlimit(-2.0f, 2.0f, stringBend[(size_t) s]);
             if (std::abs(b) < 0.05f) continue;
@@ -687,8 +706,9 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
             const float hx0 = xsC + 2.0f, hw = 44.0f, top = ysC - 9.0f;
             for (int r = 0; r < 9; ++r) {
                 const float rowY = top + r * 2.0f, k = 1.0f - (float) r / 8.0f;
+                const auto sp = juce::Point<float>(hx0 * 0.5f, rowY * 0.5f).transformedBy(xf) * 2.0f;
                 g.drawImage(src, hx0 * 0.5f + dx * k, rowY * 0.5f, hw * 0.5f, 1.0f,
-                            juce::roundToInt(hx0 - ox), juce::roundToInt(rowY - oy), (int) hw, 2);
+                            juce::roundToInt(sp.x - ox), juce::roundToInt(sp.y - oy), juce::roundToInt(hw * zs), juce::jmax(1, juce::roundToInt(2.0f * zs)));
             }
             const float gx = xsC * 0.5f + 16.0f + dx * 0.6f, gy = ysC * 0.5f - 2.0f;
             g.setColour(juce::Colour(0xfffff3dc).withAlpha(0.8f * std::abs(b) / 2.0f));
@@ -731,13 +751,14 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
     // hover on the neck: the string under the mouse lights, and a guide shows where the bar would go
     if ((hover == Fretboard || hover == Pluck) && dragging == None && ! proc.midiLearn.learnMode) {
         juce::Graphics::ScopedSaveState hs(g);
-        const int s = stringAt(hoverPos.y); const float y = stringY[s];
+        const auto hp = toSteel(hoverPos);
+        const int s = stringAt(hp.y); const float y = stringY[s];
         const float sx0 = hover == Pluck ? barX + 16.0f : fretAnchor[0][1], sx1 = stringEndX;
         juce::ColourGradient sg(kCream.withAlpha(0.0f), sx0, y, kCream.withAlpha(0.0f), sx1, y, false);
         sg.addColour(0.15, kCream.withAlpha(0.55f)); sg.addColour(0.85, kCream.withAlpha(0.55f));
         g.setGradientFill(sg); g.fillRect(juce::Rectangle<float>(sx0, y - 0.9f, sx1 - sx0, 1.8f));
         if (hover == Fretboard) {
-            const float fx = fretToX(std::round(xToFret(hoverPos.x)));
+            const float fx = fretToX(std::round(xToFret(hp.x)));
             const float y0 = stringY[0] - 7.0f, y1 = stringY[9] + 7.0f;
             juce::ColourGradient fg(kAmber.withAlpha(0.0f), fx, y0, kAmber.withAlpha(0.0f), fx, y1, false);
             fg.addColour(0.5, kAmber.withAlpha(0.65f));
@@ -772,6 +793,7 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     {   // with the MORE deck open, the steel ends where the deck begins
         juce::Graphics::ScopedSaveState ss(g);
         if (more()) g.reduceClipRegion(juce::Rectangle<int>(0, 0, (int) kDesignW, juce::roundToInt(moreDeckTop)));
+        g.addTransform(steelXf());
         drawSteel(g);
     }
 
@@ -874,7 +896,9 @@ juce::Rectangle<float> PedalSteelAudioProcessorEditor::ctlBounds(Ctl c) const {
         case MoreBtn: return R(hitMore);
         default: break;
     }
-    return ctlBoundsRow(c).translated(0.0f, lift(c));
+    auto b = ctlBoundsRow(c);
+    if (isSteelCtl(c)) b = b.transformedBy(steelXf());   // the neck, pedals and levers of a smaller-drawn instrument
+    return b.translated(0.0f, lift(c));
 }
 
 juce::Rectangle<float> PedalSteelAudioProcessorEditor::ctlBoundsRow(Ctl c) const {
@@ -970,7 +994,7 @@ juce::String PedalSteelAudioProcessorEditor::tooltipFor(Ctl c) const {
         case Display: return "Presets: click to browse, right-click for the quick list, scroll to step";
         case MidiLearnBtn: return "MIDI LEARN: assign hardware controllers. Right-click a control for its MIDI options";
         case MoreBtn: return more() ? "LESS: fold the second row away" : "MORE: vibrato, amp drive and width, delay time, reverb decay, effect character";
-        case Fretboard: case Pluck: return neckNoteText(hoverPos);
+        case Fretboard: case Pluck: return neckNoteText(toSteel(hoverPos));
         default: return {};
     }
 }
@@ -1261,10 +1285,11 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
         case Mode: showModeMenu(); return;
         case Fretboard: {   // put the bar down here and pick the string under the mouse
             dismissHint();
-            barFret = std::round(xToFret(d.x)); lastString = stringAt(d.y);   // a click plays in tune: nearest fret
+            const auto ds = toSteel(d);
+            barFret = std::round(xToFret(ds.x)); lastString = stringAt(ds.y);   // a click plays in tune: nearest fret
             playString(lastString, barFret); dragging = Fretboard; return;
         }
-        case Pluck: lastString = stringAt(d.y); playString(lastString, barFret); dragging = Pluck; return;
+        case Pluck: lastString = stringAt(toSteel(d).y); playString(lastString, barFret); dragging = Pluck; return;
         case None: case NumCtl: case MidiLearnBtn: return;
         default: break;
     }
@@ -1277,12 +1302,13 @@ void PedalSteelAudioProcessorEditor::mouseDrag(const juce::MouseEvent& e) {
     if (dragging == None) return;
     const auto d = toDesign(e.position);
     if (dragging == Fretboard || dragging == Pluck) {
+        const auto ds = toSteel(d);
         if (dragging == Fretboard) {   // slide every held string with the bar
-            barFret = snapFret(xToFret(d.x), e.mods.isShiftDown());
+            barFret = snapFret(xToFret(ds.x), e.mods.isShiftDown());
             for (int s = 0; s < 10; ++s) if (heldStrings[(size_t) s]) proc.slideFretboardNote(s, barFret);
         }
-        const int s = stringAt(d.y);   // dragging across strings strums them
-        if (s != lastString && std::abs(stringY[s] - d.y) < 4.0f) { lastString = s; playString(s, barFret); }
+        const int s = stringAt(ds.y);   // dragging across strings strums them
+        if (s != lastString && std::abs(stringY[s] - ds.y) < 4.0f) { lastString = s; playString(s, barFret); }
         return;
     }
     if (dragging == Volume) { setNorm(Volume, unanchored(d.x, kVolume, sliderX0, sliderX1)); return; }

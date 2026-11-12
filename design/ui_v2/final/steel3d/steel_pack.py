@@ -115,6 +115,12 @@ def package(d, brass=None):
     print("tone bar", S["tone_bar"])
 
 
+def affine_of(d):
+    """canvas map from the walnut steel to this render (steel_3d.py STEEL_ZOOM): [scale, tx, ty]"""
+    p = os.path.join(d, "steel.json")
+    return json.load(open(p)).get("affine", [1.0, 0.0, 0.0]) if os.path.exists(p) else [1.0, 0.0, 0.0]
+
+
 def skins(dirs):
     os.makedirs(os.path.join(P, "skins"), exist_ok=True); out = {}
     box = [ZONE[0] - 14, ZONE[1] - 14, ZONE[2] + 14, ZONE[3] + 14]
@@ -122,7 +128,7 @@ def skins(dirs):
         img = background(d)
         Image.fromarray(np.clip(img[box[1]:box[3], box[0]:box[2]], 0, 255).astype(np.uint8)).save(os.path.join(P, "skins", "skin_%s.jpg" % sk), quality=94)
         Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).resize((1600, 1000), Image.LANCZOS).save(os.path.join(P, "skins", "_full_%s.jpg" % sk), quality=88)
-        out[sk] = {"box": box, "job": "steel3d:" + sk}; print(sk, box)
+        out[sk] = {"box": box, "job": "steel3d:" + sk, "affine": affine_of(d)}; print(sk, box, out[sk]["affine"])
     json.dump(out, open(os.path.join(P, "skins", "skins.json"), "w"), indent=1)
 
 
@@ -130,23 +136,30 @@ def rest_image(plate_dir, metal="chrome"):
     """the plate with every moving layer at rest and the tone bar at its reference fret (what the plugin shows idle)"""
     im = background(plate_dir); S = json.load(open(os.path.join(P, "sprites", "sprites.json")))
     F = json.load(open(os.path.join(P, "sprites", "floor3d.json")))["layers"]
+    lay = np.zeros((CH, CW, 4), np.float32)   # the moving parts at rest (premultiplied), then mapped onto this instrument
+    def put(img, b):
+        a = img[..., 3:] / 255; reg = lay[b[1]:b[3], b[0]:b[2]]
+        reg[..., :3] = img[..., :3] * a + reg[..., :3] * (1 - a); reg[..., 3:] = 255 * a + reg[..., 3:] * (1 - a)
     for name in LAYERS:
         st = np.asarray(Image.open(os.path.join(P, "sprites", "f3d_%s_%s.png" % (metal, name))).convert("RGBA"), np.float32)
-        b = F[name]["box"]; h = b[3] - b[1]; fr = st[:h]; a = fr[..., 3:] / 255
-        im[b[1]:b[3], b[0]:b[2]] = fr[..., :3] * a + im[b[1]:b[3], b[0]:b[2]] * (1 - a)
-    tb = S["tone_bar"]["box"]; t = np.asarray(Image.open(os.path.join(P, "sprites", "tone_bar.png")).convert("RGBA"), np.float32); a = t[..., 3:] / 255
-    im[tb[1]:tb[3], tb[0]:tb[2]] = t[..., :3] * a + im[tb[1]:tb[3], tb[0]:tb[2]] * (1 - a)
-    return im
+        b = F[name]["box"]; put(st[:b[3] - b[1]], b)
+    put(np.asarray(Image.open(os.path.join(P, "sprites", "tone_bar.png")).convert("RGBA"), np.float32), S["tone_bar"]["box"])
+    s_, tx, ty = affine_of(plate_dir)
+    if (s_, tx, ty) != (1.0, 0.0, 0.0):
+        lay = cv2.warpAffine(lay, np.float32([[s_, 0, tx], [0, s_, ty]]), (CW, CH), flags=cv2.INTER_AREA)
+    a = lay[..., 3:] / 255
+    return lay[..., :3] + im * (1 - a)
 
 
 def cards(dirs):
     """the five instrument cards of the preset browser (card number -> finish), 726x316, from the 3D steel"""
-    num = {"walnut": 1, "maple": 4, "redsparkle": 6, "pearloid": 13, "koa": 18}
+    num = {"walnut": [1], "maple": [], "redsparkle": [6], "pearloid": [13], "koa": [18],   # card = factory preset number
+           "bullnose_maple": [4], "bullnose_rosewood": [5, 9], "doubleneck": [11, 23]}
     dst = os.path.join(H, "..", "..", "..", "..", "Source", "ui_assets")
     for sk, d in dirs.items():
         im = rest_image(d, "chrome")   # koa is chrome now too (2026-11-11)
         c = Image.fromarray(np.clip(im, 0, 255).astype(np.uint8)).crop((190, 160, 3010, 1386)).resize((726, 316), Image.LANCZOS)
-        c.save(os.path.join(dst, "card_%02d.jpg" % num[sk]), quality=92); print("card_%02d" % num[sk], sk)
+        for n in num[sk]: c.save(os.path.join(dst, "card_%02d.jpg" % n), quality=92); print("card_%02d" % n, sk)
 
 
 def check(d, outp):

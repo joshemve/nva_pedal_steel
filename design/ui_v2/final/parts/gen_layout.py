@@ -114,6 +114,8 @@ if os.path.exists("skins/skins.json"):
     for sk, v in SKN.items():
         shutil.copy("skins/skin_%s.jpg" % sk, os.path.join(OUT, "skin_%s.jpg" % sk)); b = v["box"]
         rect("skin_" + sk, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
+        s_, tx, ty = v.get("affine", [1.0, 0.0, 0.0])   # steel_3d STEEL_ZOOM: walnut steel -> this instrument (UI px)
+        L("inline constexpr float skinXf_%s[3] = { %.5ff, %.3ff, %.3ff };   // scale, dx, dy" % (sk, s_, tx / 2, ty / 2))
 # dot-matrix display
 K = np.load("display_kernel.npy"); km = float(K.max())
 Image.fromarray(np.clip(K / km * 255, 0, 255).astype(np.uint8)).save(os.path.join(OUT, "display_dot.png"))

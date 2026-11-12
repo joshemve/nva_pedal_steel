@@ -62,6 +62,18 @@ MORE/LESS fits after MIDI LEARN. Editor: Ctl enum gained Vibrato..Character, Syn
 Mapping: VIBRATO vibratoDepth, RATE vibratoRate, SLIDE barSlideNoise, DRIVE ampDrive, WIDTH stereoWidth (concept said
 WARMTH, but TONE already is toneWarmth), DELAY delayTime, DECAY reverbDecay, CHARACTER fxCharacter (names STUDIO TAPE OPTO
 PHASER SPRING R&B WARBLE SHIMMER ROTARY GATE ROOM), SYNC tempoSync. 74 UI tests pass (7 new). Sheet: renders/more_deck_vs_concept.jpg.
+**Shapes built (2026-11-12):** `steel_3d.py STEEL_SHAPE=bullnose|double` (default box). Bullnose: half-round front apron
+(the front-most point stays at the box's front, so knee levers / pedals / sprites are unchanged), plain chrome legs on bell
+feet, no trim bars, photo-wood (CAB_UV=0); on maple a cream fretboard with dark frets and maroon/pearl diamonds
+(MAPLE_SAT 0.62 / MAPLE_VAL 1.06 for the pale blonde). Double: cabinet grows BACK_EXT 0.15 m away from the player, the whole
+neck (keyhead to changer) is copied NECK2_DY 0.15 m behind, five static C6 pedals join A B C (which stay the moving
+sprites). It does not fit the fixed camera (its far neck would run under the top bar), so it renders through a wider lens
+from the same spot (STEEL_ZOOM 0.88, anchored at the floor's front centre): an exact similarity, written to steel.json
+"affine" [s, tx, ty] (canvas). steel_pack skins carries it into skins.json; gen_layout emits skinXf_<skin> (UI px); the
+editor applies steelXf() around drawSteel and maps neck/pedal clicks back with toSteel(). Renders: final/steel3d/shapes/
+{bullnose_maple, bullnose_rosewood, double_rosewood} (STEEL_MODE=static, 160 samples). Skins 5 bullnose_maple (04),
+6 bullnose_rosewood (05, 09), 7 doubleneck (11, 23); cards 04/05/09/11/23 from `steel_pack.py cards` (rest_image warps
+the moving parts by the affine). User presets still save one of the five box finishes (save dialog unchanged).
 Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin with the real Motion/FX params) and
 `targets` (multi-select of round29 s1-s8 real-world steel styles, the shape targets).
 

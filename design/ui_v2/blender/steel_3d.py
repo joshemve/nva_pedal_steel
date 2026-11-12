@@ -66,6 +66,12 @@ def mat(name, base, metal=0.0, rough=0.5, coat=0.0, spec=None):
 
 
 FINISH = os.environ.get("STEEL_FINISH", "rosewood")
+# body shape (Joshua 2026-11-12, round29 s3_1 / s6_3): "box" (the approved steel), "bullnose" (60s blonde: half-round front
+# apron, bell feet, light fretboard on maple), "double" (E9/C6 double neck: a second neck behind the playable one, eight
+# pedals; rendered through a slightly wider lens on the same camera, so the plugin maps it with one scale + offset)
+SHAPE = os.environ.get("STEEL_SHAPE", "box")
+if SHAPE != "box":
+    os.environ.setdefault("CAB_UV", "0"); os.environ.setdefault("HL", "0")   # the UV sheets are laid out for the box
 # settings matched to the approved concepts by measuring hue/saturation/brightness (Joshua 2026-11-11); env still overrides
 TUNED = {
     "koa": dict(CAB_SAT=0.95, CAB_VAL=1.02, CAB_HUE=0.524, CAB_GAMMA=1.35, CAB_COAT=0.10, FRONT_GLINT=0.6, HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.45, HL_TB=0.15),   # red sparkle's gloss (Joshua)
@@ -362,7 +368,14 @@ def cabinet_uvs(o):
 
 
 USE_UV = os.path.exists(CAB_TEX) and os.environ.get("CAB_UV", "1") == "1"
-cab = box("Cabinet", (0, 0, -APRON / 2), (BODY_L, BODY_D, APRON), uv_mat(CAB_TEX) if USE_UV else M_WOOD, bevel=E("CAB_BEVEL", 0.003), seg=int(E("CAB_SEG", 3)))
+BACK_EXT = E("BACK_EXT", 0.150) if SHAPE == "double" else 0.0   # the double neck's cabinet grows away from the player
+YF, YB = -BODY_D / 2, BODY_D / 2 + BACK_EXT; YC, DEPTH = (YF + YB) / 2, YB - YF
+if SHAPE == "bullnose":   # half-round front apron, flat top behind it (the front-most point stays where the box's was)
+    BN_R = APRON / 2
+    cab = box("Cabinet", (0, (YF + BN_R + YB) / 2, -APRON / 2), (BODY_L, YB - YF - BN_R, APRON), M_WOOD, bevel=0.003)
+    cyl("CabinetNose", (0, YF + BN_R, -APRON / 2), BN_R, BODY_L, M_WOOD, "X", 96)
+else:
+    cab = box("Cabinet", (0, YC, -APRON / 2), (BODY_L, DEPTH, APRON), uv_mat(CAB_TEX) if USE_UV else M_WOOD, bevel=E("CAB_BEVEL", 0.003), seg=int(E("CAB_SEG", 3)))
 HL_MASK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "cabinet", "hl_%s.png" % FINISH)
 USE_HL = os.path.exists(HL_MASK) and E("HL", 0) > 0
 if USE_UV or USE_HL:
@@ -403,6 +416,7 @@ if USE_HL:   # the concept's bright edge highlights, painted on the UV layout (f
         nt.links.new(mx3.outputs[2], em.inputs["Color"])
     ad = nt.nodes.new("ShaderNodeAddShader"); nt.links.new(bsdf_.outputs[0], ad.inputs[0]); nt.links.new(em.outputs[0], ad.inputs[1])
     nt.links.new(ad.outputs[0], out_.inputs["Surface"])
+if SHAPE == "bullnose": os.environ["TOP_TRIM"] = os.environ["BOTTOM_BAR"] = "0"   # nothing straight to run along the round front
 if E("TOP_TRIM", 1) > 0: box("TopTrim", (0, -BODY_D / 2 + 0.0012, 0.0004), (BODY_L - 0.004, 0.0020, 0.0014), M_ALU, bevel=0.0005)       # front top edge strip
 if E("BOTTOM_BAR", 1) > 0:   # metal bar along the bottom edge of the front apron, endplate to endplate (Joshua 2026-11-11, red line)
     _bh = E("BAR_H", 0.0055)   # thin, like the concepts (Joshua)
@@ -415,20 +429,26 @@ if E("EDGE_TRIM", 0) > 0:   # darker satin-silver strip wrapping the top front e
 EP_T = 0.025
 for sx in (-1, 1):                                                           # endplates: polished cast aluminium, proud of the cabinet
     xe = sx * (BODY_L / 2 + EP_T / 2 - 0.004)
-    box("Endplate", (xe, 0, -APRON / 2 - 0.004), (EP_T, BODY_D + 0.014, APRON + 0.022), M_END, bevel=0.006, seg=5)
-    box("EndLip", (sx * (BODY_L / 2 - 0.004), 0, 0.0025), (0.026, BODY_D + 0.014, 0.005), M_END, bevel=0.002, seg=3)
+    box("Endplate", (xe, YC, -APRON / 2 - 0.004), (EP_T, DEPTH + 0.014, APRON + 0.022), M_END, bevel=0.006, seg=5)
+    box("EndLip", (sx * (BODY_L / 2 - 0.004), YC, 0.0025), (0.026, DEPTH + 0.014, 0.005), M_END, bevel=0.002, seg=3)
     for z in (-0.016, -APRON + 0.006):                                       # screws on the front face
         cyl("Screw", (xe, -BODY_D / 2 - 0.0072, z), 0.0048, 0.0018, M_CHROME, "Y", 20, bevel=0.0006)
         box("ScrewSlot", (xe, -BODY_D / 2 - 0.0082, z), (0.0070, 0.0006, 0.0010), M_BLACK, rot=(0, math.radians(35), 0))
-    for sy in (-1, 1):
-        cyl("LipScrew", (sx * (BODY_L / 2 - 0.006), sy * (BODY_D / 2 - 0.016), 0.0052), 0.0030, 0.0012, M_CHROME, "Z", 16)
+    for ye in (YF + 0.016, YB - 0.016):
+        cyl("LipScrew", (sx * (BODY_L / 2 - 0.006), ye, 0.0052), 0.0030, 0.0012, M_CHROME, "Z", 16)
 
-if FINISH == "maple":                                                         # dark inlaid stripe low on the front
+if FINISH == "maple" and SHAPE == "box":                                                       # dark inlaid stripe low on the front
     box("Inlay", (0, -BODY_D / 2 - 0.0002, -APRON * E("INLAY_Z", 0.62)), (BODY_L - 0.002, 0.0012, E("INLAY_H", 0.0055)), M_INLAY)
 if FINISH == "redsparkle":                                                    # chrome trim strip along the front
     box("FrontTrim", (0, -BODY_D / 2 - 0.0016, -APRON * E("TRIM_Z", 0.42)), (BODY_L - 0.002, 0.0070, E("TRIM_H", 0.0140)), mat("TrimBright", (0.90, 0.89, 0.87), 1.0, E("TRIM_ROUGH", 0.20)), bevel=0.0034, seg=10)   # wider, rounded so it catches the light (Joshua)
 
 # ---- neck plate (runs from the keyhead to the changer), fretboard
+NECK_START = set(bpy.data.objects)   # everything up to the changer is copied for the double neck's second neck
+if SHAPE == "bullnose" and FINISH == "maple":   # the 60s blonde: cream board, dark frets, maroon and pearl diamonds
+    M_FB = mat("FretboardCream", (0.78, 0.70, 0.54), 0.0, 0.30, spec=0.4)
+    M_FRET = mat("FretLineDark", (0.035, 0.030, 0.028), 0.0, 0.5)
+    COL = {"red": (0.32, 0.035, 0.03), "cream": (0.80, 0.82, 0.84), "blue": (0.32, 0.035, 0.03), "yellow": (0.80, 0.82, 0.84)}
+    M_MARK = {k: mat("Mark_" + k, v, 0.0, 0.35) for k, v in COL.items()}
 FB_W = 0.122
 X_GUIDE = X_NUT - 0.098                                                      # the roller bar where the keyhead ends
 x0n, x1n = X_NUT - 0.009, X_BR + 0.004
@@ -441,7 +461,7 @@ for xs_ in (X_NUT + 0.02, fret_x(6.5), fret_x(14.5)):          # (no pair by the
 fb0, fb1 = X_NUT + 0.004, X_NUT + 0.495
 box("Fretboard", ((fb0 + fb1) / 2, 0, NECK_H + 0.0008), (fb1 - fb0, FB_W, 0.0016), M_FB, bevel=0.0006)
 ZF_ = NECK_H + 0.00165
-M_GUIDE = mat("GuideLine", (0.42, 0.41, 0.39), 0.0, 0.5)
+M_GUIDE = mat("GuideLine", (0.42, 0.41, 0.39) if M_FB.name == "Fretboard" else (0.50, 0.44, 0.33), 0.0, 0.5)
 box("FbBorder", ((fb0 + fb1) / 2, 0, ZF_ - 0.00012), (fb1 - fb0 - 0.004, FB_W - 0.004, 0.0002), M_FRET)
 box("FbInner", ((fb0 + fb1) / 2, 0, ZF_ - 0.00006), (fb1 - fb0 - 0.0052, FB_W - 0.0052, 0.0002), M_FB)
 FRET_Y0, FRET_Y1 = -FB_W / 2 + 0.019, FB_W / 2 - 0.004                       # fret lines stop above the number strip
@@ -452,7 +472,7 @@ for y in SY:                                                                 # t
     box("Guide", ((fb0 + fb1) / 2, y, ZF_ - 0.00002), (fb1 - fb0 - 0.006, 0.0004, 0.0002), M_GUIDE)
 MARKS = {3: ["red"], 5: ["cream"], 7: ["blue"], 9: ["cream"], 12: ["yellow", "yellow"], 15: ["red"], 17: ["cream"],
          19: ["blue"], 21: ["blue"], 24: ["yellow", "yellow"]}
-M_NUM = mat("FretNumber", (0.92, 0.90, 0.84), 0.0, 0.5)
+M_NUM = mat("FretNumber", (0.92, 0.90, 0.84) if M_FB.name == "Fretboard" else (0.05, 0.04, 0.035), 0.0, 0.5)
 for n, cols in MARKS.items():
     xm = (fret_x(n - 1) + fret_x(n)) / 2
     for j, c in enumerate(cols):
@@ -533,18 +553,35 @@ for s in (1, -1):
     box("CheekFoot", (X_BR + 0.006, s * (NECK_W / 2 - 0.0005), (Z_STR - 0.015) / 2), (0.033, 0.0100, Z_STR - 0.015), M_ALU, bevel=0.002)
     cyl("CheekScrew", (X_BR + 0.006, s * (NECK_W / 2 + 0.0048), Z_STR - 0.0150), 0.0040, 0.0016, M_CHROME, "Y", 16)
 
+if SHAPE == "double":   # the second (far) neck: the same neck, keyhead, changer and strings, one neck-width further away
+    DY = E("NECK2_DY", 0.150); DZ = E("NECK2_DZ", 0.0)
+    made = [o for o in bpy.data.objects if o not in NECK_START]; twins = {}
+    for o in made:
+        c = o.copy(); sc.collection.objects.link(c); c.location = o.location + Vector((0, DY, DZ)); twins[o] = c
+    for o, c in twins.items():
+        for md in c.modifiers:
+            if md.type == "BOOLEAN" and md.object in twins: md.object = twins[md.object]
+    if DZ > 0:   # a wood riser under the raised neck
+        box("NeckRiser", ((KH_X0 + X_BR + 0.08) / 2, DY, DZ / 2), (X_BR + 0.08 - KH_X0, NECK_W + 0.012, DZ), M_WOOD, bevel=0.002)
+
 # ---- legs: chrome upper tube, thinner lower tube with a clutch collar, rubber foot; each stands straight down from
 # its corner socket under the endplate (Joshua 2026-11-10: angled-in legs looked bent)
 FEET = {}
 for sx in (-1, 1):
     for sy in (-1, 1):
-        top = Vector((sx * (BODY_L / 2 + EP_T / 2 - 0.004), sy * (BODY_D / 2 - 0.004), -APRON - 0.010))   # under the endplate's corner
+        top = Vector((sx * (BODY_L / 2 + EP_T / 2 - 0.004), (YF + 0.004) if sy < 0 else (YB - 0.004), -APRON - 0.010))   # under the endplate's corner
         foot = Vector((top.x, top.y, Z_FLOOR + 0.012))
         ax = (foot - top).normalized(); mid = top.lerp(foot, 0.70)
         rod("LegSocket", top + ax * -0.006, top + ax * 0.020, 0.0122, M_ALU, 32)
-        rod("LegUpper", top, mid, 0.0090, M_CHROME, 40); rod("LegLower", mid, foot, 0.0068, M_CHROME, 40)
-        rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0114, M_ROD, 32)
-        rod("LegFoot", foot - ax * 0.004, foot + ax * 0.014, 0.0100, M_RUBBER, 24)
+        if SHAPE == "bullnose":   # one plain chrome tube on a flared bell foot (s3_1)
+            rod("LegUpper", top, foot, 0.0085, M_CHROME, 40)
+            bpy.ops.mesh.primitive_cone_add(vertices=48, radius1=0.0150, radius2=0.0085, depth=0.024, location=(foot.x, foot.y, Z_FLOOR + 0.012))
+            finish(bpy.context.object, M_CHROME, 0.0015, 3).name = "LegBell"
+            cyl("LegPad", (foot.x, foot.y, Z_FLOOR + 0.0012), 0.0150, 0.0024, M_RUBBER, "Z", 48)
+        else:
+            rod("LegUpper", top, mid, 0.0090, M_CHROME, 40); rod("LegLower", mid, foot, 0.0068, M_CHROME, 40)
+            rod("LegCollar", mid - ax * 0.012, mid + ax * 0.008, 0.0114, M_ROD, 32)
+            rod("LegFoot", foot - ax * 0.004, foot + ax * 0.014, 0.0100, M_RUBBER, 24)
         FEET[(sx, sy)] = foot
 
 # ---- pedal rod clamped to the front legs, three ribbed pedals, pull rods; knee levers at the front apron
@@ -556,11 +593,15 @@ for f in (fl, fr):
     cyl("ClampBolt", (f.x - 0.008, BAR_Y - 0.0145, BAR_Z), 0.0036, 0.003, M_CHROME, "Y", 6)
     cyl("ClampBolt", (f.x + 0.008, BAR_Y - 0.0145, BAR_Z), 0.0036, 0.003, M_CHROME, "Y", 6)
 PEDAL_X = [-0.0935, -0.0250, 0.0410]
-for xs_ in (PEDAL_X[0] - 0.030, PEDAL_X[2] + 0.030):                         # stop collars either side of the pedal group
+# the double neck's C6 pedals: static, either side of the three that move (A B C stay where the plugin's sprites are)
+PSTEP = PEDAL_X[1] - PEDAL_X[0]
+EXTRA_X = ([PEDAL_X[0] - PSTEP * i for i in (2, 1)] + [PEDAL_X[2] + PSTEP * i for i in (1, 2, 3)]) if SHAPE == "double" else []
+ALL_X = sorted(PEDAL_X + EXTRA_X)
+for xs_ in (ALL_X[0] - 0.030, ALL_X[-1] + 0.030):                             # stop collars either side of the pedal group
     cyl("BarCollar", (xs_, BAR_Y, BAR_Z), 0.0095, 0.010, M_ROD, "X", 24, bevel=0.001)
 PT = math.radians(-16)
 cT, sT = math.cos(PT), math.sin(PT)
-for k, px in zip("ABC", PEDAL_X):
+for k, px in list(zip("ABC", PEDAL_X)) + [("X%d" % i, x) for i, x in enumerate(EXTRA_X)]:
     box("PedalHinge_" + k, (px, BAR_Y, BAR_Z), (0.030, 0.020, 0.020), M_ALU, bevel=0.004, seg=3)
     pc = Vector((px, BAR_Y - 0.043, BAR_Z + 0.0004))                         # pedal plate centre; local Y runs down the tread
     box("Pedal_" + k, pc, (0.037, 0.074, 0.009), M_ALU, bevel=0.003, seg=4, rot=(PT, 0, 0))
@@ -612,6 +653,17 @@ def proj(p):
 
 y_a = proj(AIM)[1]; cam.data.shift_y = 0.1; bpy.context.view_layer.update(); y_b = proj(AIM)[1]
 cam.data.shift_y = 0.1 * (AIM_Y - y_a) / (y_b - y_a); bpy.context.view_layer.update()
+# a wider lens from the same spot = the same picture scaled about a point, so canvas' = ZOOM * canvas + (tx, ty) exactly;
+# the anchor (the front of the floor, centre) stays put (double neck: its far neck would otherwise run under the top bar)
+ZOOM = E("STEEL_ZOOM", 0.88 if SHAPE == "double" else 1.0); AFFINE = [1.0, 0.0, 0.0]
+if ZOOM != 1.0:
+    _anc = Vector((0, -BODY_D / 2 - 0.05, Z_FLOOR)); _p0 = proj(_anc)
+    cam.data.lens *= ZOOM; cam.data.shift_x *= ZOOM; cam.data.shift_y *= ZOOM; bpy.context.view_layer.update()
+    for _ in range(3):   # shift_x > 0 moves the picture left, shift_y > 0 moves it down (units: the canvas width)
+        _p1 = proj(_anc); cam.data.shift_x -= (_p0[0] - _p1[0]) / CW; cam.data.shift_y += (_p0[1] - _p1[1]) / CW
+        bpy.context.view_layer.update()
+    _pa = proj(_anc); AFFINE = [ZOOM, _pa[0] - ZOOM * _p0[0], _pa[1] - ZOOM * _p0[1]]
+    print("ZOOM affine", AFFINE, "anchor", _p0, "->", _pa)
 
 
 # ---- lights: the room's warm lamp upper left, a broad soft top light, a low front fill
@@ -694,7 +746,7 @@ meta = {"frets": [[n, round(proj((fret_x(n) if n else X_NUT, 0, Z_STR))[0], 2)] 
         "body": [round(v, 1) for v in (proj((XL, 0, 0))[0], proj((0, BODY_D / 2, 0))[1], proj((XR, 0, 0))[0], proj((0, -BODY_D / 2, -APRON))[1])],
         "floorFrontY": round(proj((0, fl.y, Z_FLOOR))[1], 1),
         "pedals": {k: [round(v, 1) for v in proj((px, BAR_Y - 0.06, BAR_Z + 0.03))] for k, px in zip("ABC", PEDAL_X)},
-        "camera": {"pitch_deg": math.degrees(TH), "dist": DIST, "px_per_m": PXM}}
+        "camera": {"pitch_deg": math.degrees(TH), "dist": DIST, "px_per_m": PXM}, "shape": SHAPE, "affine": AFFINE}
 (out / "steel.json").write_text(json.dumps(meta, indent=1))
 print("LAYOUT", json.dumps({k: meta[k] for k in ("stringY", "bridgeX", "body", "floorFrontY")}))
 

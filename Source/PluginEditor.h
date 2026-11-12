@@ -127,8 +127,13 @@ private:
     void stepChoice(Ctl c, int delta);
     void toggleSync();
     juce::Rectangle<float> ctlBoundsRow(Ctl c) const;   // row-1 / strip / top-bar bounds before the MORE lift
-    // per-preset instruments: 0 walnut (the plate), 1 maple, 2 red sparkle, 3 pearloid, 4 koa
-    juce::Image skinImg[5], bgScaledPrev;
+    // per-preset instruments: 0 walnut (the plate), 1 maple, 2 red sparkle, 3 pearloid, 4 koa (the box steel), and the special
+    // shapes: 5 bullnose maple, 6 bullnose rosewood, 7 double neck (drawn smaller: its steel maps through steelXf)
+    static constexpr int kNumSkins = 8;
+    juce::Image skinImg[kNumSkins], bgScaledPrev;
+    juce::AffineTransform steelXf() const;   // walnut steel coordinates (UiLayout) -> this instrument's, design px
+    juce::Point<float> toSteel(juce::Point<float> d) const { return d.transformedBy(steelXf().inverted()); }
+    static bool isSteelCtl(Ctl c) { return (c >= PedA && c <= LKR) || c == Fretboard || c == Pluck; }
     int skin = 0; float skinFade = 1.0f;
     juce::String cachedUserName; int cachedUserSkin = 0;
 public:
