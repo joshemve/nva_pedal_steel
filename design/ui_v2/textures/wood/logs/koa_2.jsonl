@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1c8ef-d4a0-7073-a126-99bbf10a6335"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one edge-to-edge koa texture with horizontal grain and irregular curly figure."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"1536×1024 Hawaiian koa veneer texture with horizontal grain, irregular curly figure, and rich honey-brown to chocolate tones."}}
+{"type":"turn.completed","usage":{"input_tokens":45441,"cached_input_tokens":33408,"cache_write_input_tokens":0,"output_tokens":290,"reasoning_output_tokens":0}}

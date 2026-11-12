@@ -1,0 +1,16 @@
+[
+ {
+  "name": "deckclean_1",
+  "images": [
+   "final/deck3d/deck_crop.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the three black-rubber foot-switch pedals labelled A, B and C (their chrome frames and their shadows) and the two chrome knee-lever toggles labelled LKL and LKR (the chrome ring mounts, the angled chrome rods and the small ribbed black paddles, and their shadows). Where they were, show only the same plain dark brown-black leather panel texture, continuing naturally and evenly with the same grain, sheen and soft lighting. Keep the letters A, B, C, LKL, LKR, the small round lamp lenses above A, B and C, the thin vertical divider line, the knobs, the slider and everything else exactly as they are. Everything outside that change must stay identical to the input."
+ },
+ {
+  "name": "deckclean_2",
+  "images": [
+   "final/deck3d/deck_crop.png"
+  ],
+  "prompt": "This is an upscaled crop of a photoreal audio-plugin UI. Output ONE image, landscape 1536x1024, with EXACTLY the same framing, scale, perspective, lighting, colours and every detail as the input, so it overlays the input pixel for pixel. Change ONLY this: remove the three black-rubber foot-switch pedals labelled A, B and C (their chrome frames and their shadows) and the two chrome knee-lever toggles labelled LKL and LKR (the chrome ring mounts, the angled chrome rods and the small ribbed black paddles, and their shadows). Where they were, show only the same plain dark brown-black leather panel texture, continuing naturally and evenly with the same grain, sheen and soft lighting. Keep the letters A, B, C, LKL, LKR, the small round lamp lenses above A, B and C, the thin vertical divider line, the knobs, the slider and everything else exactly as they are. Everything outside that change must stay identical to the input."
+ }
+]

@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1c853-4520-78d0-9741-2edb642f6f47"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one landscape rosewood texture with sharp horizontal grain and even lighting."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"1536×1024 rosewood veneer texture with detailed horizontal reddish-brown grain, near-black streaks, and an evenly lit satin finish."}}
+{"type":"turn.completed","usage":{"input_tokens":46489,"cached_input_tokens":35712,"cache_write_input_tokens":0,"output_tokens":289,"reasoning_output_tokens":0}}

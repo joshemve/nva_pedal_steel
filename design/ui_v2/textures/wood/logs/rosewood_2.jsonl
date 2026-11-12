@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1c853-1f76-72a0-85fb-53025a07517e"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one edge-to-edge rosewood texture with horizontal grain and even lighting."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"1536×1024 East Indian rosewood texture with rich horizontal grain, fine pores, and an evenly lit satin finish."}}
+{"type":"turn.completed","usage":{"input_tokens":38855,"cached_input_tokens":34688,"cache_write_input_tokens":0,"output_tokens":275,"reasoning_output_tokens":0}}

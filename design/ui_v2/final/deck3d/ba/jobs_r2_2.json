@@ -1,0 +1,16 @@
+[
+ {
+  "name": "r2_vertA_1",
+  "images": [
+   "final/deck3d/ba/gen/r2_vert_1_1.png"
+  ],
+  "prompt": "This is the full UI of a photoreal pedal steel guitar audio plugin. Keep proportions and everything the same: output ONE image, landscape 1536x1024, identical to the input in framing, layout, scale, lighting, colours and every detail. Also light the A, B and C lamps warm amber and press A, B and C down slightly into the panel (no glow on the panel). Show the LKL and LKR knee levers ENGAGED: each tilts about 20 degrees on its pivot ring, LKL's paddle swinging a little to the left and LKR's a little to the right, the travel kept short. The spacing must stay balanced: each lever's paddle stays centred under its LKL / LKR label, the pair stays evenly spaced and centred in its section, well clear of the divider line and the panel edge. Nothing else changes."
+ },
+ {
+  "name": "r2_vertA_2",
+  "images": [
+   "final/deck3d/ba/gen/r2_vert_2_1.png"
+  ],
+  "prompt": "This is the full UI of a photoreal pedal steel guitar audio plugin. Keep proportions and everything the same: output ONE image, landscape 1536x1024, identical to the input in framing, layout, scale, lighting, colours and every detail. Also light the A, B and C lamps warm amber and press A, B and C down slightly into the panel (no glow on the panel). Show the LKL and LKR knee levers ENGAGED: each tilts about 20 degrees on its pivot ring, LKL's paddle swinging a little to the left and LKR's a little to the right, the travel kept short. The spacing must stay balanced: each lever's paddle stays centred under its LKL / LKR label, the pair stays evenly spaced and centred in its section, well clear of the divider line and the panel edge. Nothing else changes."
+ }
+]

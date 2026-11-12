@@ -1,0 +1,19 @@
+{
+ "region": [
+  990,
+  700,
+  2010,
+  1340
+ ],
+ "frames": 7,
+ "metal": "chrome",
+ "press_deg": 13.0,
+ "layers": {
+  "bar": 1,
+  "pedal_A": 7,
+  "pedal_B": 7,
+  "pedal_C": 7,
+  "knee_L": 7,
+  "knee_R": 7
+ }
+}

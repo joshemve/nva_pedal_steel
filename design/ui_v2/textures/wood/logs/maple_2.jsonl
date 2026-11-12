@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1c8da-ae7d-7b92-88ea-04024704aacf"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one seamless-looking, straight-on maple veneer texture with warm amber color and fine birdseye detail."}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"1536×1024 amber birdseye maple veneer texture with dense burl figure, fine pin knots, and horizontal grain filling the frame."}}
+{"type":"turn.completed","usage":{"input_tokens":46514,"cached_input_tokens":35712,"cache_write_input_tokens":0,"output_tokens":307,"reasoning_output_tokens":0}}

@@ -1,0 +1,30 @@
+[
+ {
+  "name": "after_1_1",
+  "images": [
+   "final/deck3d/ba/gen/before_1_1.png"
+  ],
+  "prompt": "This is the full approved UI of a photoreal pedal steel guitar audio plugin. Keep proportions and everything the same: output ONE image, landscape 1536x1024, identical to the input in framing, layout, scale, lighting, colours, the steel guitar, the rug, the top bar, every knob, label, display and the bottom strip. This image shows the A, B, C pedals and LKL, LKR knee levers at rest (BEFORE). Now make the AFTER position: the same exact pedals and levers, same places and same spacing, but ENGAGED: A, B and C pressed down (tipped forward into the panel, the rubber pad lower with a tighter shadow) with their lamps lit warm amber; LKL swung outward to the left and LKR swung outward to the right on their pivots. No glow spilling on the panel. Nothing else changes."
+ },
+ {
+  "name": "after_2_1",
+  "images": [
+   "final/deck3d/ba/gen/before_2_1.png"
+  ],
+  "prompt": "This is the full approved UI of a photoreal pedal steel guitar audio plugin. Keep proportions and everything the same: output ONE image, landscape 1536x1024, identical to the input in framing, layout, scale, lighting, colours, the steel guitar, the rug, the top bar, every knob, label, display and the bottom strip. This image shows the A, B, C pedals and LKL, LKR knee levers at rest (BEFORE). Now make the AFTER position: the same exact pedals and levers, same places and same spacing, but ENGAGED: A, B and C pressed down (tipped forward into the panel, the rubber pad lower with a tighter shadow) with their lamps lit warm amber; LKL swung outward to the left and LKR swung outward to the right on their pivots. No glow spilling on the panel. Nothing else changes."
+ },
+ {
+  "name": "after_3_1",
+  "images": [
+   "final/deck3d/ba/gen/before_3_1.png"
+  ],
+  "prompt": "This is the full approved UI of a photoreal pedal steel guitar audio plugin. Keep proportions and everything the same: output ONE image, landscape 1536x1024, identical to the input in framing, layout, scale, lighting, colours, the steel guitar, the rug, the top bar, every knob, label, display and the bottom strip. This image shows the A, B, C pedals and LKL, LKR knee levers at rest (BEFORE). Now make the AFTER position: the same exact pedals and levers, same places and same spacing, but ENGAGED: A, B and C pressed down (tipped forward into the panel, the rubber pad lower with a tighter shadow) with their lamps lit warm amber; LKL swung outward to the left and LKR swung outward to the right on their pivots. No glow spilling on the panel. Nothing else changes."
+ },
+ {
+  "name": "after_4_1",
+  "images": [
+   "final/deck3d/ba/gen/before_4_1.png"
+  ],
+  "prompt": "This is the full approved UI of a photoreal pedal steel guitar audio plugin. Keep proportions and everything the same: output ONE image, landscape 1536x1024, identical to the input in framing, layout, scale, lighting, colours, the steel guitar, the rug, the top bar, every knob, label, display and the bottom strip. This image shows the A, B, C pedals and LKL, LKR knee levers at rest (BEFORE). Now make the AFTER position: the same exact pedals and levers, same places and same spacing, but ENGAGED: A, B and C pressed down (tipped forward into the panel, the rubber pad lower with a tighter shadow) with their lamps lit warm amber; LKL swung outward to the left and LKR swung outward to the right on their pivots. No glow spilling on the panel. Nothing else changes."
+ }
+]

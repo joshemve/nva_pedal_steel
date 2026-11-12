@@ -66,6 +66,17 @@ def mat(name, base, metal=0.0, rough=0.5, coat=0.0, spec=None):
 
 
 FINISH = os.environ.get("STEEL_FINISH", "rosewood")
+# settings matched to the approved concepts by measuring hue/saturation/brightness (Joshua 2026-11-11); env still overrides
+TUNED = {
+    "koa": dict(CAB_SAT=0.95, CAB_VAL=1.02, CAB_HUE=0.524, CAB_GAMMA=1.35, CAB_COAT=0.10, FRONT_GLINT=0.6, HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.45, HL_TB=0.15),   # red sparkle's gloss (Joshua)
+    "maple": dict(HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.75, HL_TB=0.45),
+    "rosewood": dict(HL=7, HL_TEXP=0.5, HL_CORE=1.2, HL_GAMMA=1.0, HL_TR=1.0, HL_TG=0.35, HL_TB=0.2),
+    "redsparkle": dict(RS_DARK=0.38, RS_HI=3.4, RS_SCALE=1900, FLAKE_COAT=0.0, TOP_GLINT=1.6, FRONT_GLINT=0.0, FLAKE_EDGE_TINT=1, HL=9.0, HL_CORE=2.2, HL_GAMMA=1.0, TOP_TRIM=0,
+                       BOTTOM_BAR=0, TRIM_ROUGH=0.04),   # one mirror band in the middle of the front only (Joshua)
+    "pearloid": dict(CAB_SAT=0.56, CAB_VAL=1.08, CAB_HUE=0.52, CAB_GAMMA=1.25, CAB_TOP_VAL=0.55, HL=1.5, TOP_TRIM=0, EDGE_TRIM=1, HL_GAMMA=1.0, HL_TEXP=6, TILE_GLINT=2.0,
+                     HL_CORE=0.01, HL_TR=1, HL_TG=1, HL_TB=1),   # glossy: white flashes on the bright tiles (Joshua 2026-11-11)
+}
+for _k, _v in TUNED.get(FINISH, {}).items(): os.environ.setdefault(_k, str(_v))
 # (darkest, middle, lightest) of the grain, lacquer roughness
 WOODS = {"rosewood": ((0.008, 0.003, 0.002), (0.055, 0.011, 0.004), (0.30, 0.042, 0.010)),
          "maple": ((0.50, 0.30, 0.11), (0.74, 0.50, 0.22), (0.88, 0.66, 0.34)),
@@ -129,7 +140,7 @@ def wood_mat():
 
 def flake_mat(name, base, cell, lo, hi, metal):
     """sparkle / pearloid top coats: small cells of varying brightness under a clear coat"""
-    m = mat(name, base, metal, 0.25, coat=1.0); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
+    m = mat(name, base, metal, 0.25, coat=E("FLAKE_COAT", 1.0)); nt = m.node_tree; b = nt.nodes["Principled BSDF"]
     tc = nt.nodes.new("ShaderNodeTexCoord")
     if metal > 0:                              # sparkle: tiny hard flakes
         v = nt.nodes.new("ShaderNodeTexVoronoi"); v.inputs["Scale"].default_value = cell; src = "Color"
@@ -152,6 +163,8 @@ def flake_mat(name, base, cell, lo, hi, metal):
         nt.links.new(nrm.outputs[0], b.inputs["Normal"]); b.inputs["Roughness"].default_value = E("FLAKE_ROUGH", 0.08)
     mx_ = nt.nodes.new("ShaderNodeMix"); mx_.data_type = "RGBA"; mx_.blend_type = "MULTIPLY"; mx_.inputs[0].default_value = 1.0
     mx_.inputs[6].default_value = (*base, 1); nt.links.new(mr.outputs[0], mx_.inputs[7]); nt.links.new(mx_.outputs[2], b.inputs["Base Color"])
+    if metal > 0 and E("FLAKE_EDGE_TINT", 0.0) > 0:   # metal flakes keep their red at grazing angles instead of going white
+        nt.links.new(mx_.outputs[2], b.inputs["Specular Tint"])
     return m
 
 
@@ -182,7 +195,7 @@ M_WOOD = (photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_T
           photo_wood(KOA_TEX, E("KOA_SAT", 1.12), E("KOA_VAL", 0.93), E("KOA_HUE", 0.515), E("KOA_SCALE", 1.8)) if FINISH == "koa" and os.path.exists(KOA_TEX) else
           photo_wood(PEARL_TEX, E("PEARL_SAT", 0.42), E("PEARL_VAL", 1.08), E("PEARL_HUE", 0.512), E("PEARL_SCALE", 2.2)) if FINISH == "pearloid" and os.path.exists(PEARL_TEX) else
           photo_wood(MAPLE_TEX, E("MAPLE_SAT", 0.86), E("MAPLE_VAL", 1.17), E("MAPLE_HUE", 0.532), E("MAPLE_SCALE", 1.3)) if FINISH == "maple" and os.path.exists(MAPLE_TEX) else
-          flake_mat("RedSparkle", (0.26, 0.004, 0.006), 1100.0, 0.55, 2.4, 0.90) if FINISH == "redsparkle" else
+          flake_mat("RedSparkle", tuple(c * E("RS_DARK", 1.0) for c in (0.26, 0.004, 0.006)), E("RS_SCALE", 1100.0), 0.55, E("RS_HI", 2.4), 0.90) if FINISH == "redsparkle" else
           flake_mat("Pearloid", (0.88, 0.85, 0.78), 22.0, 0.66, 1.08, 0.0) if FINISH == "pearloid" else wood_mat())
 M_ALU = mat("Aluminium", (0.74, 0.73, 0.72), 1.0, 0.30)   # satin cast aluminium (keyhead, changer, endplates)   # polished: crisp reflections (Joshua: ours felt hazed)          # polished cast aluminium (satin)
 M_ALU_B = mat("AluBrushed", (0.60, 0.60, 0.61), 1.0, 0.20)        # neck, pedal bar
@@ -316,7 +329,15 @@ def uv_mat(path):
     tx.interpolation = "Cubic"; nt.links.new(tc.outputs["UV"], tx.inputs["Vector"])
     hs = nt.nodes.new("ShaderNodeHueSaturation"); hs.inputs["Saturation"].default_value = E("CAB_SAT", {"rosewood": 1.35, "koa": 0.85}.get(FINISH, 1.0))
     hs.inputs["Value"].default_value = E("CAB_VAL", 1.0); hs.inputs["Hue"].default_value = E("CAB_HUE", {"koa": 0.514}.get(FINISH, 0.5))
-    nt.links.new(tx.outputs["Color"], hs.inputs["Color"]); nt.links.new(hs.outputs["Color"], b.inputs["Base Color"])
+    gm = nt.nodes.new("ShaderNodeGamma"); gm.inputs["Gamma"].default_value = E("CAB_GAMMA", 1.0)   # >1 deepens the dark grain bands
+    nt.links.new(tx.outputs["Color"], hs.inputs["Color"]); nt.links.new(hs.outputs["Color"], gm.inputs["Color"]); nt.links.new(gm.outputs["Color"], b.inputs["Base Color"])
+    if E("CAB_TOP_VAL", 1.0) != 1.0:   # the up-facing top takes the key light head-on; dim it alone (pearloid top was blown out)
+        ge = nt.nodes.new("ShaderNodeNewGeometry"); sz = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(ge.outputs["Normal"], sz.inputs[0])
+        up = nt.nodes.new("ShaderNodeMath"); up.operation = "GREATER_THAN"; up.inputs[1].default_value = 0.5; nt.links.new(sz.outputs["Z"], up.inputs[0])
+        k_ = nt.nodes.new("ShaderNodeMath"); k_.operation = "MULTIPLY_ADD"; k_.inputs[1].default_value = E("CAB_TOP_VAL", 1.0) - 1.0; k_.inputs[2].default_value = 1.0
+        nt.links.new(up.outputs[0], k_.inputs[0])
+        mm = nt.nodes.new("ShaderNodeVectorMath"); mm.operation = "SCALE"; nt.links.new(gm.outputs["Color"], mm.inputs[0]); nt.links.new(k_.outputs[0], mm.inputs["Scale"])
+        nt.links.new(mm.outputs[0], b.inputs["Base Color"])
     bw = nt.nodes.new("ShaderNodeRGBToBW"); nt.links.new(tx.outputs["Color"], bw.inputs[0])
     bm = nt.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = 0.05; bm.inputs["Distance"].default_value = 0.0003
     nt.links.new(bw.outputs[0], bm.inputs["Height"]); nt.links.new(bm.outputs["Normal"], b.inputs["Normal"])
@@ -335,11 +356,56 @@ def cabinet_uvs(o):
 
 
 USE_UV = os.path.exists(CAB_TEX) and os.environ.get("CAB_UV", "1") == "1"
-cab = box("Cabinet", (0, 0, -APRON / 2), (BODY_L, BODY_D, APRON), uv_mat(CAB_TEX) if USE_UV else M_WOOD, bevel=0.003, seg=3)
-if USE_UV:
+cab = box("Cabinet", (0, 0, -APRON / 2), (BODY_L, BODY_D, APRON), uv_mat(CAB_TEX) if USE_UV else M_WOOD, bevel=E("CAB_BEVEL", 0.003), seg=int(E("CAB_SEG", 3)))
+HL_MASK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "cabinet", "hl_%s.png" % FINISH)
+USE_HL = os.path.exists(HL_MASK) and E("HL", 0) > 0
+if USE_UV or USE_HL:
     cab.data.uv_layers.remove(cab.data.uv_layers[0]) if cab.data.uv_layers else None
     cabinet_uvs(cab)
-box("TopTrim", (0, -BODY_D / 2 + 0.0012, 0.0004), (BODY_L - 0.004, 0.0020, 0.0014), M_ALU, bevel=0.0005)       # front top edge strip
+if USE_HL:   # the concept's bright edge highlights, painted on the UV layout (fixed camera, so they read as gloss)
+    hm = cab.data.materials[0].copy(); cab.data.materials[0] = hm; nt = hm.node_tree
+    out_ = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL"); bsdf_ = out_.inputs["Surface"].links[0].from_node
+    tcm = nt.nodes.new("ShaderNodeTexCoord"); txm = nt.nodes.new("ShaderNodeTexImage"); txm.image = bpy.data.images.load(HL_MASK)
+    txm.image.colorspace_settings.name = "Non-Color"; nt.links.new(tcm.outputs["UV"], txm.inputs["Vector"])
+    pw = nt.nodes.new("ShaderNodeMath"); pw.operation = "POWER"; pw.inputs[1].default_value = E("HL_GAMMA", 1.6)
+    nt.links.new(txm.outputs["Color"], pw.inputs[0])
+    em = nt.nodes.new("ShaderNodeEmission"); em.inputs["Color"].default_value = (1.0, 0.93, 0.88, 1)
+    ml = nt.nodes.new("ShaderNodeMath"); ml.operation = "MULTIPLY"; ml.inputs[1].default_value = E("HL", 0)
+    fl = next((n for n in nt.nodes if n.type == "MAP_RANGE"), None)        # let the sparkle glitter through the highlight
+    if fl is not None:
+        fm = nt.nodes.new("ShaderNodeMath"); fm.operation = "MULTIPLY_ADD"; fm.inputs[1].default_value = E("HL_FLAKE", 0.35); fm.inputs[2].default_value = 0.4
+        nt.links.new(fl.outputs[0], fm.inputs[0]); m2 = nt.nodes.new("ShaderNodeMath"); m2.operation = "MULTIPLY"
+        nt.links.new(pw.outputs[0], m2.inputs[0]); nt.links.new(fm.outputs[0], m2.inputs[1]); pw = m2
+    tx_ = next((n for n in nt.nodes if n.type == "TEX_IMAGE" and n is not txm), None)
+    lum = None
+    if tx_ is not None:   # UV-painted cabinets (pearloid): the gloss lands on the bright pearl tiles, so they flash white
+        bw = nt.nodes.new("ShaderNodeRGBToBW"); nt.links.new(tx_.outputs["Color"], bw.inputs[0])
+        lum = nt.nodes.new("ShaderNodeMath"); lum.operation = "POWER"; lum.inputs[1].default_value = E("HL_TEXP", 3.0)
+        nt.links.new(bw.outputs[0], lum.inputs[0])
+        m3 = nt.nodes.new("ShaderNodeMath"); m3.operation = "MULTIPLY"
+        nt.links.new(pw.outputs[0], m3.inputs[0]); nt.links.new(lum.outputs[0], m3.inputs[1]); pw = m3
+    nt.links.new(pw.outputs[0], ml.inputs[0])
+    if lum is not None and E("TILE_GLINT", 0) > 0:   # plus a little everywhere: individual tiles catch the light across the face
+        tg = nt.nodes.new("ShaderNodeMath"); tg.operation = "MULTIPLY_ADD"; tg.inputs[1].default_value = E("TILE_GLINT", 0)
+        nt.links.new(lum.outputs[0], tg.inputs[0]); nt.links.new(ml.outputs[0], tg.inputs[2]); ml = tg
+    nt.links.new(ml.outputs[0], em.inputs["Strength"])
+    if E("HL_CORE", 0) > 0:   # tinted glow fading to a white-hot core, like gloss on a coloured finish
+        cp = nt.nodes.new("ShaderNodeMath"); cp.operation = "POWER"; cp.inputs[1].default_value = E("HL_CORE", 0)
+        nt.links.new(txm.outputs["Color"], cp.inputs[0])
+        mx3 = nt.nodes.new("ShaderNodeMix"); mx3.data_type = "RGBA"; nt.links.new(cp.outputs[0], mx3.inputs[0])
+        mx3.inputs[6].default_value = (E("HL_TR", 1.0), E("HL_TG", 0.12), E("HL_TB", 0.10), 1); mx3.inputs[7].default_value = (1.0, 0.93, 0.88, 1)
+        nt.links.new(mx3.outputs[2], em.inputs["Color"])
+    ad = nt.nodes.new("ShaderNodeAddShader"); nt.links.new(bsdf_.outputs[0], ad.inputs[0]); nt.links.new(em.outputs[0], ad.inputs[1])
+    nt.links.new(ad.outputs[0], out_.inputs["Surface"])
+if E("TOP_TRIM", 1) > 0: box("TopTrim", (0, -BODY_D / 2 + 0.0012, 0.0004), (BODY_L - 0.004, 0.0020, 0.0014), M_ALU, bevel=0.0005)       # front top edge strip
+if E("BOTTOM_BAR", 1) > 0:   # metal bar along the bottom edge of the front apron, endplate to endplate (Joshua 2026-11-11, red line)
+    _bh = E("BAR_H", 0.0055)   # thin, like the concepts (Joshua)
+    _bv = E("BAR_VAL", 0.16)   # darker satin metal where the concept's bar sits in shadow (koa, Joshua)
+    _bm = mat("BarMetal", (_bv, _bv, _bv * 0.98), 1.0, E("BAR_ROUGH", 0.32)) if _bv > 0 else M_ALU
+    box("BottomBar", (0, -BODY_D / 2 + 0.002, -APRON + _bh / 2 - 0.0015), (BODY_L - 0.004, 0.0070, _bh), _bm, bevel=0.0018, seg=5)
+if E("EDGE_TRIM", 0) > 0:   # darker satin-silver strip wrapping the top front edge (pearloid concept, Joshua)
+    _ev = E("EDGE_VAL", 0.50)
+    box("EdgeTrim", (0, -BODY_D / 2 + 0.0020, -0.0020), (BODY_L - 0.004, 0.0062, 0.0062), mat("EdgeMetal", (_ev, _ev, _ev * 0.98), 1.0, E("EDGE_ROUGH", 0.30)), bevel=0.0018, seg=4)
 EP_T = 0.025
 for sx in (-1, 1):                                                           # endplates: polished cast aluminium, proud of the cabinet
     xe = sx * (BODY_L / 2 + EP_T / 2 - 0.004)
@@ -549,8 +615,9 @@ def area(name, loc, size, power, col, target=(0, 0, -0.1)):
     o.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat("-Z", "Y").to_euler(); return o
 KP = E("STEEL_LIGHT", 1.0)
 area("Key", (-1.2, -0.7, 1.5), (0.35, 0.30), 60 * KP, (1.0, 0.84, 0.66))
-area("Top", (0.2, 0.3, 1.9), (1.6, 0.5), 9 * KP, (1.0, 0.90, 0.78))
-area("Fill", (0.6, -1.6, 0.5), (1.6, 0.8), 5 * KP, (1.0, 0.86, 0.72))
+_top = area("Top", (0.2, 0.3, 1.9), (1.6, 0.5), 9 * KP, (1.0, 0.90, 0.78))
+_fill = area("Fill", (0.6, -1.6, 0.5), (1.6, 0.8), 5 * KP, (1.0, 0.86, 0.72))
+if E("BIG_LIGHT_GLOSSY", 1.0) <= 0: _top.visible_glossy = _fill.visible_glossy = False   # broad lights read as haze on gloss paint
 # low soft light from the player's side under the cabinet: the knee levers and pedal hardware were in the apron's
 # shadow, darker than the reference (Joshua)
 area("UnderFill", (0.0, -1.3, -0.13), (1.4, 0.25), E("UNDER_FILL", 0.0) * KP, (1.0, 0.86, 0.70), target=(0, -0.10, -0.17))
@@ -579,11 +646,19 @@ d_front = Vector((0, -math.cos(TH), -math.sin(TH)))        # where the front apr
 d_top = Vector((0, math.cos(TH), math.sin(TH)))            # where the flat tops' mirror direction points
 for i, gx in enumerate((-0.42, 0.02, 0.40)):
     glint("GlintTop%d" % i, d_top * 3.0 + Vector((gx * 1.0, 0, 0)), 0.55, 1.4, E("TOP_GLINT", {"redsparkle": 3.6}.get(FINISH, 1.6)) * GL)
+# small hot spots that only show as sharp highlights on rounded glossy edges (Joshua's red sparkle concept)
+if E("HOTSPOTS", 0) > 0:
+    d_mid = (d_top + Vector((0, -1.2, 0.4))).normalized()
+    spots = [d_mid * 3.0 + Vector((gx, 0, 0)) for gx in (-1.1, -0.35, 0.35, 1.1)]
+    spots += [Vector((sx * 2.6, -1.6, 1.4)) for sx in (-1, 1)]
+    for i, p_ in enumerate(spots):
+        glint("Hot%d" % i, p_, E("HOT_SIZE", 0.10), E("HOT_SIZE", 0.10), E("HOTSPOTS", 0) * GL, col=(1.0, 0.95, 0.88))
 # the front apron: one long soft sheen running past both ends (three panels read as blurry blotches: Joshua)
 glint("GlintFront", d_front * 3.0, E("FRONT_W", 9.0), E("FRONT_H", 1.3), E("FRONT_GLINT", {"koa": 1.0}.get(FINISH, 2.2)) * GL)   # koa: less haze on the front (Joshua)
 
 bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, radius=9, location=(0, 0, 0))
 dome = bpy.context.object; dome.name = "RoomDome"
+if E("DOME_GLOSSY", 1.0) <= 0: dome.visible_glossy = False   # glossy paint shows only the highlight strips, not a hazy room
 for p in dome.data.polygons: p.use_smooth = True
 dm = bpy.data.materials.new("RoomDome"); dm.use_nodes = True; nt = dm.node_tree; nt.nodes.clear()
 o_ = nt.nodes.new("ShaderNodeOutputMaterial"); em = nt.nodes.new("ShaderNodeEmission")

@@ -144,7 +144,7 @@ def cards(dirs):
     num = {"walnut": 1, "maple": 4, "redsparkle": 6, "pearloid": 13, "koa": 18}
     dst = os.path.join(H, "..", "..", "..", "..", "Source", "ui_assets")
     for sk, d in dirs.items():
-        im = rest_image(d, "brass" if sk == "koa" else "chrome")
+        im = rest_image(d, "chrome")   # koa is chrome now too (2026-11-11)
         c = Image.fromarray(np.clip(im, 0, 255).astype(np.uint8)).crop((190, 160, 3010, 1386)).resize((726, 316), Image.LANCZOS)
         c.save(os.path.join(dst, "card_%02d.jpg" % num[sk]), quality=92); print("card_%02d" % num[sk], sk)
 

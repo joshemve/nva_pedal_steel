@@ -1,0 +1,5 @@
+{"type":"thread.started","thread_id":"01a1c8da-ad51-7521-b3ee-5f68e17095a5"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll generate one edge-to-edge maple veneer texture with warm amber color and sharp birdseye detail.\n"}}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"1536×1024 honey-amber birdseye and burl maple veneer texture with detailed horizontal grain, filling the frame edge to edge."}}
+{"type":"turn.completed","usage":{"input_tokens":46504,"cached_input_tokens":35712,"cache_write_input_tokens":0,"output_tokens":301,"reasoning_output_tokens":0}}

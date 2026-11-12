@@ -363,3 +363,34 @@ numbers: Blender/Figma/Houdini; configurator camera guidance). All in `app.js` /
   final/knobs/workshop_feel scallop` (crops only that style, runs `fix_knob_halo.py`, copies to `Source/ui_assets/`).
   The SPACE strip came out byte-identical. Previous strips: `final/strips/knob_scallop*_before_workshop.png`.
   The recipe as rendered: `final/knobs/workshop_feel_recipe.json`.
+
+### 2026-11-11 later: finishes matched by measurement
+- Colours are now tuned by measuring hue / saturation / brightness of the cabinet front in the concept vs the render
+  (front-panel boxes on 1000x321 crops), not by eye. `steel_3d.py` `TUNED` holds the per-finish results (env overrides):
+  koa CAB_SAT .95 VAL 1.02 HUE .524 GAMMA 1.35 (new CAB_GAMMA deepens grain bands); pearloid SAT .66 VAL 1.08 GAMMA .85
+  (concept pearl is whiter, not brighter); red sparkle RS_DARK .45 RS_HI 3.4 no coat, FLAKE_EDGE_TINT (metal flakes went
+  white at grazing angles = the pink haze) and HL 3.0.
+- Red sparkle highlights: lighting/coat attempts only gave haze, so the concept's edge streaks are painted into a UV mask
+  (`blender/highlight_mask.py` -> `textures/cabinet/hl_redsparkle.png`), added as emission with the sparkle through it.
+  Valid because the camera never moves.
+- Pearloid uses `cab_pearloid.png` = snap_pearloid_1 (Joshua's Option 1) with the whiter grade.
+- `steel_pack.py cards` draws koa with chrome now. Skins/cards repacked; 67 tests pass. Packaging (grade()) was checked:
+  plugin skins measure within 1-2 points of the previews, so it is not what shifts colour.
+- New knobs: CAB_GAMMA, CAB_BEVEL/CAB_SEG, FLAKE_COAT, FLAKE_EDGE_TINT, RS_DARK/RS_HI, DOME_GLOSSY, BIG_LIGHT_GLOSSY,
+  HOTSPOTS/HOT_SIZE (the last four were tried for highlights and are off by default).
+- Same day, later: metal bar along the bottom edge of the front apron on every steel (`BottomBar`, BOTTOM_BAR/BAR_H; Joshua's
+  red line). Highlights redone against the concepts: `highlight_mask.py <finish> <out>` paints per-finish layouts
+  (red: white-hot line on the front edge with hot spots + glows on the top strip; pearloid: gloss on the top strip and edge).
+  The mask now works on UV-painted cabinets too (gloss weighted by texture brightness, HL_TEXP; TILE_GLINT flashes the bright
+  pearl tiles everywhere); HL_CORE tints the glow and fades to a white core. Red drops TopTrim (TOP_TRIM=0).
+  Layers + all four finish plates re-rendered, packed, rebuilt; 67 UI tests pass. Sheet: renders/steels_vs_concept.jpg.
+- Then matched by measurement at plugin size: red RS_SCALE 1900 (finer flakes), RS_DARK .38, FRONT_GLINT 0, HL_CORE 2.2 plus a
+  broad red sheen band on the top strip in the mask; pearloid CAB_TOP_VAL .55 (new: dims only the up-facing top, which the
+  key light blew out to gold), CAB_SAT .56, CAB_HUE .52, HL 1.5. Scripts: final/steel3d/uvt/measrs.py, measpl.py.
+- Joshua's follow-ups: red has no bottom bar and one mirror band mid-front (BOTTOM_BAR=0, TRIM_ROUGH .04); pearloid has a
+  darker satin-silver strip wrapping the top front edge (EDGE_TRIM, EDGE_VAL .5) instead of TopTrim, and no gloss spot at
+  the changer end; koa's bottom bar is darker satin metal (BAR_VAL .30).
+- Bottom rail thinner (BAR_H 5.5 mm) and dark satin metal by default (BAR_VAL .16). Joshua liked the red's gloss, so koa, maple
+  and rosewood got it too: highlight_mask.py layouts for them (front edge line + three glare spots on the top strip, no broad
+  sheen), TUNED HL 7 / HL_TEXP .5 / HL_CORE 1.2 with a per-wood tint (HL_TR/TG/TB); pearloid got the glare spots as well.
+  Layers + every finish re-rendered, packed, rebuilt; 67 UI tests pass. Sheet: renders/steels_gloss_all.jpg.

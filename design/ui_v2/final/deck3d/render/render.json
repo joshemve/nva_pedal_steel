@@ -1,0 +1,18 @@
+{
+ "region": [
+  1950,
+  1420,
+  3120,
+  1770
+ ],
+ "frames": 7,
+ "press_deg": 7.0,
+ "swing_deg": 10.0,
+ "layers": {
+  "pedal_A": 7,
+  "pedal_B": 7,
+  "pedal_C": 7,
+  "lever_L": 7,
+  "lever_R": 7
+ }
+}
