@@ -538,7 +538,7 @@ public:
             for (int i = 0; i < categories.size(); ++i) m.addItem(i + 1, categoryLabel(categories[i]), true, categories[i] == category);
             juce::Component::SafePointer<PresetSaveDialog> safe(this);
             m.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this).withTargetScreenArea(localAreaToGlobal(categoryBounds().toNearestInt()))
-                                .withMinimumWidth(juce::roundToInt(categoryBounds().getWidth() * getTransform().getScaleFactor())),
+                                .withMinimumWidth(juce::roundToInt(categoryBounds().getWidth() * std::sqrt(std::abs(getTransform().getDeterminant())))),
                             [safe](int r) { if (safe != nullptr && r > 0) safe->setCategory(safe->categories[r - 1]); });
         }
     }

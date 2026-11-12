@@ -115,7 +115,7 @@ private:
     TextItem txtS[9];  // the same in the small-window variant (small_1: bolder, larger)
     juce::Image spSmallDeck, spSmallTop;
     // the MORE deck (design/ui_v2/final/parts/more_deck.py): row 1 lifts by moreD, row 2 takes its place
-    juce::Image deckMore;
+    juce::Image deckMore, deckMoreTop;
     TextItem txt2[8];   // VIBRATO RATE SLIDE DRIVE WIDTH DELAY DECAY values, SYNC on/off
     bool more() const { return proc.showMore; }
     void setMore(bool on);

@@ -134,7 +134,8 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     setTxtS(7, poppinsMedium, txtRef_mode, txtS_mode, txtSColour_mode, true);
     setTxtS(8, poppinsSemi, txtRef_db, txtS_db, txtSColour_db);
     spSmallDeck = loadImage(BinaryData::sp_small_deck_png, BinaryData::sp_small_deck_pngSize);
-    deckMore = loadImage(BinaryData::deck_more_png, BinaryData::deck_more_pngSize);
+    deckMore = loadImage(BinaryData::deck_more_jpg, BinaryData::deck_more_jpgSize);
+    deckMoreTop = loadImage(BinaryData::deck_more_top_png, BinaryData::deck_more_top_pngSize);
     f3dDnKnee[0] = loadImage(BinaryData::f3d_doubleneck_knee_L_png, BinaryData::f3d_doubleneck_knee_L_pngSize);
     f3dDnKnee[1] = loadImage(BinaryData::f3d_doubleneck_knee_R_png, BinaryData::f3d_doubleneck_knee_R_pngSize);
     for (int i = 0; i < 8; ++i) {   // the MORE row's value boxes sit on row 1's old rows: TONE's text, moved along x
@@ -358,7 +359,8 @@ void PedalSteelAudioProcessorEditor::rebuildScaledBackground() {
     if (more() && deckMore.isValid()) {   // the taller deck covers the floor pedals (its top rows are transparent above
         // the walnut frame, with a soft contact shadow baked in, so the steel's legs and pull rods show down to the frame)
         const float k = (float) w / kDesignW, top = moreDeckTop * k;
-        g.drawImage(deckMore, juce::Rectangle<float>(0.0f, top, (float) w, (kDesignH - moreDeckTop) * k));
+        g.drawImage(deckMoreTop, juce::Rectangle<float>(0.0f, top, (float) w, moreTopBand * k));
+        g.drawImage(deckMore, juce::Rectangle<float>(0.0f, top + moreTopBand * k, (float) w, (kDesignH - moreDeckTop - moreTopBand) * k));
     }
 }
 
@@ -714,8 +716,9 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
             for (int r = 0; r < 9; ++r) {
                 const float rowY = top + r * 2.0f, k = 1.0f - (float) r / 8.0f;
                 const auto sp = juce::Point<float>(hx0 * 0.5f, rowY * 0.5f).transformedBy(xf) * 2.0f;
-                g.drawImage(src, hx0 * 0.5f + dx * k, rowY * 0.5f, hw * 0.5f, 1.0f,
-                            juce::roundToInt(sp.x - ox), juce::roundToInt(sp.y - oy), juce::roundToInt(hw * zs), juce::jmax(1, juce::roundToInt(2.0f * zs)));
+                const juce::Rectangle<int> srcR(juce::roundToInt(sp.x - ox), juce::roundToInt(sp.y - oy), juce::roundToInt(hw * zs), juce::jmax(1, juce::roundToInt(2.0f * zs)));
+                g.drawImage(src.getClippedImage(srcR.getIntersection(src.getBounds())),
+                            juce::Rectangle<float>(hx0 * 0.5f + dx * k, rowY * 0.5f, hw * 0.5f, 1.0f));   // float dest: no truncation
             }
             const float gx = xsC * 0.5f + 16.0f + dx * 0.6f, gy = ysC * 0.5f - 2.0f;
             g.setColour(juce::Colour(0xfffff3dc).withAlpha(0.8f * std::abs(b) / 2.0f));
@@ -808,7 +811,8 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     g.drawImage(dispImg, R(displayBox));
     if (meterLit > 0) {
         const float srcW = (float) meterSegEnd[juce::jlimit(0, meterSegments - 1, meterLit - 1)] + 1.0f;
-        g.drawImage(spMeter, sp_meter_on[0], sp_meter_on[1], srcW * 0.5f, sp_meter_on[3], 0, 0, (int) srcW, spMeter.getHeight());
+        g.drawImage(spMeter.getClippedImage({ 0, 0, (int) srcW, spMeter.getHeight() }),
+                    juce::Rectangle<float>(sp_meter_on[0], sp_meter_on[1], srcW * 0.5f, sp_meter_on[3]));
     }
     drawStripFrame(g, ptrTrim, trimFrame(), { ptrTRIMOrigin[0], ptrTRIMOrigin[1], ptrTRIMFramePx * 0.5f, ptrTRIMFramePx * 0.5f });
 

@@ -22,9 +22,11 @@ import more_deck as MD   # the MORE state: taller deck (row 2) + the bottom stri
 _bg = deck_pack.apply(np.asarray(Image.open("bg_steel3d.png").convert("RGB"), np.float32))
 Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)
-for _f in ("deck_more.jpg", "deck_more.png"):
+for _f in ("deck_more.jpg", "deck_more.png", "deck_more_top.png"):
     if os.path.exists(os.path.join(OUT, _f)): os.remove(os.path.join(OUT, _f))
-Image.fromarray(np.clip(_more, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "deck_more.png"), optimize=True)   # top rows transparent
+_m8 = np.clip(_more, 0, 255).astype(np.uint8)   # the body as JPG (small); the top band (transparent above the frame) as PNG
+Image.fromarray(_m8[MD.TOPBAND:, :, :3]).save(os.path.join(OUT, "deck_more.jpg"), quality=95, subsampling=0)
+Image.fromarray(_m8[:MD.TOPBAND], "RGBA").save(os.path.join(OUT, "deck_more_top.png"), optimize=True)
 _SH = MD.SHIFT; S["midi_on"]["box"][0] -= _SH; S["midi_on"]["box"][2] -= _SH   # MIDI LEARN moved left
 T["vol"]["ink_cx"] -= _SH; T["vol"]["ink_left"] -= _SH
 # sprites (canvas boxes -> UI rects)
@@ -148,7 +150,7 @@ rect("hitSlider", 752 * RX, 915 * RY, 1168 * RX - _SH / 2, 958 * RY)
 # the MORE state (more_deck.py): row 1 moves up by moreD, row 2 sits where row 1 was
 ML = MD.layout(); bx, by, bw, bh = ML["btn"]
 rect("hitMore", bx, by, bx + bw, by + bh)
-L("inline constexpr float moreD = %.2ff, moreDeckTop = %.2ff, moreFrameTop = %.2ff;   // UI px: row-1 lift; deck_more.png starts here (to 1000); its walnut frame's top" % (ML["D_ui"], ML["deckTop_ui"], ML["frameTop_ui"]))
+L("inline constexpr float moreD = %.2ff, moreDeckTop = %.2ff, moreFrameTop = %.2ff, moreTopBand = %.2ff;   // UI px: row-1 lift; deck_more_top.png starts here, then deck_more.jpg (to 1000); its walnut frame's top" % (ML["D_ui"], ML["deckTop_ui"], ML["frameTop_ui"], MD.TOPBAND / 2))
 L("inline constexpr float row2X[7] = { %s };   // VIBRATO RATE SLIDE (scallop) DRIVE WIDTH (dome) DELAY DECAY (space)" % ", ".join("%.1ff" % cx for _, _, cx in ML["row2"]))
 L("inline constexpr float charCentre[2] = { %.2ff, %.2ff }, charScale = %.3ff, charDotR = %.1ff;" % (*ML["char_c"], ML["char_scale"], ML["char_r"]))
 L("inline constexpr float charAngle[11] = { %s };   // deg clockwise from 12 o'clock, STUDIO..ROOM" % ", ".join("%.1ff" % a for a in ML["char_ang"]))

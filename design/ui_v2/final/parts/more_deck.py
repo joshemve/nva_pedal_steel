@@ -25,7 +25,8 @@ ROW_TOP, RULE_Y = 1350, 1782  # row 1 panel content rows, and the rule between t
 D = RULE_Y + 4 - ROW_TOP    # 436: row 1 moves up by one row height (+ the rule)
 Y0 = FRAME_TOP - D          # the MORE deck image starts here (842)
 TOPBAND = 110               # rows below FRAME_TOP searched for the walnut rim (above it: rug, now transparent)
-RIM_ROW = 1338              # the rim's top in the middle of the deck (measured on ui_bg)
+RIM_ROW = 1340              # the rim's top in the middle of the deck (measured on ui_bg)
+FRAME_OUTLINE = (23, 3178, 1340, 52)   # the walnut frame: left, right, top, corner radius (canvas, ui_bg)
 XI0, XI1 = 46, 3156         # panel interior (between the walnut sides)
 LABEL_Y = (1654, 1679)      # knob labels' cap box (TONE)
 TITLE_Y = (1392, 1420)      # section titles' cap box (VOICE)
@@ -302,13 +303,16 @@ def build_more(bg):
     # the rows above the walnut frame are not deck: transparent (the steel, its legs and pull rods show through), with a
     # soft contact shadow just above the frame instead of a hard band (Joshua: legs missing, dark line across the rug)
     alpha = np.full(out.shape[:2], 255.0, np.float32)
-    band = src[FRAME_TOP:FRAME_TOP + TOPBAND]; rim = (band[..., 0] - band[..., 2] > 100) & (band.mean(2) > 70)
-    for x in range(out.shape[1]):
-        ys = np.flatnonzero(rim[:, x]); y_ = int(ys[0]) if len(ys) else TOPBAND
-        alpha[:y_, x] = 0.0
-        sh0 = max(0, y_ - 12); out[sh0:y_, x] = 0.0
-        alpha[sh0:y_, x] = 255.0 * 0.38 * np.linspace(0.0, 1.0, y_ - sh0, endpoint=False) ** 1.5
-    alpha = cv2.GaussianBlur(alpha, (0, 0), 0.8)
+    # the walnut frame's outline (a rounded rectangle measured on ui_bg) decides it, not colour: the rim's grain varies
+    fx0, fx1, ftop, fr = FRAME_OUTLINE; xs = np.arange(out.shape[1], dtype=np.float32) + 0.5
+    cx_ = np.clip(xs, fx0 + fr, fx1 - fr); dx_ = xs - cx_
+    edge = np.where(np.abs(dx_) >= fr, 1e6, ftop + fr - np.sqrt(np.maximum(fr * fr - dx_ * dx_, 0.0))) - FRAME_TOP
+    ys = np.arange(TOPBAND, dtype=np.float32)[:, None] + 0.5
+    cover = np.clip(ys - edge[None, :] + 0.5, 0.0, 1.0)                       # anti-aliased frame coverage
+    shade = 0.38 * np.clip(1.0 - (edge[None, :] - ys) / 12.0, 0.0, 1.0) ** 1.5 * (cover < 1)   # soft contact shadow above it
+    top = out[:TOPBAND]
+    alpha[:TOPBAND] = 255.0 * (cover + (1 - cover) * shade)
+    out[:TOPBAND] = top * (cover / np.maximum(cover + (1 - cover) * shade, 1e-4))[..., None]
     return np.clip(np.dstack([out, alpha]), 0, 255), info
 
 

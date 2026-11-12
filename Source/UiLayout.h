@@ -134,7 +134,7 @@ namespace UiLayout {
     inline constexpr float hitMidiLearn[4] = { 1258.18f, 909.27f, 154.08f, 37.89f };   // x, y, w, h
     inline constexpr float hitSlider[4] = { 767.35f, 912.26f, 323.49f, 42.87f };   // x, y, w, h
     inline constexpr float hitMore[4] = { 1428.00f, 908.50f, 87.00f, 39.50f };   // x, y, w, h
-    inline constexpr float moreD = 218.00f, moreDeckTop = 421.00f, moreFrameTop = 451.00f;   // UI px: row-1 lift; deck_more.png starts here (to 1000); its walnut frame's top
+    inline constexpr float moreD = 218.00f, moreDeckTop = 421.00f, moreFrameTop = 452.00f, moreTopBand = 55.00f;   // UI px: row-1 lift; deck_more_top.png starts here, then deck_more.jpg (to 1000); its walnut frame's top
     inline constexpr float row2X[7] = { 135.0f, 270.0f, 405.0f, 562.0f, 706.0f, 882.0f, 1030.0f };   // VIBRATO RATE SLIDE (scallop) DRIVE WIDTH (dome) DELAY DECAY (space)
     inline constexpr float charCentre[2] = { 1282.00f, 798.00f }, charScale = 1.500f, charDotR = 65.5f;
     inline constexpr float charAngle[11] = { -131.0f, -103.0f, -81.0f, -59.0f, -32.0f, 0.0f, 32.0f, 59.0f, 81.0f, 103.0f, 131.0f };   // deg clockwise from 12 o'clock, STUDIO..ROOM

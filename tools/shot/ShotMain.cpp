@@ -1,3 +1,6 @@
+#ifdef _MSC_VER
+#pragma warning(disable: 4456)   // each test is its own block and reuses short local names (t0, f, os...)
+#endif
 #include "../../Source/UiLayout.h"
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
