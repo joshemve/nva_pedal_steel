@@ -199,8 +199,10 @@ KOA_TEX = os.path.join(WOOD_DIR, "koa_1_1.png")           # real figured koa (th
 MAPLE_TEX = os.path.join(WOOD_DIR, "maple_1_1.png")       # approved ref p3d_maple_1: honey birdseye/burl maple
 if SHAPE == "bullnose":   # the 60s blonde (round29 s3_1) is flamed maple, not burl
     MAPLE_TEX = os.path.join(WOOD_DIR, "flamemaple_1_1.png")
-    for _k, _v in dict(MAPLE_SAT=0.95, MAPLE_VAL=1.0, MAPLE_HUE=0.5, MAPLE_SCALE=1.0).items(): os.environ.setdefault(_k, str(_v))
-M_WOOD = (photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_TEX) else
+    for _k, _v in dict(MAPLE_SAT=1.18, MAPLE_VAL=0.90, MAPLE_HUE=0.5, MAPLE_SCALE=1.0).items(): os.environ.setdefault(_k, str(_v))
+WALNUT_TEX = os.path.join(WOOD_DIR, "walnut_1_1.png")     # figured walnut of the double-neck concept (round29 s6_3)
+M_WOOD = (photo_wood(WALNUT_TEX, E("WALNUT_SAT", 1.0), E("WALNUT_VAL", 0.80), 0.5, E("WALNUT_SCALE", 1.0)) if SHAPE == "double" and os.path.exists(WALNUT_TEX) else
+          photo_wood(WOOD_TEX) if FINISH == "rosewood" and os.path.exists(WOOD_TEX) else
           photo_wood(KOA_TEX, E("KOA_SAT", 1.12), E("KOA_VAL", 0.93), E("KOA_HUE", 0.515), E("KOA_SCALE", 1.8)) if FINISH == "koa" and os.path.exists(KOA_TEX) else
           photo_wood(PEARL_TEX, E("PEARL_SAT", 0.42), E("PEARL_VAL", 1.08), E("PEARL_HUE", 0.512), E("PEARL_SCALE", 2.2)) if FINISH == "pearloid" and os.path.exists(PEARL_TEX) else
           photo_wood(MAPLE_TEX, E("MAPLE_SAT", 0.86), E("MAPLE_VAL", 1.17), E("MAPLE_HUE", 0.532), E("MAPLE_SCALE", 1.3)) if FINISH == "maple" and os.path.exists(MAPLE_TEX) else
@@ -377,6 +379,11 @@ if SHAPE == "bullnose":   # half-round front apron, flat top behind it (the fron
     BN_R = APRON / 2
     cab = box("Cabinet", (0, (YF + BN_R + YB) / 2, -APRON / 2), (BODY_L, YB - YF - BN_R, APRON), M_WOOD, bevel=0.003)
     cyl("CabinetNose", (0, YF + BN_R, -APRON / 2), BN_R, BODY_L, M_WOOD, "X", 96)
+    # the veneer is projected in object space: bake rotation and position into both parts, so the grain runs along the
+    # cabinet on the round nose too (it ran up and down) and carries on across the seam
+    for _o in (cab, bpy.context.object):
+        bpy.ops.object.select_all(action="DESELECT"); _o.select_set(True); bpy.context.view_layer.objects.active = _o
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 else:
     cab = box("Cabinet", (0, YC, -APRON / 2), (BODY_L, DEPTH, APRON), uv_mat(CAB_TEX) if USE_UV else M_WOOD, bevel=E("CAB_BEVEL", 0.003), seg=int(E("CAB_SEG", 3)))
 HL_MASK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "textures", "cabinet", "hl_%s.png" % FINISH)
@@ -452,6 +459,8 @@ if SHAPE == "bullnose" and FINISH == "maple":   # the 60s blonde: cream board, d
     M_FRET = mat("FretLineDark", (0.035, 0.030, 0.028), 0.0, 0.5)
     COL = {"red": (0.32, 0.035, 0.03), "cream": (0.80, 0.82, 0.84), "blue": (0.32, 0.035, 0.03), "yellow": (0.80, 0.82, 0.84)}
     M_MARK = {k: mat("Mark_" + k, v, 0.0, 0.35) for k, v in COL.items()}
+if SHAPE == "double":   # pearl diamonds on both necks, as on the concept
+    M_MARK = {k: mat("Mark_pearl", (0.82, 0.83, 0.84), 0.0, 0.30, coat=0.6) for k in COL}
 FB_W = 0.122
 X_GUIDE = X_NUT - 0.098                                                      # the roller bar where the keyhead ends
 x0n, x1n = X_NUT - 0.009, X_BR + 0.004
