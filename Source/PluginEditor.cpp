@@ -138,6 +138,11 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
     deckMoreTop = loadImage(BinaryData::deck_more_top_png, BinaryData::deck_more_top_pngSize);
     f3dDnKnee[0] = loadImage(BinaryData::f3d_doubleneck_knee_L_png, BinaryData::f3d_doubleneck_knee_L_pngSize);
     f3dDnKnee[1] = loadImage(BinaryData::f3d_doubleneck_knee_R_png, BinaryData::f3d_doubleneck_knee_R_pngSize);
+    f3dDnPedal[0] = loadImage(BinaryData::f3d_doubleneck_pedal_X0_png, BinaryData::f3d_doubleneck_pedal_X0_pngSize);
+    f3dDnPedal[1] = loadImage(BinaryData::f3d_doubleneck_pedal_X1_png, BinaryData::f3d_doubleneck_pedal_X1_pngSize);
+    f3dDnPedal[2] = loadImage(BinaryData::f3d_doubleneck_pedal_X2_png, BinaryData::f3d_doubleneck_pedal_X2_pngSize);
+    f3dDnPedal[3] = loadImage(BinaryData::f3d_doubleneck_pedal_X3_png, BinaryData::f3d_doubleneck_pedal_X3_pngSize);
+    f3dDnPedal[4] = loadImage(BinaryData::f3d_doubleneck_pedal_X4_png, BinaryData::f3d_doubleneck_pedal_X4_pngSize);
     for (int i = 0; i < 8; ++i) {   // the MORE row's value boxes sit on row 1's old rows: TONE's text, moved along x
         txt2[i] = txt[0]; txt2[i].cx = i < 7 ? row2X[i] : syncCentre[0]; prepareText(txt2[i]);
     }
@@ -550,6 +555,19 @@ int PedalSteelAudioProcessorEditor::n2StringAt(float y) {
     return best;
 }
 
+float PedalSteelAudioProcessorEditor::xPedalNorm(int i) const {
+    auto* p = proc.apvts.getParameter(ParamIDs::extraPedals[juce::jlimit(0, 4, i)]); return p ? p->getValue() : 0.0f;
+}
+
+void PedalSteelAudioProcessorEditor::toggleXPedal(int i) {
+    if (auto* p = proc.apvts.getParameter(ParamIDs::extraPedals[juce::jlimit(0, 4, i)])) {
+        p->beginChangeGesture(); p->setValueNotifyingHost(p->getValue() > 0.5f ? 0.0f : 1.0f); p->endChangeGesture();
+        static const char* names[5] = { "PEDAL D MAJ7", "PEDAL E SUS4", "PEDAL F AUG", "PEDAL G B5", "PEDAL H MINOR" };
+        displayOverride = juce::String(names[i]) + (p->getValue() > 0.5f ? " ON" : " OFF");
+        displayOverrideUntil = juce::Time::getMillisecondCounterHiRes() * 0.001 + 1.4;
+    }
+}
+
 int PedalSteelAudioProcessorEditor::backStyle() const {
     const int style = (int) proc.apvts.getRawParameterValue(ParamIDs::presetStyle)->load();
     return style == 4 ? 0 : 4;   // C6 preset -> E9 back neck; anything else -> C6
@@ -690,6 +708,9 @@ void PedalSteelAudioProcessorEditor::drawSteel(juce::Graphics& g) {
             g.addTransform(steelXf().inverted());
             drawFloorLayer(g, f3dDnKnee[0], f3d_doubleneck_knee_L, f3dFrames_doubleneck_knee_L, pedalShown(3), top);
             drawFloorLayer(g, f3dDnKnee[1], f3d_doubleneck_knee_R, f3dFrames_doubleneck_knee_R, pedalShown(4), top);
+            static const float* xb[5] = { f3d_doubleneck_pedal_X0, f3d_doubleneck_pedal_X1, f3d_doubleneck_pedal_X2, f3d_doubleneck_pedal_X3, f3d_doubleneck_pedal_X4 };
+            static const int xf[5] = { f3dFrames_doubleneck_pedal_X0, f3dFrames_doubleneck_pedal_X1, f3dFrames_doubleneck_pedal_X2, f3dFrames_doubleneck_pedal_X3, f3dFrames_doubleneck_pedal_X4 };
+            for (int i = 0; i < 5; ++i) drawFloorLayer(g, f3dDnPedal[i], xb[i], xf[i], xPedalAnim[(size_t) i], top);
         } else {
             drawFloorLayer(g, f3d[m][1], f3d_knee_L, f3dFrames_knee_L, pedalShown(3), top);
             drawFloorLayer(g, f3d[m][2], f3d_knee_R, f3dFrames_knee_R, pedalShown(4), top);
@@ -956,6 +977,12 @@ juce::Rectangle<float> PedalSteelAudioProcessorEditor::ctlBounds(Ctl c) const {
         case Sync: return { syncCentre[0] - 40.0f, syncCentre[1] - 22.0f, 80.0f, 875.0f - (syncCentre[1] - 22.0f) };
         case MoreBtn: return R(hitMore);
         case Neck2: return skin == 7 ? R(hitNeck2) : juce::Rectangle<float>();
+        case XPed0: case XPed1: case XPed2: case XPed3: case XPed4: {
+            if (skin != 7 || more()) return {};
+            static const float* xb[5] = { f3d_doubleneck_pedal_X0, f3d_doubleneck_pedal_X1, f3d_doubleneck_pedal_X2, f3d_doubleneck_pedal_X3, f3d_doubleneck_pedal_X4 };
+            const float* b = xb[c - XPed0];   // the lower part of the layer: the tread (the pull rod above is thin)
+            return { b[0] + 4.0f, b[1] + b[3] * 0.62f, b[2] - 8.0f, b[3] * 0.38f };
+        }
         default: break;
     }
     auto b = ctlBoundsRow(c);
@@ -1059,6 +1086,11 @@ juce::String PedalSteelAudioProcessorEditor::tooltipFor(Ctl c) const {
         case MoreBtn: return more() ? "LESS: fold the second row away" : "MORE: vibrato, amp drive and width, delay time, reverb decay, effect character";
         case Fretboard: case Pluck: return neckNoteText(toSteel(hoverPos));
         case Neck2: return neckNoteText(hoverPos, true);
+        case XPed0: return "Pedal D: lowers the root a half step (major 7th). Click to engage";
+        case XPed1: return "Pedal E: raises the third a half step (sus4). Click to engage";
+        case XPed2: return "Pedal F: raises the fifth a half step (augmented). Click to engage";
+        case XPed3: return "Pedal G: lowers the fifth a half step (flat 5). Click to engage";
+        case XPed4: return "Pedal H: lowers the third a half step (minor). Click to engage";
         default: return {};
     }
 }
@@ -1096,6 +1128,10 @@ void PedalSteelAudioProcessorEditor::timerCallback() {
         }
     }
     // pedals and levers ease toward their state (~80 ms)
+    for (int i = 0; i < 5; ++i) {   // (the double neck's D..H)
+        const float target = xPedalNorm(i) > 0.5f ? 1.0f : 0.0f; float& a = xPedalAnim[(size_t) i];
+        if (a != target) { a = snap ? target : (std::abs(target - a) < 0.02f ? target : a + (target - a) * 0.3f); dirty = true; }
+    }
     for (int i = 0; i < 5; ++i) {
         const float target = norm((Ctl) (PedA + i)) > 0.5f ? 1.0f : 0.0f; float& a = pedalAnim[(size_t) i];
         if (a != target) { a = snap ? target : (std::abs(target - a) < 0.02f ? target : a + (target - a) * 0.3f); dirty = true; }
@@ -1175,7 +1211,8 @@ PedalSteelAudioProcessorEditor::Ctl PedalSteelAudioProcessorEditor::hitTest(juce
     auto inCircle = [&](juce::Rectangle<float> b) { return d.getDistanceFrom(b.getCentre()) <= b.getWidth() * 0.5f + 2.0f; };
     for (int i = Tone; i <= Trim; ++i) { const auto b = ctlBounds((Ctl) i); if (! b.isEmpty() && inCircle(b)) return (Ctl) i; }
     if (charAt(d) >= 0) return Character;   // CHARACTER's engraved names and dots
-    for (Ctl c : { Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode, Prev, Next, Display, MidiLearnBtn, MoreBtn, Neck2, Fretboard, Pluck })
+    for (Ctl c : { Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode, Prev, Next, Display, MidiLearnBtn, MoreBtn, Neck2, Fretboard, Pluck,
+                   XPed0, XPed1, XPed2, XPed3, XPed4 })
         if (ctlBounds(c).contains(d)) return c;
     return None;
 }
@@ -1343,6 +1380,7 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
     }
     switch (c) {
         case PedA: case PedB: case PedC: case LKL: case LKR: toggle(c); return;
+        case XPed0: case XPed1: case XPed2: case XPed3: case XPed4: toggleXPedal(c - XPed0); return;
         case Sync: toggleSync(); return;
         case MoreBtn: setMore(! more()); return;
         case Prev: proc.stepPreset(-1); return;

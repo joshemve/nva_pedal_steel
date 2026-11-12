@@ -99,6 +99,7 @@ private:
     std::atomic<float>* pPresetStyle   = nullptr;
     std::atomic<float>* pPlayMode      = nullptr;
     std::atomic<float>* pPedalA        = nullptr;
+    std::atomic<float>* pPedalX[5]     = {};
     std::atomic<float>* pPedalB        = nullptr;
     std::atomic<float>* pPedalC        = nullptr;
     std::atomic<float>* pLeverLKL      = nullptr;

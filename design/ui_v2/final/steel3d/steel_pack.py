@@ -178,12 +178,12 @@ def swatches(dirs):
         print("finish_%s.png" % sk)
 
 
-def knees(name, d):
+def knees(name, d, lays=("knee_L", "knee_R")):
     """an instrument's own knee levers (the double neck's hang by the legs): rendered in that instrument's canvas (its
     lens), so the editor draws them without the steel mapping. -> sprites/f3d_<name>_knee_[LR].png + floor3d.json alt"""
     info = json.load(open(os.path.join(d, "layers.json"))); p0 = background(d)
     F = json.load(open(os.path.join(P, "sprites", "floor3d.json"))); F.setdefault("alt", {})[name] = {}
-    for lay in ("knee_L", "knee_R"):
+    for lay in lays:
         reg = info["layers"][lay]["region"]; fs = [frame_sprite(p0, d, lay, f, reg) for f in range(info["frames"])]
         al = np.max([f[..., 3] for f in fs], 0); ys, xs = np.where(al >= 4)
         x0, y0, x1, y1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
@@ -215,5 +215,5 @@ if __name__ == "__main__":
     elif sys.argv[1] == "cards": cards(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "skins": skins(dict(a.split("=") for a in sys.argv[2:]))
     elif sys.argv[1] == "check": check(sys.argv[2], sys.argv[3])
-    elif sys.argv[1] == "knees": knees(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "knees": knees(sys.argv[2], sys.argv[3], tuple(sys.argv[4:]) or ("knee_L", "knee_R"))   # + the layers to take
     elif sys.argv[1] == "swatches": swatches(dict(a.split("=") for a in sys.argv[2:]))

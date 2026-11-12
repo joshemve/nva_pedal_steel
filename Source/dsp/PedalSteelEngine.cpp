@@ -1143,6 +1143,7 @@ void PedalSteelEngine::reset() {
     keyswitchPedals.fill(0.0f);
     ccPedals.fill(0.0f);
     smoothPedalA = smoothPedalB = smoothPedalC = smoothLKL = smoothLKR = 0.0f;
+    for (auto& x : smoothX) x = 0.0f;
     smoothVolPedal = params.volumePedal;
     smoothPitchWheel = 0.0f;
     smoothPitchWheelVel = 0.0f;
@@ -1168,6 +1169,14 @@ void PedalSteelEngine::reset() {
     modernChar.reset();
     tapeDelay.reset();
     reverb.reset();
+}
+
+float PedalSteelEngine::extraPedalSemis(StringRole r) const {
+    // the double neck's pedals D..H: D root -1 (maj7), E third +1 (sus4), F fifth +1 (aug), G fifth -1 (b5), H third -1 (minor)
+    if (r == StringRole::Root)  return -1.0f * smoothX[0];
+    if (r == StringRole::Third) return 1.0f * smoothX[1] - 1.0f * smoothX[4];
+    if (r == StringRole::Fifth) return 1.0f * smoothX[2] - 1.0f * smoothX[3];
+    return 0.0f;
 }
 
 void PedalSteelEngine::setParams(const PedalSteelParams& newParams) {
@@ -2033,6 +2042,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         smoothPedalC += (targetC - smoothPedalC) * pSmooth;
         smoothLKL    += (targetLKL - smoothLKL) * pSmooth;
         smoothLKR    += (targetLKR - smoothLKR) * pSmooth;
+        for (int k = 0; k < 5; ++k) smoothX[k] += (juce::jlimit(0.0f, 1.0f, params.pedalX[k]) - smoothX[k]) * pSmooth;
         smoothVolPedal += (targetVol - smoothVolPedal) * pSmooth;
 
         const float pwOmega = (!anyVoiceHeld) ? 28.0f : std::min(barOmega, 10.5f);
@@ -2091,6 +2101,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
                 float roleTargetSemis = (v.role == StringRole::Third) ? (1.0f * smoothPedalB - 0.5f * smoothLKR)
                                       : (v.role == StringRole::Fifth) ? (2.0f * smoothPedalA + 2.0f * smoothPedalC)
                                       : (1.0f * smoothLKL - 1.0f * smoothLKR + 2.0f * smoothPedalC);
+                roleTargetSemis += extraPedalSemis(v.role);
                 const float pedalErr = roleTargetSemis - v.pedalCurrentSemis;
                 const float pedalAccel = pedalOmega * pedalOmega * pedalErr - 1.95f * pedalOmega * v.pedalVel;
                 v.pedalVel += pedalAccel * static_cast<float>(dt);
@@ -2142,27 +2153,27 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             v.barCurrentMidi += v.barVelocity * static_cast<float>(dt);
 
             // 2. Mechanical Bellcrank Pedal Pull & MPE Per-Note Oblique Bend (E9th Front-Neck vs C6th Back-Neck)
-            float roleTargetSemis = 0.0f;
-            if (stStyle == 4) {
+            float roleTargetSemis = extraPedalSemis(v.role);
+            if ((v.fretStyle >= 0 ? v.fretStyle : stStyle) == 4) {   // a back-neck note bends with its own neck's pedals
                 // Authentic Emmons D-10 Back-Neck C6th Copedent (Pedals 5, 6, 7 jazz 6/9 -> C9 & minor-6th slants!)
                 if (v.role == StringRole::Root) {
-                    roleTargetSemis = 2.0f * smoothPedalA + 1.0f * smoothLKL - 1.0f * smoothLKR; // C -> D (9th!)
+                    roleTargetSemis += 2.0f * smoothPedalA + 1.0f * smoothLKL - 1.0f * smoothLKR; // C -> D (9th!)
                 } else if (v.role == StringRole::Third) {
-                    roleTargetSemis = -1.0f * smoothPedalC - 0.5f * smoothLKR; // E -> Eb (Pedal 6 minor-6th jazz slant!)
+                    roleTargetSemis += -1.0f * smoothPedalC - 0.5f * smoothLKR; // E -> Eb (Pedal 6 minor-6th jazz slant!)
                 } else if (v.role == StringRole::Fifth) {
-                    roleTargetSemis = 2.0f * smoothPedalC; // G -> A
+                    roleTargetSemis += 2.0f * smoothPedalC; // G -> A
                 } else {
-                    roleTargetSemis = 1.0f * smoothPedalB; // A -> Bb (Pedal 7 dominant b7th -> instant rootless V9!)
+                    roleTargetSemis += 1.0f * smoothPedalB; // A -> Bb (Pedal 7 dominant b7th -> instant rootless V9!)
                 }
             } else {
                 if (v.role == StringRole::Third) {
-                    roleTargetSemis = 1.0f * smoothPedalB - 0.5f * smoothLKR;
+                    roleTargetSemis += 1.0f * smoothPedalB - 0.5f * smoothLKR;
                 } else if (v.role == StringRole::Fifth) {
-                    roleTargetSemis = 2.0f * smoothPedalA + 2.0f * smoothPedalC;
+                    roleTargetSemis += 2.0f * smoothPedalA + 2.0f * smoothPedalC;
                 } else if (v.role == StringRole::Root) {
-                    roleTargetSemis = 1.0f * smoothLKL - 1.0f * smoothLKR + 2.0f * smoothPedalC;
+                    roleTargetSemis += 1.0f * smoothLKL - 1.0f * smoothLKR + 2.0f * smoothPedalC;
                 } else {
-                    roleTargetSemis = 0.0f;
+                    roleTargetSemis += 0.0f;
                 }
             }
 

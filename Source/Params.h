@@ -9,6 +9,13 @@ namespace ParamIDs {
     inline constexpr const char* pedalC        = "pedalC";
     inline constexpr const char* leverLKL      = "leverLKL";
     inline constexpr const char* leverLKR      = "leverLKR";
+    // the double neck's extra (C6-style) pedals D..H: chord-role changes (root -1, third +1, fifth +1, fifth -1, third -1)
+    inline constexpr const char* pedalD        = "pedalD";
+    inline constexpr const char* pedalE        = "pedalE";
+    inline constexpr const char* pedalF        = "pedalF";
+    inline constexpr const char* pedalG        = "pedalG";
+    inline constexpr const char* pedalH        = "pedalH";
+    inline constexpr const char* extraPedals[5] = { pedalD, pedalE, pedalF, pedalG, pedalH };
     inline constexpr const char* volumePedal   = "volumePedal";
     inline constexpr const char* scoopDepth    = "scoopDepth";
     inline constexpr const char* pedalSpeed    = "pedalSpeed";
@@ -46,6 +53,7 @@ struct PedalSteelParams {
     float pedalC        = 0.0f;  // 0..1 (+2 semitones on strings 4 & 5)
     float leverLKL      = 0.0f;  // 0..1 (+1 semitone on strings 4 & 8, E -> F)
     float leverLKR      = 0.0f;  // 0..1 (-1 semitone on strings 4 & 8, E -> D#)
+    float pedalX[5]     = {};    // 0..1 the double neck's pedals D..H (root -1, third +1, fifth +1, fifth -1, third -1)
     float volumePedal   = 0.92f; // 0..1 Goodrich optical volume pedal
     float scoopDepth    = 0.65f; // 0..1 Auto A/B pedal scoop depth on attacks/oblique moves
     float pedalSpeed    = 145.0f;// ms (40..350ms) mechanical bellcrank S-curve pull time

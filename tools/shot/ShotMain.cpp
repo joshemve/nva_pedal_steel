@@ -470,6 +470,32 @@ int main(int argc, char* argv[]) {
                     }
                     editor->mouseUp(ev(p2)); run(4);
                 }
+                {   // its extra floor pedals D..H play: click pedal F's tread on the floor
+                    processor.loadPreset(22); pe5->refreshVisualizer();
+                    const float* b = UiLayout::f3d_doubleneck_pedal_X2;
+                    const juce::Point<float> pf { b[0] + b[2] * 0.5f, b[1] + b[3] * 0.85f };
+                    editor->mouseDown(ev(pf)); editor->mouseUp(ev(pf)); pe5->refreshVisualizer();
+                    check(pv(ParamIDs::pedalF) > 0.5f, "double neck: clicking its floor pedal F engages it");
+                    {
+                        auto img = editor->createComponentSnapshot({ 200, 380, 1200, 300 });
+                        auto f = outFile.getSiblingFile(outFile.getFileNameWithoutExtension() + "_doubleneck_pedalF.png");
+                        f.deleteFile(); juce::FileOutputStream os(f); if (os.openedOk()) juce::PNGImageFormat().writeImageToStream(img, os);
+                    }
+                    editor->mouseDown(ev(pf)); editor->mouseUp(ev(pf));
+                    check(pv(ParamIDs::pedalF) < 0.5f, "...and a second click releases it");
+                    // and it changes the sound: an E major triad (E9 strings 4 E, 3 G#, 5 B); pedal F raises the fifth a half step
+                    processor.loadPreset(0); midiBuf.clear(); run(400);
+                    auto fifthBend = [&](float pedal) {
+                        processor.apvts.getParameter(ParamIDs::pedalF)->setValueNotifyingHost(pedal);
+                        for (int s : { 3, 2, 4 }) processor.triggerFretboardNote(s, 0.0f);
+                        run(300); const float b5 = processor.getLiveStatus().stringBendSemis[4];
+                        for (int s : { 3, 2, 4 }) processor.releaseFretboardNote(s);
+                        run(400); return b5;
+                    };
+                    const float off = fifthBend(0.0f), on = fifthBend(1.0f);
+                    check(std::abs((on - off) - 1.0f) < 0.15f, "pedal F raises the triad's fifth by a half step (" + std::to_string(off) + " -> " + std::to_string(on) + ")");
+                    processor.apvts.getParameter(ParamIDs::pedalF)->setValueNotifyingHost(0.0f);
+                }
                 {   // the double neck in the small window and with the MORE deck open
                     editor->setSize(1000, 625); pe5->refreshVisualizer();
                     auto a = editor->createComponentSnapshot(editor->getLocalBounds());

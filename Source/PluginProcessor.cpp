@@ -19,6 +19,7 @@ PedalSteelAudioProcessor::PedalSteelAudioProcessor()
     pPedalC        = apvts.getRawParameterValue(ParamIDs::pedalC);
     pLeverLKL      = apvts.getRawParameterValue(ParamIDs::leverLKL);
     pLeverLKR      = apvts.getRawParameterValue(ParamIDs::leverLKR);
+    for (int i = 0; i < 5; ++i) pPedalX[i] = apvts.getRawParameterValue(ParamIDs::extraPedals[i]);
     pVolumePedal   = apvts.getRawParameterValue(ParamIDs::volumePedal);
     pScoopDepth    = apvts.getRawParameterValue(ParamIDs::scoopDepth);
     pPedalSpeed    = apvts.getRawParameterValue(ParamIDs::pedalSpeed);
@@ -79,6 +80,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::leverLKR, 1 }, "Knee LKR (E->D# -1)",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.0f));
+
+    {   // the double neck's extra pedals (added 2026-11-12, version 2 so hosts keep the older ids stable)
+        const char* names[5] = { "Pedal D (root -1, maj7)", "Pedal E (3rd +1, sus4)", "Pedal F (5th +1, aug)",
+                                 "Pedal G (5th -1, b5)", "Pedal H (3rd -1, minor)" };
+        for (int i = 0; i < 5; ++i)
+            layout.push_back(std::make_unique<juce::AudioParameterFloat>(
+                juce::ParameterID{ ParamIDs::extraPedals[i], 2 }, names[i], juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f), 0.0f));
+    }
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{ ParamIDs::volumePedal, 1 }, "Volume Pedal",
@@ -212,6 +221,7 @@ PedalSteelParams PedalSteelAudioProcessor::readParamsFromAtomics() const {
     p.pedalC        = pPedalC->load();
     p.leverLKL      = pLeverLKL->load();
     p.leverLKR      = pLeverLKR->load();
+    for (int i = 0; i < 5; ++i) p.pedalX[i] = pPedalX[i]->load();
     p.volumePedal   = pVolumePedal->load();
     p.scoopDepth    = pScoopDepth->load();
     p.pedalSpeed    = pPedalSpeed->load();
@@ -383,6 +393,7 @@ void PedalSteelAudioProcessor::loadPreset(int index) {
     setParam(ParamIDs::pedalC,        p.pedalC);
     setParam(ParamIDs::leverLKL,      p.leverLKL);
     setParam(ParamIDs::leverLKR,      p.leverLKR);
+    for (int i = 0; i < 5; ++i) setParam(ParamIDs::extraPedals[i], p.pedalX[i]);
     setParam(ParamIDs::volumePedal,   p.volumePedal);
     setParam(ParamIDs::scoopDepth,    p.scoopDepth);
     setParam(ParamIDs::pedalSpeed,    p.pedalSpeed);

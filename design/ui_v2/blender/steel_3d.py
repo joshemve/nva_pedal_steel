@@ -804,7 +804,7 @@ MODE = os.environ.get("STEEL_MODE", "still")
 FRAMES = 7
 def named(*prefixes): return [o for o in bpy.data.objects if o.name.split(".")[0] in prefixes]
 LAYERS = {}
-for k, px in zip("ABC", PEDAL_X):
+for k, px in list(zip("ABC", PEDAL_X)) + [("X%d" % i, x) for i, x in enumerate(EXTRA_X)]:   # (the double neck's D..H too)
     LAYERS["pedal_" + k] = {"turn": named("Pedal_" + k, "PedalRib_" + k, "Yoke_" + k, "RodClevis_" + k, "ClevisPin_" + k),
                             "slide": named("PullRod_" + k), "pivot": Vector((px, BAR_Y, BAR_Z)), "axis": "X", "angle": math.radians(15.0)}
 for k, kx, sgn in KNEES:

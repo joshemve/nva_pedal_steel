@@ -303,6 +303,8 @@ private:
     float smoothPedalC = 0.0f;
     float smoothLKL = 0.0f;
     float smoothLKR = 0.0f;
+    float smoothX[5] = {};   // the double neck's pedals D..H
+    float extraPedalSemis(StringRole r) const;
     float smoothVolPedal = 0.92f;
     float smoothPitchWheel = 0.0f;
     float smoothPitchWheelVel = 0.0f;

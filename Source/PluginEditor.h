@@ -56,7 +56,7 @@ private:
     enum Ctl { None = -1, Tone, Pick, Glide, Swell, Echo, Reverb,
                Vibrato, Rate, Slide, Drive, Width, Delay, Decay, Character,   // the MORE row
                Trim, Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode,
-               Prev, Next, Display, MidiLearnBtn, MoreBtn, Fretboard, Pluck, Neck2, NumCtl };   // Neck2: the double neck's back neck
+               Prev, Next, Display, MidiLearnBtn, MoreBtn, Fretboard, Pluck, Neck2, XPed0, XPed1, XPed2, XPed3, XPed4, NumCtl };   // XPed: the double neck's floor pedals D..H   // Neck2: the double neck's back neck
 public:   // control ids for the tests' applyTypedValue / openValueEditorForTest
     static constexpr int kCtlTone = Tone, kCtlEcho = Echo, kCtlTrim = Trim, kCtlVolume = Volume;
 private:
@@ -112,7 +112,10 @@ private:
     float scale = 1.0f;
 
     juce::Image bg, bgScaled, d3dPedal[3], d3dLamp[3], d3dLever[2], spMeter, spThumb, spFill, dispImg, spMidi, spBar, spBarHome;
-    juce::Image f3dDnKnee[2];   // the double neck's own knee levers (out by the legs), in its own (smaller) canvas
+    juce::Image f3dDnKnee[2], f3dDnPedal[5];
+    std::array<float, 5> xPedalAnim{};   // the double neck's pedals D..H, eased like A B C
+    float xPedalNorm(int i) const;
+    void toggleXPedal(int i);   // the double neck's own knee levers (out by the legs), in its own (smaller) canvas
     juce::Image f3d[2][6];   // the 3D floor assembly (Blender): [chrome, brass][bar, knee L, knee R, pedal A, B, C]
     Strip scallop, space, ptrTone, ptrPick, ptrTrim;
     std::vector<float> dotKernel; int dotK = 0;   // RGB, dotK x dotK

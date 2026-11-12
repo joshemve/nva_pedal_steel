@@ -78,7 +78,7 @@ Added after: `more_layout` (round28 m1/m2: the d4 deck drawn on the real plugin 
 `targets` (multi-select of round29 s1-s8 real-world steel styles, the shape targets).
 
 **Open now (2026-11-12, night):** nothing Joshua asked for is unfinished. Waiting on him: his look at the new instruments
-and the MORE deck in the standalone, and permission to push ui-v2-design. Verified: 79 UI tests (PedalSteelShot), the
+and the MORE deck in the standalone, and permission to push ui-v2-design. Verified: 82 UI tests (PedalSteelShot), the
 VST3 host test, the hosted editor on screen (renders/host_onscreen.png) and the standalone app (renders/standalone_onscreen.png).
 **Status (2026-11-12, late):** hardware answered and rendered; MORE deck built; MIDI Learn kept as built; shapes built
 (bullnose maple uses textures/wood/flamemaple_1_1.png, generated from jobs_flame.json). The preset editor's STEEL FINISH
@@ -91,7 +91,13 @@ The double neck's back neck plays too (2026-11-12, night), in the other tuning: 
 anything else (11). steel_3d writes its projected frets/strings/bridge to steel.json "neck2" (STEEL_MODE=meta writes the
 numbers without rendering); gen_layout emits neck2Fret/neck2StringY/neck2BridgeX/hitNeck2 (design px, not mapped); the
 editor's Neck2 control clicks/slides/strums there with proc.triggerFretboardNote(s, fret, style) (engine voices keep
-fretStyle); the strings shimmer and the bar moves there (barNeck). The five extra C6 pedals stay scenery (the engine has A B C).
+fretStyle); the strings shimmer and the bar moves there (barNeck). Back-neck notes bend with their own neck's pedal set.
+Joshua chose "make them play" for the five extra pedals: params pedalD..pedalH (ParameterID version 2; presets reset them
+to 0), engine extraPedalSemis(role): D root -1 (maj7), E third +1 (sus4), F fifth +1 (aug), G fifth -1 (b5), H third -1
+(minor), added on top of either neck's A B C set. steel_3d renders them as layers pedal_X0..X4 (double only); packed with
+`steel_pack.py knees doubleneck shapes/double_rosewood knee_L knee_R pedal_X0 ... pedal_X4` into floor3d.json alt; the
+editor's XPed0..4 click their treads on the floor (double neck, not in MORE) and the LED shows e.g. "PEDAL F AUG ON".
+Branch pushed to origin/ui-v2-design (2026-11-12) at Joshua's OK.
 Joshua's notes, same evening, fixed: bullnose end caps are a profile wrapping the round front (front legs meet the cap's
 curved underside); the double neck's knee levers hang by the legs (KNEES in steel_3d, bent chrome arm + flat paddle),
 rendered as their own layers (STEEL_MODE=layers STEEL_LAYERS=knee_L,knee_R) and packed by `steel_pack.py knees doubleneck
