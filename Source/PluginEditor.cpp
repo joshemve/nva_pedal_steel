@@ -523,9 +523,16 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
         "Dumble H910 Lead",
         "Cinecitta Twang",
         "Khruangbin Cry-Spring",
-        "VHS Generation-Drift"
+        "VHS Generation-Drift",
+        "Mercury7 Sub-Cathedra",
+        "Golden Hour 224XL Silk",
+        "Mellotron M400 Flute-Str",
+        "Maggot Brain Octavia Fuzz",
+        "'72 Suitcase Rhodes & Dyno",
+        "Blonde White-Ferrari Prism",
+        "'77 Rumours Pianet Flanger"
     }, 1);
-    charBox.setTooltip("Analog Character Circuit (30 Modes): Cassette, Ribbon+LA-2A, Phaser, Spring+Trem, R&B, VB-2, Shimmer, Leslie 147, Diode Bloom, Standel, Bosstone, Talk-Box, Bakelite, ADT, Tri-Chorus, Organ, Harmonic-Trem Noir, Reverse Tape, Mohan Veena, CE-1 Syrup, Binson Echorec, CS-80, SPX90 Shoegaze, Kingston Dub, Microcosm Crystal, Dumble H910, Cinecitta Twang, Khruangbin Cry-Spring, or VHS Generation-Drift!");
+    charBox.setTooltip("Analog Character Circuit (37 Modes): 36 first-principles studio & vintage hardware circuits alongside Studio Standard — click-free 17 ms live crossfade on any preset!");
     addAndMakeVisible(charBox);
     charAttach = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.apvts, ParamIDs::fxCharacter, charBox);

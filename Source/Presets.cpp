@@ -1580,6 +1580,265 @@ const std::vector<PedalSteelPreset>& getPedalSteelPresets() {
                 p.outputLevel   = -0.6f;
                 return p;
             }()
+        },
+        {
+            "44 - Mercury7 Cathedra Sub-Well",
+            "Sci-Fi Sub-Ambient",
+            "Meris Mercury7 'Cathedra' x Vangelis / Luke Schneider (100% Concert-Pitch Locked): Doppler-free -12st Pitch Vector bowed contrabass/CS-80 sub-octave + symmetrical 0.00-cent Blade Runner hall.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3; // Montana Lush Swell
+                p.playMode      = 2; // Lush Swell Pad
+                p.fxCharacter   = 30; // Mercury7 Sub-Cathedra
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.06f;
+                p.pedalSpeed    = 185.0f;
+                p.barGlide      = 175.0f;
+                p.barSlideNoise = 0.16f;
+                p.vibratoDepth  = 0.06f;
+                p.vibratoRate   = 4.65f;
+                p.autoSwell     = 0.58f;
+                p.swellTime     = 260.0f;
+                p.sampleBlend   = 0.90f;
+                p.pickSnap      = 0.36f;
+                p.pickupPos     = 2.45f;
+                p.coilPeakFreq  = 2050.0f;
+                p.coilResonance = 0.62f;
+                p.sustainTime   = 11.4f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.16f;
+                p.toneWarmth    = 0.64f;
+                p.delayMix      = 0.14f;
+                p.delayTime     = 480.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.62f;
+                p.reverbDecay   = 0.92f;
+                p.outputLevel   = 0.8f;
+                return p;
+            }()
+        },
+        {
+            "45 - Golden Hour Butterflies Silk",
+            "Modern Nashville Pop",
+            "Russ Pahl & Dan Dugmore on Kacey Musgraves ('Butterflies' / 'Space Cowboy'): pickless thumb-flesh Show Pro E9th into API 312/550A air, symmetrical 0.00-cent micro-dimension width, and a lush wide Lexicon 224XL vocal plate.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 0;
+                p.playMode      = 0;
+                p.fxCharacter   = 31; // Golden Hour 224XL Silk
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.38f;
+                p.pedalSpeed    = 155.0f;
+                p.barGlide      = 130.0f;
+                p.barSlideNoise = 0.20f;
+                p.vibratoDepth  = 0.16f;
+                p.vibratoRate   = 4.75f;
+                p.autoSwell     = 0.08f;
+                p.swellTime     = 75.0f;
+                p.sampleBlend   = 0.92f;
+                p.pickSnap      = 0.30f;
+                p.pickupPos     = 2.52f;
+                p.coilPeakFreq  = 2150.0f;
+                p.coilResonance = 0.58f;
+                p.sustainTime   = 10.2f;
+                p.cabinetDrop   = 0.08f;
+                p.stereoWidth   = 1.38f;
+                p.ampDrive      = 0.12f;
+                p.toneWarmth    = 0.48f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 415.0f;
+                p.tempoSync     = true;
+                p.reverbMix     = 0.46f;
+                p.reverbDecay   = 0.82f;
+                p.outputLevel   = 0.8f;
+                return p;
+            }()
+        },
+        {
+            "46 - '67 Mellotron M400 Flute-Strings",
+            "60s Tape-Replay Chamber",
+            "Beatles ('Strawberry Fields') / Radiohead ('Exit Music') / King Crimson: zero-pluck 1967 Streetly 3/8-inch 7.5-ips tape-replay bowed Cello/Violin section blended with a concert-locked +12st 4' wooden flute track.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 3;
+                p.playMode      = 2; // Lush Swell Pad (zero-pluck bowed tape-pinch entry!)
+                p.fxCharacter   = 32; // Mellotron M400 Flute-Str
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.0f;
+                p.pedalSpeed    = 160.0f;
+                p.barGlide      = 140.0f;
+                p.barSlideNoise = 0.0f;
+                p.vibratoDepth  = 0.05f;
+                p.vibratoRate   = 4.80f;
+                p.autoSwell     = 0.68f;
+                p.swellTime     = 175.0f;
+                p.sampleBlend   = 0.86f;
+                p.pickSnap      = 0.0f;
+                p.pickupPos     = 2.65f;
+                p.coilPeakFreq  = 1720.0f;
+                p.coilResonance = 0.64f;
+                p.sustainTime   = 11.0f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.24f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.68f;
+                p.delayMix      = 0.0f;
+                p.delayTime     = 240.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.16f;
+                p.reverbDecay   = 0.44f;
+                p.outputLevel   = -1.8f;
+                return p;
+            }()
+        },
+        {
+            "47 - '71 Maggot Brain Octavia Fuzz",
+            "70s Psych-Soul Lead",
+            "Eddie Hazel ('Maggot Brain') / Hendrix ('Band of Gypsys'): transformer mid-push into an instant zero-latency analog silicon bridge full-wave rectifier (+12st Tycobrahe Octavia fuzz) through a 1968 Marshall 4x12 Greenback & Echoplex.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 2; // Mikey's Grit Tweed raw harmonic bite
+                p.playMode      = 1; // Screaming Crying Lead Gliss
+                p.fxCharacter   = 33; // Maggot Brain Octavia Fuzz
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.34f;
+                p.pedalSpeed    = 130.0f;
+                p.barGlide      = 135.0f;
+                p.barSlideNoise = 0.28f;
+                p.vibratoDepth  = 0.28f;
+                p.vibratoRate   = 5.25f;
+                p.autoSwell     = 0.0f;
+                p.swellTime     = 60.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.76f;
+                p.pickupPos     = 2.12f;
+                p.coilPeakFreq  = 2050.0f;
+                p.coilResonance = 0.70f;
+                p.sustainTime   = 11.4f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.28f;
+                p.ampDrive      = 0.42f;
+                p.toneWarmth    = 0.58f;
+                p.delayMix      = 0.12f;
+                p.delayTime     = 380.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.32f;
+                p.reverbDecay   = 0.68f;
+                p.outputLevel   = -6.8f;
+                return p;
+            }()
+        },
+        {
+            "48 - '72 Suitcase Rhodes & Dyno",
+            "Neo-Soul Suitcase Rhodes",
+            "D'Angelo ('Untitled' / 'Spanish Joint') & Frank Ocean ('Pink + White'): 1972 Fender Rhodes Mark I Suitcase 88 warm magnetic-pickup tonebar body + 62ms transient-enveloped +12st Chuck Monte Dyno-My-Piano bell tine, 0.00c Tri-Stereo Chorus, and 1.06 Hz Suitcase cabinet panner.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 4; // Warm jazz/neo-soul tonebar body
+                p.playMode      = 1;
+                p.fxCharacter   = 34; // '72 Suitcase Rhodes & Dyno
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.0f;
+                p.pedalSpeed    = 75.0f;
+                p.barGlide      = 25.0f;
+                p.barSlideNoise = 0.0f;
+                p.vibratoDepth  = 0.0f;
+                p.vibratoRate   = 4.80f;
+                p.autoSwell     = 0.0f;
+                p.swellTime     = 35.0f;
+                p.sampleBlend   = 0.88f;
+                p.pickSnap      = 0.42f;
+                p.pickupPos     = 2.45f;
+                p.coilPeakFreq  = 1850.0f;
+                p.coilResonance = 0.60f;
+                p.sustainTime   = 4.2f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.42f;
+                p.ampDrive      = 0.22f;
+                p.toneWarmth    = 0.58f;
+                p.delayMix      = 0.06f;
+                p.delayTime     = 340.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.24f;
+                p.reverbDecay   = 0.54f;
+                p.outputLevel   = 0.8f;
+                return p;
+            }()
+        },
+        {
+            "49 - Blonde White-Ferrari Prism",
+            "Modern Indie-Gospel Prism",
+            "Frank Ocean ('White Ferrari' / 'Godspeed'), Bon Iver ('22, A Million') & Dijon: 100% phase-pure per-voice 16' cello-sub + 8' wooden flute-organ + 4' Prismizer choir harmonics (0.00c concert-locked, zero granular warble) in intimate Electric Lady velvet air.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 4;
+                p.playMode      = 1;
+                p.fxCharacter   = 35; // Blonde White-Ferrari Prism
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.0f;
+                p.pedalSpeed    = 75.0f;
+                p.barGlide      = 25.0f;
+                p.barSlideNoise = 0.0f;
+                p.vibratoDepth  = 0.0f;
+                p.vibratoRate   = 4.70f;
+                p.autoSwell     = 0.64f;
+                p.swellTime     = 150.0f;
+                p.sampleBlend   = 0.42f;
+                p.pickSnap      = 0.0f;
+                p.pickupPos     = 2.68f;
+                p.coilPeakFreq  = 1650.0f;
+                p.coilResonance = 0.56f;
+                p.sustainTime   = 5.6f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.40f;
+                p.ampDrive      = 0.14f;
+                p.toneWarmth    = 0.64f;
+                p.delayMix      = 0.0f;
+                p.delayTime     = 420.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.20f;
+                p.reverbDecay   = 0.44f;
+                p.outputLevel   = 2.2f;
+                return p;
+            }()
+        },
+        {
+            "50 - '77 Rumours Pianet & Flanger",
+            "70s Cali Soft-Rock Pianet",
+            "Christine McVie & Lindsey Buckingham ('Dreams' / 'Everywhere' at Record Plant Sausalito, 1976): sticky-pad Hohner Pianet N warm reed-bell pulse through an API 2520 console preamp and an Eventide Clockworks FL201 Instant Flanger.",
+            [] {
+                PedalSteelParams p;
+                p.presetStyle   = 4;
+                p.playMode      = 1;
+                p.fxCharacter   = 36; // '77 Rumours Pianet Flanger
+                p.volumePedal   = 0.96f;
+                p.scoopDepth    = 0.0f;
+                p.pedalSpeed    = 75.0f;
+                p.barGlide      = 25.0f;
+                p.barSlideNoise = 0.0f;
+                p.vibratoDepth  = 0.0f;
+                p.vibratoRate   = 4.60f;
+                p.autoSwell     = 0.04f;
+                p.swellTime     = 40.0f;
+                p.sampleBlend   = 0.84f;
+                p.pickSnap      = 0.36f;
+                p.pickupPos     = 2.52f;
+                p.coilPeakFreq  = 1780.0f;
+                p.coilResonance = 0.56f;
+                p.sustainTime   = 3.8f;
+                p.cabinetDrop   = 0.0f;
+                p.stereoWidth   = 1.40f;
+                p.ampDrive      = 0.16f;
+                p.toneWarmth    = 0.62f;
+                p.delayMix      = 0.08f;
+                p.delayTime     = 500.0f;
+                p.tempoSync     = false;
+                p.reverbMix     = 0.24f;
+                p.reverbDecay   = 0.56f;
+                p.outputLevel   = -1.2f;
+                return p;
+            }()
         }
     };
     return kPresets;

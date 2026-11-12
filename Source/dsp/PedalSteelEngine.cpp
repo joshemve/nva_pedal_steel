@@ -481,7 +481,7 @@ void PedalSteelEngine::ModernCharacterProcessor::reset() {
 }
 
 void PedalSteelEngine::ModernCharacterProcessor::setTargetMode(double sr, int mode) {
-    targetMode = juce::jlimit(0, 29, mode);
+    targetMode = juce::jlimit(0, 36, mode);
     if (!hasRendered) {
         currentMode = targetMode;
         wetGain = (currentMode > 0) ? 1.0f : 0.0f;
@@ -518,6 +518,7 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         shimWritePos = 0;
         shimPhasor = 0.0;
         subPhasor = 0.0;
+        tremPhase = 0.0;
         auxPhasor = (mode == 29) ? 0.56 : 0.0;
         std::fill(shimBufL.begin(), shimBufL.end(), 0.0f);
         std::fill(shimBufR.begin(), shimBufR.end(), 0.0f);
@@ -737,6 +738,62 @@ void PedalSteelEngine::ModernCharacterProcessor::applyModeCoeffs(double sr, int 
         charFilter3.setLowpass(sr, 3450.0f, 0.88f);     // Steep 4-pole consumer VHS head-gap roll-off (Stage 1: papery nostalgic ceiling!)
         charFilter4.setLowpass(sr, 3650.0f, 0.68f);     // Steep 4-pole consumer VHS head-gap roll-off (Stage 2)
         subLpFilter.setLowpass(sr, 1950.0f, 0.74f);     // Degraded camcorder AGC tape-memory bloom LPF
+    } else if (mode == 30) {
+        // C01: Mercury7 Cathedra Sub-Well (100% Concert-Pitch-Locked -12st Pitch Vector Bowed Sub-Cello + Symmetrical Cathedra Hall)
+        dimHpFilter.setHighpass(sr, 118.0f, 0.707f);
+        charFilter1.setPeak(sr, 205.0f, 0.76f, 2.6f);
+        charFilter2.setPeak(sr, 2550.0f, 0.92f, -2.2f);
+        charFilter3.setLowpass(sr, 4750.0f, 0.74f);
+        charFilter4.setLowpass(sr, 540.0f, 0.80f);      // Pure -1200.00c bowed contrabass/CS-80 sub-vector filter (< 540 Hz)
+        subLpFilter.setLowpass(sr, 2550.0f, 0.74f);     // Dark Blade Runner Cathedra tail silk
+    } else if (mode == 31) {
+        // C07: Golden Hour Butterflies Silk (Russ Pahl / Dan Dugmore on Kacey Musgraves: Thumb-Flesh Show Pro + API 550A Air + 224XL Vocal Plate)
+        dimHpFilter.setHighpass(sr, 108.0f, 0.707f);
+        charFilter1.setPeak(sr, 225.0f, 0.76f, 2.5f);
+        charFilter2.setPeak(sr, 1820.0f, 1.05f, -2.4f);
+        charFilter3.setPeak(sr, 4350.0f, 0.65f, 3.0f);
+        charFilter4.setLowpass(sr, 6800.0f, 0.707f);
+        subLpFilter.setLowpass(sr, 3850.0f, 0.72f);
+    } else if (mode == 32) {
+        // N01: '67 Mellotron M400 Flute-Strings (1967 Streetly 3/8" Tape-Replay Bowed Cello/Violin + 4' Strawberry Fields Wood-Flute!)
+        dimHpFilter.setHighpass(sr, 115.0f, 0.707f);
+        charFilter1.setPeak(sr, 465.0f, 1.05f, 4.4f);   // Wooden 1967 MkII/M400 bowed cello chest formant!
+        charFilter2.setPeak(sr, 1380.0f, 1.25f, 3.4f);  // Rosined Streetly violin tape-head nasal bridge resonance!
+        charFilter3.setLowpass(sr, 3150.0f, 0.82f);     // Authentic 3/8" 7.5-ips Streetly tape-head HF curve Stage 1
+        charFilter4.setLowpass(sr, 3550.0f, 0.70f);     // Streetly tape-head curve Stage 2 (zero modern guitar sheen!)
+        subLpFilter.setLowpass(sr, 2250.0f, 0.85f);     // +12st 4' Strawberry Fields wood-flute embouchure lowpass!
+    } else if (mode == 33) {
+        // N07 (Winner #4): '71 Maggot Brain Octavia Fuzz (Eddie Hazel / Hendrix: Full-Wave Silicon Rectifier +12st Octave-Fuzz -> '68 Marshall 4x12 Greenback!)
+        dimHpFilter.setHighpass(sr, 148.0f, 0.74f);     // Tight pre-Octavia bass cut for pure singing +12st intermodulation!
+        charFilter1.setPeak(sr, 960.0f, 1.10f, 5.2f);   // Tycobrahe Octavia transformer mid-push into rectifier diodes!
+        charFilter2.setPeak(sr, 1680.0f, 1.05f, 3.8f);  // 1968 Celestion G12M-25 Greenback vocal midrange cry!
+        charFilter3.setLowpass(sr, 3550.0f, 0.86f);     // 4x12 Greenback paper-cone roll-off Stage 1 (zero harsh digital fizz!)
+        charFilter4.setLowpass(sr, 4050.0f, 0.72f);     // 4x12 Greenback roll-off Stage 2
+        subLpFilter.setLowpass(sr, 2450.0f, 0.74f);     // Wide Echoplex stadium echo filter
+    } else if (mode == 34) {
+        // Preset 48: '72 Suitcase Rhodes & Dyno (1972 Fender Rhodes Mark I Suitcase 88 + Per-Voice +12st Dyno Tine-Bell + Stereo Cabinet Pan!)
+        dimHpFilter.setHighpass(sr, 72.0f, 0.707f);
+        charFilter1.setPeak(sr, 235.0f, 0.78f, 4.2f);    // Lush 1972 Mark I Rhodes tonebar fundamental warmth ('Untitled' / 'Pink + White')!
+        charFilter2.setPeak(sr, 920.0f, 0.95f, -5.0f);   // Deep Fender Rhodes mid-scoop (removes 100% of guitar midrange!)
+        charFilter3.setLowpass(sr, 1320.0f, 0.72f);      // Pure sinusoidal sustained Rhodes tonebar roll-off (zero stringy guitar tail!)
+        charFilter4.setHighpass(sr, 1450.0f, 0.76f);     // Crystalline Chuck Monte Dyno-My-Piano transient tine-bell chime HPF!
+        subLpFilter.setLowpass(sr, 5400.0f, 0.72f);      // Silky Dyno-bell sparkle ceiling
+    } else if (mode == 35) {
+        // Preset 49: Blonde White-Ferrari Prism (100.0% Pure Per-Voice 16'+8'+4' Ranks + Velvet Prismizer Choir Formants — Zero Granular Warble!)
+        dimHpFilter.setHighpass(sr, 65.0f, 0.707f);
+        charFilter1.setPeak(sr, 215.0f, 0.78f, 4.2f);    // Pure 8'/16' wooden flute-drawbar & cello-sub bedroom warmth!
+        charFilter2.setPeak(sr, 1380.0f, 0.95f, -5.0f);  // Strips 100% of guitar twang -> pure Frank Ocean / Buddy Ross organ-hymn!
+        charFilter3.setLowpass(sr, 2750.0f, 0.76f);      // Intimate 15-ips Studer A800 dark velvet pillow
+        charFilter4.setPeak(sr, 880.0f, 1.35f, 3.2f);    // Warm human 'aaah-oooh' Prismizer choir vowel resonance (static -> 0.00c lock!)
+        subLpFilter.setLowpass(sr, 2450.0f, 0.74f);      // Symmetrical 0.00c Electric Lady stereo ensemble LPF
+    } else if (mode == 36) {
+        // Preset 50: '77 Rumours Pianet & Flanger (Fleetwood Mac 'Dreams' / 'Gypsy': Hohner Pianet Sticky-Pad Reed + Eventide FL201 Flanger!)
+        dimHpFilter.setHighpass(sr, 76.0f, 0.707f);
+        charFilter1.setPeak(sr, 275.0f, 0.80f, 4.2f);     // Warm Hohner Pianet N stainless-reed bell body ('Dreams'!)
+        charFilter2.setPeak(sr, 1160.0f, 0.95f, -4.8f);   // Scoops guitar mids -> pure Sausalito Record Plant electric piano!
+        charFilter3.setLowpass(sr, 2650.0f, 0.74f);       // Buttery West-Coast 30-ips Studer + API 2520 op-amp silk
+        charFilter4.setPeak(sr, 640.0f, 1.10f, 2.2f);     // Foam/leather suction-pad release warmth
+        subLpFilter.setLowpass(sr, 3200.0f, 0.74f);       // Eventide Clockworks FL201 dual-BBD Instant Flanger LPF
     }
 }
 
@@ -748,7 +805,7 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
     outExtraRevR = 0.0f;
     if (modMaxLen < 32) return;
 
-    targetMode = juce::jlimit(0, 29, desiredMode);
+    targetMode = juce::jlimit(0, 36, desiredMode);
     if (!hasRendered) {
         currentMode = targetMode;
         wetGain = (currentMode > 0) ? 1.0f : 0.0f;
@@ -2524,6 +2581,383 @@ void PedalSteelEngine::ModernCharacterProcessor::processSample(
         ioR = vhsTapeR * 0.88f + vhsMemR * (0.16f + 0.22f * agcBloom);
         outExtraRevL = (vhsTapeL * 0.22f + vhsMemL * 0.62f) * 0.25f;
         outExtraRevR = (vhsTapeR * 0.22f + vhsMemR * 0.62f) * 0.25f;
+    } else if (mode == 30 && shimMaxLen > 64) {
+        // C01: Mercury7 Cathedra Sub-Well (100% Concert-Pitch-Locked -12st Bowed Sub-Vector + Symmetrical 0.00c Cathedra Cloud!)
+        lfoPhase1 += 0.24 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0; // Symmetrical 3-phase 0.00c Cathedra ensemble
+
+        const float dryWarmL = charFilter3.processL(charFilter2.processL(charFilter1.processL(dimHpFilter.processL(ioL))));
+        const float dryWarmR = charFilter3.processR(charFilter2.processR(charFilter1.processR(dimHpFilter.processR(ioR))));
+
+        // 1. 100% Doppler-Free -12st (0.500000x) Dual-Grain Hann Pitch-Vector Sub-Cello Tank (ZERO LFO inside shimBuf -> 0.00c pitch lock!)
+        const float maxHalfBuf = static_cast<float>(shimMaxLen - 96) * 0.45f;
+        const float gSubSamples = juce::jlimit(512.0f, maxHalfBuf, 185.0f * srMs);
+        subPhasor += 0.5 / static_cast<double>(gSubSamples); // dD/dn = +0.5 -> exact -1200.00c concert sub-octave!
+        if (subPhasor >= 1.0) subPhasor -= 1.0;
+
+        const double pSa = subPhasor;
+        const double pSb = (pSa + 0.5 >= 1.0) ? (pSa - 0.5) : (pSa + 0.5);
+        const float wSa = 0.5f * (1.0f - static_cast<float>(std::cos(kTwoPi * pSa)));
+        const float wSb = 0.5f * (1.0f - static_cast<float>(std::cos(kTwoPi * pSb)));
+        const float dSa = 24.0f * srMs + static_cast<float>(pSa) * gSubSamples;
+        const float dSb = 24.0f * srMs + static_cast<float>(pSb) * gSubSamples;
+
+        const float rawSubL = wSa * readFloatBufHermite(shimBufL, shimWritePos, dSa)
+                            + wSb * readFloatBufHermite(shimBufL, shimWritePos, dSb);
+        const float rawSubR = wSa * readFloatBufHermite(shimBufR, shimWritePos, dSa)
+                            + wSb * readFloatBufHermite(shimBufR, shimWritePos, dSb);
+        const float subCelloL = fastTanh(charFilter4.processL(rawSubL) * 1.45f) * 0.92f;
+        const float subCelloR = fastTanh(charFilter4.processR(rawSubR) * 1.45f) * 0.92f;
+
+        // Pure unmodulated pitch-locked sub-tank regeneration + fixed 92 ms / 148 ms Cathedra pre-reflections
+        const float maxShimDel = static_cast<float>(shimMaxLen - 16);
+        const float fixedPreL = 0.55f * readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, 92.0f  * srMs))
+                              + 0.45f * readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, 224.0f * srMs));
+        const float fixedPreR = 0.55f * readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, 128.0f * srMs))
+                              + 0.45f * readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, 278.0f * srMs));
+
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(dryWarmL * 0.80f + subCelloR * 0.28f + fixedPreR * 0.32f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(dryWarmR * 0.80f + subCelloL * 0.28f + fixedPreL * 0.32f);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        // 2. Symmetrical 120-Deg 3-Phase Cathedra Cloud (sin(0)+sin(120)+sin(240) == 0 -> lush stereo width, 0.00c net pitch drift!)
+        modBufL[static_cast<size_t>(modWritePos)] = fixedPreL;
+        modBufR[static_cast<size_t>(modWritePos)] = fixedPreR;
+        const float maxModDel = static_cast<float>(modMaxLen - 8);
+        const float ph0 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float ph1 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.3333333)));
+        const float ph2 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.6666667)));
+        float catDiffL = (readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (9.0f  + 0.42f * ph0) * srMs))
+                        + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (14.5f + 0.42f * ph1) * srMs))
+                        + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (19.5f + 0.42f * ph2) * srMs))) * 0.36f;
+        float catDiffR = (readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (9.8f  + 0.42f * ph2) * srMs))
+                        + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (15.2f + 0.42f * ph0) * srMs))
+                        + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (20.4f + 0.42f * ph1) * srMs))) * 0.36f;
+
+        for (size_t i = 0; i < 4; ++i) {
+            auto& bL = springApL[i];
+            auto& bR = springApR[i];
+            int idxL = springApPosL[i], idxR = springApPosR[i];
+            const float dL = bL[static_cast<size_t>(idxL)], dR = bR[static_cast<size_t>(idxR)];
+            const float g = 0.60f;
+            const float wL = catDiffL + dL * g, wR = catDiffR + dR * g;
+            bL[static_cast<size_t>(idxL)] = wL;
+            bR[static_cast<size_t>(idxR)] = wR;
+            catDiffL = dL - wL * g;
+            catDiffR = dR - wR * g;
+            if (++idxL >= static_cast<int>(bL.size())) idxL = 0;
+            if (++idxR >= static_cast<int>(bR.size())) idxR = 0;
+            springApPosL[i] = idxL;
+            springApPosR[i] = idxR;
+        }
+
+        const float catHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 165.0 / sr));
+        hornBeamLpL += catHpAlpha * (catDiffL - hornBeamLpL);
+        hornBeamLpR += catHpAlpha * (catDiffR - hornBeamLpR);
+        const float catHallL = subLpFilter.processL(catDiffL - hornBeamLpL);
+        const float catHallR = subLpFilter.processR(catDiffR - hornBeamLpR);
+
+        ioL = dryWarmL * 0.76f + subCelloL * 0.72f + catHallL * 0.48f;
+        ioR = dryWarmR * 0.76f + subCelloR * 0.72f + catHallR * 0.48f;
+        outExtraRevL = (subCelloL * 0.44f + catHallL * 0.72f) * 0.44f;
+        outExtraRevR = (subCelloR * 0.44f + catHallR * 0.72f) * 0.44f;
+    } else if (mode == 31 && shimMaxLen > 64) {
+        // C07: Golden Hour Butterflies Silk (Russ Pahl / Dan Dugmore on Kacey Musgraves 'Golden Hour':
+        //     Pickless Thumb-Flesh Show Pro -> API 312/550A Air -> Symmetrical 0.00-Cent Micro-Dimension -> Wide Lexicon 224XL Vocal Plate!)
+        lfoPhase1 += 0.36 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0; // Symmetrical 3-phase micro-dimension silk
+        lfoPhase2 += 0.52 * dt; if (lfoPhase2 >= 1.0) lfoPhase2 -= 1.0; // Lexicon 224XL Concert/Vocal Plate chorusing
+
+        const float pk = std::max(std::abs(ioL), std::abs(ioR));
+        const float limAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.0065 : 0.220)));
+        cassetteSagEnv += limAlpha * (pk - cassetteSagEnv);
+        const float apiGain = 1.24f / (0.85f + 0.52f * cassetteSagEnv);
+
+        const float silkDryL = charFilter4.processL(charFilter3.processL(charFilter2.processL(charFilter1.processL(
+            dimHpFilter.processL(fastTanh(ioL * apiGain) * 0.88f)))));
+        const float silkDryR = charFilter4.processR(charFilter3.processR(charFilter2.processR(charFilter1.processR(
+            dimHpFilter.processR(fastTanh(ioR * apiGain) * 0.88f)))));
+
+        modBufL[static_cast<size_t>(modWritePos)] = silkDryL;
+        modBufR[static_cast<size_t>(modWritePos)] = silkDryR;
+        const float maxModDel = static_cast<float>(modMaxLen - 8);
+        const float ph0 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float ph1 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.3333333)));
+        const float ph2 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.6666667)));
+
+        const float dimL = 0.50f * readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (6.2f + 0.36f * ph0) * srMs))
+                         + 0.50f * readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (8.9f + 0.36f * ph1) * srMs));
+        const float dimR = 0.50f * readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (6.5f + 0.36f * ph2) * srMs))
+                         + 0.50f * readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (9.3f + 0.36f * ph0) * srMs));
+        const float dimHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 240.0 / sr));
+        xoverLp1L += dimHpAlpha * (dimL - xoverLp1L);
+        xoverLp1R += dimHpAlpha * (dimR - xoverLp1R);
+        const float airDimL = dimL - xoverLp1L;
+        const float airDimR = dimR - xoverLp1R;
+
+        const float maxShimDel = static_cast<float>(shimMaxLen - 16);
+        const float plMod = 1.15f * static_cast<float>(std::sin(kTwoPi * lfoPhase2));
+        const float plRawL = 0.62f * readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, (52.0f  + plMod) * srMs))
+                           + 0.44f * readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, (148.0f - plMod) * srMs));
+        const float plRawR = 0.62f * readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, (71.0f  - plMod) * srMs))
+                           + 0.44f * readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, (186.0f + plMod) * srMs));
+        const float plHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 195.0 / sr));
+        hornBeamLpL += plHpAlpha * (plRawL - hornBeamLpL);
+        hornBeamLpR += plHpAlpha * (plRawR - hornBeamLpR);
+        const float plateL = subLpFilter.processL(plRawL - hornBeamLpL);
+        const float plateR = subLpFilter.processR(plRawR - hornBeamLpR);
+
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(silkDryL * 0.72f + plateR * 0.40f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(silkDryR * 0.72f + plateL * 0.40f);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        const float duck = 1.0f / (1.0f + 1.35f * cassetteSagEnv);
+        ioL = silkDryL * 0.84f + airDimL * 0.24f + plateL * (0.18f + 0.16f * duck);
+        ioR = silkDryR * 0.84f + airDimR * 0.24f + plateR * (0.18f + 0.16f * duck);
+        outExtraRevL = (airDimL * 0.25f + plateL * 0.75f) * 0.44f;
+        outExtraRevR = (airDimR * 0.25f + plateR * 0.75f) * 0.44f;
+    } else if (mode == 32 && shimMaxLen > 64) {
+        // N01: '67 Mellotron M400 Flute-Strings (Beatles 'Strawberry Fields' / Radiohead / King Crimson:
+        //     1967 Streetly 3/8" 7.5-ips Tape-Replay Bowed Cello/Violin Section + Concert-Locked +12st 4' Wood-Flute!)
+        lfoPhase1 += 0.44 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0; // Symmetrical 3-phase 0.00c Streetly tape ensemble
+
+        const float pk = std::max(std::abs(ioL), std::abs(ioR));
+        const float envAlpha = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.0080 : 0.240)));
+        cassetteSagEnv += envAlpha * (pk - cassetteSagEnv);
+
+        // 1. 1967 Streetly CMC-10 Valve/Transistor Tape-Head Preamp + Bowed Cello/Violin Formant Body (3.15 kHz 7.5-ips ceiling!)
+        const float tapeDrv = 1.55f / (0.78f + 0.55f * cassetteSagEnv);
+        const float uL = juce::jlimit(-2.6f, 2.6f, dimHpFilter.processL(ioL) * tapeDrv);
+        const float uR = juce::jlimit(-2.6f, 2.6f, dimHpFilter.processR(ioR) * tapeDrv);
+        const float preStrL = (fastTanh(uL + 0.18f * uL * uL) - 0.09f * fastTanh(uL * uL)) * 0.86f;
+        const float preStrR = (fastTanh(uR + 0.18f * uR * uR) - 0.09f * fastTanh(uR * uR)) * 0.86f;
+        const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 24.0 / sr));
+        leslieDcL += dcAlpha * (preStrL - leslieDcL);
+        leslieDcR += dcAlpha * (preStrR - leslieDcR);
+
+        const float melloStrL = charFilter4.processL(charFilter3.processL(charFilter2.processL(charFilter1.processL(preStrL - leslieDcL))));
+        const float melloStrR = charFilter4.processR(charFilter3.processR(charFilter2.processR(charFilter1.processR(preStrR - leslieDcR))));
+
+        // 2. Symmetrical 3-Phase Streetly 3-Violins Tape Ensemble (sin(0)+sin(120)+sin(240) == 0 -> 0.00c concert-pitch lock!)
+        modBufL[static_cast<size_t>(modWritePos)] = melloStrL;
+        modBufR[static_cast<size_t>(modWritePos)] = melloStrR;
+        const float maxModDel = static_cast<float>(modMaxLen - 8);
+        const float e0 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float e1 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.3333333)));
+        const float e2 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.6666667)));
+        const float strEnsL = (readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (5.8f  + 0.32f * e0) * srMs))
+                             + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (9.4f  + 0.32f * e1) * srMs))
+                             + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (13.2f + 0.32f * e2) * srMs))) * 0.35f;
+        const float strEnsR = (readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (6.3f  + 0.32f * e2) * srMs))
+                             + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(3.0f, maxModDel, (10.1f + 0.32f * e0) * srMs))
+                             + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(3.0f, maxModDel, (13.9f + 0.32f * e1) * srMs))) * 0.35f;
+
+        // 3. Concert-Locked +12st (2.000000x) 4' 'Strawberry Fields' Wood-Flute Tape Track!
+        shimBufL[static_cast<size_t>(shimWritePos)] = melloStrL;
+        shimBufR[static_cast<size_t>(shimWritePos)] = melloStrR;
+        const float gFlute = juce::jlimit(384.0f, static_cast<float>(shimMaxLen - 96) * 0.35f, 68.0f * srMs);
+        shimPhasor += 1.0 / static_cast<double>(gFlute); // dD/dn = -1.0 -> exact +1200.00c octave wood-flute!
+        if (shimPhasor >= 1.0) shimPhasor -= 1.0;
+        const double pFa = shimPhasor;
+        const double pFb = (pFa + 0.5 >= 1.0) ? (pFa - 0.5) : (pFa + 0.5);
+        const float wFa = 0.5f * (1.0f - static_cast<float>(std::cos(kTwoPi * pFa)));
+        const float wFb = 1.0f - wFa;
+        const float dFa = 12.0f + static_cast<float>(1.0 - pFa) * gFlute;
+        const float dFb = 12.0f + static_cast<float>(1.0 - pFb) * gFlute;
+        const float rawFluteL = wFa * readFloatBufHermite(shimBufL, shimWritePos, dFa)
+                              + wFb * readFloatBufHermite(shimBufL, shimWritePos, dFb);
+        const float rawFluteR = wFa * readFloatBufHermite(shimBufR, shimWritePos, dFa)
+                              + wFb * readFloatBufHermite(shimBufR, shimWritePos, dFb);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        // Hollow wooden flute embouchure ZDF resonator (1,180 Hz Q=1.95) + 2,250 Hz tape lowpass
+        const float gF = static_cast<float>(std::tan(kPi * juce::jlimit(250.0, sr * 0.42, 1180.0) / sr));
+        const float kQF = 1.0f / 1.95f;
+        const float a1F = 1.0f / (1.0f + gF * (gF + kQF)), a2F = gF * a1F, a3F = gF * a2F;
+        const float v3FL = rawFluteL - svf1Ic2L, v1FL = a1F * svf1Ic1L + a2F * v3FL, v2FL = svf1Ic2L + a2F * svf1Ic1L + a3F * v3FL;
+        svf1Ic1L = 2.0f * v1FL - svf1Ic1L; svf1Ic2L = 2.0f * v2FL - svf1Ic2L;
+        const float v3FR = rawFluteR - svf1Ic2R, v1FR = a1F * svf1Ic1R + a2F * v3FR, v2FR = svf1Ic2R + a2F * svf1Ic1R + a3F * v3FR;
+        svf1Ic1R = 2.0f * v1FR - svf1Ic1R; svf1Ic2R = 2.0f * v2FR - svf1Ic2R;
+
+        const float woodFluteL = subLpFilter.processL((v1FL * kQF) * 1.95f + v2FL * 0.42f);
+        const float woodFluteR = subLpFilter.processR((v1FR * kQF) * 1.95f + v2FR * 0.42f);
+
+        // Intimate Abbey Road Studio 2 wood blend: Bowed Cello/Violin Left-Center + 4' Wood-Flute Right-Center!
+        ioL = (melloStrL * 0.56f + strEnsL * 0.48f) + woodFluteL * 0.44f + woodFluteR * 0.16f;
+        ioR = (melloStrR * 0.56f + strEnsR * 0.48f) + woodFluteR * 0.44f + woodFluteL * 0.16f;
+        outExtraRevL = (strEnsL * 0.55f + woodFluteL * 0.45f) * 0.14f;
+        outExtraRevR = (strEnsR * 0.55f + woodFluteR * 0.45f) * 0.14f;
+    } else if (mode == 33 && shimMaxLen > 64) {
+        // N07 (Winner #4): '71 Maggot Brain Octavia Fuzz (Eddie Hazel / Jimi Hendrix 'Band of Gypsys':
+        //     Transformer Mid-Push -> Analog Silicon Full-Wave Bridge Rectifier (+12st Octave-Fuzz!) -> '68 Marshall 4x12 Greenback + Echoplex!)
+        const float preL = charFilter1.processL(dimHpFilter.processL(ioL));
+        const float preR = charFilter1.processR(dimHpFilter.processR(ioR));
+
+        const float pk = std::max(std::abs(preL), std::abs(preR));
+        const float envA = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.0020 : 0.195)));
+        cassetteSagEnv += envA * (pk - cassetteSagEnv);
+        const float octGain = juce::jlimit(1.2f, 5.2f, 3.65f / (0.38f + 1.15f * cassetteSagEnv));
+
+        const float uL = juce::jlimit(-3.5f, 3.5f, preL * octGain);
+        const float uR = juce::jlimit(-3.5f, 3.5f, preR * octGain);
+
+        const float rectL = std::sqrt(uL * uL + 0.0010f) - 0.03162f;
+        const float rectR = std::sqrt(uR * uR + 0.0010f) - 0.03162f;
+        const float fuzzRawL = fastTanh(rectL * 1.75f + fastTanh(uL * 1.95f) * 0.68f) * 0.72f;
+        const float fuzzRawR = fastTanh(rectR * 1.75f + fastTanh(uR * 1.95f) * 0.68f) * 0.72f;
+
+        const float dcAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 26.0 / sr));
+        leslieDcL += dcAlpha * (fuzzRawL - leslieDcL);
+        leslieDcR += dcAlpha * (fuzzRawR - leslieDcR);
+
+        const float cab4x12L = charFilter4.processL(charFilter3.processL(charFilter2.processL(fuzzRawL - leslieDcL)));
+        const float cab4x12R = charFilter4.processR(charFilter3.processR(charFilter2.processR(fuzzRawR - leslieDcR)));
+
+        const float maxShimDel = static_cast<float>(shimMaxLen - 16);
+        const float epRawL = readFloatBufHermite(shimBufL, shimWritePos, juce::jlimit(8.0f, maxShimDel, 310.0f * srMs));
+        const float epRawR = readFloatBufHermite(shimBufR, shimWritePos, juce::jlimit(8.0f, maxShimDel, 425.0f * srMs));
+        const float epHpAlpha = static_cast<float>(1.0 - std::exp(-kTwoPi * 185.0 / sr));
+        hornBeamLpL += epHpAlpha * (epRawL - hornBeamLpL);
+        hornBeamLpR += epHpAlpha * (epRawR - hornBeamLpR);
+        const float epCleanL = subLpFilter.processL(epRawL - hornBeamLpL);
+        const float epCleanR = subLpFilter.processR(epRawR - hornBeamLpR);
+
+        shimBufL[static_cast<size_t>(shimWritePos)] = fastTanh(cab4x12L * 0.72f + epCleanR * 0.36f);
+        shimBufR[static_cast<size_t>(shimWritePos)] = fastTanh(cab4x12R * 0.72f + epCleanL * 0.36f);
+        if (++shimWritePos >= shimMaxLen) shimWritePos = 0;
+
+        const float soloDuck = 1.0f / (1.0f + 1.45f * cassetteSagEnv);
+        ioL = cab4x12L * 0.86f + epCleanL * (0.20f + 0.18f * soloDuck);
+        ioR = cab4x12R * 0.86f + epCleanR * (0.20f + 0.18f * soloDuck);
+        outExtraRevL = (cab4x12L * 0.22f + epCleanL * 0.68f) * 0.34f;
+        outExtraRevR = (cab4x12R * 0.22f + epCleanR * 0.68f) * 0.34f;
+    } else if (mode == 34 && shimMaxLen > 64) {
+        // Preset 48: '72 Suitcase Rhodes & Dyno (1972 Mark I Magnetic-Pickup Tonebar Warmth
+        //     + Per-Voice Phase-Pure +12st Chuck Monte Dyno Tine-Bell + 0.00c Tri-Stereo Chorus + Suitcase Stereo Auto-Pan!)
+        tremPhase += 1.06 * dt; if (tremPhase >= 1.0) tremPhase -= 1.0; // Classic Suitcase stereo cabinet auto-pan!
+        lfoPhase1 += 0.62 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0; // Dyno-My-Piano Tri-Stereo BBD Chorus (0.00c locked!)
+
+        const float inL = dimHpFilter.processL(ioL);
+        const float inR = dimHpFilter.processR(ioR);
+
+        // Hammer-on-tine transient detector: shapes a crisp 62ms crystalline Dyno tine-bell chime on each chord strike!
+        const float pk = std::max(std::abs(inL), std::abs(inR));
+        if (pk > cassetteSagEnv * 1.28f + 0.025f) {
+            gateEnv = juce::jlimit(0.0f, 1.0f, pk * 2.6f);
+        }
+        const float envA = static_cast<float>(1.0 - std::exp(-dt / ((pk > cassetteSagEnv) ? 0.0015 : 0.110)));
+        cassetteSagEnv += envA * (pk - cassetteSagEnv);
+        gateEnv *= static_cast<float>(std::exp(-dt / 0.062)); // Authentic 62 ms Rhodes tine-strike bell decay!
+
+        // 1. Warm Asymmetric Magnetic-Pickup Tonebar Fundamental Body (scooped guitar mids -> pure velvet sine-tonebar sustain!)
+        const float magRawL = fastTanh(inL * 1.55f + 0.22f * inL * inL) - 0.10f * inL * inL;
+        const float magRawR = fastTanh(inR * 1.55f + 0.22f * inR * inR) - 0.10f * inR * inR;
+        const float dcA34 = static_cast<float>(1.0 - std::exp(-kTwoPi * 22.0 / sr));
+        leslieDcL += dcA34 * (magRawL - leslieDcL);
+        leslieDcR += dcA34 * (magRawR - leslieDcR);
+        const float tonebarL = charFilter3.processL(charFilter2.processL(charFilter1.processL(magRawL - leslieDcL)));
+        const float tonebarR = charFilter3.processR(charFilter2.processR(charFilter1.processR(magRawR - leslieDcR)));
+
+        // 2. Chuck Monte 'Dyno-My-Piano' Crystalline Tine-Bell Chime (powered per-voice by rackBellSmooth = 1.0f — ZERO granular warble!)
+        const float bellOctL = subLpFilter.processL(charFilter4.processL(inL));
+        const float bellOctR = subLpFilter.processR(charFilter4.processR(inR));
+        const float bellGain = 0.28f + 0.96f * gateEnv;
+        const float rhodesCoreL = tonebarL * 0.94f + bellOctL * bellGain;
+        const float rhodesCoreR = tonebarR * 0.94f + bellOctR * bellGain;
+
+        // 3. Symmetrical 3-Phase 0.00c Tri-Stereo Chorus + Smooth Sinusoidal Suitcase L<->R Cabinet Auto-Pan!
+        modBufL[static_cast<size_t>(modWritePos)] = rhodesCoreL;
+        modBufR[static_cast<size_t>(modWritePos)] = rhodesCoreR;
+        const float maxModDel = static_cast<float>(modMaxLen - 8);
+        const float d0 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float d1 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.3333333)));
+        const float d2 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.6666667)));
+        const float triL = (readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, maxModDel, (5.4f + 0.46f * d0) * srMs))
+                          + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, maxModDel, (9.1f + 0.46f * d1) * srMs))
+                          + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, maxModDel, (12.8f + 0.46f * d2) * srMs))) * 0.35f;
+        const float triR = (readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, maxModDel, (5.9f + 0.46f * d2) * srMs))
+                          + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, maxModDel, (9.7f + 0.46f * d0) * srMs))
+                          + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, maxModDel, (13.4f + 0.46f * d1) * srMs))) * 0.35f;
+
+        const float suitPan = static_cast<float>(std::sin(kTwoPi * tremPhase)); // -1..+1 smooth Suitcase stereo ping-pong!
+        const float panGainL = 0.72f + 0.28f * suitPan;
+        const float panGainR = 0.72f - 0.28f * suitPan;
+
+        ioL = (rhodesCoreL * 0.68f + triL * 0.48f) * panGainL;
+        ioR = (rhodesCoreR * 0.68f + triR * 0.48f) * panGainR;
+        outExtraRevL = (triL * 0.65f + bellOctL * 0.35f) * 0.28f;
+        outExtraRevR = (triR * 0.65f + bellOctR * 0.35f) * 0.28f;
+    } else if (mode == 35 && shimMaxLen > 64) {
+        // Preset 49: Blonde White-Ferrari Prism (100.000% Pure Per-Voice 16'+8'+4' Ranks!
+        //     Zero Granular Pitch-Shifter Warble: Pure Wooden Flute-Organ + Cello-Sub + Prismizer Choir Formant + 0.00c Ensemble!)
+        lfoPhase1 += 0.36 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0;
+
+        const float inL = dimHpFilter.processL(ioL);
+        const float inR = dimHpFilter.processR(ioR);
+
+        // 1. Per-voice organRankSmooth = 1.0f already injects 100% phase-locked -12st (16' cello-sub) & +12st (4' Prismizer flute-choir)!
+        //    Shape through warm Studer A800 15-ips tape saturation + guitar-twang removal + warm 880 Hz human choir vowel resonance!
+        const float drawRawL = fastTanh(inL * 1.48f + 0.14f * inL * inL) - 0.06f * inL * inL;
+        const float drawRawR = fastTanh(inR * 1.48f + 0.14f * inR * inR) - 0.06f * inR * inR;
+        const float dcA35 = static_cast<float>(1.0 - std::exp(-kTwoPi * 22.0 / sr));
+        leslieDcL += dcA35 * (drawRawL - leslieDcL);
+        leslieDcR += dcA35 * (drawRawR - leslieDcR);
+
+        const float hymnL = charFilter4.processL(charFilter3.processL(charFilter2.processL(charFilter1.processL(drawRawL - leslieDcL))));
+        const float hymnR = charFilter4.processR(charFilter3.processR(charFilter2.processR(charFilter1.processR(drawRawR - leslieDcR))));
+
+        // 2. Symmetrical 3-Phase 0.00c Electric Lady Velvet Stereo Ensemble (100.000% concert-pitch locked!)
+        modBufL[static_cast<size_t>(modWritePos)] = hymnL;
+        modBufR[static_cast<size_t>(modWritePos)] = hymnR;
+        const float maxModDel = static_cast<float>(modMaxLen - 8);
+        const float b0 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float b1 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.3333333)));
+        const float b2 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.6666667)));
+        const float ensL = subLpFilter.processL((readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, maxModDel, (6.2f + 0.38f * b0) * srMs))
+                                               + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, maxModDel, (10.4f + 0.38f * b1) * srMs))
+                                               + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, maxModDel, (14.6f + 0.38f * b2) * srMs))) * 0.35f);
+        const float ensR = subLpFilter.processR((readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, maxModDel, (6.8f + 0.38f * b2) * srMs))
+                                               + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(2.0f, maxModDel, (11.1f + 0.38f * b0) * srMs))
+                                               + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(2.0f, maxModDel, (15.3f + 0.38f * b1) * srMs))) * 0.35f);
+
+        ioL = hymnL * 0.68f + ensL * 0.48f;
+        ioR = hymnR * 0.68f + ensR * 0.48f;
+        outExtraRevL = ensL * 0.22f;
+        outExtraRevR = ensR * 0.22f;
+    } else if (mode == 36 && shimMaxLen > 64) {
+        // Preset 50: '77 Rumours Pianet & Flanger (Fleetwood Mac 'Dreams' / 'Gypsy' / Men I Trust:
+        //     Hohner Pianet Sticky-Pad Stainless-Reed Bell -> API 2520 Console -> 0.00c Eventide Clockworks Instant Flanger!)
+        lfoPhase1 += 0.21 * dt; if (lfoPhase1 >= 1.0) lfoPhase1 -= 1.0; // Slow, hypnotic Sausalito Record Plant flanger breath!
+
+        const float inL = dimHpFilter.processL(ioL);
+        const float inR = dimHpFilter.processR(ioR);
+
+        // 1. Hohner Pianet Suction-Pad Reed Pluck + API 2520 Op-Amp & Transformer Warmth!
+        const float apiRawL = fastTanh(inL * 1.52f + 0.15f * inL * inL) - 0.06f * inL * inL;
+        const float apiRawR = fastTanh(inR * 1.52f + 0.15f * inR * inR) - 0.06f * inR * inR;
+        const float dcA36 = static_cast<float>(1.0 - std::exp(-kTwoPi * 22.0 / sr));
+        leslieDcL += dcA36 * (apiRawL - leslieDcL);
+        leslieDcR += dcA36 * (apiRawR - leslieDcR);
+
+        const float pianetL = charFilter4.processL(charFilter3.processL(charFilter2.processL(charFilter1.processL(apiRawL - leslieDcL))));
+        const float pianetR = charFilter4.processR(charFilter3.processR(charFilter2.processR(charFilter1.processR(apiRawR - leslieDcR))));
+
+        // 2. Eventide Clockworks FL201 'Instant Flanger' (Symmetrical 3-Phase 1.6..3.4ms BBD Comb Notch — 0.00c Pitch-Locked!)
+        modBufL[static_cast<size_t>(modWritePos)] = pianetL;
+        modBufR[static_cast<size_t>(modWritePos)] = pianetR;
+        const float maxModDel = static_cast<float>(modMaxLen - 8);
+        const float fl0 = static_cast<float>(std::sin(kTwoPi * lfoPhase1));
+        const float fl1 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.3333333)));
+        const float fl2 = static_cast<float>(std::sin(kTwoPi * (lfoPhase1 + 0.6666667)));
+        const float flgL = subLpFilter.processL((readFloatBufHermite(modBufL, modWritePos, juce::jlimit(1.2f, maxModDel, (2.15f + 0.65f * fl0) * srMs))
+                                               + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(1.2f, maxModDel, (3.45f + 0.65f * fl1) * srMs))
+                                               + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(1.2f, maxModDel, (4.75f + 0.65f * fl2) * srMs))) * 0.35f);
+        const float flgR = subLpFilter.processR((readFloatBufHermite(modBufR, modWritePos, juce::jlimit(1.2f, maxModDel, (2.45f + 0.65f * fl2) * srMs))
+                                               + readFloatBufHermite(modBufL, modWritePos, juce::jlimit(1.2f, maxModDel, (3.75f + 0.65f * fl0) * srMs))
+                                               + readFloatBufHermite(modBufR, modWritePos, juce::jlimit(1.2f, maxModDel, (5.05f + 0.65f * fl1) * srMs))) * 0.35f);
+
+        ioL = pianetL * 0.68f + flgL * 0.50f;
+        ioR = pianetR * 0.68f + flgR * 0.50f;
+        outExtraRevL = flgL * 0.30f;
+        outExtraRevR = flgR * 0.30f;
     }
 
     if (wetGain < 0.9999f) {
@@ -2593,8 +3027,8 @@ void PedalSteelEngine::reset() {
     studioTweedCabFilter.reset();
     dcBlockerStudio.reset();
     tweedSagEnv = 0.0f;
-    rackBellSmooth  = (params.fxCharacter == 15) ? 1.0f : 0.0f;
-    organRankSmooth = (params.fxCharacter == 16) ? 1.0f : 0.0f;
+    rackBellSmooth  = (params.fxCharacter == 15 || params.fxCharacter == 34) ? 1.0f : 0.0f;
+    organRankSmooth = (params.fxCharacter == 16 || params.fxCharacter == 35) ? 1.0f : 0.0f;
     jawariSmooth    = (params.fxCharacter == 19) ? 1.0f : 0.0f;
     cs80BrassSmooth = (params.fxCharacter == 22) ? 1.0f : 0.0f;
 
@@ -2692,10 +3126,11 @@ void PedalSteelEngine::updateFilterCoeffs() {
     studioTweedCabFilter.setLowpass(sampleRate, 4550.0f, 0.82f);
     modernChar.setTargetMode(sampleRate, params.fxCharacter);
     if (!modernChar.hasRendered) {
-        rackBellSmooth  = (params.fxCharacter == 15) ? 1.0f : 0.0f;
-        organRankSmooth = (params.fxCharacter == 16) ? 1.0f : 0.0f;
-        jawariSmooth    = (params.fxCharacter == 19) ? 1.0f : 0.0f;
-        cs80BrassSmooth = (params.fxCharacter == 22) ? 1.0f : 0.0f;
+        const int fxc = params.fxCharacter;
+        rackBellSmooth  = (fxc == 15 || fxc == 34) ? 1.0f : 0.0f;
+        organRankSmooth = (fxc == 16 || fxc == 35) ? 1.0f : 0.0f;
+        jawariSmooth    = (fxc == 19) ? 1.0f : 0.0f;
+        cs80BrassSmooth = (fxc == 22) ? 1.0f : 0.0f;
     }
 }
 
@@ -3445,7 +3880,8 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
 
     const double stringTauSec = 0.65 + 0.15 * std::max(1.0, static_cast<double>(params.sustainTime));
     const float sustainDecayRate = static_cast<float>(1.0 - std::exp(-dt / stringTauSec));
-    const float releaseTimeSec = (params.playMode == 2) ? 0.55f : 0.28f;
+    const int fxcRel = params.fxCharacter;
+    const float releaseTimeSec = (fxcRel == 35) ? 0.13f : ((params.playMode == 2) ? 0.55f : 0.28f);
     const float releaseDecayRate = static_cast<float>(1.0 - std::exp(-dt / releaseTimeSec));
 
     const float effectiveDelayMs = params.tempoSync
@@ -3472,13 +3908,15 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
         smoothLKL    += (targetLKL - smoothLKL) * pSmooth;
         smoothLKR    += (targetLKR - smoothLKR) * pSmooth;
         smoothVolPedal += (targetVol - smoothVolPedal) * pSmooth;
-        const float targetRack  = (params.fxCharacter == 15) ? 1.0f : 0.0f;
-        const float targetOrgan = (params.fxCharacter == 16) ? 1.0f : 0.0f;
+        const int fxc = params.fxCharacter;
+        const float targetRack  = (fxc == 15 || fxc == 34) ? 1.0f : 0.0f;
+        const float targetOrgan = (fxc == 16 || fxc == 35) ? 1.0f : 0.0f;
+        const float targetCs80  = (fxc == 22) ? 1.0f : 0.0f;
         const float rankAlpha   = static_cast<float>(1.0 - std::exp(-dt / 0.0085));
         rackBellSmooth  += (targetRack  - rackBellSmooth)  * rankAlpha;
         organRankSmooth += (targetOrgan - organRankSmooth) * rankAlpha;
-        jawariSmooth    += (((params.fxCharacter == 19) ? 1.0f : 0.0f) - jawariSmooth)    * rankAlpha;
-        cs80BrassSmooth += (((params.fxCharacter == 22) ? 1.0f : 0.0f) - cs80BrassSmooth) * rankAlpha;
+        jawariSmooth    += (((fxc == 19) ? 1.0f : 0.0f) - jawariSmooth) * rankAlpha;
+        cs80BrassSmooth += (targetCs80  - cs80BrassSmooth) * rankAlpha;
 
         const float pwOmega = (!anyVoiceHeld) ? 28.0f : std::min(barOmega, 10.5f);
         const float pwAccel = pwOmega * pwOmega * (pitchWheelNorm - smoothPitchWheel) - 2.0f * pwOmega * smoothPitchWheelVel;

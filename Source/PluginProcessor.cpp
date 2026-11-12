@@ -206,7 +206,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
             "Dumble H910 Lead",
             "Cinecitta Twang",
             "Khruangbin Cry-Spring",
-            "VHS Generation-Drift"
+            "VHS Generation-Drift",
+            "Mercury7 Sub-Cathedra",
+            "Golden Hour 224XL Silk",
+            "Mellotron M400 Flute-Str",
+            "Maggot Brain Octavia Fuzz",
+            "'72 Suitcase Rhodes & Dyno",
+            "Blonde White-Ferrari Prism",
+            "'77 Rumours Pianet Flanger"
         }, 0));
 
     layout.push_back(std::make_unique<juce::AudioParameterFloat>(

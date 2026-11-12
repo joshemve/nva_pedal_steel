@@ -193,10 +193,13 @@ static int runDeepDspAudit() {
                   << " dB | 96=" << juce::String(rmsDbByRate[2], 2) << " dB" << std::endl;
     }
 
-    // 2. Live FX Character Hot-Switch Click-Free Audit (0 -> 1 -> ... -> 29 -> 0 mid-chord)
+    // 2. Live FX Character Hot-Switch Click-Free Audit (0 -> 1 -> ... -> maxCharMode -> 0 mid-chord)
     {
+        int maxCharMode = 29;
+        for (const auto& pr : presets) maxCharMode = std::max(maxCharMode, pr.params.fxCharacter);
+        const int numSlots = maxCharMode + 2; // 0..maxCharMode then back to 0
         constexpr double sr = 48000.0;
-        const int total = static_cast<int>(sr * 9.2);
+        const int total = static_cast<int>(sr * (0.30 * numSlots));
         PedalSteelEngine eng;
         eng.prepare(sr, 64);
         PedalSteelParams p = presets[0].params;
@@ -211,10 +214,10 @@ static int runDeepDspAudit() {
         int lastSwitchSlot = -1;
         while (pos < total) {
             const int chunk = std::min(64, total - pos);
-            const int slot = static_cast<int>((static_cast<int64_t>(pos) * 31) / total);
+            const int slot = static_cast<int>((static_cast<int64_t>(pos) * numSlots) / total);
             if (slot != lastSwitchSlot) {
                 lastSwitchSlot = slot;
-                p.fxCharacter = (slot < 30) ? slot : 0;
+                p.fxCharacter = (slot <= maxCharMode) ? slot : 0;
                 eng.setParams(p);
             }
             eng.renderBlock(buf, pos, chunk);
@@ -230,7 +233,7 @@ static int runDeepDspAudit() {
             std::cerr << "[FAIL] Live FX Character hot-switch step too high: " << maxStep << std::endl;
             return 1;
         }
-        std::cout << "[PASS] Click-free live FX Character hot-switching (0->1->...->29->0): maxSampleStep="
+        std::cout << "[PASS] Click-free live FX Character hot-switching (0->1->...->" << maxCharMode << "->0): maxSampleStep="
                   << juce::String(maxStep, 4) << std::endl;
     }
 
@@ -2722,6 +2725,282 @@ int main(int argc, char* argv[]) {
         ev.push_back({ 13.30, juce::MidiMessage::noteOff(3, 67) });
 
         renderSequenceToWav(42, 14.5, 82.0, ev, presetsDir.getChildFile("43_98_generation_vhs_drift.wav"));
+    }
+
+    // =========================================================================
+    // Preset 44 (idx 43): Mercury7 Cathedra Sub-Well (66 BPM, D Major — 100% Concert-Pitch Locked!)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        ev.push_back({ 0.12, juce::MidiMessage::noteOn(1, 50, 0.85f) }); // D3 (-> D2 73.4 Hz bowed sub-cello!)
+        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 57, 0.85f) }); // A3
+        ev.push_back({ 0.24, juce::MidiMessage::noteOn(1, 66, 0.87f) }); // F#4
+        ev.push_back({ 0.30, juce::MidiMessage::noteOn(1, 69, 0.88f) }); // A4
+        ev.push_back({ 0.36, juce::MidiMessage::noteOn(1, 76, 0.89f) }); // E5 (pure 9th)
+        for (int n : { 50, 57, 66, 69, 76 }) ev.push_back({ 3.80, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 4.00, juce::MidiMessage::noteOn(1, 47, 0.85f) }); // B2
+        ev.push_back({ 4.06, juce::MidiMessage::noteOn(1, 54, 0.85f) }); // F#3
+        ev.push_back({ 4.12, juce::MidiMessage::noteOn(1, 62, 0.87f) }); // D4
+        ev.push_back({ 4.18, juce::MidiMessage::noteOn(1, 69, 0.88f) }); // A4
+        ev.push_back({ 4.24, juce::MidiMessage::noteOn(1, 73, 0.89f) }); // C#5
+        for (int n : { 47, 54, 62, 69, 73 }) ev.push_back({ 7.20, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 7.40, juce::MidiMessage::noteOn(1, 43, 0.86f) }); // G2
+        ev.push_back({ 7.46, juce::MidiMessage::noteOn(1, 55, 0.86f) }); // G3
+        ev.push_back({ 7.52, juce::MidiMessage::noteOn(1, 62, 0.87f) }); // D4
+        ev.push_back({ 7.58, juce::MidiMessage::noteOn(1, 66, 0.88f) }); // F#4
+        ev.push_back({ 7.64, juce::MidiMessage::noteOn(1, 71, 0.89f) }); // B4
+        for (int n : { 43, 55, 62, 66, 71 }) ev.push_back({ 10.10, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 10.30, juce::MidiMessage::noteOn(1, 50, 0.87f) }); // D3
+        ev.push_back({ 10.36, juce::MidiMessage::noteOn(1, 57, 0.87f) }); // A3
+        ev.push_back({ 10.42, juce::MidiMessage::noteOn(3, 64, 0.90f) }); // E4 -> F#4
+        ev.push_back({ 10.48, juce::MidiMessage::noteOn(1, 69, 0.89f) }); // A4
+        ev.push_back({ 10.54, juce::MidiMessage::noteOn(1, 74, 0.90f) }); // D5
+        addPitchWheelRamp(ev, 3, 10.95, 11.45, 0.0f, +2.0f / 12.0f);
+        for (int n : { 50, 57, 69, 74 }) ev.push_back({ 13.20, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 13.20, juce::MidiMessage::noteOff(3, 64) });
+
+        renderSequenceToWav(43, 15.0, 66.0, ev, presetsDir.getChildFile("44_mercury7_cathedra_sub_well.wav"));
+    }
+
+    // =========================================================================
+    // Preset 45 (idx 44): Golden Hour Butterflies Silk (84 BPM, A Major — Russ Pahl / Kacey Musgraves)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(4, 8192) });
+
+        ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 45, 0.80f) });
+        ev.push_back({ 0.18, juce::MidiMessage::noteOn(1, 57, 0.81f) });
+        ev.push_back({ 0.26, juce::MidiMessage::noteOn(3, 64, 0.86f) });
+        ev.push_back({ 0.34, juce::MidiMessage::noteOn(4, 61, 0.85f) });
+        ev.push_back({ 0.42, juce::MidiMessage::noteOn(1, 71, 0.86f) });
+        ev.push_back({ 0.50, juce::MidiMessage::noteOn(1, 76, 0.87f) });
+        addPitchWheelRamp(ev, 3, 1.05, 1.48, 0.0f, +2.0f / 12.0f);
+        addPitchWheelRamp(ev, 4, 1.05, 1.48, 0.0f, +1.0f / 12.0f);
+        addPitchWheelRamp(ev, 3, 2.25, 2.68, +2.0f / 12.0f, 0.0f);
+        addPitchWheelRamp(ev, 4, 2.25, 2.68, +1.0f / 12.0f, 0.0f);
+        for (int n : { 45, 57, 71, 76 }) ev.push_back({ 3.55, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 3.55, juce::MidiMessage::noteOff(3, 64) });
+        ev.push_back({ 3.55, juce::MidiMessage::noteOff(4, 61) });
+        ev.push_back({ 3.60, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 3.60, juce::MidiMessage::pitchWheel(4, 8192) });
+
+        ev.push_back({ 3.75, juce::MidiMessage::noteOn(1, 42, 0.80f) });
+        ev.push_back({ 3.85, juce::MidiMessage::noteOn(4, 64, 0.85f) });
+        ev.push_back({ 3.88, juce::MidiMessage::noteOn(3, 73, 0.89f) });
+        addPitchWheelRamp(ev, 4, 4.25, 4.65, 0.0f, +2.0f / 12.0f);
+        addPitchWheelRamp(ev, 3, 4.25, 4.65, 0.0f, +1.0f / 12.0f);
+        addPitchWheelRamp(ev, 4, 5.15, 5.55, +2.0f / 12.0f, 0.0f);
+        addPitchWheelRamp(ev, 3, 5.15, 5.55, +1.0f / 12.0f, 0.0f);
+        ev.push_back({ 6.15, juce::MidiMessage::noteOff(1, 42) });
+        ev.push_back({ 6.15, juce::MidiMessage::noteOff(4, 64) });
+        ev.push_back({ 6.15, juce::MidiMessage::noteOff(3, 73) });
+        ev.push_back({ 6.20, juce::MidiMessage::pitchWheel(3, 8192) });
+        ev.push_back({ 6.20, juce::MidiMessage::pitchWheel(4, 8192) });
+
+        ev.push_back({ 6.35, juce::MidiMessage::noteOn(1, 47, 0.81f) });
+        ev.push_back({ 6.43, juce::MidiMessage::noteOn(1, 57, 0.82f) });
+        ev.push_back({ 6.51, juce::MidiMessage::noteOn(1, 66, 0.84f) });
+        ev.push_back({ 6.59, juce::MidiMessage::noteOn(1, 73, 0.87f) });
+        for (int n : { 47, 57, 66, 73 }) ev.push_back({ 7.85, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 8.00, juce::MidiMessage::noteOn(1, 52, 0.82f) });
+        ev.push_back({ 8.08, juce::MidiMessage::noteOn(1, 62, 0.83f) });
+        ev.push_back({ 8.16, juce::MidiMessage::noteOn(1, 69, 0.85f) });
+        ev.push_back({ 8.24, juce::MidiMessage::noteOn(1, 73, 0.87f) });
+        for (int n : { 52, 62, 69, 73 }) ev.push_back({ 9.25, juce::MidiMessage::noteOff(1, n) });
+
+        ev.push_back({ 9.40, juce::MidiMessage::noteOn(1, 45, 0.82f) });
+        ev.push_back({ 9.48, juce::MidiMessage::noteOn(1, 57, 0.83f) });
+        ev.push_back({ 9.56, juce::MidiMessage::noteOn(1, 66, 0.85f) });
+        ev.push_back({ 9.64, juce::MidiMessage::noteOn(3, 71, 0.90f) });
+        ev.push_back({ 9.72, juce::MidiMessage::noteOn(1, 76, 0.88f) });
+        addPitchWheelRamp(ev, 3, 10.05, 10.50, 0.0f, +2.0f / 12.0f);
+        for (int n : { 45, 57, 66, 76 }) ev.push_back({ 12.60, juce::MidiMessage::noteOff(1, n) });
+        ev.push_back({ 12.60, juce::MidiMessage::noteOff(3, 71) });
+
+        renderSequenceToWav(44, 14.2, 84.0, ev, presetsDir.getChildFile("45_golden_hour_butterflies_silk.wav"));
+    }
+
+    // =========================================================================
+    // Preset 46 (idx 45): '67 Mellotron M400 Flute-Strings (78 BPM, A Minor — Beatles "Strawberry Fields" / Radiohead!)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+
+        auto playMelloChord = [&](double t0, double t1, std::initializer_list<int> notes, float vel) {
+            int k = 0;
+            for (int n : notes) {
+                ev.push_back({ t0 + k * 0.012, juce::MidiMessage::noteOn(1, n, vel) });
+                ev.push_back({ t1, juce::MidiMessage::noteOff(1, n) });
+                ++k;
+            }
+        };
+
+        playMelloChord(0.10, 1.92, { 45, 52, 60, 69, 76 }, 0.84f); // Am
+        playMelloChord(1.98, 3.80, { 45, 52, 60, 68, 76 }, 0.85f); // Am(maj7)
+        playMelloChord(3.86, 5.68, { 45, 52, 60, 67, 76 }, 0.85f); // Am7
+        playMelloChord(5.74, 7.56, { 42, 54, 60, 66, 74 }, 0.86f); // D9/F#
+        playMelloChord(7.62, 9.42, { 41, 53, 60, 65, 72 }, 0.86f); // Fmaj7
+        playMelloChord(9.48, 10.90,{ 40, 52, 59, 68, 74 }, 0.87f); // E7
+        playMelloChord(10.96,13.40,{ 45, 52, 60, 69, 71 }, 0.85f); // Am(add9)
+
+        renderSequenceToWav(45, 14.5, 78.0, ev, presetsDir.getChildFile("46_67_mellotron_m400_flute_strings.wav"));
+    }
+
+    // =========================================================================
+    // Preset 47 (idx 46): '71 Maggot Brain Octavia Fuzz (68 BPM, E Minor — Eddie Hazel / Hendrix Solo!)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+        ev.push_back({ 0.00, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        ev.push_back({ 0.08, juce::MidiMessage::noteOn(1, 40, 0.96f) });
+        ev.push_back({ 0.82, juce::MidiMessage::noteOff(1, 40) });
+
+        ev.push_back({ 0.95, juce::MidiMessage::noteOn(3, 74, 0.98f) });
+        addPitchWheelRamp(ev, 3, 1.05, 1.48, 0.0f, +2.0f / 12.0f);
+        addPitchWheelRamp(ev, 3, 2.35, 2.68, +2.0f / 12.0f, 0.0f);
+        ev.push_back({ 2.75, juce::MidiMessage::noteOff(3, 74) });
+        ev.push_back({ 2.77, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        auto soloNote = [&](double t0, double t1, int note, float vel) {
+            ev.push_back({ t0, juce::MidiMessage::noteOn(3, note, vel) });
+            ev.push_back({ t1, juce::MidiMessage::noteOff(3, note) });
+        };
+        soloNote(2.80, 3.04, 71, 0.95f);
+        soloNote(3.06, 3.28, 74, 0.96f);
+        soloNote(3.30, 3.52, 71, 0.94f);
+        soloNote(3.54, 3.78, 69, 0.95f);
+        soloNote(3.80, 4.15, 67, 0.96f);
+        soloNote(4.18, 4.95, 64, 0.97f);
+
+        ev.push_back({ 5.12, juce::MidiMessage::noteOn(3, 76, 0.96f) });
+        ev.push_back({ 5.42, juce::MidiMessage::noteOff(3, 76) });
+        ev.push_back({ 5.46, juce::MidiMessage::noteOn(3, 79, 0.99f) });
+        addPitchWheelRamp(ev, 3, 5.58, 6.08, 0.0f, +2.0f / 12.0f);
+        addPitchWheelRamp(ev, 3, 6.95, 7.35, +2.0f / 12.0f, 0.0f);
+        ev.push_back({ 7.55, juce::MidiMessage::noteOff(3, 79) });
+        ev.push_back({ 7.58, juce::MidiMessage::pitchWheel(3, 8192) });
+
+        soloNote(7.65, 7.90, 76, 0.96f);
+        soloNote(7.92, 8.16, 74, 0.95f);
+        soloNote(8.18, 8.42, 71, 0.96f);
+        soloNote(8.44, 8.66, 70, 0.95f);
+        soloNote(8.68, 8.92, 69, 0.95f);
+        soloNote(8.94, 9.25, 67, 0.96f);
+
+        ev.push_back({ 9.30, juce::MidiMessage::noteOn(3, 74, 0.99f) });
+        addPitchWheelRamp(ev, 3, 9.48, 9.98, 0.0f, +2.0f / 12.0f);
+        ev.push_back({ 12.50, juce::MidiMessage::noteOff(3, 74) });
+
+        renderSequenceToWav(46, 14.0, 68.0, ev, presetsDir.getChildFile("47_71_maggot_brain_octavia_fuzz.wav"));
+    }
+
+    // =========================================================================
+    // Preset 48 (idx 47): '72 Suitcase Rhodes & Dyno (78 BPM, Eb Major / Cm11 — D'Angelo 'Untitled' / 'Pink + White'!)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+
+        auto rhodesRoll = [&](double t0, double t1, std::initializer_list<int> notes, float vel, double rollSec = 0.016) {
+            int k = 0;
+            for (int n : notes) {
+                ev.push_back({ t0 + k * rollSec, juce::MidiMessage::noteOn(1, n, vel) });
+                ev.push_back({ t1,               juce::MidiMessage::noteOff(1, n) });
+                ++k;
+            }
+        };
+
+        rhodesRoll(0.08, 2.22, { 44, 51, 55, 60, 70 }, 0.74f, 0.018);
+        ev.push_back({ 1.32, juce::MidiMessage::noteOn(1, 77, 0.84f) });
+        ev.push_back({ 1.38, juce::MidiMessage::noteOff(1, 77) });
+        ev.push_back({ 1.38, juce::MidiMessage::noteOn(1, 79, 0.90f) });
+        ev.push_back({ 2.22, juce::MidiMessage::noteOff(1, 79) });
+
+        rhodesRoll(2.28, 3.82, { 43, 53, 59, 63, 70 }, 0.82f, 0.015);
+
+        rhodesRoll(3.88, 6.25, { 36, 43, 58, 63, 65, 74 }, 0.78f, 0.018);
+        const int runNotes[4] = { 70, 72, 75, 79 };
+        for (int i = 0; i < 4; ++i) {
+            ev.push_back({ 5.05 + i * 0.19, juce::MidiMessage::noteOn(1, runNotes[i], 0.82f + 0.03f * i) });
+            ev.push_back({ 6.25,            juce::MidiMessage::noteOff(1, runNotes[i]) });
+        }
+
+        rhodesRoll(6.32, 8.15, { 41, 51, 57, 62, 67, 72 }, 0.80f, 0.016);
+        rhodesRoll(8.22, 9.95, { 46, 56, 60, 63, 67, 72 }, 0.84f, 0.016);
+        rhodesRoll(10.04, 13.45, { 39, 46, 55, 62, 65, 72, 79 }, 0.86f, 0.024);
+
+        renderSequenceToWav(47, 14.6, 78.0, ev, presetsDir.getChildFile("48_72_suitcase_rhodes_dyno.wav"));
+    }
+
+    // =========================================================================
+    // Preset 49 (idx 48): Blonde White-Ferrari Prism (66 BPM, C Major — 100.000% Pure Intonation!)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+
+        auto blondeHymn = [&](double t0, double t1, std::initializer_list<int> notes, float vel) {
+            int k = 0;
+            for (int n : notes) {
+                ev.push_back({ t0 + k * 0.014, juce::MidiMessage::noteOn(1, n, vel) });
+                ev.push_back({ t1,             juce::MidiMessage::noteOff(1, n) });
+                ++k;
+            }
+        };
+
+        blondeHymn(0.08,  2.22, { 41, 48, 57, 64, 72 }, 0.84f);     // Fmaj7
+        blondeHymn(2.70,  4.84, { 36, 43, 52, 62, 67, 76 }, 0.85f); // C(add9)
+        blondeHymn(5.32,  7.46, { 45, 52, 60, 67, 72 }, 0.86f);     // Am7
+        blondeHymn(7.94,  9.92, { 43, 50, 59, 64, 71 }, 0.86f);     // G6
+        blondeHymn(10.40, 14.05,{ 41, 48, 57, 64, 67, 74 }, 0.89f); // Fmaj13(add9)
+
+        renderSequenceToWav(48, 15.3, 66.0, ev, presetsDir.getChildFile("49_blonde_white_ferrari_prism.wav"));
+    }
+
+    // =========================================================================
+    // Preset 50 (idx 49): '77 Rumours Pianet & Flanger (120 BPM, F Lydian / A Minor — Fleetwood Mac 'Dreams' Sausalito!)
+    // =========================================================================
+    {
+        std::vector<ScheduledMidiEvent> ev;
+
+        const double b = 60.0 / 120.0; // 0.50s per beat; 1 bar = 2.0s
+        auto pianetPulse = [&](double beat, double durBeats, std::initializer_list<int> chord, float vel) {
+            int k = 0;
+            for (int n : chord) {
+                const double t0 = 0.08 + beat * b + k * 0.012;
+                ev.push_back({ t0,                juce::MidiMessage::noteOn(1, n, vel) });
+                ev.push_back({ t0 + durBeats * b, juce::MidiMessage::noteOff(1, n) });
+                ++k;
+            }
+        };
+
+        pianetPulse(0.0, 1.85, { 41, 48, 57, 64, 67 }, 0.78f);
+        pianetPulse(2.0, 1.85, { 41, 48, 57, 64, 72 }, 0.82f);
+
+        pianetPulse(4.0, 1.85, { 43, 50, 59, 64, 71 }, 0.80f);
+        pianetPulse(6.0, 1.85, { 43, 50, 59, 64, 74 }, 0.84f);
+
+        pianetPulse(8.0, 3.70, { 41, 48, 57, 64 }, 0.78f);
+        ev.push_back({ 0.08 + 8.5 * b,  juce::MidiMessage::noteOn(1, 69, 0.84f) });
+        ev.push_back({ 0.08 + 9.4 * b,  juce::MidiMessage::noteOff(1, 69) });
+        ev.push_back({ 0.08 + 9.5 * b,  juce::MidiMessage::noteOn(1, 71, 0.85f) });
+        ev.push_back({ 0.08 + 10.4 * b, juce::MidiMessage::noteOff(1, 71) });
+        ev.push_back({ 0.08 + 10.5 * b, juce::MidiMessage::noteOn(1, 72, 0.88f) });
+        ev.push_back({ 0.08 + 11.8 * b, juce::MidiMessage::noteOff(1, 72) });
+
+        pianetPulse(12.0, 1.85, { 43, 50, 59, 64, 76 }, 0.86f);
+        pianetPulse(14.0, 1.85, { 45, 52, 60, 67, 74 }, 0.84f);
+
+        pianetPulse(16.0, 8.20, { 41, 48, 57, 64, 67, 72, 76 }, 0.86f);
+
+        renderSequenceToWav(49, 14.0, 120.0, ev, presetsDir.getChildFile("50_77_rumours_pianet_flanger.wav"));
     }
 
     // =========================================================================
