@@ -2,6 +2,43 @@
 
 Branch: `ui-v2-design`. Read `TASTE.md` first: it holds every decision and preference from Joshua, in order. `BRIEF.md` is the original brief.
 
+## START HERE (next agent, 2026-11-11 evening)
+
+**State:** the five 3D steels (rosewood main, maple, red sparkle, pearloid, koa) are APPROVED by Joshua ("they look great now!"),
+built into the plugin (67 UI tests pass) and pushed (`03c65a0`). Don't change their look unless he asks. The detailed history
+is in the dated sections at the bottom of this file (from "2026-11-10: real 3D pedal steel" onward).
+
+**What the steels have now** (all in `blender/steel_3d.py`, per-finish defaults in the `TUNED` dict near the top; env vars override):
+- Colours matched to the concepts `final/steel3d/gen/p3d_*` by measurement, not by eye (`final/steel3d/uvt/measrs.py`, `measpl.py`).
+- Painted gloss highlights on every finish: `blender/highlight_mask.py <finish> <out>` writes `textures/cabinet/hl_<finish>.png`
+  (white-hot front-edge line + glare spots on the top strip). Driven by HL, HL_CORE (tinted glow to white core), HL_TR/TG/TB,
+  HL_TEXP, TILE_GLINT. Valid only because the plugin camera is fixed. Joshua loved this look; keep it consistent across finishes.
+- Thin dark satin bottom rail (BottomBar, BAR_H/BAR_VAL) on all but red. Red: one mirror chrome band mid-front, no rail, no top trim.
+  Pearloid: darker satin EdgeTrim on the top front edge, CAB_TOP_VAL dims its up-facing top.
+
+**To change a steel and get it into the plugin** (run from `design/ui_v2`; Blender path in "Tools" below):
+1. Test: `STEEL_MODE=static STEEL_FINISH=<f> blender --factory-startup -b -P blender/steel_3d.py -- final/steel3d/uvt/<name> 64`
+2. Final plates at 160 samples: `finish_<f>` for maple/koa/redsparkle/pearloid; rosewood = `STEEL_MODE=layers ... -- final/steel3d/layers 160`
+   (renders static + all pedal/knee animation frames). Anything that changes geometry near the pedals/knee levers or the lighting
+   needs layers AND every finish re-rendered together. Script: `final/steel3d/uvt/rerender_gloss.sh` is a template.
+3. From `final/steel3d`: `python steel_pack.py package layers`, `python steel_pack.py skins maple=finish_maple redsparkle=finish_redsparkle pearloid=finish_pearloid koa=finish_koa`,
+   `python steel_pack.py cards walnut=layers maple=finish_maple redsparkle=finish_redsparkle pearloid=finish_pearloid koa=finish_koa`
+   (steel_pack uses relative paths: run it from that folder).
+4. From repo root: `python design/ui_v2/final/parts/gen_layout.py`, `cmake --build build --config Release`,
+   `./build/PedalSteelShot_artefacts/Release/PedalSteelShot.exe` (expect 67 PASS; writes renders/ui_screenshot*.png).
+
+**Gotchas:** steel_3d.py has CRLF line endings (edit with the Edit tool or `open(..., newline="")`). Python string edits to TUNED
+broke the file once: run `python -c "import ast;ast.parse(open('blender/steel_3d.py',encoding='utf-8').read())"` after editing.
+A Mix node's colour sockets are inputs[6]/[7], output[2] in Blender 5. Don't kill other sessions' blender.exe processes.
+
+**How Joshua works:** he judges by images, side by side with the concept. Send comparison sheets (concept vs ours, same crop)
+with SendUserFile, not text. When colour is off, measure and tune, or give him a masked slider page; never several rounds
+of guesses. He circles problems on screenshots; fix exactly what's circled, then show the result.
+
+**Still open (not started or unanswered):** hardware picker artifact (3f53TJPzbBxYsPc1psGRk7) never answered; the More drawer
+(Motion + Effects) and MIDI Learn designs are unpicked (see "Where it stands" below); each preset's own instrument
+design beyond the finish is still the same 3D model.
+
 ## Where it stands
 
 - **Knob correction follow-up (2026-11-06):** Joshua rejected the previous knob match and asked for realistic native rotation with correct moving highlights. `final/knobs/studio_rotation/` now contains a separate Cycles studio, an animated `.blend`, 181-frame transparent atlases, a motion preview, and a reference/previous/new comparison. Read its `README.md` for validation and limitations. **Pixel-perfect reference fidelity remains unachieved**, particularly for the Feel contour and shoulder lighting. The earlier “done” label below describes the prior export only, not user acceptance. The new candidate does not overwrite the existing strips or change the JUCE UI.
