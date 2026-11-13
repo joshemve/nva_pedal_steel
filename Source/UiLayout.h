@@ -46,11 +46,11 @@ namespace UiLayout {
     inline constexpr int d3dFrames_lever_L = 7;
     inline constexpr float d3d_lever_R[4] = { 1450.00f, 725.50f, 93.00f, 133.00f };   // x, y, w, h
     inline constexpr int d3dFrames_lever_R = 7;
-    inline constexpr float d3d_lamp_A[4] = { 981.50f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
+    inline constexpr float d3d_lamp_A[4] = { 981.50f, 688.00f, 88.50f, 80.50f };   // x, y, w, h
     inline constexpr int d3dFrames_lamp_A = 1;
-    inline constexpr float d3d_lamp_B[4] = { 1070.00f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
+    inline constexpr float d3d_lamp_B[4] = { 1070.00f, 688.00f, 88.50f, 80.50f };   // x, y, w, h
     inline constexpr int d3dFrames_lamp_B = 1;
-    inline constexpr float d3d_lamp_C[4] = { 1158.50f, 688.00f, 88.50f, 60.50f };   // x, y, w, h
+    inline constexpr float d3d_lamp_C[4] = { 1158.50f, 688.00f, 88.50f, 80.50f };   // x, y, w, h
     inline constexpr int d3dFrames_lamp_C = 1;
     inline constexpr float skinBodyY[5] = { 90.0f, 90.0f, 90.0f, 90.0f, 90.0f };   // UI px: bottom edge of each instrument's body (walnut, maple, redsparkle, pearloid, koa)
     inline constexpr int meterSegments = 15;

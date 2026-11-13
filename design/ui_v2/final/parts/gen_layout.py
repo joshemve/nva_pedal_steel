@@ -106,6 +106,19 @@ for name, v in D3["layers"].items():
         _pm = cv2.warpAffine(_pm, np.float32([[1, 0, _sx], [0, 1, 0]]), (_lb.shape[1], _lb.shape[0]), flags=cv2.INTER_CUBIC)
         _pm[..., :3] = np.where(_pm[..., 3:] > 0.5, _pm[..., :3] / np.maximum(_pm[..., 3:] / 255, 1e-3), 0)
         Image.fromarray(np.clip(_pm, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "d3d_lamp_C.png"))
+    if name.startswith("lamp_"):   # the lit lamp's glow ran off the bottom of its render, cut flat (Joshua): the glow is
+        LAMP_PAD = 40                 # round, so the missing lower part is the upper part mirrored about the bulb's centre
+        _la = np.asarray(Image.open(os.path.join(OUT, "d3d_%s.png" % name)).convert("RGBA"), np.float32)
+        _h = _la.shape[0]; _lum = _la[..., :3].mean(2) * _la[..., 3] / 255
+        _by = float(np.where(_lum > 0.6 * _lum.max())[0].mean())
+        _out = np.zeros((_h + LAMP_PAD, _la.shape[1], 4), np.float32); _out[:_h] = _la
+        for _y in range(_h, _h + LAMP_PAD):
+            _src = int(round(2 * _by - _y))
+            if 0 <= _src < _h: _out[_y] = _la[_src]
+        _yy = np.arange(_h + LAMP_PAD, dtype=np.float32)[:, None]
+        _out[..., 3] *= np.clip((_h + LAMP_PAD - 1 - _yy) / 8.0, 0, 1)   # and it fades out before the new edge
+        Image.fromarray(np.clip(_out, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "d3d_%s.png" % name))
+        v["box"] = [v["box"][0], v["box"][1], v["box"][2], v["box"][3] + LAMP_PAD]
     if name.startswith("lever_"):   # the swung lever's shadow ran off its frame: cut straight (Joshua); fade it out
         _a = np.asarray(Image.open(os.path.join(OUT, "d3d_%s.png" % name)).convert("RGBA"), np.float32)
         _fh = _a.shape[0] // v["frames"]; _yy, _xx = np.mgrid[0:_fh, 0:_a.shape[1]]
