@@ -514,3 +514,14 @@ numbers: Blender/Figma/Houdini; configurator camera guidance). All in `app.js` /
 - Audio check: `PedalSteelRender --audit` passes; every preset renders below -1 dBFS. Level at a fixed note spans 9 dB
   (22 at -16.0, 12 at -25.1). Proposed, waiting on Joshua: TRIM 22 -4.5, 08 +4.3, 12 +3.4, 04 +1.9 (12 and 04 capped
   by their phrase peaks). Run the render tool from a scratch folder: it writes `renders/` into the working directory.
+
+### Open at the end of 2026-11-12 (Joshua restarted; pick up here)
+- TRIM readout paper: `paper_grain.py` now GENERATES grain (copying from above duplicated faint diagonal creases:
+  "little artifact lines") and rebuilds the shading from the paper around the box, knob and its shadow excluded.
+  Joshua hasn't seen this version yet.
+- TODO (Joshua, screenshot): patchy AI texture inside the MODE dropdown box ("Crying Lead Gliss").
+- TODO (Joshua, screenshot): uneven AI lighting patches across the dark deck behind A / B / C and LKL / LKR, down to the
+  divider above MIDI LEARN / MORE.
+- TODO (Joshua): while a chord is held over MIDI, grabbing the tone bar with the mouse must NOT trigger the frets under the
+  pointer; the drag should slide the held MIDI notes (bar position follows the mouse, like a real bar slide).
+- Still waiting on his yes/no: preset level TRIM changes (22 -4.5, 08 +4.3, 12 +3.4, 04 +1.9 dB).
