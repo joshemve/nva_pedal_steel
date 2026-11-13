@@ -1,0 +1,23 @@
+[
+ {
+  "name": "deck_bare_a",
+  "images": [
+   "final/bgregen/in_main.png"
+  ],
+  "prompt": "This is a screenshot of an audio plugin: a 3D pedal steel guitar on a rug, a cream top bar, and a dark brown control deck in a walnut wood frame at the bottom. Recreate this SAME image at the same framing, size and aspect (16:10), keeping the top bar, the rug, the room and the pedal steel guitar with its pedals and legs exactly as they are. Change only the control deck at the bottom: make it an EMPTY panel. Remove every knob, tick mark, pedal switch, lamp, knee lever, slider, button, value box, dropdown, divider line and every word of text. What remains is one continuous, naturally lit dark brown painted metal panel with a fine, even satin grain, consistent everywhere (no patches, no blotches, no areas that look pasted or cleaned up), the same walnut frame around it with its four corner screws, and the same soft shadow the frame casts. Same colour and brightness as the original panel. Photoreal, matte, no glare, no new objects, nothing added."
+ },
+ {
+  "name": "deck_bare_b",
+  "images": [
+   "final/bgregen/in_main.png"
+  ],
+  "prompt": "This is a screenshot of an audio plugin: a 3D pedal steel guitar on a rug, a cream top bar, and a dark brown control deck in a walnut wood frame at the bottom. Recreate this SAME image at the same framing, size and aspect (16:10), keeping the top bar, the rug, the room and the pedal steel guitar with its pedals and legs exactly as they are. Change only the control deck at the bottom: make it an EMPTY panel. Remove every knob, tick mark, pedal switch, lamp, knee lever, slider, button, value box, dropdown, divider line and every word of text. What remains is one continuous, naturally lit dark brown painted metal panel with a fine, even satin grain, consistent everywhere (no patches, no blotches, no areas that look pasted or cleaned up), the same walnut frame around it with its four corner screws, and the same soft shadow the frame casts. Same colour and brightness as the original panel. Keep the panel very slightly lighter toward the top edge, like soft overhead light. Photoreal, matte, no glare, no new objects, nothing added."
+ },
+ {
+  "name": "deck_labels",
+  "images": [
+   "final/bgregen/in_main.png"
+  ],
+  "prompt": "This is a screenshot of an audio plugin: a 3D pedal steel guitar on a rug, a cream top bar, and a dark brown control deck in a walnut wood frame at the bottom. Recreate this SAME image at the same framing, size and aspect (16:10), keeping the top bar, the rug, the room and the pedal steel guitar with its pedals and legs exactly as they are. Change only the control deck at the bottom: remove every knob, tick mark, pedal switch, lamp, knee lever, the slider handle and track, and any numbers inside the value boxes. Keep the section titles (VOICE, FEEL, SPACE, A, B, C, LKL, LKR, MODE, VOLUME PEDAL), the knob names, the thin cream divider lines, the empty outlined value boxes, the MODE box and the MIDI LEARN / MORE buttons exactly where they are. The dark brown panel behind everything must be one continuous, naturally lit painted surface with an even fine grain everywhere: no patches, blotches or areas that look pasted, cut out or covered up. Photoreal, matte, no glare, no new objects, nothing added."
+ }
+]

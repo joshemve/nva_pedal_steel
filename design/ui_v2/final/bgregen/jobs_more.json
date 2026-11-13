@@ -1,0 +1,16 @@
+[
+ {
+  "name": "more_bare_a",
+  "images": [
+   "final/bgregen/in_more.png"
+  ],
+  "prompt": "This is a screenshot of an audio plugin: a 3D pedal steel guitar on a rug, a cream top bar, and a tall dark brown control deck (two rows of controls) in a walnut wood frame filling the lower half. Recreate this SAME image at the same framing, size and aspect (16:10), keeping the top bar, the rug, the room and the pedal steel guitar with its pedals and legs exactly as they are. Change only the control deck at the bottom: make it an EMPTY panel. Remove every knob, tick mark, pedal switch, lamp, knee lever, slider, button, value box, dropdown, divider line and every word of text. What remains is one continuous, naturally lit dark brown painted metal panel with a fine, even satin grain, consistent everywhere (no patches, no blotches, no areas that look pasted or cleaned up), the same walnut frame around it with its four corner screws, and the same soft shadow the frame casts. Same colour and brightness as the original panel. Photoreal, matte, no glare, no new objects, nothing added."
+ },
+ {
+  "name": "more_bare_a2",
+  "images": [
+   "final/bgregen/in_more.png"
+  ],
+  "prompt": "This is a screenshot of an audio plugin: a 3D pedal steel guitar on a rug, a cream top bar, and a tall dark brown control deck (two rows of controls) in a walnut wood frame filling the lower half. Recreate this SAME image at the same framing, size and aspect (16:10), keeping the top bar, the rug, the room and the pedal steel guitar with its pedals and legs exactly as they are. Change only the control deck at the bottom: make it an EMPTY panel. Remove every knob, tick mark, pedal switch, lamp, knee lever, slider, button, value box, dropdown, divider line and every word of text. What remains is one continuous, naturally lit dark brown painted metal panel with a fine, even satin grain, consistent everywhere (no patches, no blotches, no areas that look pasted or cleaned up), the same walnut frame around it with its four corner screws, and the same soft shadow the frame casts. Same colour and brightness as the original panel. Photoreal, matte, no glare, no new objects, nothing added."
+ }
+]
