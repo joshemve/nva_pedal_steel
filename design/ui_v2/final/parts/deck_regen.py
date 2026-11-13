@@ -22,8 +22,31 @@ def _nblur(img, m, sigma):
     return num / np.maximum(den[..., None] if img.ndim == 3 else den, 1e-4)
 
 
+_SURF = None
+
+
 def apply(bg):
     return _regen(bg, SURFACE, BOX, 0)
+
+
+def swap_sprite(sp, X0, Y0):
+    """an overlay sprite's own patches of old deck paint (the small window's bolder labels, cut from an older concept,
+    each with a fringe of that concept's blotchy paint) -> the new surface; the cream ink keeps its pixels.
+    sp: float RGBA; X0, Y0: its canvas top-left. Run after apply()."""
+    if _SURF is None: return sp
+    sp = sp.copy(); h, w = sp.shape[:2]
+    surf = _SURF[Y0:Y0 + h, X0:X0 + w]
+    if surf.shape[:2] != (h, w): surf = cv2.copyMakeBorder(surf, 0, h - surf.shape[0], 0, w - surf.shape[1], cv2.BORDER_REPLICATE)
+    rgb = sp[..., :3]; a = sp[..., 3]; lum = rgb.mean(2); rb = rgb[..., 0] - rgb[..., 2]
+    paint = ((a > 8) & (lum < 70) & (rb < 25)).astype(np.uint8)
+    ink = cv2.dilate(((lum > 90) & (a > 8)).astype(np.uint8), np.ones((5, 5), np.uint8))
+    paint = (paint & (1 - ink)).astype(np.float32)
+    num = cv2.GaussianBlur(rgb * paint[..., None], (0, 0), 3.0); den = cv2.GaussianBlur(paint, (0, 0), 3.0)[..., None]
+    old_p = num / np.maximum(den, 1e-4)
+    num = cv2.GaussianBlur(surf * paint[..., None], (0, 0), 3.0); new_p = num / np.maximum(den, 1e-4)
+    wgt = cv2.GaussianBlur(paint, (0, 0), 1.0)[..., None]
+    sp[..., :3] = surf * wgt + (rgb - old_p + new_p) * (1 - wgt) * (den > 1e-3) + rgb * (1 - wgt) * (den <= 1e-3)
+    return sp
 
 
 def apply_more(more_rgb, y_canvas):
@@ -46,6 +69,8 @@ def _regen(img, surface, box, yoff):
     # the new surface matched to our paint: same mean colour, same overall contrast of its fine grain
     gm = gen.reshape(-1, 3)[paint.ravel() > 0.5].mean(0); om = reg.reshape(-1, 3)[paint.ravel() > 0.5].mean(0)
     surf = gen * (om / np.maximum(gm, 1e-3))[None, None, :]
+    if yoff == 0:   # the main deck's matched surface, for swap_sprite
+        global _SURF; _SURF = np.zeros((2000, 3200, 3), np.float32); _SURF[y0:y1, x0:x1] = surf
     # ink and frame keep their own pixels; their surrounding paint is swapped by difference (ink sits on the new paint)
     old_paint = _nblur(reg, paint, 4.0)
     new_paint = _nblur(surf, paint, 4.0)

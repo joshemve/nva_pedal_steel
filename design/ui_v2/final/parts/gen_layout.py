@@ -55,6 +55,10 @@ for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states a
 for k, v in S.items():
     if k.startswith(("floor_", "kl_", "pedal_", "lever_")): continue   # pedal_/lever_: the deck controls are 3D (deck3d/)
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
+    if k == "small_deck":   # its labels' fringes of old blotchy paint -> the new deck surface
+        _sd = np.asarray(Image.open(os.path.join(OUT, "sp_small_deck.png")).convert("RGBA"), np.float32)
+        _sd = deck_regen.swap_sprite(_sd, int(round(b[0])), int(round(b[1])))
+        Image.fromarray(np.clip(_sd, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "sp_small_deck.png"))
     if k == "small_top":   # its baked half-bold TRIM and stray "B" (small_1 artifacts) -> a clean bold TRIM
         import small_top_fix
         _st = np.asarray(Image.open(os.path.join(OUT, "sp_small_top.png")).convert("RGBA"), np.float32)
