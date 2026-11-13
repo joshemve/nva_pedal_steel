@@ -1,0 +1,16 @@
+[
+ {
+  "name": "fill_a",
+  "images": [
+   "final/bgregen/in_fill.png"
+  ],
+  "prompt": "Image 1 is a lit fader track from an audio plugin: a long horizontal rounded groove on black, filled with a warm cream glowing bar with thin metal rims above and below. It came out patchy: orange blotches inside the bar and ragged rim lines. Repaint it CLEAN at exactly the same size, position, length, thickness and colours: the same horizontal bar with round ends, a smooth even warm-cream glow along its whole length (slightly brighter in the middle row, soft falloff toward the top and bottom edges), perfectly straight, even, thin satin-metal rim lines above and below that follow the bar exactly, and pure black everywhere else. No blotches, no streaks, no texture variation along the length, no noise, no text, nothing added. Output one image 1536x1024 with the bar in the same place."
+ },
+ {
+  "name": "fill_b",
+  "images": [
+   "final/bgregen/in_fill.png"
+  ],
+  "prompt": "Image 1 is a lit fader track from an audio plugin: a long horizontal rounded groove on black, filled with a warm cream glowing bar with thin metal rims above and below. It came out patchy: orange blotches inside the bar and ragged rim lines. Repaint it CLEAN at exactly the same size, position, length, thickness and colours: the same horizontal bar with round ends, a smooth even warm-cream glow along its whole length (slightly brighter in the middle row, soft falloff toward the top and bottom edges), perfectly straight, even, thin satin-metal rim lines above and below that follow the bar exactly, and pure black everywhere else. No blotches, no streaks, no texture variation along the length, no noise, no text, nothing added. Output one image 1536x1024 with the bar in the same place."
+ }
+]

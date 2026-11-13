@@ -58,6 +58,16 @@ KS_ = {k_: [(i_["cx"], i_["cy"]) for i_ in _SJ[k_]["instances"]] for k_ in ("sca
 for k, v in S.items():
     if k.startswith(("floor_", "kl_", "pedal_", "lever_")): continue   # pedal_/lever_: the deck controls are 3D (deck3d/)
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
+    if k == "slider_fill":   # repainted clean by ChatGPT (the cut-out fill was patchy: orange blotches, ragged rims; Joshua)
+        _ai = Image.open(os.path.join(H, "..", "bgregen", "out", "fill_a_1.png")).convert("RGB").resize((1536, 1024), Image.LANCZOS)
+        _r = np.asarray(_ai.crop((0, 428, 1536, 595)).resize((660, 72), Image.LANCZOS), np.float32)
+        _M = np.float32([[607 / 609, 0, 21 - 21 * 607 / 609], [0, 1, 1]])          # its bar onto ours: x 21..630 -> 21..628, 1 px down
+        _r = cv2.warpAffine(_r, _M, (660, 72), flags=cv2.INTER_CUBIC)
+        _fo = np.asarray(Image.open(os.path.join(OUT, "sp_slider_fill.png")).convert("RGBA"), np.float32)
+        _new = np.zeros_like(_fo); _lum = _r.max(2)
+        _al = np.clip(_lum / 40.0, 0, 1)
+        _new[:72, :660, :3] = _r / np.maximum(_al, 1e-3)[..., None]; _new[:72, :660, 3] = _al * 255
+        Image.fromarray(np.clip(_new, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "sp_slider_fill.png"))
     if k == "slider_thumb":   # it carried a rectangle of the old concept round the handle: dark patch, rim bits, a tick
         _t = np.asarray(Image.open(os.path.join(OUT, "sp_slider_thumb.png")).convert("RGBA"), np.float32)   # (Joshua)
         _lum = _t[..., :3].mean(2); _cream = ((_t[..., 3] > 200) & (_lum > 95) & (_t[..., 0] - _t[..., 2] > 25)).astype(np.uint8)
@@ -95,7 +105,7 @@ for k, v in S.items():
         Image.fromarray(np.clip(_st, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "sp_small_top.png"))
     if k in ("slider_fill", "small_deck"):   # follow the shorter slider / moved strip controls
         a_ = np.asarray(Image.open(os.path.join(OUT, "sp_%s.png" % k)).convert("RGBA"), np.float32)
-        if k == "slider_fill": a_ = MD.remap_groove(a_, b[0])
+        if k == "slider_fill": pass   # the ChatGPT fill is already drawn at the shortened groove's length (no second remap)
         else:
             y_ = MD.STRIP_Y[0] - b[1]; x_ = MD.MOVE_X[0] - b[0]
             mv = a_[y_:, x_:].copy(); a_[y_:, x_ - _SH:] = 0; a_[y_:, x_ - _SH:a_.shape[1] - _SH] = mv
@@ -164,6 +174,10 @@ for name, v in D3["layers"].items():
         for _f in range(v["frames"]):
             _fr = np.zeros((_fh + 2 * SHP, _W + 2 * SHP, 4), np.float32); _fr[SHP:SHP + _fh, SHP:SHP + _W] = _a[_f * _fh:(_f + 1) * _fh]
             _al = _fr[..., 3] / 255; _body = (_al >= 200 / 255).astype(np.uint8)
+            if name.startswith("pedal_"):   # C's render kept an opaque dark band under its copper base (an extra shadow; Joshua):
+                _lumf = _fr[..., :3].mean(2); _cu = (_lumf > 70) & (_al > 0.8)     # the switch ends at its lowest copper row
+                _cr = np.where(_cu[:, _fr.shape[1] // 2 - 30:_fr.shape[1] // 2 + 30].any(1))[0]
+                if len(_cr): _body[_cr.max() + 2:] = 0
             _d = cv2.distanceTransform(1 - _body, cv2.DIST_L2, 3)
             _keep = (_d < 1.6) & (_al > 0.01)
             if name.startswith("lever_"): _keep[:SHP + 14] |= _al[:SHP + 14] > 0.01   # its mount meets the plate at the top
