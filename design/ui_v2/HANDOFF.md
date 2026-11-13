@@ -499,3 +499,18 @@ numbers: Blender/Figma/Houdini; configurator camera guidance). All in `app.js` /
   and rosewood got it too: highlight_mask.py layouts for them (front edge line + three glare spots on the top strip, no broad
   sheen), TUNED HL 7 / HL_TEXP .5 / HL_CORE 1.2 with a per-wood tint (HL_TR/TG/TB); pearloid got the glare spots as well.
   Layers + every finish re-rendered, packed, rebuilt; 67 UI tests pass. Sheet: renders/steels_gloss_all.jpg.
+
+## 2026-11-12 late: TRIM and knee-lever cleanups (commits 05e237a, 6ee3d90; not pushed yet)
+
+- TRIM had a painted pointer stub between the label and the knob, so a turned TRIM showed two pointers (Joshua: "there's an
+  extra pointer"). `final/parts/paper_grain.py` (hooked into gen_layout after tick_rings) fills the stub from the paper
+  either side and re-grains the erased "0.0 dB" patch right of the knob (it was a smooth blob). The small window's sprite
+  had its own stub: `small_top_fix.py` STUB_BOX inpaints it.
+- `dome_pointers.py`: the TRIM pointer strip keeps only its bar (it had picked up specks of the TRIM letters, which swung
+  with it). Frame size went 82 -> 76.
+- `drawFloorLayer` clips one pixel short of the box bottom: a clipped frame shares the strip's pixels, and scaling it
+  read the next pose's opaque first row (a faint copper dash under LKL/LKR, the floor knee levers and small-window pedals).
+  If a frame strip ever shows a line at its edge, suspect this bleed first.
+- Audio check: `PedalSteelRender --audit` passes; every preset renders below -1 dBFS. Level at a fixed note spans 9 dB
+  (22 at -16.0, 12 at -25.1). Proposed, waiting on Joshua: TRIM 22 -4.5, 08 +4.3, 12 +3.4, 04 +1.9 (12 and 04 capped
+  by their phrase peaks). Run the render tool from a scratch folder: it writes `renders/` into the working directory.
