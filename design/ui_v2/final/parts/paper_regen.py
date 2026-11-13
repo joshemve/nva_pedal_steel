@@ -14,6 +14,29 @@ BOX = (0, 0, 3200, 186)           # canvas px: the bar down to just above its bo
 KEEP_CIRCLES = [(2975.0, 105.0, 62.0)]   # canvas (cx, cy, r): the TRIM knob, its cream dome is paper-coloured
 
 
+_SURF = None   # the matched paper sheet over BOX, kept for swap_sprite (apply runs first)
+
+
+def swap_sprite(sp, X0, Y0):
+    """an overlay sprite's own paper patches (the small window's top bar, cut from an older concept) -> the same sheet,
+    so they don't show as differently grained rectangles; its ink keeps its pixels. sp: float RGBA; X0, Y0: its canvas
+    top-left."""
+    if _SURF is None: return sp
+    sp = sp.copy(); h, w = sp.shape[:2]
+    surf = np.zeros((h, w, 3), np.float32)
+    hh, ww = min(h, _SURF.shape[0] - Y0), min(w, _SURF.shape[1] - X0)
+    surf[:hh, :ww] = _SURF[Y0:Y0 + hh, X0:X0 + ww]
+    if hh < h: surf[hh:] = surf[hh - 1:hh]
+    rgb = sp[..., :3]; a = sp[..., 3]; lum = rgb.mean(2)
+    level = np.median(lum[(a > 250) & (lum > 150)])
+    plain = ((a > 8) & (lum > level - 12) & (lum < level + 14)).astype(np.uint8)
+    paint = (cv2.dilate(1 - cv2.erode(plain, np.ones((3, 3), np.uint8)), np.ones((7, 7), np.uint8)) == 0).astype(np.float32)
+    old_p = _nblur(rgb, paint, 4.0); new_p = _nblur(surf, paint, 4.0)
+    wgt = cv2.GaussianBlur(paint, (0, 0), 1.2)[..., None]
+    sp[..., :3] = surf * wgt + (rgb - old_p + new_p) * (1 - wgt)
+    return sp
+
+
 def _nblur(img, m, sigma):
     num = cv2.GaussianBlur(img * m[..., None], (0, 0), sigma)
     den = cv2.GaussianBlur(m, (0, 0), sigma)[..., None]
@@ -43,6 +66,7 @@ def apply(bg):
     # the new paper matched to ours in mean colour
     gm = gen.reshape(-1, 3)[paint.ravel() > 0.5].mean(0); om = reg.reshape(-1, 3)[paint.ravel() > 0.5].mean(0)
     surf = gen * (om / np.maximum(gm, 1e-3))[None, None, :]
+    global _SURF; _SURF = surf
     old_paper = _nblur(reg, paint, 5.0)
     new_paper = _nblur(surf, paint, 5.0)
     w = cv2.GaussianBlur(paint, (0, 0), 1.5)[..., None]

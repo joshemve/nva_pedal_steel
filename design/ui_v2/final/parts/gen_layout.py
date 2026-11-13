@@ -57,6 +57,7 @@ for k, v in S.items():
         import small_top_fix
         _st = np.asarray(Image.open(os.path.join(OUT, "sp_small_top.png")).convert("RGBA"), np.float32)
         _st = small_top_fix.fix(_st, _bg, (b[0] / 2, b[1] / 2))
+        _st = paper_regen.swap_sprite(_st, int(round(b[0])), int(round(b[1])))   # its paper patches -> the new sheet
         Image.fromarray(np.clip(_st, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "sp_small_top.png"))
     if k in ("slider_fill", "small_deck"):   # follow the shorter slider / moved strip controls
         a_ = np.asarray(Image.open(os.path.join(OUT, "sp_%s.png" % k)).convert("RGBA"), np.float32)
