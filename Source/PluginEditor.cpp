@@ -608,7 +608,12 @@ void PedalSteelAudioProcessorEditor::drawFloorLayer(juce::Graphics& g, const juc
     // one rendered pose per frame (stacked vertically); in between two poses the next one fades in over the last
     if (! strip.isValid() || frames <= 0) return;
     juce::Graphics::ScopedSaveState ss(g);
-    g.reduceClipRegion(juce::Rectangle<float>(box[0] - 1, clipTop, box[2] + 2, box[1] + box[3] - clipTop + 1).toNearestInt());
+    // bottom: stop one pixel short of the box. A clipped frame shares the strip's pixels, so scaling it reads the next
+    // pose's first row (a knee lever's opaque top) into the last pixel row: a faint copper dash under LKL/LKR (Joshua).
+    // Every pose's last rows are transparent shadow fade, so nothing real is lost.
+    const int clipBottom = (int) std::floor(box[1] + box[3] - 0.5f);
+    g.reduceClipRegion(juce::Rectangle<int>::leftTopRightBottom((int) std::floor(box[0] - 1), (int) std::floor(clipTop),
+                                                                (int) std::ceil(box[0] + box[2] + 1), clipBottom));
     const int fh = strip.getHeight() / frames;
     const float f = juce::jlimit(0.0f, (float) (frames - 1), t * (float) (frames - 1));
     const int i0 = (int) f; const float frac = f - (float) i0;
