@@ -48,6 +48,11 @@ for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states a
 for k, v in S.items():
     if k.startswith(("floor_", "kl_", "pedal_", "lever_")): continue   # pedal_/lever_: the deck controls are 3D (deck3d/)
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
+    if k == "small_top":   # its baked half-bold TRIM and stray "B" (small_1 artifacts) -> a clean bold TRIM
+        import small_top_fix
+        _st = np.asarray(Image.open(os.path.join(OUT, "sp_small_top.png")).convert("RGBA"), np.float32)
+        _st = small_top_fix.fix(_st, _bg, (b[0] / 2, b[1] / 2))
+        Image.fromarray(np.clip(_st, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "sp_small_top.png"))
     if k in ("slider_fill", "small_deck"):   # follow the shorter slider / moved strip controls
         a_ = np.asarray(Image.open(os.path.join(OUT, "sp_%s.png" % k)).convert("RGBA"), np.float32)
         if k == "slider_fill": a_ = MD.remap_groove(a_, b[0])
@@ -82,6 +87,15 @@ D3 = json.load(open("sprites/d3d.json"))
 for name, v in D3["layers"].items():
     src = "d3d_%s.png" % name if not name.startswith("lamp_") else "d3d_lamp_%s.png" % name[5:]
     shutil.copy("sprites/" + src, os.path.join(OUT, "d3d_%s.png" % name))
+    if name.startswith("lever_"):   # the swung lever's shadow ran off its frame: cut straight (Joshua); fade it out
+        _a = np.asarray(Image.open(os.path.join(OUT, "d3d_%s.png" % name)).convert("RGBA"), np.float32)
+        _fh = _a.shape[0] // v["frames"]; _yy, _xx = np.mgrid[0:_fh, 0:_a.shape[1]]
+        _d = np.minimum(np.minimum(_fh - 1 - _yy, _xx), _a.shape[1] - 1 - _xx).astype(np.float32)   # not the top (it meets the plate)
+        _w = np.clip(_d / 10.0, 0, 1)
+        for _f in range(v["frames"]):
+            _fr = _a[_f * _fh:(_f + 1) * _fh]; _sh = _fr[..., 3] < 200          # only the soft shadow, never the lever
+            _fr[..., 3] = np.where(_sh, _fr[..., 3] * _w, _fr[..., 3])
+        Image.fromarray(np.clip(_a, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "d3d_%s.png" % name))
     b = v["box"]; rect("d3d_" + name, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
     L("inline constexpr int d3dFrames_%s = %d;" % (name, v["frames"]))
 BY = F3["body_y"]

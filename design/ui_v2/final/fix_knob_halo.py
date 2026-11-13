@@ -54,6 +54,10 @@ for style in [s_ for s_ in ("scallop", "space", "dome") if s_ != "dome" or os.pa
         return fr
 
     strip = np.concatenate([wide_base(strip[k * fs:(k + 1) * fs]) for k in range(n)], 0)
+    if style == "space":   # top light: the lower half falls off into shadow (Joshua: bottom should be darker than the top)
+        t = np.clip((yy - c) / (0.42 * fs), 0, 1); shade = 1.0 - 0.50 * (t * t * (3 - 2 * t))
+        for k in range(n):
+            fr = strip[k * fs:(k + 1) * fs]; fr[..., :3] *= shade[..., None]
     # measure: shadow s = 1 - L / L_panel around the reference knobs, binned by (distance, direction)
     acc = np.zeros((DMAX + 1, NB)); cnt = np.zeros((DMAX + 1, NB))
     for inst, ang in zip(m["instances"], REF_ANGLE[style]):
