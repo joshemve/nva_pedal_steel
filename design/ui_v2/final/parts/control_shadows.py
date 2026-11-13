@@ -12,8 +12,8 @@ from PIL import Image
 H = os.path.dirname(os.path.abspath(__file__))
 MASK_MAIN = os.path.join(H, "..", "bgregen", "shadow_mask_main.png")
 MASK_MORE = os.path.join(H, "..", "bgregen", "shadow_mask_more.png")
-BROAD = dict(sigma=15.0, dx=5.0, dy=16.0, k=0.50)     # canvas px
-CONTACT = dict(sigma=4.0, dx=1.5, dy=5.0, k=0.40)
+BROAD = dict(sigma=14.0, dx=4.0, dy=10.0, k=0.38)     # canvas px (softer: a dark crescent showed under the knobs)
+CONTACT = dict(sigma=4.0, dx=1.0, dy=3.0, k=0.32)
 DECK_X = (40, 3160)                                   # canvas px: inside the walnut frame
 
 

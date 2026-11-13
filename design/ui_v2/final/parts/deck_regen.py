@@ -17,7 +17,7 @@ KEEP = [(1538, 1838, 2182, 1878)]  # canvas px: dark parts that aren't paint: th
 # the FINAL slider groove (after more_deck's strip step shortens it): the old painted handle left its shadow over and
 # round it and a bright fleck at its end, showing at 0 % (Joshua). fix_groove() runs on the finished images.
 GROOVE_Y, GROOVE_X, CLEAN_X = (1833, 1881), (1572, 2150), (1600, 1900)   # rims and their edges too (a line was left at them)
-SMUDGE = (1930, 1812, 2040, 1886)   # canvas px round the old handle: its shadow over the deck paint
+SMUDGE = (1920, 1806, 2060, 1928)   # canvas px round the old handle: its shadow over the deck paint
 
 
 def _nblur(img, m, sigma):
