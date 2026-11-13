@@ -99,6 +99,13 @@ D3 = json.load(open("sprites/d3d.json"))
 for name, v in D3["layers"].items():
     src = "d3d_%s.png" % name if not name.startswith("lamp_") else "d3d_lamp_%s.png" % name[5:]
     shutil.copy("sprites/" + src, os.path.join(OUT, "d3d_%s.png" % name))
+    if name == "lamp_C":   # C's lit render was clipped (flat yellow-green left side, glow pushed right; Joshua): B's lamp,
+        _lb = np.asarray(Image.open("sprites/d3d_lamp_B.png").convert("RGBA"), np.float32)   # moved onto C's own lamp hole
+        _sx = (2394.3 - v["box"][0]) - (2227.7 - D3["layers"]["lamp_B"]["box"][0]) if "layers" in D3 else 0.0
+        _pm = _lb.copy(); _pm[..., :3] *= _pm[..., 3:] / 255
+        _pm = cv2.warpAffine(_pm, np.float32([[1, 0, _sx], [0, 1, 0]]), (_lb.shape[1], _lb.shape[0]), flags=cv2.INTER_CUBIC)
+        _pm[..., :3] = np.where(_pm[..., 3:] > 0.5, _pm[..., :3] / np.maximum(_pm[..., 3:] / 255, 1e-3), 0)
+        Image.fromarray(np.clip(_pm, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "d3d_lamp_C.png"))
     if name.startswith("lever_"):   # the swung lever's shadow ran off its frame: cut straight (Joshua); fade it out
         _a = np.asarray(Image.open(os.path.join(OUT, "d3d_%s.png" % name)).convert("RGBA"), np.float32)
         _fh = _a.shape[0] // v["frames"]; _yy, _xx = np.mgrid[0:_fh, 0:_a.shape[1]]
