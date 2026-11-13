@@ -50,6 +50,8 @@ const char* panelLabel(int c) {
 const char* kCharNames[11] = { "STUDIO", "TAPE", "OPTO", "PHASER", "SPRING", "R&B", "WARBLE", "SHIMMER", "ROTARY", "GATE", "ROOM" };
 constexpr Anchor kLinear{ 0.5f, 0.0f };   // the MORE row has no design reference to match: value -> angle is a straight line
 constexpr float kSpaceFit = 37.4f / 42.2f;   // the workshop SPACE knob drawn inside its tick ring (Joshua's pick)
+constexpr float kTrimFit = 0.69f;                   // the deck's dome knob at TRIM's size (head-on)
+constexpr float kTrimCentre[2] = { 1487.5f, 58.0f };  // UI px
 constexpr float kScallopFit = 0.87f;          // FEEL's scallops sat right against their ticks; same gap as VOICE / SPACE (Joshua)
 juce::Point<float> ptrCentre(const float* o, int px) { return { o[0] + px * 0.25f, o[1] + px * 0.25f }; }
 
@@ -893,7 +895,12 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
         g.drawImage(spMeter.getClippedImage({ 0, 0, (int) srcW, spMeter.getHeight() }),
                     juce::Rectangle<float>(sp_meter_on[0], sp_meter_on[1], srcW * 0.5f, sp_meter_on[3]));
     }
-    drawStripFrame(g, ptrTrim, trimFrame(), { ptrTRIMOrigin[0], ptrTRIMOrigin[1], ptrTRIMFramePx * 0.5f, ptrTRIMFramePx * 0.5f });
+    {   // TRIM: the deck's head-on cream knob, scaled to TRIM's size, turning whole (the painted one sat tilted; Joshua)
+        auto* p = param(Trim); const float db = p ? p->convertFrom0to1(p->getValue()) : 0.0f;
+        const float ang = db < 0 ? db / 24.0f * 135.0f : db / 12.0f * 135.0f;
+        const float s = domeFramePx * 0.5f * kTrimFit;
+        drawStripFrame(g, dome, frameFor(ang, domeFrames), { kTrimCentre[0] - s * 0.5f, kTrimCentre[1] - s * 0.5f, s, s });
+    }
 
     // deck knobs (row 1 lifts by moreD when the MORE deck is open)
     {
@@ -1012,7 +1019,7 @@ juce::Rectangle<float> PedalSteelAudioProcessorEditor::ctlBoundsRow(Ctl c) const
         case Swell:  return circle({ scallopCentre1[0], scallopCentre1[1] }, 46);
         case Echo:   return circle({ spaceCentre0[0], spaceCentre0[1] }, 40);
         case Reverb: return circle({ spaceCentre1[0], spaceCentre1[1] }, 40);
-        case Trim:   return circle(ptrCentre(ptrTRIMOrigin, ptrTRIMFramePx), 22);
+        case Trim:   return circle({ kTrimCentre[0], kTrimCentre[1] }, 22);
         case Volume: return R(hitSlider);
         case PedA:   return R(hitPedalA);
         case PedB:   return R(hitPedalB);
