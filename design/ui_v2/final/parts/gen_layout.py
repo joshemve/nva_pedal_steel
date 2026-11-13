@@ -35,6 +35,7 @@ _bg = _clear_domes(_bg)
 import tick_rings; _bg = tick_rings.apply(_bg)   # ECHO / REVERB ticks redrawn even (the painted ones had strays)
 import paper_grain; _bg = paper_grain.apply(_bg)   # grain back on the erased TRIM readout's paper
 import deck_regen; _bg = deck_regen.apply(_bg)   # the deck's paint: one continuous ChatGPT surface under our ink
+import paper_regen; _bg = paper_regen.apply(_bg)   # the top bar's paper: one continuous ChatGPT sheet under our ink
 # (deck_flatten.py evened the old paint's blotches; superseded by deck_regen, kept for reference)
 Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)

@@ -1,0 +1,16 @@
+[
+ {
+  "name": "top_bare_a",
+  "images": [
+   "final/bgregen/in_main.png"
+  ],
+  "prompt": "This is a screenshot of an audio plugin: a cream paper top bar, a 3D pedal steel guitar on a rug, and a dark control deck in a walnut frame. Recreate this SAME image at the same framing, size and aspect (16:10), keeping everything below the top bar exactly as it is. Change only the cream top bar along the top edge: make it EMPTY. Remove the 'Pedal Steel' logo, the 'NORTHERN VALLEY AUDIO' text, the thin lines, the preset display and its two arrow buttons, the OUTPUT meter and its label, the TRIM knob, its label and the dB readout, and the vertical divider. What remains is one continuous sheet of warm cream paper with a fine, even, natural paper grain everywhere: no blotches, smudges, creases, scratches, lines or areas that look erased, pasted or cleaned up. Same colour and brightness as the original bar, the same soft shadow where it meets the room below. Photoreal, matte, no glare, nothing added."
+ },
+ {
+  "name": "top_bare_b",
+  "images": [
+   "final/bgregen/in_main.png"
+  ],
+  "prompt": "This is a screenshot of an audio plugin: a cream paper top bar, a 3D pedal steel guitar on a rug, and a dark control deck in a walnut frame. Recreate this SAME image at the same framing, size and aspect (16:10), keeping everything below the top bar exactly as it is. Change only the cream top bar along the top edge: make it EMPTY. Remove the 'Pedal Steel' logo, the 'NORTHERN VALLEY AUDIO' text, the thin lines, the preset display and its two arrow buttons, the OUTPUT meter and its label, the TRIM knob, its label and the dB readout, and the vertical divider. What remains is one continuous sheet of warm cream paper with a fine, even, natural paper grain everywhere: no blotches, smudges, creases, scratches, lines or areas that look erased, pasted or cleaned up. Same colour and brightness as the original bar, the same soft shadow where it meets the room below. Photoreal, matte, no glare, nothing added."
+ }
+]
