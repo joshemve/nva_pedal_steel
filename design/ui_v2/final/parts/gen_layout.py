@@ -38,10 +38,11 @@ import deck_regen; _bg = deck_regen.apply(_bg)   # the deck's paint: one continu
 import paper_regen; _bg = paper_regen.apply(_bg)   # the top bar's paper: one continuous ChatGPT sheet under our ink
 import control_shadows; _bg = control_shadows.apply(_bg)   # one consistent cast shadow under every deck control
 # (deck_flatten.py evened the old paint's blotches; superseded by deck_regen, kept for reference)
-Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
+Image.fromarray(np.clip(deck_regen.fix_groove(MD.apply_strip(_bg)), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)
 _more[..., :3] = deck_regen.apply_more(_more[..., :3], 2000 - _more.shape[0])   # the MORE deck: its own continuous ChatGPT surface
 _more[..., :3] = control_shadows.apply_more(_more[..., :3], 2000 - _more.shape[0])   # and its controls' shadows
+_more[..., :3] = deck_regen.fix_groove(_more[..., :3], 2000 - _more.shape[0])   # and its slider groove
 for _f in ("deck_more.jpg", "deck_more.png", "deck_more_top.png"):
     if os.path.exists(os.path.join(OUT, _f)): os.remove(os.path.join(OUT, _f))
 _m8 = np.clip(_more, 0, 255).astype(np.uint8)   # the body as JPG (small); the top band (transparent above the frame) as PNG

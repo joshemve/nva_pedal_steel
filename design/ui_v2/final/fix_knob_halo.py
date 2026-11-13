@@ -12,6 +12,7 @@ hd = np.asarray(Image.open("parts/bg_hd.png"), np.float32); Lref = hd.mean(2)
 S = json.load(open("strips/strips.json"))
 REF_ANGLE = {"scallop": (61.7, 60.7), "space": (-88.1, -55.5), "dome": (35.0, -50.0)}   # the design's pointer angles (PluginEditor anchors)
 DMAX, NB = 30, 36
+CONTACT = 9   # px: how far the knob's own contact shadow reaches
 blur = lambda a, s: cv2.GaussianBlur(a, (0, 0), s)
 
 for style in [s_ for s_ in ("scallop", "space", "dome") if s_ != "dome" or os.path.exists("strips/knob_dome_orig.png")]:   # dome: once a workshop dome is installed
@@ -55,7 +56,7 @@ for style in [s_ for s_ in ("scallop", "space", "dome") if s_ != "dome" or os.pa
 
     strip = np.concatenate([wide_base(strip[k * fs:(k + 1) * fs]) for k in range(n)], 0)
     if style == "space":   # top light: the lower half falls off into shadow (Joshua: bottom should be darker than the top)
-        t = np.clip((yy - c) / (0.42 * fs), 0, 1); shade = 1.0 - 0.50 * (t * t * (3 - 2 * t))
+        t = np.clip((yy - c) / (0.42 * fs), 0, 1); shade = 1.0 - 0.28 * (t * t * (3 - 2 * t))   # 0.50 sank the bottom into the deck ("cut off")
         for k in range(n):
             fr = strip[k * fs:(k + 1) * fs]; fr[..., :3] *= shade[..., None]
     # measure: shadow s = 1 - L / L_panel around the reference knobs, binned by (distance, direction)
@@ -77,6 +78,9 @@ for style in [s_ for s_ in ("scallop", "space", "dome") if s_ != "dome" or os.pa
     prof = np.concatenate([prof[:, -6:], prof, prof[:, :6]], 1)
     prof = cv2.GaussianBlur(prof.astype(np.float32), (0, 0), sigmaX=2.0, sigmaY=1.0)[:, 6:-6]
     prof *= np.clip((DMAX - np.arange(DMAX + 1)) / 8.0, 0, 1)[:, None]
+    # only a tight contact shadow stays on the knob itself: the deck paint carries every control's cast shadow
+    # (control_shadows.py); the old 30 px one didn't fit the frames and was cut off at the bottom (Joshua)
+    prof *= np.clip((CONTACT - np.arange(DMAX + 1)) / 4.0, 0, 1)[:, None]
     prof = np.clip(prof, 0, 0.9)
     print(style, "shadow at d=2: min %.2f max %.2f (by direction)" % (prof[2].min(), prof[2].max()))
 

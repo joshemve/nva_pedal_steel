@@ -13,7 +13,11 @@ SURFACE = os.path.join(H, "..", "bgregen", "out", "deck_bare_a_1.png")   # Joshu
 SURFACE_MORE = os.path.join(H, "..", "bgregen", "out", "more_bare_a_1.png")   # the tall MORE deck, painted the same way
 BOX = (24, 1330, 3176, 1985)      # canvas px: the deck inside its walnut frame (the frame itself is kept by colour)
 BOX_MORE = (24, 904, 3176, 1985)  # canvas px: the MORE deck inside its frame
-KEEP = [(1538, 1832, 2182, 1882)]  # canvas px: dark parts that aren't paint: the volume slider's recessed groove
+KEEP = [(1538, 1838, 2182, 1878)]  # canvas px: dark parts that aren't paint: the volume slider's recessed groove
+# the FINAL slider groove (after more_deck's strip step shortens it): the old painted handle left its shadow over and
+# round it and a bright fleck at its end, showing at 0 % (Joshua). fix_groove() runs on the finished images.
+GROOVE_Y, GROOVE_X, CLEAN_X = (1840, 1874), (1572, 2150), (1600, 1900)
+SMUDGE = (1930, 1812, 2040, 1886)   # canvas px round the old handle: its shadow over the deck paint
 
 
 def _nblur(img, m, sigma):
@@ -81,4 +85,30 @@ def _regen(img, surface, box, yoff):
     ink_on_new = reg - old_paint + new_paint
     mixed = surf * w + ink_on_new * (1 - w)
     out[y0:y1, x0:x1] = mixed * (1 - wood) + reg * wood
+    return out
+
+
+def fix_groove(img, yoff=0):
+    """the finished slider groove: even inside along its whole length, and the old handle's shadow round it gone"""
+    out = img.copy()
+    if _SURF is not None:   # the shadow on the deck paint above and below the groove -> the new surface
+        x0, y0, x1, y1 = SMUDGE
+        for ya, yb in ((y0, GROOVE_Y[0] - 2), (GROOVE_Y[1] + 2, y1)):
+            seg = out[ya - yoff:yb - yoff, x0:x1]; new = _SURF[ya:yb, x0:x1]
+            h, w = seg.shape[:2]; xx = np.arange(w)
+            wx = np.clip(np.minimum(xx, w - 1 - xx) / 12.0, 0, 1)[None, :, None]
+            dark = np.clip((new.mean(2) - seg.mean(2)) / 6.0, 0, 1)[..., None]   # only where it's darker than the paint
+            out[ya - yoff:yb - yoff, x0:x1] = new * wx * dark + seg * (1 - wx * dark)
+    gy0, gy1 = GROOVE_Y[0] - yoff, GROOVE_Y[1] - yoff
+    prof = np.median(out[gy0:gy1, CLEAN_X[0]:CLEAN_X[1]], axis=1)
+    n = GROOVE_X[1] - GROOVE_X[0]
+    fill = np.repeat(prof[:, None, :], n, axis=1) + np.random.default_rng(3).normal(0, 0.8, (gy1 - gy0, n))[..., None]
+    ramp = np.clip(np.minimum(np.arange(n), n - 1 - np.arange(n)) / 6.0, 0, 1)[None, :, None]
+    seg = out[gy0:gy1, GROOVE_X[0]:GROOVE_X[1]]
+    out[gy0:gy1, GROOVE_X[0]:GROOVE_X[1]] = fill * ramp + seg * (1 - ramp)
+    # the right cap held the old handle's bright fleck: it becomes the clean left cap, mirrored (rims at 1550 / 2165)
+    cy0, cy1 = 1834 - yoff, 1884 - yoff
+    left = out[cy0:cy1, 3715 - 2190:3715 - 2130][:, ::-1]           # mirror of columns 2130..2190
+    w = left.shape[1]; blend = np.clip((np.arange(w) - 2.0) / 14.0, 0, 1)[None, :, None]
+    out[cy0:cy1, 2130:2190] = left * blend + out[cy0:cy1, 2130:2190] * (1 - blend)
     return out

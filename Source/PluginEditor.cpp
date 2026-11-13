@@ -50,6 +50,7 @@ const char* panelLabel(int c) {
 const char* kCharNames[11] = { "STUDIO", "TAPE", "OPTO", "PHASER", "SPRING", "R&B", "WARBLE", "SHIMMER", "ROTARY", "GATE", "ROOM" };
 constexpr Anchor kLinear{ 0.5f, 0.0f };   // the MORE row has no design reference to match: value -> angle is a straight line
 constexpr float kSpaceFit = 37.4f / 42.2f;   // the workshop SPACE knob drawn inside its tick ring (Joshua's pick)
+constexpr float kScallopFit = 0.87f;          // FEEL's scallops sat right against their ticks; same gap as VOICE / SPACE (Joshua)
 juce::Point<float> ptrCentre(const float* o, int px) { return { o[0] + px * 0.25f, o[1] + px * 0.25f }; }
 
 const juce::Rectangle<float> kSteelArea{ 120.0f, 80.0f, 1360.0f, 600.0f };   // bar, strings, floor pedals, knee levers
@@ -906,10 +907,10 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     // VOICE: Joshua's workshop dome turns whole (body, skirt and pointer), over the painted one, on its pivot
     drawStripFrame(g, dome, frameFor(knobAngle(Tone), domeFrames), centred(domeCentre0, domeFramePx));
     drawStripFrame(g, dome, frameFor(knobAngle(Pick), domeFrames), centred(domeCentre1, domeFramePx));
-    drawStripFrame(g, scallop, frameFor(knobAngle(Glide), scallopFrames), centred(scallopCentre0, scallopFramePx));
-    drawStripFrame(g, scallop, frameFor(knobAngle(Swell), scallopFrames), centred(scallopCentre1, scallopFramePx));
     // Joshua's workshop SPACE knob, drawn to sit inside its tick ring (42 -> 37.4 px radius, his pick)
     auto centredS = [](const float* c, int px, float k) { const float s = px * 0.5f * k; return juce::Rectangle<float>(c[0] - s * 0.5f, c[1] - s * 0.5f, s, s); };
+    drawStripFrame(g, scallop, frameFor(knobAngle(Glide), scallopFrames), centredS(scallopCentre0, scallopFramePx, kScallopFit));
+    drawStripFrame(g, scallop, frameFor(knobAngle(Swell), scallopFrames), centredS(scallopCentre1, scallopFramePx, kScallopFit));
     drawStripFrame(g, space, frameFor(knobAngle(Echo), spaceFrames), centredS(spaceCentre0, spaceFramePx, kSpaceFit));
     drawStripFrame(g, space, frameFor(knobAngle(Reverb), spaceFrames), centredS(spaceCentre1, spaceFramePx, kSpaceFit));
 
@@ -932,7 +933,7 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
         auto lin = [&](Ctl c) { return anchored(norm(c), kLinear); };
         auto at = [](float cx, float cy, int px, float k = 1.0f) { const float s = px * 0.5f * k; return juce::Rectangle<float>(cx - s * 0.5f, cy - s * 0.5f, s, s); };
         const Ctl sc[3] = { Vibrato, Rate, Slide };
-        for (int i = 0; i < 3; ++i) drawStripFrame(g, scallop, frameFor(lin(sc[i]), scallopFrames), at(row2X[i], scallopCentre0[1], scallopFramePx));
+        for (int i = 0; i < 3; ++i) drawStripFrame(g, scallop, frameFor(lin(sc[i]), scallopFrames), at(row2X[i], scallopCentre0[1], scallopFramePx, kScallopFit));
         const float domeOff = ptrTONEFramePx * 0.25f;
         { const float d0[2] = { row2X[3] - domeOff + ptrTONEFramePx * 0.25f, domeCentre0[1] }, d1[2] = { row2X[4] - domeOff + ptrTONEFramePx * 0.25f, domeCentre0[1] };
           const float s = domeFramePx * 0.5f;
