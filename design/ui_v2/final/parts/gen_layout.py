@@ -32,6 +32,7 @@ def _clear_domes(bg):   # the painted TONE / PICK domes go: the workshop dome st
         out[y0:y1, x0:x1] = fill * mm + out[y0:y1, x0:x1] * (1 - mm)   # (the new knob and its shadow cover nearly all of it)
     return out
 _bg = _clear_domes(_bg)
+import tick_rings; _bg = tick_rings.apply(_bg)   # ECHO / REVERB ticks redrawn even (the painted ones had strays)
 Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)
 for _f in ("deck_more.jpg", "deck_more.png", "deck_more_top.png"):
