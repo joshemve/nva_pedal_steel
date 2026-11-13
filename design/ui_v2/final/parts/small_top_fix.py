@@ -12,6 +12,7 @@ CAP = 26                           # OUTPUT's cap height (sprite px)
 TRIM_BOX = (586, 4, 712, 52)       # sprite px: the label's patch
 TRIM_CX = 643                      # the TRIM knob's axis (sprite px)
 B_BOX = (812, 70, 867, 124)        # the stray "B" fragment
+STUB_BOX = (634, 44, 656, 53)      # the painted pointer stub between TRIM and the knob
 
 
 def fix(sp, bg, box_ui):
@@ -42,4 +43,9 @@ def fix(sp, bg, box_ui):
     ar = a[..., None] / 255
     reg[..., :3] = patch * ar + reg[..., :3] * (1 - ar)
     reg[..., 3] = np.maximum(reg[..., 3], a)
+    # the painted pointer stub under TRIM (the plugin draws the pointer; Joshua: "there's an extra pointer")
+    x0, y0, x1, y1 = STUB_BOX
+    st = np.clip(sp[y0:y1, x0:x1, :3], 0, 255).astype(np.uint8)
+    m = cv2.dilate((st.mean(2) < 175).astype(np.uint8), np.ones((3, 3), np.uint8))
+    sp[y0:y1, x0:x1, :3] = cv2.inpaint(st, m, 4, cv2.INPAINT_TELEA).astype(np.float32)
     return sp

@@ -39,10 +39,10 @@
  },
  "TRIM": {
   "frames": 128,
-  "frame_px": 82,
+  "frame_px": 76,
   "origin_canvas": [
-   2935,
-   65
+   2938,
+   68
   ],
   "axis_canvas": [
    2975.021675833064,

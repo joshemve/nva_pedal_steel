@@ -34,6 +34,10 @@ for K, (job, a_ref) in KN.items():
     dark = ref[m & (d > np.percentile(d[m], 80))]; c = np.median(dark, 0)
     al = np.clip(((nop - ref) / np.maximum(nop - c, 1)).mean(2), 0, 1) * m
     al = cv2.GaussianBlur(al.astype(np.float32), (0, 0), 0.6)
+    if K == "TRIM":   # the pointer's tip touches the TRIM label: keep only the bar itself, not the label's specks (Joshua 2026-11-12)
+        nb, lb = cv2.connectedComponents((al > 0.08).astype(np.uint8))
+        keep = max(range(1, nb), key=lambda i: ((lb == i) & (lab == best)).sum())
+        al = al * (cv2.dilate((lb == keep).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0)
     col = np.where(al[..., None] > 0.05, np.clip((ref - (1 - al[..., None]) * nop) / np.maximum(al[..., None], 0.05), 0, 255), c)
     rgba = np.dstack([col, al * 255]).astype(np.float32)
     # frame: square around the rotation centre, big enough for the pointer at any angle

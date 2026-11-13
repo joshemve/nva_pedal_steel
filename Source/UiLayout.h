@@ -61,8 +61,8 @@ namespace UiLayout {
     inline constexpr float ptrTONEOrigin[2] = { 97.00f, 737.50f };   // UI px, top-left of each frame
     inline constexpr int ptrPICKFrames = 128, ptrPICKFramePx = 134;
     inline constexpr float ptrPICKOrigin[2] = { 237.00f, 737.50f };   // UI px, top-left of each frame
-    inline constexpr int ptrTRIMFrames = 128, ptrTRIMFramePx = 82;
-    inline constexpr float ptrTRIMOrigin[2] = { 1467.50f, 32.50f };   // UI px, top-left of each frame
+    inline constexpr int ptrTRIMFrames = 128, ptrTRIMFramePx = 76;
+    inline constexpr float ptrTRIMOrigin[2] = { 1469.00f, 34.00f };   // UI px, top-left of each frame
     inline constexpr int scallopFrames = 128, scallopFramePx = 236;   // 2x px, frames stacked vertically
     inline constexpr float scallopCentre0[2] = { 441.90f, 775.30f };
     inline constexpr float scallopCentre1[2] = { 582.90f, 775.70f };
