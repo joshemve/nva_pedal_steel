@@ -57,12 +57,12 @@ namespace UiLayout {
     inline constexpr int meterSegEnd[15] = { 28, 49, 69, 90, 109, 129, 148, 168, 189, 208, 229, 249, 269, 290, 310 };   // sprite px (2x) where each lit segment ends
     inline constexpr float sliderX0 = 793.25f, sliderX1 = 1060.25f;   // handle centre at value 0 and 1 (UI px) = first/last tick
     inline constexpr float sliderThumbCx = 1063.75f;               // handle centre as drawn in sp_slider_thumb
-    inline constexpr int ptrTONEFrames = 128, ptrTONEFramePx = 134;
-    inline constexpr float ptrTONEOrigin[2] = { 97.00f, 737.50f };   // UI px, top-left of each frame
-    inline constexpr int ptrPICKFrames = 128, ptrPICKFramePx = 134;
-    inline constexpr float ptrPICKOrigin[2] = { 237.00f, 737.50f };   // UI px, top-left of each frame
-    inline constexpr int ptrTRIMFrames = 128, ptrTRIMFramePx = 76;
-    inline constexpr float ptrTRIMOrigin[2] = { 1469.00f, 34.00f };   // UI px, top-left of each frame
+    inline constexpr int ptrTONEFrames = 128, ptrTONEFramePx = 140;
+    inline constexpr float ptrTONEOrigin[2] = { 95.50f, 736.00f };   // UI px, top-left of each frame
+    inline constexpr int ptrPICKFrames = 128, ptrPICKFramePx = 138;
+    inline constexpr float ptrPICKOrigin[2] = { 236.00f, 736.50f };   // UI px, top-left of each frame
+    inline constexpr int ptrTRIMFrames = 128, ptrTRIMFramePx = 90;
+    inline constexpr float ptrTRIMOrigin[2] = { 1465.50f, 30.50f };   // UI px, top-left of each frame
     inline constexpr int scallopFrames = 128, scallopFramePx = 236;   // 2x px, frames stacked vertically
     inline constexpr float scallopCentre0[2] = { 441.90f, 775.30f };
     inline constexpr float scallopCentre1[2] = { 582.90f, 775.70f };

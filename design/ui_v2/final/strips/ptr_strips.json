@@ -1,10 +1,10 @@
 {
  "TONE": {
   "frames": 128,
-  "frame_px": 134,
+  "frame_px": 140,
   "origin_canvas": [
-   194,
-   1475
+   191,
+   1472
   ],
   "axis_canvas": [
    260.4824933425387,
@@ -20,10 +20,10 @@
  },
  "PICK": {
   "frames": 128,
-  "frame_px": 134,
+  "frame_px": 138,
   "origin_canvas": [
-   474,
-   1475
+   472,
+   1473
   ],
   "axis_canvas": [
    540.9231302625062,
@@ -39,10 +39,10 @@
  },
  "TRIM": {
   "frames": 128,
-  "frame_px": 76,
+  "frame_px": 90,
   "origin_canvas": [
-   2938,
-   68
+   2931,
+   61
   ],
   "axis_canvas": [
    2975.021675833064,

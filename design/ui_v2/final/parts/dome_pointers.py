@@ -41,7 +41,7 @@ for K, (job, a_ref) in KN.items():
     col = np.where(al[..., None] > 0.05, np.clip((ref - (1 - al[..., None]) * nop) / np.maximum(al[..., None], 0.05), 0, 255), c)
     rgba = np.dstack([col, al * 255]).astype(np.float32)
     # frame: square around the rotation centre, big enough for the pointer at any angle
-    ys_, xs_ = np.where(al > 0.02); rmax = np.hypot(xs_ - cx, ys_ - cy).max() + 4; half = int(np.ceil(rmax))
+    ys_, xs_ = np.where(al > 0.02); rmax = np.hypot(xs_ - cx, (ys_ - cy) / asp).max() + 4; half = int(np.ceil(rmax))   # unsquashed: turned sideways the pointer reaches further (TRIM's tip was clipped near +/-110 deg)
     gx, gy = x0 + cx, y0 + cy                               # canvas coords of the axis
     fx0, fy0 = int(np.floor(gx)) - half, int(np.floor(gy)) - half; fs = 2 * half + 2
     pcx, pcy = gx - fx0, gy - fy0                           # axis inside the frame (sub-pixel)
