@@ -52,6 +52,7 @@ constexpr Anchor kLinear{ 0.5f, 0.0f };   // the MORE row has no design referenc
 constexpr float kSpaceFit = 37.4f / 42.2f;   // the workshop SPACE knob drawn inside its tick ring (Joshua's pick)
 constexpr float kTrimFit = 0.69f;                   // the deck's dome knob at TRIM's size (head-on)
 constexpr float kTrimCentre[2] = { 1487.5f, 58.0f };  // UI px
+constexpr float kTrimBaseR = 25.0f;                  // UI px: the black base round the cap (the cap itself is ~21.5)
 constexpr float kScallopFit = 0.87f;          // FEEL's scallops sat right against their ticks; same gap as VOICE / SPACE (Joshua)
 juce::Point<float> ptrCentre(const float* o, int px) { return { o[0] + px * 0.25f, o[1] + px * 0.25f }; }
 
@@ -899,7 +900,17 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
         auto* p = param(Trim); const float db = p ? p->convertFrom0to1(p->getValue()) : 0.0f;
         const float ang = db < 0 ? db / 24.0f * 135.0f : db / 12.0f * 135.0f;
         const float s = domeFramePx * 0.5f * kTrimFit;
-        drawStripFrame(g, dome, frameFor(ang, domeFrames), { kTrimCentre[0] - s * 0.5f, kTrimCentre[1] - s * 0.5f, s, s });
+        // a thicker black base under the cream cap, with a soft drop shadow (Joshua: like the old knob's, but head-on)
+        const float cx = kTrimCentre[0], cy = kTrimCentre[1], rb = kTrimBaseR;
+        juce::Path base; base.addEllipse(cx - rb, cy - rb, rb * 2.0f, rb * 2.0f);
+        juce::DropShadow(juce::Colours::black.withAlpha(0.42f), 9, { 1, 4 }).drawForPath(g, base);
+        juce::DropShadow(juce::Colours::black.withAlpha(0.35f), 3, { 0, 1 }).drawForPath(g, base);
+        g.setGradientFill(juce::ColourGradient(juce::Colour(0xff3a322b), cx, cy - rb, juce::Colour(0xff0d0b09), cx, cy + rb, false));
+        g.fillPath(base);
+        g.setColour(juce::Colours::white.withAlpha(0.10f));   // a faint top rim catch
+        g.drawEllipse(cx - rb + 0.75f, cy - rb + 0.75f, rb * 2.0f - 1.5f, rb * 2.0f - 1.5f, 1.0f);
+        g.setOpacity(1.0f);   // (the rim colour's alpha would otherwise carry into the cap image)
+        drawStripFrame(g, dome, frameFor(ang, domeFrames), { cx - s * 0.5f, cy - s * 0.5f, s, s });
     }
 
     // deck knobs (row 1 lifts by moreD when the MORE deck is open)

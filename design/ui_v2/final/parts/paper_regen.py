@@ -104,7 +104,7 @@ def apply(bg):
     tcx, tcy, tr = TRIM_SHADOW   # the head-on TRIM knob's shadow, the deck knobs' style
     disc = (np.hypot(xx - tcx, yy - tcy) < tr).astype(np.float32)
     f = np.ones_like(disc)
-    for dx, dy, sg, k in ((3, 8, 10.0, 0.30), (1, 3, 3.0, 0.28)):
+    for dx, dy, sg, k in ((3, 8, 10.0, 0.0), (1, 3, 3.0, 0.0)):   # off: the editor draws TRIM's base and drop shadow now
         sh = cv2.GaussianBlur(cv2.warpAffine(disc, np.float32([[1, 0, dx], [0, 1, dy]]), (disc.shape[1], disc.shape[0])), (0, 0), sg)
         f *= 1 - k * sh
     mixed = mixed * f[..., None]
