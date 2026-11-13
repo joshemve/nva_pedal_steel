@@ -153,7 +153,7 @@ namespace UiLayout {
     inline constexpr float hitMore[4] = { 1428.00f, 908.50f, 87.00f, 39.50f };   // x, y, w, h
     inline constexpr float moreD = 218.00f, moreDeckTop = 421.00f, moreFrameTop = 452.00f, moreTopBand = 55.00f;   // UI px: row-1 lift; deck_more_top.png starts here, then deck_more.jpg (to 1000); its walnut frame's top
     inline constexpr float row2X[7] = { 135.0f, 270.0f, 405.0f, 562.0f, 706.0f, 882.0f, 1030.0f };   // VIBRATO RATE SLIDE (scallop) DRIVE WIDTH (dome) DELAY DECAY (space)
-    inline constexpr float charCentre[2] = { 1282.00f, 798.00f }, charScale = 1.300f, charDotR = 65.5f;
+    inline constexpr float charCentre[2] = { 1282.00f, 798.00f }, charScale = 1.120f, charDotR = 65.5f;
     inline constexpr float charAngle[11] = { -131.0f, -103.0f, -81.0f, -59.0f, -32.0f, 0.0f, 32.0f, 59.0f, 81.0f, 103.0f, 131.0f };   // deg clockwise from 12 o'clock, STUDIO..ROOM
     inline constexpr float charRadius[11] = { 70.5f, 73.0f, 72.0f, 69.0f, 66.7f, 65.5f, 66.7f, 69.0f, 72.0f, 73.0f, 70.5f };   // UI px from the centre to each spot's dot
     inline constexpr float syncCentre[2] = { 1508.00f, 780.00f }, lampACentre[2] = { 1028.00f, 733.50f };

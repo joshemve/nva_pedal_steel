@@ -49,6 +49,7 @@ const char* panelLabel(int c) {
 // the CHARACTER dial's engraved positions (fxCharacter choices 0..10, in order)
 const char* kCharNames[11] = { "STUDIO", "TAPE", "OPTO", "PHASER", "SPRING", "R&B", "WARBLE", "SHIMMER", "ROTARY", "GATE", "ROOM" };
 constexpr Anchor kLinear{ 0.5f, 0.0f };   // the MORE row has no design reference to match: value -> angle is a straight line
+constexpr float kSpaceFit = 37.4f / 42.2f;   // the workshop SPACE knob drawn inside its tick ring (Joshua's pick)
 juce::Point<float> ptrCentre(const float* o, int px) { return { o[0] + px * 0.25f, o[1] + px * 0.25f }; }
 
 const juce::Rectangle<float> kSteelArea{ 120.0f, 80.0f, 1360.0f, 600.0f };   // bar, strings, floor pedals, knee levers
@@ -902,8 +903,10 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     drawStripFrame(g, dome, frameFor(knobAngle(Pick), domeFrames), centred(domeCentre1, domeFramePx));
     drawStripFrame(g, scallop, frameFor(knobAngle(Glide), scallopFrames), centred(scallopCentre0, scallopFramePx));
     drawStripFrame(g, scallop, frameFor(knobAngle(Swell), scallopFrames), centred(scallopCentre1, scallopFramePx));
-    drawStripFrame(g, space, frameFor(knobAngle(Echo), spaceFrames), centred(spaceCentre0, spaceFramePx));
-    drawStripFrame(g, space, frameFor(knobAngle(Reverb), spaceFrames), centred(spaceCentre1, spaceFramePx));
+    // Joshua's workshop SPACE knob, drawn to sit inside its tick ring (42 -> 37.4 px radius, his pick)
+    auto centredS = [](const float* c, int px, float k) { const float s = px * 0.5f * k; return juce::Rectangle<float>(c[0] - s * 0.5f, c[1] - s * 0.5f, s, s); };
+    drawStripFrame(g, space, frameFor(knobAngle(Echo), spaceFrames), centredS(spaceCentre0, spaceFramePx, kSpaceFit));
+    drawStripFrame(g, space, frameFor(knobAngle(Reverb), spaceFrames), centredS(spaceCentre1, spaceFramePx, kSpaceFit));
 
     // pedals A B C (tip forward into the panel, lamp lights), knee levers (swing outward, ring halo lights): rendered
     // poses crossfaded like the floor pedals
@@ -930,8 +933,8 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
           const float s = domeFramePx * 0.5f;
           drawStripFrame(g, dome, frameFor(lin(Drive), domeFrames), { d0[0] - s * 0.5f, d0[1] - s * 0.5f, s, s });
           drawStripFrame(g, dome, frameFor(lin(Width), domeFrames), { d1[0] - s * 0.5f, d1[1] - s * 0.5f, s, s }); }
-        drawStripFrame(g, space, frameFor(lin(Delay), spaceFrames), at(row2X[5], spaceCentre0[1], spaceFramePx));
-        drawStripFrame(g, space, frameFor(lin(Decay), spaceFrames), at(row2X[6], spaceCentre0[1], spaceFramePx));
+        drawStripFrame(g, space, frameFor(lin(Delay), spaceFrames), at(row2X[5], spaceCentre0[1], spaceFramePx, kSpaceFit));
+        drawStripFrame(g, space, frameFor(lin(Decay), spaceFrames), at(row2X[6], spaceCentre0[1], spaceFramePx, kSpaceFit));
         auto* cp = dynamic_cast<juce::AudioParameterChoice*>(param(Character));
         const int ci = cp ? juce::jlimit(0, 10, cp->getIndex()) : 0;
         drawStripFrame(g, space, frameFor(charAngle[ci], spaceFrames), at(charCentre[0], charCentre[1], spaceFramePx, charScale));
