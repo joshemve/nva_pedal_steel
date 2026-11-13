@@ -173,7 +173,13 @@ for name, v in D3["layers"].items():
         _frs = []
         for _f in range(v["frames"]):
             _fr = np.zeros((_fh + 2 * SHP, _W + 2 * SHP, 4), np.float32); _fr[SHP:SHP + _fh, SHP:SHP + _W] = _a[_f * _fh:(_f + 1) * _fh]
-            _al = _fr[..., 3] / 255; _body = (_al >= 200 / 255).astype(np.uint8)
+            _al = _fr[..., 3] / 255
+            # the renders baked a near-black, nearly opaque shadow beside the part (a hard block under a swung lever;
+            # Joshua): the part is what isn't near-black, holes filled; that old shadow is dropped for the soft one below
+            _vis = ((_al >= 200 / 255) & (_fr[..., :3].mean(2) >= 14)).astype(np.uint8)
+            _vis = cv2.morphologyEx(_vis, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+            _ff = _vis.copy(); _mk = np.zeros((_ff.shape[0] + 2, _ff.shape[1] + 2), np.uint8); cv2.floodFill(_ff, _mk, (0, 0), 1)
+            _body = (np.maximum(_vis, 1 - _ff) & (_al >= 200 / 255)).astype(np.uint8)
             if name.startswith("pedal_"):   # C's render kept an opaque dark band under its copper base (an extra shadow; Joshua):
                 _lumf = _fr[..., :3].mean(2); _cu = (_lumf > 70) & (_al > 0.8)     # the switch ends at its lowest copper row
                 _cr = np.where(_cu[:, _fr.shape[1] // 2 - 30:_fr.shape[1] // 2 + 30].any(1))[0]
