@@ -34,6 +34,7 @@ def _clear_domes(bg):   # the painted TONE / PICK domes go: the workshop dome st
 _bg = _clear_domes(_bg)
 import tick_rings; _bg = tick_rings.apply(_bg)   # ECHO / REVERB ticks redrawn even (the painted ones had strays)
 import paper_grain; _bg = paper_grain.apply(_bg)   # grain back on the erased TRIM readout's paper
+import deck_flatten; _bg = deck_flatten.apply(_bg)   # the deck's blotchy AI lighting evened (MODE box, A/B/C, LKL/LKR)
 Image.fromarray(np.clip(MD.apply_strip(_bg), 0, 255).astype(np.uint8)).save(os.path.join(OUT, "ui_bg.jpg"), quality=97, subsampling=0)
 _more, _minfo = MD.build_more(_bg)
 for _f in ("deck_more.jpg", "deck_more.png", "deck_more_top.png"):

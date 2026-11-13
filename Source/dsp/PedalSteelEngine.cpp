@@ -1946,6 +1946,13 @@ void PedalSteelEngine::slideFretboardNote(int stringIndex, float fret) {
     }
 }
 
+void PedalSteelEngine::slideHeldMidiNotes(float semis) {
+    semis = juce::jlimit(-24.0f, 24.0f, semis);
+    for (auto& v : voices)
+        if (v.active && v.held && !v.uiTriggered && !v.isPhraseSlice)
+            v.barTargetMidi = juce::jlimit(24.0f, 108.0f, static_cast<float>(v.midiNote) + semis);   // midiNote stays: note-off still matches
+}
+
 void PedalSteelEngine::releaseFretboardNote(int stringIndex) {
     const int s = juce::jlimit(0, kNumStrings - 1, stringIndex);
     auto& v = voices[static_cast<size_t>(s)];
@@ -1977,6 +1984,7 @@ CopedentStatus PedalSteelEngine::getStatus() const {
         st.stringEnergy[static_cast<size_t>(i)] = v.active ? juce::jlimit(0.0f, 1.0f, v.ampEnv) : 0.0f;
         st.stringPitchSemis[static_cast<size_t>(i)] = v.barCurrentMidi + v.pedalCurrentSemis + v.scoopOffsetSemis + v.mpePitchSemis;
         st.stringBendSemis[static_cast<size_t>(i)] = v.pedalCurrentSemis + v.scoopOffsetSemis + v.mpePitchSemis;
+        if (v.active && v.held && !v.uiTriggered && !v.isPhraseSlice) ++st.heldMidiVoices;
         if (v.active && v.ampEnv > 0.02f) {
             ++activeCount;
             const float openMidi = static_cast<float>(getOpenStringMidiForStyle(v.fretStyle >= 0 ? v.fretStyle : params.presetStyle, i));

@@ -191,6 +191,29 @@ int main(int argc, char* argv[]) {
         st = processor.getLiveStatus();
         check(st.stringEnergy[5] > 0.05f, "dragging across strings strums them");
         editor->mouseUp(ev({ nx15, ny6 })); run(4);
+        // a chord held on MIDI: grabbing the bar slides that chord, it plucks nothing (Joshua)
+        {
+            processor.triggerPanic(); run(20);
+            juce::MidiBuffer held; for (int n : { 64, 68, 71 }) held.addEvent(juce::MidiMessage::noteOn(1, n, 0.9f), 0);
+            processor.processBlock(audioBuf, held); run(30);
+            auto pitchTop = [&](const CopedentStatus& s_) { float m = -1e9f; for (int i = 0; i < 10; ++i) if (s_.stringEnergy[(size_t) i] > 0.05f) m = std::max(m, s_.stringPitchSemis[(size_t) i]); return m; };
+            const auto s0 = processor.getLiveStatus();
+            check(s0.heldMidiVoices == 3, "a MIDI chord is held (" + std::to_string(s0.heldMidiVoices) + " notes)");
+            editor->mouseDown(ev({ nx12, ny4 })); run(10);
+            const auto s1 = processor.getLiveStatus();
+            check(s1.activeVoiceCount == s0.activeVoiceCount, "grabbing the bar over a held chord plucks no string");
+            const float nx15b = UiLayout::fretAnchor[15][1];
+            editor->mouseDrag(ev({ nx15b, ny6 })); run(80);
+            const auto s2 = processor.getLiveStatus();
+            check(std::abs((pitchTop(s2) - pitchTop(s0)) - 3.0f) < 0.3f, "dragging 3 frets slides the held chord up 3 semitones ("
+                  + std::to_string(pitchTop(s2) - pitchTop(s0)) + ")");
+            check(s2.activeVoiceCount <= s0.activeVoiceCount && s2.heldMidiVoices == 3, "...and strums nothing on the way (voices " + std::to_string(s0.activeVoiceCount) + " -> " + std::to_string(s2.activeVoiceCount) + ")");
+            editor->mouseUp(ev({ nx15b, ny6 })); run(4);
+            juce::MidiBuffer off; for (int n : { 64, 68, 71 }) off.addEvent(juce::MidiMessage::noteOff(1, n), 0);
+            processor.processBlock(audioBuf, off); run(10);
+            check(processor.getLiveStatus().heldMidiVoices == 0, "the slid notes still stop on their note-offs");
+            processor.triggerPanic(); run(10);
+        }
         // pedal C toggles on and off; knee lever LKR
         const float c0 = pv(ParamIDs::pedalC);
         editor->mouseDown(ev({ 1202.0f, 800.0f })); editor->mouseUp(ev({ 1202.0f, 800.0f }));

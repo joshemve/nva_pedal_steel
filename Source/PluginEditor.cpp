@@ -1168,6 +1168,7 @@ void PedalSteelAudioProcessorEditor::timerCallback() {
         if (std::abs(ne - e) > 1e-3f || ne > 0.01f) steelDirty = true;
         e = ne < 0.005f ? 0.0f : ne; anySounding |= e > 0.0f;
     }
+    if (st.heldMidiVoices == 0 && ! heldSlide) heldSemis = 0.0f;   // every key let go: the next chord starts in its own place
     if (dragging != Fretboard && dragging != Neck2 && st.activeVoiceCount > 0 && st.barPositionFret > 0.25f) barFret = st.barPositionFret;
     if (skin != 7) barNeck = 1;
     if (barFretShown != barFret) {
@@ -1400,16 +1401,23 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
         case Next: proc.stepPreset(+1); return;
         case Display: openBrowser(); return;
         case Mode: showModeMenu(); return;
-        case Fretboard: {   // put the bar down here and pick the string under the mouse
+        case Fretboard: case Neck2:
+            if (proc.getLiveStatus().heldMidiVoices > 0) {   // a chord is held on MIDI: grab the bar and slide it, pluck nothing
+                dismissHint(); heldSlide = true; dragging = c;
+                heldGrabSemis = heldSemis; heldGrabBar = barFret;
+                heldGrabMouse = c == Neck2 ? n2XToFret(d.x) : xToFret(toSteel(d).x);
+                return;
+            }
+            if (c == Neck2) {   // the double neck's back neck, in the other tuning
+                dismissHint(); barNeck = 2;
+                barFret = std::round(n2XToFret(d.x)); lastString = n2StringAt(d.y);
+                playString(lastString, barFret, backStyle()); dragging = Neck2; return;
+            }
+            {   // put the bar down here and pick the string under the mouse
             dismissHint();
             const auto ds = toSteel(d); barNeck = 1;
             barFret = std::round(xToFret(ds.x)); lastString = stringAt(ds.y);   // a click plays in tune: nearest fret
             playString(lastString, barFret); dragging = Fretboard; return;
-        }
-        case Neck2: {   // the double neck's back neck, in the other tuning
-            dismissHint(); barNeck = 2;
-            barFret = std::round(n2XToFret(d.x)); lastString = n2StringAt(d.y);
-            playString(lastString, barFret, backStyle()); dragging = Neck2; return;
         }
         case Pluck: barNeck = 1; lastString = stringAt(toSteel(d).y); playString(lastString, barFret); dragging = Pluck; return;
         case None: case NumCtl: case MidiLearnBtn: return;
@@ -1423,6 +1431,13 @@ void PedalSteelAudioProcessorEditor::mouseDown(const juce::MouseEvent& e) {
 void PedalSteelAudioProcessorEditor::mouseDrag(const juce::MouseEvent& e) {
     if (dragging == None) return;
     const auto d = toDesign(e.position);
+    if (heldSlide) {   // slide the held MIDI chord: the bar moves by as many frets as the mouse, settling on frets
+        const float mouse = dragging == Neck2 ? n2XToFret(d.x) : xToFret(toSteel(d).x);
+        heldSemis = juce::jlimit(-24.0f, 24.0f, snapFret(heldGrabSemis + (mouse - heldGrabMouse), e.mods.isShiftDown()));
+        barFret = juce::jlimit(0.0f, 24.0f, heldGrabBar + (heldSemis - heldGrabSemis));
+        proc.slideHeldMidiNotes(heldSemis);
+        return;
+    }
     if (dragging == Neck2) {   // slide every held string, strum across the back neck's strings
         barFret = snapFret(n2XToFret(d.x), e.mods.isShiftDown());
         for (int s = 0; s < 10; ++s) if (heldStrings[(size_t) s]) proc.slideFretboardNote(s, barFret);
@@ -1446,7 +1461,8 @@ void PedalSteelAudioProcessorEditor::mouseDrag(const juce::MouseEvent& e) {
 }
 
 void PedalSteelAudioProcessorEditor::mouseUp(const juce::MouseEvent& e) {
-    if (dragging == Fretboard || dragging == Pluck || dragging == Neck2) releaseAllStrings();
+    if (heldSlide) heldSlide = false;   // the held chord stays where the bar was left, like a real bar
+    else if (dragging == Fretboard || dragging == Pluck || dragging == Neck2) releaseAllStrings();
     else if (dragging != None) { if (auto* p = param(dragging)) p->endChangeGesture(); recordChange(dragging, dragStartNorm); }
     dragging = None;
     mouseMove(e);

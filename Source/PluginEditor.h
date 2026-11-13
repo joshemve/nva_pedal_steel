@@ -163,6 +163,10 @@ private:
     std::array<float, 5> livePedal{};          // what the engine is actually doing (CC 65-69, keyswitches, mod wheel)
     float pedalShown(int i) const { return juce::jmax(pedalAnim[(size_t) i], livePedal[(size_t) i]); }
     float barFret = 10.0f, barFretShown = 10.0f;
+    // the bar grabbed over a chord held on MIDI (Joshua): the drag slides those notes instead of plucking the strings
+    bool heldSlide = false;
+    float heldSemis = 0.0f;                          // how far the held chord is slid now (semitones from its own notes)
+    float heldGrabSemis = 0.0f, heldGrabMouse = 0.0f, heldGrabBar = 0.0f;
     std::array<float, 10> stringEnergy{};
     std::array<float, 10> stringBend{};          // semitones the pedals/levers add to each string (copedent glow)
     juce::String displayOverride; double displayOverrideUntil = 0.0;

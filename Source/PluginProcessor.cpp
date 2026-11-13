@@ -297,6 +297,7 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
                     case UiCmdType::FretDrag: engine.slideFretboardNote(cmd.intArg, cmd.floatArg); break;
                     case UiCmdType::FretUp:   engine.releaseFretboardNote(cmd.intArg); break;
                     case UiCmdType::Pedal:    engine.setManualPedal(cmd.intArg, cmd.floatArg); break;
+                    case UiCmdType::HeldSlide: engine.slideHeldMidiNotes(cmd.floatArg); break;
                 }
             }
             pendingUiCmds.clear();
@@ -571,6 +572,12 @@ void PedalSteelAudioProcessor::triggerFretboardNote(int stringIdx, float fret, i
 void PedalSteelAudioProcessor::slideFretboardNote(int stringIdx, float fret) {
     const juce::SpinLock::ScopedLockType lock(uiCmdLock);
     if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::FretDrag, stringIdx, fret });
+}
+
+void PedalSteelAudioProcessor::slideHeldMidiNotes(float semis) {
+    const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+    if (! pendingUiCmds.empty() && pendingUiCmds.back().type == UiCmdType::HeldSlide) { pendingUiCmds.back().floatArg = semis; return; }   // only the latest drag position matters
+    if (pendingUiCmds.size() < 64) pendingUiCmds.push_back({ UiCmdType::HeldSlide, 0, semis });
 }
 
 void PedalSteelAudioProcessor::releaseFretboardNote(int stringIdx) {

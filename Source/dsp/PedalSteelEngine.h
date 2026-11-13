@@ -13,6 +13,7 @@ struct CopedentStatus {
     float volumePedal = 0.92f;
     float barPositionFret = 0.0f;
     int activeVoiceCount = 0;
+    int heldMidiVoices = 0;   // notes held down over MIDI right now (the UI bar drag slides these instead of plucking)
     int presetStyle = 0;
     bool phrasePlaying = false;
     int activeLickSlot = 0;
@@ -44,6 +45,8 @@ public:
     void triggerFretboardNote(int stringIndex, float fret, int style = -1);   // style: the tuning to play in (-1 = the preset's)
     void slideFretboardNote(int stringIndex, float fret);
     void releaseFretboardNote(int stringIndex);
+    // the bar dragged over a chord held on MIDI: every held MIDI note glides to its own note + semis (0 = back in tune)
+    void slideHeldMidiNotes(float semis);
 
     CopedentStatus getStatus() const;
 

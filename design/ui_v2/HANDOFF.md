@@ -519,9 +519,9 @@ numbers: Blender/Figma/Houdini; configurator camera guidance). All in `app.js` /
 - TRIM readout paper: `paper_grain.py` now GENERATES grain (copying from above duplicated faint diagonal creases:
   "little artifact lines") and rebuilds the shading from the paper around the box, knob and its shadow excluded.
   Joshua hasn't seen this version yet.
-- TODO (Joshua, screenshot): patchy AI texture inside the MODE dropdown box ("Crying Lead Gliss").
-- TODO (Joshua, screenshot): uneven AI lighting patches across the dark deck behind A / B / C and LKL / LKR, down to the
-  divider above MIDI LEARN / MORE.
-- TODO (Joshua): while a chord is held over MIDI, grabbing the tone bar with the mouse must NOT trigger the frets under the
-  pointer; the drag should slide the held MIDI notes (bar position follows the mouse, like a real bar slide).
+- DONE 2026-11-13: MODE box and A/B/C + LKL/LKR deck lighting evened by `final/parts/deck_flatten.py` (paint divided by its
+  own blur, times a much broader one; cream ink left out by brightness). Add an AREAS entry for any other blotchy panel.
+- DONE 2026-11-13: tone bar over a chord held on MIDI: a fretboard click grabs the bar instead of plucking, the drag slides
+  every held MIDI note by the frets moved (engine `slideHeldMidiNotes`, status `heldMidiVoices`; snaps to frets, Shift
+  hard-snaps). The chord stays where the bar is left until all keys are up. ShotMain tests it (87 PASS).
 - Still waiting on his yes/no: preset level TRIM changes (22 -4.5, 08 +4.3, 12 +3.4, 04 +1.9 dB).

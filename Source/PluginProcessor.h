@@ -48,6 +48,7 @@ public:
     void triggerFretboardNote(int stringIdx, float fret, int style = -1);   // style: another neck's tuning (double neck)
     void slideFretboardNote(int stringIdx, float fret);
     void releaseFretboardNote(int stringIdx);
+    void slideHeldMidiNotes(float semis);   // the bar dragged over a chord held on MIDI
 
     // User Preset Management (.nvps XML in Documents/NVA Pedal Steel/Presets)
     static juce::File getUserPresetsFolder();
@@ -68,7 +69,7 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
 private:
-    enum class UiCmdType { Chord, Phrase, Panic, FretDown, FretDrag, FretUp, Pedal };
+    enum class UiCmdType { Chord, Phrase, Panic, FretDown, FretDrag, FretUp, Pedal, HeldSlide };
     struct UiCmd {
         UiCmdType type = UiCmdType::Chord;
         int intArg = 0;
