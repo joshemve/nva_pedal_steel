@@ -56,6 +56,22 @@ for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states a
 for k, v in S.items():
     if k.startswith(("floor_", "kl_", "pedal_", "lever_")): continue   # pedal_/lever_: the deck controls are 3D (deck3d/)
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
+    if k == "slider_thumb":   # it carried a rectangle of the old concept round the handle: dark patch, rim bits, a tick
+        _t = np.asarray(Image.open(os.path.join(OUT, "sp_slider_thumb.png")).convert("RGBA"), np.float32)   # (Joshua)
+        _lum = _t[..., :3].mean(2); _cream = ((_t[..., 3] > 200) & (_lum > 95) & (_t[..., 0] - _t[..., 2] > 25)).astype(np.uint8)
+        _n, _lab, _st, _ = cv2.connectedComponentsWithStats(_cream); _big = 1 + int(np.argmax(_st[1:, 4]))
+        _body = (_lab == _big).astype(np.uint8)
+        _body = cv2.morphologyEx(_body, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))      # its centre groove line too
+        _ff = _body.copy(); _mk = np.zeros((_ff.shape[0] + 2, _ff.shape[1] + 2), np.uint8); cv2.floodFill(_ff, _mk, (0, 0), 1)
+        _body = np.maximum(_body, 1 - _ff).astype(np.float32)
+        _ab = cv2.GaussianBlur(_body, (0, 0), 0.8)                                       # anti-aliased edge
+        _sh = cv2.GaussianBlur(cv2.warpAffine(_body, np.float32([[1, 0, 2], [0, 1, 5]]), (_body.shape[1], _body.shape[0])), (0, 0), 5.0) * 0.55
+        _a = np.maximum(_ab, _sh)
+        _core = cv2.erode((_body > 0.5).astype(np.uint8), np.ones((3, 3), np.uint8))   # the soft edge takes the handle's own colour
+        _fill = cv2.inpaint(np.clip(_t[..., :3], 0, 255).astype(np.uint8), (1 - _core).astype(np.uint8), 3, cv2.INPAINT_TELEA).astype(np.float32)
+        _rgb = np.where(_core[..., None] > 0, _t[..., :3], _fill) * (_ab / np.maximum(_a, 1e-4))[..., None]
+        _t[..., :3] = _rgb; _t[..., 3] = _a * 255
+        Image.fromarray(np.clip(_t, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "sp_slider_thumb.png"))
     if k == "small_deck":   # its labels' fringes of old blotchy paint -> the new deck surface
         _sd = np.asarray(Image.open(os.path.join(OUT, "sp_small_deck.png")).convert("RGBA"), np.float32)
         _sd = deck_regen.swap_sprite(_sd, int(round(b[0])), int(round(b[1])))
