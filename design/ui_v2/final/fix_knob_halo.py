@@ -76,11 +76,14 @@ for style in [s_ for s_ in ("scallop", "space", "dome") if s_ != "dome" or os.pa
     prof = np.clip(prof, 0, 0.9)
     print(style, "shadow at d=2: min %.2f max %.2f (by direction)" % (prof[2].min(), prof[2].max()))
 
+    bd = np.minimum(np.minimum(yy, fs - 1 - yy), np.minimum(xx, fs - 1 - xx)).astype(np.float32)
+    edge_fade = np.clip(bd / 12.0, 0, 1) ** 1.5
     out = strip.copy()
     for k in range(n):
         fr = strip[k * fs:(k + 1) * fs]; body, d = geom(fr)
         di = np.clip(np.round(d).astype(int), 0, DMAX)
         sh = prof[di, tb] * (~body)
+        sh = sh * edge_fade   # the shadow fades out before the frame edge (a cut-off shadow drew a straight line: Joshua)
         edge = (~body) & (d < 1.5) & (fr[..., 3] > 0.05 * 255)        # the silhouette's own anti-aliasing stays
         o = out[k * fs:(k + 1) * fs]
         o[..., :3] = np.where(edge[..., None], fr[..., :3], np.where(body[..., None], fr[..., :3], 0))
