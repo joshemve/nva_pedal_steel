@@ -53,6 +53,8 @@ T["vol"]["ink_cx"] -= _SH; T["vol"]["ink_left"] -= _SH
 # sprites (canvas boxes -> UI rects)
 for f_ in os.listdir(OUT):   # the old cut-out floor pedal / knee lever states are replaced by the 3D layers
     if f_.startswith(("sp_floor_", "sp_kl_", "f3d_", "d3d_", "sp_pedal_", "sp_lever_")): os.remove(os.path.join(OUT, f_))
+_SJ = json.load(open(os.path.join(H, "..", "strips", "strips.json")))
+KS_ = {k_: [(i_["cx"], i_["cy"]) for i_ in _SJ[k_]["instances"]] for k_ in ("scallop", "space", "dome") if k_ in _SJ}
 for k, v in S.items():
     if k.startswith(("floor_", "kl_", "pedal_", "lever_")): continue   # pedal_/lever_: the deck controls are 3D (deck3d/)
     shutil.copy("sprites/%s.png" % k, os.path.join(OUT, "sp_%s.png" % k)); b = v["box"]
@@ -75,6 +77,15 @@ for k, v in S.items():
     if k == "small_deck":   # its labels' fringes of old blotchy paint -> the new deck surface
         _sd = np.asarray(Image.open(os.path.join(OUT, "sp_small_deck.png")).convert("RGBA"), np.float32)
         _sd = deck_regen.swap_sprite(_sd, int(round(b[0])), int(round(b[1])))
+        # the concept's larger knobs left their copper bottom rims in this sprite, just above GLIDE / SWELL etc.; the knobs
+        # drawn now are smaller, so those arcs showed under them (Joshua): no copper within reach of any knob centre
+        _yy, _xx = np.mgrid[0:_sd.shape[0], 0:_sd.shape[1]].astype(np.float32)
+        _rb = _sd[..., 0] - _sd[..., 2]; _L = _sd[..., :3].mean(2)
+        for _k in ("scallop", "space", "dome"):
+            for _inst in KS_[_k]:
+                _cx, _cy = (_inst[0] - b[0] / 2) * 2, (_inst[1] - b[1] / 2) * 2
+                _near = np.hypot(_xx - _cx, _yy - _cy) < 92
+                _sd[..., 3] = np.where(_near & (_rb > 45) & (_L > 45) & (_L < 175), 0, _sd[..., 3])
         Image.fromarray(np.clip(_sd, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "sp_small_deck.png"))
     if k == "small_top":   # its baked half-bold TRIM and stray "B" (small_1 artifacts) -> a clean bold TRIM
         import small_top_fix
@@ -145,6 +156,27 @@ for name, v in D3["layers"].items():
             _fr = _a[_f * _fh:(_f + 1) * _fh]; _sh = _fr[..., 3] < 200          # only the soft shadow, never the lever
             _fr[..., 3] = np.where(_sh, _fr[..., 3] * _w, _fr[..., 3])
         Image.fromarray(np.clip(_a, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "d3d_%s.png" % name))
+    if name.startswith(("pedal_", "lever_")):   # every pose casts its own soft shadow, the deck's style (Joshua: the
+        # baked shadow stayed put when a lever swung / a switch was pressed, and the sprites' own shadows ended harshly)
+        SHP = 40; _a = np.asarray(Image.open(os.path.join(OUT, "d3d_%s.png" % name)).convert("RGBA"), np.float32)
+        _fh = _a.shape[0] // v["frames"]; _W = _a.shape[1]
+        _frs = []
+        for _f in range(v["frames"]):
+            _fr = np.zeros((_fh + 2 * SHP, _W + 2 * SHP, 4), np.float32); _fr[SHP:SHP + _fh, SHP:SHP + _W] = _a[_f * _fh:(_f + 1) * _fh]
+            _al = _fr[..., 3] / 255; _body = (_al >= 200 / 255).astype(np.uint8)
+            _d = cv2.distanceTransform(1 - _body, cv2.DIST_L2, 3)
+            _keep = (_d < 1.6) & (_al > 0.01)
+            if name.startswith("lever_"): _keep[:SHP + 14] |= _al[:SHP + 14] > 0.01   # its mount meets the plate at the top
+            _bf = _body.astype(np.float32); _sh = np.zeros_like(_bf)
+            for _dx, _dy, _sg, _k in ((4, 10, 14.0, 0.38), (1, 3, 4.0, 0.32)):
+                _m = cv2.GaussianBlur(cv2.warpAffine(_bf, np.float32([[1, 0, _dx], [0, 1, _dy]]), (_bf.shape[1], _bf.shape[0])), (0, 0), _sg) * _k
+                _sh = 1 - (1 - _sh) * (1 - _m)
+            _ao = np.where(_keep, _al, 0.0)
+            _an = _ao + _sh * (1 - _ao)
+            _fr[..., :3] = np.where(_keep[..., None], _fr[..., :3], 0) * (_ao / np.maximum(_an, 1e-4))[..., None]
+            _fr[..., 3] = _an * 255; _frs.append(_fr)
+        Image.fromarray(np.clip(np.concatenate(_frs, 0), 0, 255).astype(np.uint8), "RGBA").save(os.path.join(OUT, "d3d_%s.png" % name))
+        v["box0"] = list(v["box"]); v["box"] = [v["box"][0] - SHP, v["box"][1] - SHP, v["box"][2] + SHP, v["box"][3] + SHP]
     b = v["box"]; rect("d3d_" + name, b[0] / 2, b[1] / 2, b[2] / 2, b[3] / 2)
     L("inline constexpr int d3dFrames_%s = %d;" % (name, v["frames"]))
 BY = F3["body_y"]
@@ -251,6 +283,6 @@ L("inline constexpr float syncCentre[2] = { %.2ff, %.2ff }, lampACentre[2] = { %
 pb = json.load(open("aligned/pedals_unlit.json"))["part_box_canvas"]; cw = (pb[2] - pb[0]) / 3
 for i, k in enumerate("ABC"): rect("hitPedal" + k, (pb[0] + i * cw) / 2, pb[1] / 2, (pb[0] + (i + 1) * cw) / 2, pb[3] / 2)
 for k_, n_ in (("hitLKL", "lever_L"), ("hitLKR", "lever_R")):   # the 3D levers' own boxes (all frames), not the old reference spots
-    b_ = D3["layers"][n_]["box"]; rect(k_, b_[0] / 2, b_[1] / 2, b_[2] / 2, b_[3] / 2)
+    b_ = D3["layers"][n_].get("box0", D3["layers"][n_]["box"]); rect(k_, b_[0] / 2, b_[1] / 2, b_[2] / 2, b_[3] / 2)   # not the shadow padding
 lines.append("}"); open(os.path.join(ROOT, "Source", "UiLayout.h"), "w").write("\n".join(lines) + "\n")
 print("wrote Source/UiLayout.h and", len(os.listdir(OUT)), "assets;", sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT)) // 1024, "KB")
