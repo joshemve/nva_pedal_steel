@@ -16,7 +16,7 @@ BOX_MORE = (24, 904, 3176, 1985)  # canvas px: the MORE deck inside its frame
 KEEP = [(1538, 1838, 2182, 1878)]  # canvas px: dark parts that aren't paint: the volume slider's recessed groove
 # the FINAL slider groove (after more_deck's strip step shortens it): the old painted handle left its shadow over and
 # round it and a bright fleck at its end, showing at 0 % (Joshua). fix_groove() runs on the finished images.
-GROOVE_Y, GROOVE_X, CLEAN_X = (1840, 1874), (1572, 2150), (1600, 1900)
+GROOVE_Y, GROOVE_X, CLEAN_X = (1833, 1881), (1572, 2150), (1600, 1900)   # rims and their edges too (a line was left at them)
 SMUDGE = (1930, 1812, 2040, 1886)   # canvas px round the old handle: its shadow over the deck paint
 
 
@@ -93,7 +93,7 @@ def fix_groove(img, yoff=0):
     out = img.copy()
     if _SURF is not None:   # the shadow on the deck paint above and below the groove -> the new surface
         x0, y0, x1, y1 = SMUDGE
-        for ya, yb in ((y0, GROOVE_Y[0] - 2), (GROOVE_Y[1] + 2, y1)):
+        for ya, yb in ((y0, GROOVE_Y[0] + 1), (GROOVE_Y[1] - 1, y1)):   # overlapping the groove rebuild: no gap rows left
             seg = out[ya - yoff:yb - yoff, x0:x1]; new = _SURF[ya:yb, x0:x1]
             h, w = seg.shape[:2]; xx = np.arange(w)
             wx = np.clip(np.minimum(xx, w - 1 - xx) / 12.0, 0, 1)[None, :, None]
