@@ -143,6 +143,9 @@ private:
     juce::Image skinImg[kNumSkins], bgScaledPrev;
     juce::AffineTransform steelXf() const;   // walnut steel coordinates (UiLayout) -> this instrument's, design px
     juce::Point<float> toSteel(juce::Point<float> d) const { return d.transformedBy(steelXf().inverted()); }
+public:
+    juce::Point<float> steelToDesign(juce::Point<float> p) const { return p.transformedBy(steelXf()); }   // for the shot tests
+private:
     static bool isSteelCtl(Ctl c) { return c == Fretboard || c == Pluck; }   // (A B C / LKL LKR are the deck's switches)
     int skin = 0; float skinFade = 1.0f;
     juce::String cachedUserName; int cachedUserSkin = 0;

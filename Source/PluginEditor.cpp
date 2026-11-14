@@ -1251,6 +1251,24 @@ PedalSteelAudioProcessorEditor::Ctl PedalSteelAudioProcessorEditor::hitTest(juce
     auto inCircle = [&](juce::Rectangle<float> b) { return d.getDistanceFrom(b.getCentre()) <= b.getWidth() * 0.5f + 2.0f; };
     for (int i = Tone; i <= Trim; ++i) { const auto b = ctlBounds((Ctl) i); if (! b.isEmpty() && inCircle(b)) return (Ctl) i; }
     if (charAt(d) >= 0) return Character;   // CHARACTER's engraved names and dots
+    // the steel's own floor pedals and knee levers work like their deck switches (Joshua: "I should be able to click
+    // on the pedals here"); pads only, not the long pull rods; hidden behind the MORE deck when it's open
+    if (! more() || d.y < moreFrameTop) {
+        auto pad = [](const float* b) { const float cx = b[0] + b[2] * 0.5f; return juce::Rectangle<float>(cx - 40.0f, b[1] + b[3] - 95.0f, 80.0f, 95.0f); };
+        const auto ds = toSteel(d);
+        if (pad(f3d_pedal_A).contains(ds)) return PedA;
+        if (pad(f3d_pedal_B).contains(ds)) return PedB;
+        if (pad(f3d_pedal_C).contains(ds)) return PedC;
+        if (skin == 7) {   // the double neck: its levers and five extra pedals are drawn unmapped
+            if (juce::Rectangle<float>(f3d_doubleneck_knee_L[0], f3d_doubleneck_knee_L[1], f3d_doubleneck_knee_L[2], f3d_doubleneck_knee_L[3]).contains(d)) return LKL;
+            if (juce::Rectangle<float>(f3d_doubleneck_knee_R[0], f3d_doubleneck_knee_R[1], f3d_doubleneck_knee_R[2], f3d_doubleneck_knee_R[3]).contains(d)) return LKR;
+            static const float* xb[5] = { f3d_doubleneck_pedal_X0, f3d_doubleneck_pedal_X1, f3d_doubleneck_pedal_X2, f3d_doubleneck_pedal_X3, f3d_doubleneck_pedal_X4 };
+            for (int i = 0; i < 5; ++i) if (pad(xb[i]).contains(d)) return (Ctl) (XPed0 + i);
+        } else {
+            if (juce::Rectangle<float>(f3d_knee_L[0], f3d_knee_L[1], f3d_knee_L[2], f3d_knee_L[3]).contains(ds)) return LKL;
+            if (juce::Rectangle<float>(f3d_knee_R[0], f3d_knee_R[1], f3d_knee_R[2], f3d_knee_R[3]).contains(ds)) return LKR;
+        }
+    }
     for (Ctl c : { Volume, PedA, PedB, PedC, LKL, LKR, Sync, Mode, Prev, Next, Display, MidiLearnBtn, MoreBtn, Neck2, Fretboard, Pluck,
                    XPed0, XPed1, XPed2, XPed3, XPed4 })
         if (ctlBounds(c).contains(d)) return c;

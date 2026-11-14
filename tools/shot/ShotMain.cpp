@@ -215,6 +215,19 @@ int main(int argc, char* argv[]) {
             processor.triggerPanic(); run(10);
         }
         // pedal C toggles on and off; knee lever LKR
+        {   // the steel's own floor pedal A and knee lever L toggle like their deck switches (Joshua)
+            auto* pe = dynamic_cast<PedalSteelAudioProcessorEditor*>(editor.get());
+            const auto pa = pe->steelToDesign({ UiLayout::f3d_pedal_A[0] + UiLayout::f3d_pedal_A[2] * 0.5f, UiLayout::f3d_pedal_A[1] + UiLayout::f3d_pedal_A[3] - 40.0f });
+            const float a0 = pv(ParamIDs::pedalA);
+            editor->mouseDown(ev(pa)); editor->mouseUp(ev(pa));
+            check(pv(ParamIDs::pedalA) != a0, "click on the steel's floor pedal A toggles pedal A");
+            editor->mouseDown(ev(pa)); editor->mouseUp(ev(pa));
+            const auto kl = pe->steelToDesign({ UiLayout::f3d_knee_L[0] + UiLayout::f3d_knee_L[2] * 0.5f, UiLayout::f3d_knee_L[1] + UiLayout::f3d_knee_L[3] * 0.6f });
+            const float l0 = pv(ParamIDs::leverLKL);
+            editor->mouseDown(ev(kl)); editor->mouseUp(ev(kl));
+            check(pv(ParamIDs::leverLKL) != l0, "click on the steel's knee lever LKL toggles LKL");
+            editor->mouseDown(ev(kl)); editor->mouseUp(ev(kl));
+        }
         const float c0 = pv(ParamIDs::pedalC);
         editor->mouseDown(ev({ 1202.0f, 800.0f })); editor->mouseUp(ev({ 1202.0f, 800.0f }));
         check(pv(ParamIDs::pedalC) != c0, "click on pedal C toggles it");
