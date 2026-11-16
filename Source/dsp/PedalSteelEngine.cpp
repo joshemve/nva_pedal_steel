@@ -1657,8 +1657,9 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
             return;
         }
 
-        // 3. Legacy MIDI Channel 2 Full Studio Phrase Trigger
-        if (ch == 2) {
+        // 3. Legacy MIDI Channel 2 Full Studio Phrase Trigger: only in Studio Phrase Licks mode. Everywhere else channel 2
+        //    plays notes like any other channel (it is the first member channel of an MPE controller)
+        if (ch == 2 && params.playMode == 4) {
             const int slot = (note >= 45) ? 4 : juce::jlimit(0, 4, (note - 36) / 2);
             const int pIdx = selectPhraseSliceBySlot(slot, params.presetStyle);
             startPhraseVoice(pIdx, note, ch, vel, 0.0f, false);
@@ -1714,7 +1715,7 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
             v.barVelocity = 0.0f;
             v.pedalCurrentSemis = 0.0f;
             v.pedalVel = 0.0f;
-            v.mpePitchSemis = (ch >= 3) ? (mpeChannelPitchNorm[static_cast<size_t>(ch)] * 12.0f) : 0.0f;
+            v.mpePitchSemis = (ch >= 2) ? (mpeChannelPitchNorm[static_cast<size_t>(ch)] * 12.0f) : 0.0f;
             v.mpePitchVel = 0.0f;
             v.ampEnv = 0.0f;
             v.swellEnv = 1.0f - 0.96f * params.autoSwell;
@@ -1794,7 +1795,7 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
         const int ch = juce::jlimit(1, 16, msg.getChannel());
         const float norm = static_cast<float>(msg.getPitchWheelValue() - 8192) * (1.0f / 8192.0f);
         mpeChannelPitchNorm[static_cast<size_t>(ch)] = norm;
-        if (ch == 1 || ch == 2) {
+        if (ch == 1) {   // channel 1 is the master wheel; 2..16 bend only their own notes (MPE member channels)
             pitchWheelNorm = norm;
         }
     } else if (msg.isChannelPressure()) {
@@ -2192,7 +2193,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             v.pedalVel += pedalAccel * static_cast<float>(dt);
             v.pedalCurrentSemis += v.pedalVel * static_cast<float>(dt);
 
-            if (v.channel >= 3) {
+            if (v.channel >= 2) {
                 if (v.held || v.sustainedByPedal) {
                     const float mpeTarget = mpeChannelPitchNorm[static_cast<size_t>(v.channel)] * 12.0f;
                     const float mpeAccel = pedalOmega * pedalOmega * (mpeTarget - v.mpePitchSemis) - 1.95f * pedalOmega * v.mpePitchVel;

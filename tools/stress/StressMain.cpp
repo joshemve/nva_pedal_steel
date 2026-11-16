@@ -170,6 +170,25 @@ int main(int argc, char* argv[]) {
         p.prepareToPlay(48000, 256); check(p.getLatencySamples() == 0, "zero latency at 48 kHz");
     }
 
+    // 1d. MIDI channel 2 (an MPE controller's first note channel): plays the note it was sent, and its bend stays its own
+    std::cout << "1d. MIDI channel 2 behaves like a note channel" << std::endl;
+    {
+        auto run = [](int ch, int bendCh, float& rms, float& zcr) {
+            PedalSteelAudioProcessor p; p.setPlayConfigDetails(0, 2, 48000, 256); p.prepareToPlay(48000, 256); juce::AudioBuffer<float> buf(2, 256);
+            if (auto* q = p.apvts.getParameter(ParamIDs::playMode)) q->setValueNotifyingHost(q->convertTo0to1(3.0f));   // Manual Copedent: no auto pedals
+            double e = 0; int zc = 0; float prev = 0; long long n = 0;
+            for (int b = 0; b < 180; ++b) { juce::MidiBuffer midi; if (b == 1) midi.addEvent(juce::MidiMessage::noteOn(ch, 64, (juce::uint8) 100), 0);
+                if (b == 2 && bendCh > 0) midi.addEvent(juce::MidiMessage::pitchWheel(bendCh, 16383), 0);
+                p.processBlock(buf, midi); if (b < 60) continue; const float* d = buf.getReadPointer(0);
+                for (int i = 0; i < 256; ++i) { e += d[i] * d[i]; if ((d[i] >= 0) != (prev >= 0)) ++zc; prev = d[i]; ++n; } }
+            rms = (float) std::sqrt(e / (double) n); zcr = (float) zc / (float) n;
+        };
+        float r1, z1, r2, z2, r1b, z1b; run(1, 0, r1, z1); run(2, 0, r2, z2); run(1, 2, r1b, z1b);
+        check(std::abs(juce::Decibels::gainToDecibels(r2 / std::max(1.0e-9f, r1))) < 1.5f && std::abs(z2 - z1) < 0.15f * z1,
+              "the same note on channel 2 sounds like channel 1 (level " + juce::String(juce::Decibels::gainToDecibels(r2 / std::max(1.0e-9f, r1)), 2) + " dB, pitch measure " + juce::String(z2 / z1, 3) + "x)");
+        check(std::abs(z1b - z1) < 0.03f * z1, "a pitch bend on channel 2 does not bend a note on channel 1 (pitch measure " + juce::String(z1b / z1, 3) + "x)");
+    }
+
     // 2. variable block sizes inside one prepare (0 .. max), then blocks LARGER than promised, then mono
     std::cout << "2. variable / oversized / zero-length blocks, mono" << std::endl;
     {
