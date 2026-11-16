@@ -445,6 +445,7 @@ public:
     void setCategory(const juce::String& c) { category = c; repaint(); }
     void setNotes(const juce::String& s) { notes.setText(s, false); }
     bool replaceWithoutAsking = false;   // tests
+    juce::ScopedMessageBox replaceBox;   // closes with this dialog, so it can never outlive the editor
 
     void cancel() { if (onClose) onClose(); }
     void save() {
@@ -454,7 +455,7 @@ public:
         const auto file = dir.getChildFile(n + ".nvps");
         if (file.existsAsFile() && ! replaceWithoutAsking) {
             juce::Component::SafePointer<PresetSaveDialog> safe(this);
-            juce::AlertWindow::showAsync(juce::MessageBoxOptions().withIconType(juce::MessageBoxIconType::QuestionIcon)
+            replaceBox = juce::AlertWindow::showScopedAsync(juce::MessageBoxOptions().withIconType(juce::MessageBoxIconType::QuestionIcon)
                                              .withTitle("Replace preset?").withMessage("A preset called \"" + n + "\" already exists.")
                                              .withButton("Replace").withButton("Cancel").withAssociatedComponent(this),
                                          [safe, file](int r) { if (safe != nullptr && r == 1) safe->write(file); });

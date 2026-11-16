@@ -164,6 +164,13 @@ PedalSteelAudioProcessorEditor::PedalSteelAudioProcessorEditor(PedalSteelAudioPr
         auto xml = juce::XmlDocument::parse(settingsFile());
         hintDismissed = xml != nullptr && xml->getBoolAttribute("playHintDone", false);
     }
+    // No Windows UI Automation tree (NVA rule). Once any UIA client (screen reader, desktop-automation or assistant app)
+    // has read a JUCE window, it can call back into the controls' providers while / after the window is destroyed:
+    // AddressSanitizer caught exactly that as a heap-use-after-free in the editor open / close stress test
+    // (AccessibilityNativeHandle::get_ProviderOptions), and in FL Studio it showed up as a hang on New project / quit.
+    // With accessibility off the plugin exposes no UIA elements, so there is nothing to call into. Keyboard focus and
+    // Tab traversal are not affected. (buildAccessibility()'s controls stay in place, inert, should this be revisited.)
+    setAccessible(false);
     setLookAndFeel(&menuLnf);   // resize corner (and any stock widgets) in the plugin's style
     setWantsKeyboardFocus(true);
     const int startWidth = proc.editorWidth;   // setResizeLimits below resizes (and so calls resized()) before setSize

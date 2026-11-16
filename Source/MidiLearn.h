@@ -19,7 +19,8 @@ public:
     // ---- audio thread ------------------------------------------------------------------------------------------
     void handleMidi(const juce::MidiBuffer& midi) noexcept {
         for (const auto meta : midi) {
-            const auto& m = meta.getMessage();
+            if (meta.numBytes > 3) continue;                          // SysEx: getMessage() would allocate
+            const auto m = meta.getMessage();
             if (! m.isController()) continue;
             const int cc = m.getControllerNumber();
             if (cc < 0 || cc >= 120) continue;                       // 120+ are channel-mode messages

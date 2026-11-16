@@ -212,48 +212,75 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalSteelAudioProcessor::cr
 }
 
 PedalSteelParams PedalSteelAudioProcessor::readParamsFromAtomics() const {
-    PedalSteelParams p;
-    p.presetStyle   = static_cast<int>(pPresetStyle->load());
-    p.playMode      = static_cast<int>(pPlayMode->load());
-    p.fxCharacter   = static_cast<int>(pFxCharacter->load());
-    p.pedalA        = pPedalA->load();
-    p.pedalB        = pPedalB->load();
-    p.pedalC        = pPedalC->load();
-    p.leverLKL      = pLeverLKL->load();
-    p.leverLKR      = pLeverLKR->load();
-    for (int i = 0; i < 5; ++i) p.pedalX[i] = pPedalX[i]->load();
-    p.volumePedal   = pVolumePedal->load();
-    p.scoopDepth    = pScoopDepth->load();
-    p.pedalSpeed    = pPedalSpeed->load();
-    p.barGlide      = pBarGlide->load();
-    p.barSlideNoise = pBarSlideNoise->load();
-    p.vibratoDepth  = pVibratoDepth->load();
-    p.vibratoRate   = pVibratoRate->load();
-    p.autoSwell     = pAutoSwell->load();
-    p.swellTime     = pSwellTime->load();
-    p.sampleBlend   = pSampleBlend->load();
-    p.pickSnap      = pPickSnap->load();
-    p.pickupPos     = pPickupPos->load();
-    p.coilPeakFreq  = pCoilPeakFreq->load();
-    p.coilResonance = pCoilResonance->load();
-    p.sustainTime   = pSustainTime->load();
-    p.cabinetDrop   = pCabinetDrop->load();
-    p.stereoWidth   = pStereoWidth->load();
-    p.ampDrive      = pAmpDrive->load();
-    p.toneWarmth    = pToneWarmth->load();
-    p.delayMix      = pDelayMix->load();
-    p.delayTime     = pDelayTime->load();
-    p.tempoSync     = (pTempoSync->load() >= 0.5f);
+    // a non-finite value (a hand-edited preset, a corrupted session) must never reach the engine: it would index tables
+    // with NaN and poison every filter; each float falls back to its default
+    PedalSteelParams p; const PedalSteelParams d;
+    auto fin = [](const std::atomic<float>* a, float fallback) noexcept { const float v = a->load(std::memory_order_relaxed); return std::isfinite(v) ? v : fallback; };
+    p.presetStyle   = static_cast<int>(fin(pPresetStyle, static_cast<float>(d.presetStyle)));
+    p.playMode      = static_cast<int>(fin(pPlayMode, static_cast<float>(d.playMode)));
+    p.fxCharacter   = static_cast<int>(fin(pFxCharacter, static_cast<float>(d.fxCharacter)));
+    p.pedalA        = fin(pPedalA, d.pedalA);
+    p.pedalB        = fin(pPedalB, d.pedalB);
+    p.pedalC        = fin(pPedalC, d.pedalC);
+    p.leverLKL      = fin(pLeverLKL, d.leverLKL);
+    p.leverLKR      = fin(pLeverLKR, d.leverLKR);
+    for (int i = 0; i < 5; ++i) p.pedalX[i] = fin(pPedalX[i], 0.0f);
+    p.volumePedal   = fin(pVolumePedal, d.volumePedal);
+    p.scoopDepth    = fin(pScoopDepth, d.scoopDepth);
+    p.pedalSpeed    = fin(pPedalSpeed, d.pedalSpeed);
+    p.barGlide      = fin(pBarGlide, d.barGlide);
+    p.barSlideNoise = fin(pBarSlideNoise, d.barSlideNoise);
+    p.vibratoDepth  = fin(pVibratoDepth, d.vibratoDepth);
+    p.vibratoRate   = fin(pVibratoRate, d.vibratoRate);
+    p.autoSwell     = fin(pAutoSwell, d.autoSwell);
+    p.swellTime     = fin(pSwellTime, d.swellTime);
+    p.sampleBlend   = fin(pSampleBlend, d.sampleBlend);
+    p.pickSnap      = fin(pPickSnap, d.pickSnap);
+    p.pickupPos     = fin(pPickupPos, d.pickupPos);
+    p.coilPeakFreq  = fin(pCoilPeakFreq, d.coilPeakFreq);
+    p.coilResonance = fin(pCoilResonance, d.coilResonance);
+    p.sustainTime   = fin(pSustainTime, d.sustainTime);
+    p.cabinetDrop   = fin(pCabinetDrop, d.cabinetDrop);
+    p.stereoWidth   = fin(pStereoWidth, d.stereoWidth);
+    p.ampDrive      = fin(pAmpDrive, d.ampDrive);
+    p.toneWarmth    = fin(pToneWarmth, d.toneWarmth);
+    p.delayMix      = fin(pDelayMix, d.delayMix);
+    p.delayTime     = fin(pDelayTime, d.delayTime);
+    p.tempoSync     = (fin(pTempoSync, 0.0f) >= 0.5f);
     p.hostBpm       = currentHostBpm.load(std::memory_order_relaxed);
-    p.reverbMix     = pReverbMix->load();
-    p.reverbDecay   = pReverbDecay->load();
-    p.outputLevel   = pOutputLevel->load();
+    p.reverbMix     = fin(pReverbMix, d.reverbMix);
+    p.reverbDecay   = fin(pReverbDecay, d.reverbDecay);
+    p.outputLevel   = fin(pOutputLevel, d.outputLevel);
     return p;
 }
 
 void PedalSteelAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
-    engine.prepare(sampleRate, samplesPerBlock);
+    upFactor = sampleRate >= 176000.0 ? 4 : (sampleRate >= 88000.0 ? 2 : 1);
+    engine.prepare(sampleRate / upFactor, samplesPerBlock / upFactor + 2);
+    if (upFactor > 1) {
+        // windowed-sinc low-pass at 0.46 of the engine's Nyquist-to-rate ratio, Kaiser beta 9 (~-90 dB images)
+        const int n = kUpTaps * upFactor; upFir.assign((size_t) n, 0.0f);
+        auto bessel0 = [](double x) { double sum = 1.0, term = 1.0; for (int k = 1; k < 40; ++k) { term *= (x / (2.0 * k)) * (x / (2.0 * k)); sum += term; } return sum; };
+        const double fc = 0.46 / upFactor, beta = 9.0, mid = (n - 1) * 0.5;
+        for (int i = 0; i < n; ++i) {
+            const double t = i - mid, x = juce::MathConstants<double>::twoPi * fc * t;
+            const double sinc = std::abs(t) < 1.0e-9 ? 1.0 : std::sin(x) / x, r = t / mid;
+            upFir[(size_t) i] = (float) (2.0 * fc * sinc * bessel0(beta * std::sqrt(std::max(0.0, 1.0 - r * r))) / bessel0(beta));
+        }
+        for (int ph = 0; ph < upFactor; ++ph) {   // every phase passes DC at exactly unity: no ripple at the factor rate
+            double sum = 0; for (int j = 0; j < kUpTaps; ++j) sum += upFir[(size_t) (j * upFactor + ph)];
+            for (int j = 0; j < kUpTaps; ++j) upFir[(size_t) (j * upFactor + ph)] = (float) (upFir[(size_t) (j * upFactor + ph)] / sum);
+        }
+        lowBuf.setSize(2, juce::jmax(2048, samplesPerBlock) / upFactor + 8, false, true, false);
+    }
+    for (auto& h : upHist) std::fill(std::begin(h), std::end(h), 0.0f);
+    upHistPos = 0; upHostPos = 0;
+    setLatencySamples(upFactor > 1 ? (kUpTaps / 2) * upFactor : 0);
     keyboardState.reset();
+    {   // clicks made while audio was stopped must not all fire in the first block
+        const juce::SpinLock::ScopedLockType lock(uiCmdLock);
+        pendingUiCmds.clear();
+    }
     outputPeakL.store(0.0f, std::memory_order_relaxed);
     outputPeakR.store(0.0f, std::memory_order_relaxed);
 }
@@ -272,6 +299,7 @@ bool PedalSteelAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts
 void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
     juce::ScopedNoDenormals noDenormals;
     buffer.clear();
+    if (buffer.getNumChannels() == 0) return;
 
     // Query DAW host tempo if available
     if (auto* ph = getPlayHead()) {
@@ -308,20 +336,14 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
     engine.setParams(readParamsFromAtomics());
 
-    int currentSample = 0;
     const int numSamples = buffer.getNumSamples();
+    renderEngine(buffer, midiMessages);
 
-    for (const auto metadata : midiMessages) {
-        const int msgSample = juce::jlimit(0, numSamples, metadata.samplePosition);
-        if (msgSample > currentSample) {
-            engine.renderBlock(buffer, currentSample, msgSample - currentSample);
-            currentSample = msgSample;
-        }
-        engine.handleMidiMessage(metadata.getMessage());
-    }
-
-    if (currentSample < numSamples) {
-        engine.renderBlock(buffer, currentSample, numSamples - currentSample);
+    // last line of defence: never hand the host NaN / Inf (it can mute the whole track or worse); start clean instead
+    for (int c = 0; c < buffer.getNumChannels(); ++c) {
+        const float* d = buffer.getReadPointer(c); bool bad = false;
+        for (int i = 0; i < numSamples; ++i) if (! std::isfinite(d[i])) { bad = true; break; }
+        if (bad) { buffer.clear(); engine.reset(); break; }
     }
 
     // Update stereo output peak meters with smooth ballistics
@@ -349,6 +371,70 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 CopedentStatus PedalSteelAudioProcessor::getLiveStatus() const {
     const juce::SpinLock::ScopedLockType lock(statusLock);
     return cachedStatus;
+}
+
+void PedalSteelAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) {
+    // note-offs that arrive while bypassed would be lost and the notes would ring on when un-bypassed: let go of everything
+    juce::ignoreUnused(midi);
+    buffer.clear();
+    engine.allNotesOff();
+    keyboardState.reset();
+}
+
+void PedalSteelAudioProcessor::renderEngine(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
+    const int numSamples = buffer.getNumSamples();
+    if (upFactor <= 1 || lowBuf.getNumSamples() == 0) {     // 44.1 / 48 kHz: the engine renders straight into the host buffer
+        int currentSample = 0;
+        for (const auto metadata : midiMessages) {
+            const int msgSample = juce::jlimit(0, numSamples, metadata.samplePosition);
+            if (msgSample > currentSample) {
+                engine.renderBlock(buffer, currentSample, msgSample - currentSample);
+                currentSample = msgSample;
+            }
+            if (metadata.numBytes <= 3) engine.handleMidiMessage(metadata.getMessage());   // SysEx would allocate; the engine ignores it anyway
+        }
+        if (currentSample < numSamples) engine.renderBlock(buffer, currentSample, numSamples - currentSample);
+        return;
+    }
+
+    // host sample k uses engine samples up to index k / upFactor; a new engine sample is needed whenever k % upFactor == 0
+    const int f = upFactor, numCh = juce::jmin(2, buffer.getNumChannels());
+    const int maxLow = lowBuf.getNumSamples();
+    auto midiIt = midiMessages.cbegin(); const auto midiEnd = midiMessages.cend();
+    int done = 0;
+    while (done < numSamples || midiIt != midiEnd) {
+        const int chunk = juce::jmin(numSamples - done, (maxLow - 1) * f);     // host samples in this pass
+        const juce::int64 k0 = upHostPos;
+        const int nLow = (int) ((k0 + chunk + f - 1) / f - (k0 + f - 1) / f);     // engine samples those host samples start
+        juce::AudioBuffer<float> low(lowBuf.getArrayOfWritePointers(), numCh, juce::jmax(1, nLow));
+        if (nLow > 0) low.clear(0, nLow);
+        int lowDone = 0;
+        while (midiIt != midiEnd) {
+            const auto metadata = *midiIt;
+            const int pos = juce::jlimit(0, numSamples, metadata.samplePosition);
+            if (pos >= done + chunk && chunk > 0 && done + chunk < numSamples) break;      // belongs to a later pass
+            const int lowPos = juce::jlimit(lowDone, nLow, (int) ((k0 + (pos - done) + f - 1) / f - (k0 + f - 1) / f));
+            if (lowPos > lowDone) { engine.renderBlock(low, lowDone, lowPos - lowDone); lowDone = lowPos; }
+            if (metadata.numBytes <= 3) engine.handleMidiMessage(metadata.getMessage());
+            ++midiIt;
+        }
+        if (lowDone < nLow) engine.renderBlock(low, lowDone, nLow - lowDone);
+
+        for (int c = 0; c < numCh; ++c) {
+            const float* in = low.getReadPointer(c); float* out = buffer.getWritePointer(c, done); float* hist = upHist[c];
+            int hp = upHistPos, li = 0; juce::int64 k = k0;
+            for (int i = 0; i < chunk; ++i, ++k) {
+                const int ph = (int) (k % f);
+                if (ph == 0) { hp = (hp + 1) % kUpTaps; hist[hp] = in[li++]; }
+                const float* h = upFir.data() + ph; float acc = 0.0f; int idx = hp;
+                for (int j = 0; j < kUpTaps; ++j) { acc += h[j * f] * hist[idx]; idx = idx == 0 ? kUpTaps - 1 : idx - 1; }
+                out[i] = acc;
+            }
+            if (c == numCh - 1) upHistPos = hp;
+        }
+        upHostPos += chunk; done += chunk;
+        if (chunk == 0 && midiIt == midiEnd) break;
+    }
 }
 
 int PedalSteelAudioProcessor::getNumPrograms() {
@@ -502,19 +588,24 @@ bool PedalSteelAudioProcessor::loadUserPreset(const juce::File& file) {
 
     // Apply parameter-by-parameter via setValueNotifyingHost so DAW host automation lanes stay synced!
     bool appliedAny = false;
+    juce::StringArray applied;
     for (auto* child : xml->getChildWithTagNameIterator("PARAM")) {
         const juce::String id = child->getStringAttribute("id");
         if (id.isNotEmpty() && child->hasAttribute("value")) {
             if (auto* param = apvts.getParameter(id)) {
                 const float val = static_cast<float>(child->getDoubleAttribute("value", param->convertFrom0to1(param->getValue())));
-                param->setValueNotifyingHost(param->convertTo0to1(val));
-                appliedAny = true;
+                if (! std::isfinite(val)) continue;                       // a hand-edited "nan" / "inf": keep the default
+                param->setValueNotifyingHost(juce::jlimit(0.0f, 1.0f, param->convertTo0to1(val)));
+                applied.add(id); appliedAny = true;
             }
         }
     }
-    if (!appliedAny) {
-        apvts.replaceState(juce::ValueTree::fromXml(*xml));
-    }
+    if (!appliedAny) return false;   // no parameters in it: not one of our presets
+    // a preset saved before a parameter existed (e.g. the double neck's pedals D-H) must not inherit whatever the last
+    // preset left there
+    for (auto* prm : getParameters())
+        if (auto* rp = dynamic_cast<juce::RangedAudioParameter*>(prm))
+            if (! applied.contains(rp->getParameterID())) rp->setValueNotifyingHost(rp->getDefaultValue());
 
     {
         const juce::ScopedLock sl(presetMetaLock);
@@ -591,8 +682,8 @@ void PedalSteelAudioProcessor::getStateInformation(juce::MemoryBlock& destData) 
     if (xml != nullptr) {
         xml->setAttribute("currentPresetIndex", currentPresetIndex.load());
         xml->setAttribute("midiMap", midiLearn.toString());
-        xml->setAttribute("editorWidth", editorWidth);
-        xml->setAttribute("showMore", showMore);
+        xml->setAttribute("editorWidth", editorWidth.load());
+        xml->setAttribute("showMore", showMore.load());
         const juce::String userName = getActiveUserPresetName();
         if (userName.isNotEmpty()) {
             xml->setAttribute("userPresetName", userName);
@@ -612,16 +703,18 @@ void PedalSteelAudioProcessor::setStateInformation(const void* data, int sizeInB
         }
         midiLearn.fromString(xmlState->getStringAttribute("midiMap", ""));
         xmlState->removeAttribute("midiMap");
-        editorWidth = juce::jlimit(800, 2400, xmlState->getIntAttribute("editorWidth", editorWidth));
+        editorWidth = juce::jlimit(800, 2400, xmlState->getIntAttribute("editorWidth", editorWidth.load()));
         xmlState->removeAttribute("editorWidth");
-        showMore = xmlState->getBoolAttribute("showMore", showMore);
+        showMore = xmlState->getBoolAttribute("showMore", showMore.load());
         xmlState->removeAttribute("showMore");
         apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
         // switches and choices hold whatever raw value a host last sent (e.g. 0.3 for "off"); replaceState leaves those
         // alone when the meaning doesn't change, so snap them to their legal value, and hosts read back what they saved
         for (auto* p : getParameters())
             if (auto* rp = dynamic_cast<juce::RangedAudioParameter*>(p)) {
-                const float raw = rp->getValue(), legal = rp->convertTo0to1(rp->convertFrom0to1(raw));
+                const float raw = rp->getValue();
+                if (! std::isfinite(raw)) { rp->setValueNotifyingHost(rp->getDefaultValue()); continue; }   // "nan" in a session
+                const float legal = juce::jlimit(0.0f, 1.0f, rp->convertTo0to1(rp->convertFrom0to1(raw)));
                 if (std::abs(raw - legal) > 1e-6f) rp->setValueNotifyingHost(legal);
             }
         captureCurrentAsBaseline();

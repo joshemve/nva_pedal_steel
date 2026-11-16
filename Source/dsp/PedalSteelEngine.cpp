@@ -1822,6 +1822,8 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
             ccPedals[static_cast<size_t>(cc - 65)] = val;
         } else if (cc == 120 || cc == 123) {
             allNotesOff();
+        } else if (cc == 121) {   // Reset All Controllers (hosts send it on stop / loop): a CC7 / CC11 left at 0 must not keep it silent
+            modWheelNorm = 0.0f; expressionNorm = 1.0f; ccPedals.fill(0.0f);
         }
     }
 }
@@ -2607,7 +2609,7 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             ? 0.0f
             : ((activeCharMode == 7) ? 0.06f : 0.22f);
         float finalL = (dryCombinedL + extraRevL * dryExtraGain + dlyL + revL * 1.25f) * outGain;
-        float finalR = (dryCombinedR + extraRevR * dryExtraGain + dlyL + revR * 1.25f) * outGain;
+        float finalR = (dryCombinedR + extraRevR * dryExtraGain + dlyR + revR * 1.25f) * outGain;
 
         // Mid/Side Stereo Panorama Width Control (1.0 = natural studio stereo, 0.0 = mono, 1.5 = wide)
         const float mid  = 0.5f * (finalL + finalR);

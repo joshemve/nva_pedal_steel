@@ -14,6 +14,7 @@ public:
     void releaseResources() override;
     bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void processBlockBypassed(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override { return true; }
@@ -22,7 +23,7 @@ public:
     bool acceptsMidi() const override { return true; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthSeconds() const override { return 4.5; }
+    double getTailLengthSeconds() const override { return 12.0; }   // measured: the longest sustain + reverb is silent by ~10.5 s
 
     int getNumPrograms() override;
     int getCurrentProgram() override { return currentPresetIndex.load(); }
@@ -36,8 +37,8 @@ public:
     juce::AudioProcessorValueTreeState apvts;
     juce::MidiKeyboardState keyboardState;
     MidiLearn midiLearn;   // CC -> parameter (the editor's MIDI LEARN button)
-    int editorWidth = 1280;   // the window size the user last chose (kept while the plugin instance lives, and in its state)
-    bool showMore = false;    // the MORE deck (second knob row) is open; kept like editorWidth
+    std::atomic<int> editorWidth{ 1280 };   // the window size the user last chose (kept while the plugin instance lives, and in its state)
+    std::atomic<bool> showMore{ false };   // the MORE deck (second knob row) is open; kept like editorWidth
 
     void loadPreset(int index);
     void stepPreset(int delta);
@@ -78,6 +79,18 @@ private:
     };
 
     PedalSteelEngine engine;
+
+    // High host rates (88.2 kHz and up): the engine's cost grows with the sample rate (96 kHz ~2x, 192 kHz ~4x: more than
+    // one core for a chord), and nothing it makes lies above 20 kHz. So it always runs at 44.1 / 48 kHz and its output is
+    // brought up to the host rate by a polyphase windowed-sinc interpolator. At 44.1 / 48 kHz this is bypassed entirely.
+    void renderEngine(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi);
+    static constexpr int kUpTaps = 16;                 // taps per phase (low-rate samples of history)
+    int upFactor = 1;                                  // host rate / engine rate: 1, 2 or 4
+    std::vector<float> upFir;                          // kUpTaps * upFactor coefficients, each phase sums to 1
+    float upHist[2][kUpTaps] = {};                     // the last kUpTaps engine samples per channel
+    int upHistPos = 0;
+    juce::int64 upHostPos = 0;                         // host samples made since prepare (its phase picks the FIR branch)
+    juce::AudioBuffer<float> lowBuf;                   // engine output at the low rate
     mutable juce::SpinLock statusLock;
     CopedentStatus cachedStatus{};
 

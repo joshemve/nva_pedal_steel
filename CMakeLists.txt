@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.22)
 
 project(PedalSteel VERSION 1.2.0 LANGUAGES C CXX)
 
+# Static MSVC runtime: the plugin must load on PCs without the Visual C++ redistributable (no MSVCP140 / VCRUNTIME140
+# dependency); a missing runtime DLL makes a DAW skip the plugin silently.
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -152,7 +156,30 @@ target_compile_definitions(PedalSteelHostTest PRIVATE
 target_link_libraries(PedalSteelHostTest PRIVATE juce::juce_audio_utils
 PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_warning_flags)
 
+# ---------------------------------------------------------------------------
+# Release stress test: fuzzed MIDI / automation / state, every rate and block size, editor cycles (tools/stress)
+# cmake -B build_asan -DPEDALSTEEL_ASAN=ON builds it (and the other tools) with AddressSanitizer
+# ---------------------------------------------------------------------------
+juce_add_console_app(PedalSteelStress PRODUCT_NAME "PedalSteelStress")
+juce_generate_juce_header(PedalSteelStress)
+target_sources(PedalSteelStress PRIVATE tools/stress/StressMain.cpp ${PEDALSTEEL_SOURCES})
+target_include_directories(PedalSteelStress PRIVATE Source Source/dsp)
+target_compile_definitions(PedalSteelStress PRIVATE
+    JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_DISPLAY_SPLASH_SCREEN=0
+    JucePlugin_Name="NVA Pedal Steel" JucePlugin_Build_Standalone=0 JUCE_MODAL_LOOPS_PERMITTED=1)
+target_link_libraries(PedalSteelStress PRIVATE PedalSteelUiData juce::juce_audio_utils juce::juce_dsp
+PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_warning_flags)
+
+option(PEDALSTEEL_ASAN "Build the test tools with AddressSanitizer" OFF)
+if(PEDALSTEEL_ASAN AND MSVC)
+    foreach(t PedalSteelStress PedalSteelShot)
+        target_compile_options(${t} PRIVATE /fsanitize=address /Zi)
+        target_link_options(${t} PRIVATE /INCREMENTAL:NO /DEBUG)
+    endforeach()
+endif()
+
 if(MSVC)
+    target_compile_options(PedalSteelStress PRIVATE /utf-8 /O2)
     target_compile_options(PedalSteel PRIVATE /utf-8 /O2)
     target_compile_options(PedalSteelShot PRIVATE /utf-8 /O2)
     target_compile_options(PedalSteelRender PRIVATE /utf-8 /O2)
