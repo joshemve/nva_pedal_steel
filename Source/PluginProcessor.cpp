@@ -215,7 +215,9 @@ PedalSteelParams PedalSteelAudioProcessor::readParamsFromAtomics() const {
     // a non-finite value (a hand-edited preset, a corrupted session) must never reach the engine: it would index tables
     // with NaN and poison every filter; each float falls back to its default
     PedalSteelParams p; const PedalSteelParams d;
-    auto fin = [](const std::atomic<float>* a, float fallback) noexcept { const float v = a->load(std::memory_order_relaxed); return std::isfinite(v) ? v : fallback; };
+    // a MIDI-learned CC counts from the block it arrives in (not only once the UI timer has written it to the parameter)
+    auto fin = [this](const std::atomic<float>* a, float fallback) noexcept {
+        const float v = midiLearn.liveValue(a, a->load(std::memory_order_relaxed)); return std::isfinite(v) ? v : fallback; };
     p.presetStyle   = static_cast<int>(fin(pPresetStyle, static_cast<float>(d.presetStyle)));
     p.playMode      = static_cast<int>(fin(pPlayMode, static_cast<float>(d.playMode)));
     p.fxCharacter   = static_cast<int>(fin(pFxCharacter, static_cast<float>(d.fxCharacter)));
@@ -276,6 +278,7 @@ void PedalSteelAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     for (auto& h : upHist) std::fill(std::begin(h), std::end(h), 0.0f);
     upHistPos = 0; upHostPos = 0;
     setLatencySamples(upFactor > 1 ? (kUpTaps / 2) * upFactor : 0);
+    statusInterval = juce::jmax(1, (int) (sampleRate * 0.002)); statusSamples = 1 << 30; meterDecayN = -1;
     keyboardState.reset();
     {   // clicks made while audio was stopped must not all fire in the first block
         const juce::SpinLock::ScopedLockType lock(uiCmdLock);
@@ -350,7 +353,11 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
     if (numSamples > 0) {
         const float blkL = buffer.getMagnitude(0, 0, numSamples);
         const float blkR = (buffer.getNumChannels() > 1) ? buffer.getMagnitude(1, 0, numSamples) : blkL;
-        const float decay = std::exp(-static_cast<float>(numSamples) / (0.22f * static_cast<float>(std::max(8000.0, getSampleRate()))));
+        if (numSamples != meterDecayN) {   // the exp only when the block size changes (tiny blocks: once per call adds up)
+            meterDecayN = numSamples;
+            meterDecay = std::exp(-static_cast<float>(numSamples) / (0.22f * static_cast<float>(std::max(8000.0, getSampleRate()))));
+        }
+        const float decay = meterDecay;
         const float prevL = outputPeakL.load(std::memory_order_relaxed);
         const float prevR = outputPeakR.load(std::memory_order_relaxed);
         outputPeakL.store(std::max(blkL, prevL * decay), std::memory_order_relaxed);
@@ -359,8 +366,11 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 
     blocksProcessed.fetch_add(1, std::memory_order_relaxed);
 
-    // Publish live copedent status snapshot for UI visualizer
-    {
+    // Publish live copedent status snapshot for UI visualizer: the UI reads it at 60 Hz, so ~every 2 ms is plenty
+    // (with 1-sample blocks, building it on every call was a large share of the plugin's cost)
+    statusSamples += numSamples;
+    if (statusSamples >= statusInterval) {
+        statusSamples = 0;
         const juce::SpinLock::ScopedTryLockType lock(statusLock);
         if (lock.isLocked()) {
             cachedStatus = engine.getStatus();

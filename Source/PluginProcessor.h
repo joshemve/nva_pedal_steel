@@ -93,6 +93,8 @@ private:
     juce::AudioBuffer<float> lowBuf;                   // engine output at the low rate
     mutable juce::SpinLock statusLock;
     CopedentStatus cachedStatus{};
+    int statusSamples = 1 << 30, statusInterval = 96;   // audio thread: samples since the last status snapshot
+    int meterDecayN = -1; float meterDecay = 1.0f;     // audio thread: peak-meter decay for the last block size
 
     juce::SpinLock uiCmdLock;
     std::vector<UiCmd> pendingUiCmds;

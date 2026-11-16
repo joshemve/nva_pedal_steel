@@ -1186,7 +1186,10 @@ void PedalSteelEngine::setParams(const PedalSteelParams& newParams) {
     uiPedals[2] = params.pedalC;
     uiPedals[3] = params.leverLKL;
     uiPedals[4] = params.leverLKR;
-    updateFilterCoeffs();
+    // ~14 biquad designs (trig + pow): every block at 1-sample blocks was most of the plugin's cost. Only when they change.
+    const std::array<float, 6> key { (float) params.presetStyle, params.coilPeakFreq, params.coilResonance,
+                                     params.toneWarmth, params.ampDrive, (float) params.fxCharacter };
+    if (! coeffsValid || key != coeffKey) updateFilterCoeffs();
 }
 
 void PedalSteelEngine::setManualPedal(int pedalIndex, float value) {
@@ -1208,6 +1211,9 @@ void PedalSteelEngine::allNotesOff() {
 }
 
 void PedalSteelEngine::updateFilterCoeffs() {
+    coeffKey = { (float) params.presetStyle, params.coilPeakFreq, params.coilResonance,
+                 params.toneWarmth, params.ampDrive, (float) params.fxCharacter };
+    coeffsValid = true;
     const int st = juce::jlimit(0, 5, params.presetStyle);
     const float coilFreq = juce::jlimit(1200.0f, 3400.0f, params.coilPeakFreq);
     const float coilQ    = 0.90f + 0.75f * params.coilResonance;

@@ -20,7 +20,7 @@
 static double threadCpuSeconds() {
 #if JUCE_WINDOWS
     static const double hz = [] { DWORD mhz = 0, sz = sizeof(mhz);
-        RegGetValueA(HKEY_LOCAL_MACHINE, "HARDWARE\DESCRIPTION\System\CentralProcessor\0", "~MHz", RRF_RT_REG_DWORD, nullptr, &mhz, &sz);
+        RegGetValueA(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", "~MHz", RRF_RT_REG_DWORD, nullptr, &mhz, &sz);
         return mhz > 0 ? mhz * 1.0e6 : 3.0e9; }();
     ULONG64 c = 0; QueryThreadCycleTime(GetCurrentThread(), &c); return (double) c / hz;
 #else
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
         const double avgLoad = total / (nBlocks * (bs / sr));
         if (avgLoad > worstLoad) { worstLoad = avgLoad; worstLoadAt = juce::String(sr, 0) + " Hz / " + juce::String(bs); }
         const long long allocs = gAudioAllocs.load();
-        check(s.finite && s.peak < 8.0f && allocs == 0 && avgLoad < (bs == 1 ? 1.0 : 0.6),   // 1-sample blocks: per-call overhead dominates
+        check(s.finite && s.peak < 8.0f && allocs == 0 && avgLoad < 0.6,   // 1-sample blocks too (per-call overhead trimmed: coefficients / status / meter only when needed)
               juce::String(sr, 0) + " Hz, block " + juce::String(bs) + ": peak " + juce::String(s.peak, 3) + (s.finite ? "" : " NaN/Inf!")
               + ", audio-thread allocations " + juce::String(allocs) + ", CPU avg " + juce::String(avgLoad * 100, 1) + "% worst block " + juce::String(maxLoad * 100, 0) + "%");
         p.releaseResources();
@@ -187,6 +187,37 @@ int main(int argc, char* argv[]) {
         check(std::abs(juce::Decibels::gainToDecibels(r2 / std::max(1.0e-9f, r1))) < 1.5f && std::abs(z2 - z1) < 0.15f * z1,
               "the same note on channel 2 sounds like channel 1 (level " + juce::String(juce::Decibels::gainToDecibels(r2 / std::max(1.0e-9f, r1)), 2) + " dB, pitch measure " + juce::String(z2 / z1, 3) + "x)");
         check(std::abs(z1b - z1) < 0.03f * z1, "a pitch bend on channel 2 does not bend a note on channel 1 (pitch measure " + juce::String(z1b / z1, 3) + "x)");
+    }
+
+    // 1e. a MIDI-learned CC must change the sound from the block it arrives in, whether or not the message thread runs
+    //     (an offline bounce may never give the UI timer a chance): bounce == live
+    std::cout << "1e. MIDI-learned CCs act on the audio thread (offline bounce == live)" << std::endl;
+    {
+        auto run = [](bool live, float& rmsAfter, float& paramAfter) {
+            PedalSteelAudioProcessor p; p.setPlayConfigDetails(0, 2, 48000, 256); p.prepareToPlay(48000, 256); juce::AudioBuffer<float> buf(2, 256);
+            p.midiLearn.fromString(juce::String("20:") + ParamIDs::outputLevel);
+            double e = 0; long long n = 0;
+            for (int b = 0; b < 120; ++b) { juce::MidiBuffer midi;
+                if (b == 1) for (int note : { 52, 59, 64, 68 }) midi.addEvent(juce::MidiMessage::noteOn(1, note, (juce::uint8) 100), 0);
+                if (b == 40) midi.addEvent(juce::MidiMessage::controllerEvent(1, 20, 0), 0);      // output level all the way down
+                p.processBlock(buf, midi);
+                if (live) p.midiLearn.process();                                                   // what the 60 Hz timer does
+                if (b >= 50 && b < 70) { const float* d = buf.getReadPointer(0); for (int i = 0; i < 256; ++i) { e += d[i] * d[i]; ++n; } } }
+            rmsAfter = (float) std::sqrt(e / (double) std::max(1LL, n));
+            paramAfter = p.apvts.getParameter(ParamIDs::outputLevel)->getValue();
+        };
+        float rOff, pOff, rLive, pLive, rRef, pRef;
+        run(false, rOff, pOff); run(true, rLive, pLive);
+        {   // reference: same chord, no CC
+            PedalSteelAudioProcessor p; p.setPlayConfigDetails(0, 2, 48000, 256); p.prepareToPlay(48000, 256); juce::AudioBuffer<float> buf(2, 256); double e = 0; long long n = 0;
+            for (int b = 0; b < 70; ++b) { juce::MidiBuffer midi; if (b == 1) for (int note : { 52, 59, 64, 68 }) midi.addEvent(juce::MidiMessage::noteOn(1, note, (juce::uint8) 100), 0);
+                p.processBlock(buf, midi); if (b >= 50) { const float* d = buf.getReadPointer(0); for (int i = 0; i < 256; ++i) { e += d[i] * d[i]; ++n; } } }
+            rRef = (float) std::sqrt(e / (double) n); pRef = 0;
+        }
+        auto dB = [](float a, float b) { return juce::Decibels::gainToDecibels(std::max(1.0e-9f, a) / std::max(1.0e-9f, b)); };
+        check(dB(rOff, rRef) < -12.0f, "learned CC turns the output down with no message thread (" + juce::String(dB(rOff, rRef), 1) + " dB vs untouched)");
+        check(std::abs(dB(rOff, rLive)) < 0.1f, "offline bounce matches live playback (" + juce::String(dB(rOff, rLive), 3) + " dB apart)");
+        check(pLive < 0.01f, "live: the parameter itself follows the CC (normalised " + juce::String(pLive, 3) + ")");
     }
 
     // 2. variable block sizes inside one prepare (0 .. max), then blocks LARGER than promised, then mono

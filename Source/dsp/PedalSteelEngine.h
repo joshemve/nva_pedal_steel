@@ -339,6 +339,8 @@ private:
     // Helper methods
     float nextRandomSigned();
     void updateFilterCoeffs();
+    std::array<float, 6> coeffKey{};   // the params updateFilterCoeffs last used (prepare always recomputes)
+    bool coeffsValid = false;
     void reassignChordRoles();
     void pushVoiceToChokeTail(const StringVoice& v, int strIdx);
     int chooseBestStringForNote(int midiNote, int channel, float velocity, bool& outIsLegatoTransfer, float& outPrevBarMidi);
