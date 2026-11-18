@@ -3059,6 +3059,8 @@ void PedalSteelEngine::allNotesOff() {
         v.held = false;
         v.sustainedByPedal = false;
         v.uiTriggered = false;
+        v.numHeldKeys = 0;
+        v.isObliquePedalGlide = false;
         v.releaseAgeSec = 0.0;
     }
     keyswitchPedals.fill(0.0f);
@@ -3323,6 +3325,10 @@ void PedalSteelEngine::startPhraseVoice(int phraseIdx, int midiNote, int channel
     v.velocity = vel;
     v.noteAgeSec = 0.0;
     v.releaseAgeSec = 0.0;
+    v.timeSinceLegatoSec = 10.0;
+    v.numHeldKeys = 0;
+    v.isObliquePedalGlide = false;
+    v.obliqueBaseMidi = static_cast<float>(ps.rootMidiNote) + transposeSemis;
     v.triggerOrder = ++noteCounter;
     v.barTargetMidi = static_cast<float>(ps.rootMidiNote) + transposeSemis;
     v.barCurrentMidi = v.barTargetMidi;
@@ -3413,8 +3419,10 @@ void PedalSteelEngine::reassignChordRoles() {
     }
 }
 
-int PedalSteelEngine::chooseBestStringForNote(int midiNote, int channel, float /*velocity*/, bool& outIsLegatoTransfer, float& outPrevBarMidi) {
+int PedalSteelEngine::chooseBestStringForNote(int midiNote, int channel, float /*velocity*/,
+                                              bool& outIsLegatoTransfer, bool& outIsObliquePedal, float& outPrevBarMidi) {
     outIsLegatoTransfer = false;
+    outIsObliquePedal = false;
     outPrevBarMidi = static_cast<float>(midiNote);
 
     for (int i = 0; i < kNumStrings; ++i) {
@@ -3424,43 +3432,87 @@ int PedalSteelEngine::chooseBestStringForNote(int midiNote, int channel, float /
         }
     }
 
-    int heldCount = 0;
-    int recentlyReleasedCount = 0;
-    for (int i = 0; i < kNumStrings; ++i) {
-        const auto& v = voices[i];
-        if (!v.active || v.isPhraseSlice) continue;
-        if (v.held || v.sustainedByPedal) ++heldCount;
-        else if (v.releaseAgeSec < 0.16 && v.ampEnv > 0.05f) ++recentlyReleasedCount;
-    }
+    const int fxc = params.fxCharacter;
+    const bool isKeyboardInstrument = (fxc == 16 || fxc == 32 || fxc == 34 || fxc == 35 || fxc == 36 || params.barGlide <= 32.0f);
 
-    const bool allowReleasedGlide = (recentlyReleasedCount == 1) || (heldCount >= 1 && recentlyReleasedCount <= 1);
-    const int maxOverlapGlideSemis = (params.playMode == 1) ? 0 : 2;
-    const int maxReleaseGlideSemis = (params.playMode == 1) ? 7 : 2;
-    int bestLegatoIdx = -1;
-    int bestLegatoDist = 999;
-
-    for (int i = 0; i < kNumStrings; ++i) {
-        const auto& v = voices[i];
-        if (!v.active || v.isPhraseSlice || v.channel != channel) continue;
-
-        int dist = std::abs(midiNote - v.midiNote);
-        if (dist == 0) continue;
-
-        const double maxRelAge = (dist <= 2) ? 0.025 : 0.016;
-        bool canTransferReleased = (allowReleasedGlide && !v.held && !v.sustainedByPedal && v.releaseAgeSec < maxRelAge && v.ampEnv > 0.05f && dist <= maxReleaseGlideSemis);
-        bool canTransferOverlappedPedal = (v.held && v.noteAgeSec > 0.030 && v.noteAgeSec < 0.140 && dist <= maxOverlapGlideSemis);
-
-        if ((canTransferReleased || canTransferOverlappedPedal) && dist < bestLegatoDist) {
-            bestLegatoDist = dist;
-            bestLegatoIdx = i;
+    if (!isKeyboardInstrument && params.playMode != 3) {
+        int totalHeldOnChan = 0;
+        int olderHeldOnChan = 0;
+        for (int i = 0; i < kNumStrings; ++i) {
+            const auto& v = voices[i];
+            if (!v.active || v.isPhraseSlice || v.channel != channel) continue;
+            if (v.held || v.sustainedByPedal) {
+                ++totalHeldOnChan;
+                if (v.noteAgeSec >= 0.065) ++olderHeldOnChan;
+            }
         }
-    }
 
-    if (bestLegatoIdx >= 0) {
-        outIsLegatoTransfer = true;
-        const auto& v = voices[bestLegatoIdx];
-        outPrevBarMidi = v.barCurrentMidi + v.pedalCurrentSemis + v.scoopOffsetSemis;
-        return bestLegatoIdx;
+        const int maxSingleOverlapSemis = (params.playMode == 1) ? 7 : ((params.playMode == 2) ? 2 : 4);
+        const int maxSingleReleaseSemis = (params.playMode == 1) ? 7 : 4;
+
+        int bestLegatoIdx = -1;
+        int bestLegatoDist = 999;
+        bool bestIsOblique = false;
+
+        for (int i = 0; i < kNumStrings; ++i) {
+            const auto& v = voices[i];
+            if (!v.active || v.isPhraseSlice || v.channel != channel) continue;
+            if (v.timeSinceLegatoSec < 0.055) continue; // Never double-steal a string during a multi-finger chord switch
+
+            const int signedDelta = midiNote - v.midiNote;
+            const int dist = std::abs(signedDelta);
+            if (dist == 0) continue;
+
+            // Path A: Single-note overlapped melody line -> natural chrome-bar legato slide!
+            bool canSingleOverlap = (!sustainPedalDown && v.held && totalHeldOnChan == 1 && olderHeldOnChan == 1
+                                     && v.noteAgeSec >= 0.065 && dist <= maxSingleOverlapSemis);
+
+            // Path B: Fingered oblique copedent pedal pull inside a held chord (e.g. C-E-G -> C-F-A or Dsus4 -> D)!
+            bool canChordObliqueOverlap = false;
+            if (!sustainPedalDown && v.held && totalHeldOnChan >= 2 && v.noteAgeSec >= 0.085) {
+                if (dist == 1) {
+                    canChordObliqueOverlap = true; // Half-step Pedal B / LKL / LKR / sus4 pull or release
+                } else if (dist == 2 && totalHeldOnChan >= 3) {
+                    if (v.role == StringRole::Fifth && signedDelta == 2) {
+                        canChordObliqueOverlap = true; // Pedal A (+2): 5th -> 6th (e.g. G -> A in C-E-G -> C-F-A)
+                    } else if (v.role == StringRole::Third && signedDelta == -2) {
+                        canChordObliqueOverlap = true; // Pedal A release (-2): A -> G in C-F-A -> C-E-G, or 3rd -> sus2
+                    } else if (v.isObliquePedalGlide && std::abs(static_cast<float>(midiNote) - v.obliqueBaseMidi) < 0.25f) {
+                        canChordObliqueOverlap = true; // Returning an obliquely pulled string to its home fret
+                    }
+                }
+            }
+
+            // Path C: Lift-and-press legato (supports both 2-finger oblique chord switches & tight single-string slurs)
+            bool canReleaseTransfer = false;
+            bool relIsOblique = false;
+            if (!v.held && !v.sustainedByPedal && v.ampEnv > 0.05f) {
+                if (olderHeldOnChan >= 1 && dist <= 2 && v.releaseAgeSec < 0.110) {
+                    canReleaseTransfer = true;
+                    relIsOblique = true;
+                } else if (olderHeldOnChan == 0 && dist <= maxSingleReleaseSemis) {
+                    const double maxRelAge = (dist <= 2) ? 0.035 : 0.018;
+                    if (v.releaseAgeSec < maxRelAge) {
+                        canReleaseTransfer = true;
+                        relIsOblique = false;
+                    }
+                }
+            }
+
+            if ((canSingleOverlap || canChordObliqueOverlap || canReleaseTransfer) && dist < bestLegatoDist) {
+                bestLegatoDist = dist;
+                bestLegatoIdx = i;
+                bestIsOblique = canChordObliqueOverlap || relIsOblique;
+            }
+        }
+
+        if (bestLegatoIdx >= 0) {
+            outIsLegatoTransfer = true;
+            outIsObliquePedal = bestIsOblique;
+            const auto& v = voices[bestLegatoIdx];
+            outPrevBarMidi = v.barCurrentMidi + v.scoopOffsetSemis;
+            return bestLegatoIdx;
+        }
     }
 
     int bestFreeIdx = -1;
@@ -3510,8 +3562,8 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
             return;
         }
 
-        // 2. Channel-1 Low Studio Phrase Lick Keyswitches (MIDI 36..43 = C1..G1 on E9th; bypassed on low C6th/Baritone necks unless in Lick Mode)
-        if (ch == 1 && note >= 36 && note <= 43 && ((params.presetStyle < 4 && params.fxCharacter == 0 && params.playMode != 5) || params.playMode == 4)) {
+        // 2. Channel-1 Studio Phrase Lick Selector Keyswitches (MIDI 36..43 = C1..G1; active in Studio Phrase Licks mode so C1-G1 plays pure chromatic bass on all normal presets!)
+        if (ch == 1 && note >= 36 && note <= 43 && params.playMode == 4) {
             int slot = 0;
             if (note <= 36)      slot = 0;
             else if (note <= 38) slot = 1;
@@ -3543,9 +3595,12 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
 
         // 5. Standard Chromatic / Copedent / MPE 10-String E9th Voice Allocation
         bool isLegatoTransfer = false;
+        bool isObliquePedal = false;
         float prevMidi = static_cast<float>(note);
-        const int strIdx = chooseBestStringForNote(note, ch, vel, isLegatoTransfer, prevMidi);
+        const int strIdx = chooseBestStringForNote(note, ch, vel, isLegatoTransfer, isObliquePedal, prevMidi);
         auto& v = voices[strIdx];
+        const bool wasHeldBeforeTransfer = v.active && v.held && !v.isPhraseSlice;
+        const int prevMidiInt = v.midiNote;
         if (!isLegatoTransfer) {
             pushVoiceToChokeTail(v, strIdx);
         }
@@ -3564,17 +3619,46 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
         v.triggerOrder = ++noteCounter;
 
         if (isLegatoTransfer) {
+            if (wasHeldBeforeTransfer && v.numHeldKeys > 0) {
+                int writeIdx = 0;
+                for (int k = 0; k < v.numHeldKeys; ++k) {
+                    if (v.heldKeys[static_cast<size_t>(k)] != note) {
+                        v.heldKeys[static_cast<size_t>(writeIdx++)] = v.heldKeys[static_cast<size_t>(k)];
+                    }
+                }
+                if (writeIdx >= 4) {
+                    for (int k = 0; k < 3; ++k) v.heldKeys[static_cast<size_t>(k)] = v.heldKeys[static_cast<size_t>(k + 1)];
+                    writeIdx = 3;
+                }
+                v.heldKeys[static_cast<size_t>(writeIdx++)] = note;
+                v.numHeldKeys = writeIdx;
+            } else {
+                v.heldKeys[0] = note;
+                v.numHeldKeys = 1;
+            }
+            if (!v.isObliquePedalGlide && isObliquePedal) {
+                v.obliqueBaseMidi = static_cast<float>(prevMidiInt);
+            } else if (!isObliquePedal) {
+                v.obliqueBaseMidi = static_cast<float>(note);
+            }
+            v.isObliquePedalGlide = isObliquePedal;
+            v.timeSinceLegatoSec = 0.0;
             v.barCurrentMidi = prevMidi;
             v.barTargetMidi = static_cast<float>(note);
             v.scoopOffsetSemis = 0.0f;
             v.scoopVel = 0.0f;
-            v.ampEnv = std::min(1.0f, std::max(v.ampEnv, 0.45f * vel) * 1.03f);
+            v.ampEnv = std::min(1.0f, std::max(v.ampEnv, 0.46f * vel) * 1.04f);
             v.vibratoEnv *= 0.2f;
             v.transientGain = 0.0f;
         } else {
             const int sampleQueryMidi = v.isPalmHarmonic ? std::min(81, note + 12) : note;
             v.multiSampleIdx = selectBestMultiSample(sampleQueryMidi, params.presetStyle, vel);
             v.noteAgeSec = 0.0;
+            v.timeSinceLegatoSec = 10.0;
+            v.heldKeys[0] = note;
+            v.numHeldKeys = 1;
+            v.isObliquePedalGlide = false;
+            v.obliqueBaseMidi = static_cast<float>(note);
             v.barTargetMidi = static_cast<float>(note);
             v.barCurrentMidi = static_cast<float>(note);
             v.barVelocity = 0.0f;
@@ -3646,15 +3730,64 @@ void PedalSteelEngine::handleMidiMessage(const juce::MidiMessage& msg) {
             return;
         }
 
-        for (auto& v : voices) {
-            if (v.active && v.held && v.midiNote == note && (v.channel == ch || ch == 1)) {
-                v.held = false;
-                if (sustainPedalDown) {
-                    v.sustainedByPedal = true;
-                } else {
-                    v.releaseAgeSec = 0.0;
+        bool rolesChangedOnRelease = false;
+        for (int vi = 0; vi < kNumStrings; ++vi) {
+            auto& v = voices[vi];
+            if (!v.active || !v.held || !(v.channel == ch || ch == 1)) continue;
+
+            if (!v.isPhraseSlice && v.numHeldKeys > 0) {
+                int foundPos = -1;
+                for (int k = 0; k < v.numHeldKeys; ++k) {
+                    if (v.heldKeys[static_cast<size_t>(k)] == note) { foundPos = k; break; }
                 }
+                if (foundPos < 0) continue;
+
+                for (int k = foundPos; k < v.numHeldKeys - 1; ++k) {
+                    v.heldKeys[static_cast<size_t>(k)] = v.heldKeys[static_cast<size_t>(k + 1)];
+                }
+                --v.numHeldKeys;
+
+                if (v.numHeldKeys > 0) {
+                    // Earlier key on this string is still physically held -> glide smoothly back (pedal-tap / trill release)!
+                    const int backNote = v.heldKeys[static_cast<size_t>(v.numHeldKeys - 1)];
+                    if (v.midiNote != backNote) {
+                        const int prevNote = v.midiNote;
+                        int otherHeld = 0;
+                        for (int oi = 0; oi < kNumStrings; ++oi) {
+                            if (oi != vi && voices[oi].active && !voices[oi].isPhraseSlice && (voices[oi].held || voices[oi].sustainedByPedal)) {
+                                ++otherHeld;
+                            }
+                        }
+                        v.barCurrentMidi += v.scoopOffsetSemis;
+                        v.scoopOffsetSemis = 0.0f;
+                        v.scoopVel = 0.0f;
+                        v.midiNote = backNote;
+                        v.barTargetMidi = static_cast<float>(backNote);
+                        v.isObliquePedalGlide = (otherHeld >= 1 && std::abs(backNote - prevNote) <= 2);
+                        if (!v.isObliquePedalGlide) {
+                            v.obliqueBaseMidi = static_cast<float>(backNote);
+                        }
+                        v.timeSinceLegatoSec = 0.0;
+                        v.ampEnv = std::max(v.ampEnv, 0.42f * v.velocity);
+                        v.vibratoEnv *= 0.25f;
+                        rolesChangedOnRelease = true;
+                    }
+                    continue;
+                }
+            } else if (v.midiNote != note) {
+                continue;
             }
+
+            v.held = false;
+            v.numHeldKeys = 0;
+            if (sustainPedalDown) {
+                v.sustainedByPedal = true;
+            } else {
+                v.releaseAgeSec = 0.0;
+            }
+        }
+        if (rolesChangedOnRelease) {
+            reassignChordRoles();
         }
     } else if (msg.isPitchWheel()) {
         const int ch = juce::jlimit(1, 16, msg.getChannel());
@@ -3770,6 +3903,10 @@ void PedalSteelEngine::triggerFretboardNote(int stringIndex, float fret) {
     v.velocity = 0.84f;
     v.noteAgeSec = 0.0;
     v.releaseAgeSec = 0.0;
+    v.timeSinceLegatoSec = 10.0;
+    v.numHeldKeys = 0;
+    v.isObliquePedalGlide = false;
+    v.obliqueBaseMidi = targetMidi;
     v.triggerOrder = ++noteCounter;
     v.multiSampleIdx = selectBestMultiSample(v.isPalmHarmonic ? std::min(81, nearMidi + 12) : nearMidi, params.presetStyle, 0.84f);
     v.barTargetMidi = targetMidi;
@@ -3829,6 +3966,7 @@ CopedentStatus PedalSteelEngine::getStatus() const {
     st.leverLKR = smoothLKR;
     st.volumePedal = smoothVolPedal * globalSwellEnv;
     st.presetStyle = params.presetStyle;
+    st.phraseKsActive = (params.playMode == 4);
     st.activeLickSlot = selectedLickSlot;
 
     int activeCount = 0;
@@ -3838,13 +3976,25 @@ CopedentStatus PedalSteelEngine::getStatus() const {
         if (v.active && v.isPhraseSlice && v.ampEnv > 0.02f) {
             st.phrasePlaying = true;
         }
+        const float obliquePullSemis = (v.active && !v.isPhraseSlice && v.isObliquePedalGlide)
+            ? (v.barCurrentMidi - v.obliqueBaseMidi)
+            : 0.0f;
         st.stringEnergy[static_cast<size_t>(i)] = v.active ? juce::jlimit(0.0f, 1.0f, v.ampEnv) : 0.0f;
         st.stringPitchSemis[static_cast<size_t>(i)] = v.barCurrentMidi + v.pedalCurrentSemis + v.scoopOffsetSemis + v.mpePitchSemis;
-        st.stringBendSemis[static_cast<size_t>(i)] = v.pedalCurrentSemis + v.scoopOffsetSemis + v.mpePitchSemis;
+        st.stringBendSemis[static_cast<size_t>(i)] = v.pedalCurrentSemis + v.scoopOffsetSemis + v.mpePitchSemis + obliquePullSemis;
         if (v.active && v.ampEnv > 0.02f) {
             ++activeCount;
             const float openMidi = static_cast<float>(getOpenStringMidiForStyle(params.presetStyle, i));
-            barSum += std::max(0.0f, v.barCurrentMidi - openMidi);
+            const float visualBarMidi = (!v.isPhraseSlice && v.isObliquePedalGlide) ? v.obliqueBaseMidi : v.barCurrentMidi;
+            barSum += std::max(0.0f, visualBarMidi - openMidi);
+
+            if (obliquePullSemis > 1.08f) {
+                st.pedalA = std::max(st.pedalA, juce::jlimit(0.0f, 1.0f, obliquePullSemis * 0.5f));
+            } else if (obliquePullSemis > 0.08f) {
+                st.pedalB = std::max(st.pedalB, juce::jlimit(0.0f, 1.0f, obliquePullSemis));
+            } else if (obliquePullSemis < -0.08f) {
+                st.leverLKR = std::max(st.leverLKR, juce::jlimit(0.0f, 1.0f, -obliquePullSemis));
+            }
         }
     }
     st.activeVoiceCount = activeCount;
@@ -3941,11 +4091,13 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             if (!v.active) continue;
 
             v.noteAgeSec += dt;
+            v.timeSinceLegatoSec += dt;
 
             // Auto-release UI chord audition buttons after 2.4 seconds so they ring naturally without hanging forever
             if (v.uiTriggered && !v.isPhraseSlice && v.held && v.noteAgeSec > 2.4) {
                 v.held = false;
                 v.uiTriggered = false;
+                v.numHeldKeys = 0;
                 v.releaseAgeSec = 0.0;
             }
 
@@ -4019,9 +4171,11 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
             }
             maxSwell = std::max(maxSwell, v.swellEnv);
 
-            // 1. Tonebar Inertial Glide
+            // 1. Tonebar Inertial Glide (or Bellcrank Pedal Speed on fingered oblique chord pulls!)
+            const float activeGlideOmega = v.isObliquePedalGlide ? pedalOmega : barOmega;
+            const float activeGlideDamp  = v.isObliquePedalGlide ? 1.95f : 2.0f;
             const float barErr = v.barTargetMidi - v.barCurrentMidi;
-            const float barAccel = barOmega * barOmega * barErr - 2.0f * barOmega * v.barVelocity;
+            const float barAccel = activeGlideOmega * activeGlideOmega * barErr - activeGlideDamp * activeGlideOmega * v.barVelocity;
             v.barVelocity += barAccel * static_cast<float>(dt);
             v.barCurrentMidi += v.barVelocity * static_cast<float>(dt);
 
@@ -4234,7 +4388,8 @@ void PedalSteelEngine::renderBlock(juce::AudioBuffer<float>& buffer, int startSa
 
             // Physical Chrome-Bar Winding Slide Layer
             float slideWhistle = 0.0f;
-            const float barSlideRate = std::abs(v.barVelocity) + std::abs(smoothPitchWheelVel) * 7.0f + 0.35f * std::abs(v.pedalVel);
+            const float effectiveBarVel = v.isObliquePedalGlide ? (0.35f * std::abs(v.barVelocity)) : std::abs(v.barVelocity);
+            const float barSlideRate = effectiveBarVel + std::abs(smoothPitchWheelVel) * 7.0f + 0.35f * std::abs(v.pedalVel);
             if (params.barSlideNoise > 0.01f && barSlideRate > 1.1f) {
                 const float woundFactor = (stStyle == 5) ? ((i >= 3) ? 1.65f : 0.95f) : ((i >= 5) ? 1.25f : 0.55f);
                 const float slideDrive = juce::jlimit(0.0f, 1.0f, (barSlideRate - 1.1f) * 0.065f) * params.barSlideNoise * woundFactor;

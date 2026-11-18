@@ -264,6 +264,98 @@ static int runDeepDspAudit() {
         std::cout << "[PASS] Mono bus downmix + 15-note MPE voice-stealing + CC64 + CC123 Panic audit passed!" << std::endl;
     }
 
+    // 4. Intuitive Live MIDI Keyboard Playability Audit (Fingered Oblique A+B Pull/Return + Overlapped Lead Gliss + Low Bass Range)
+    {
+        constexpr double sr = 48000.0;
+        PedalSteelEngine eng;
+        eng.prepare(sr, 64);
+        eng.setParams(presets[0].params); // Preset 01: Sweet Georgia E9 (Smart Auto-Pedal)
+
+        auto runForSec = [&](double durSec, float& maxStepOut) {
+            const int nSamp = static_cast<int>(sr * durSec);
+            juce::AudioBuffer<float> b(2, nSamp);
+            b.clear();
+            int p = 0;
+            while (p < nSamp) {
+                const int c = std::min(64, nSamp - p);
+                eng.renderBlock(b, p, c);
+                p += c;
+            }
+            const float* L = b.getReadPointer(0);
+            for (int i = 1; i < nSamp; ++i) {
+                if (!std::isfinite(L[i])) { maxStepOut = 999.0f; return; }
+                maxStepOut = std::max(maxStepOut, std::abs(L[i] - L[i - 1]));
+            }
+        };
+
+        float maxStep = 0.0f;
+        // (a) Hold C4-E4-G4 triad on Channel 1 (no Mod Wheel, no keyswitches!)
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 60, 0.84f));
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 64, 0.86f));
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 67, 0.88f));
+        runForSec(0.22, maxStep);
+        if (eng.getStatus().activeVoiceCount != 3) {
+            std::cerr << "[FAIL] Expected 3 active voices on C-E-G triad!" << std::endl;
+            return 1;
+        }
+
+        // (b) Tap F4 (65) + A4 (69) while keeping C4-E4-G4 held -> must bend E4->F4 & G4->A4 obliquely on the SAME 3 strings!
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 65, 0.86f));
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 69, 0.88f));
+        runForSec(0.24, maxStep);
+        const auto stPulled = eng.getStatus();
+        if (stPulled.activeVoiceCount != 3 || stPulled.pedalA < 0.70f || stPulled.pedalB < 0.70f) {
+            std::cerr << "[FAIL] Fingered C-E-G -> F-A oblique bend failed: voices=" << stPulled.activeVoiceCount
+                      << " pedalA=" << stPulled.pedalA << " pedalB=" << stPulled.pedalB << std::endl;
+            return 1;
+        }
+
+        // (c) Release F4 + A4 while C4-E4-G4 remain held -> must glide smoothly back to E4 & G4 with zero re-pluck!
+        eng.handleMidiMessage(juce::MidiMessage::noteOff(1, 65));
+        eng.handleMidiMessage(juce::MidiMessage::noteOff(1, 69));
+        runForSec(0.24, maxStep);
+        const auto stReturned = eng.getStatus();
+        if (stReturned.activeVoiceCount != 3 || stReturned.pedalA > 0.15f || stReturned.pedalB > 0.15f) {
+            std::cerr << "[FAIL] Fingered F-A release return to C-E-G failed: voices=" << stReturned.activeVoiceCount
+                      << " pedalA=" << stReturned.pedalA << " pedalB=" << stReturned.pedalB << std::endl;
+            return 1;
+        }
+        // (d) Overlapped Single-Note Crying Lead Gliss (Preset 05: playMode == 1): D5 -> F#5 (+4st) -> trill release back to D5!
+        eng.reset();
+        eng.setParams(presets[4].params);
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 74, 0.90f)); // D5
+        runForSec(0.15, maxStep);
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 78, 0.92f)); // Overlap F#5 (+4st bar slide on SAME string!)
+        runForSec(0.18, maxStep);
+        if (eng.getStatus().activeVoiceCount != 1) {
+            std::cerr << "[FAIL] Overlapped Crying Lead Gliss spawned extra string instead of sliding!" << std::endl;
+            return 1;
+        }
+        eng.handleMidiMessage(juce::MidiMessage::noteOff(1, 78)); // Release F#5 while D5 still held -> trill slide back to D5!
+        runForSec(0.18, maxStep);
+        if (eng.getStatus().activeVoiceCount != 1) {
+            std::cerr << "[FAIL] Lead trill release dropped voice instead of returning to held note!" << std::endl;
+            return 1;
+        }
+
+        // (e) Low E2 (MIDI 40) on Channel 1 on Preset 01 must play a chromatic bass string (not a pre-recorded phrase slice!)
+        eng.reset();
+        eng.setParams(presets[0].params);
+        eng.handleMidiMessage(juce::MidiMessage::noteOn(1, 40, 0.85f));
+        runForSec(0.12, maxStep);
+        if (eng.getStatus().phrasePlaying || eng.getStatus().activeVoiceCount != 1) {
+            std::cerr << "[FAIL] Low E2 (MIDI 40) triggered phrase slice instead of chromatic bass note!" << std::endl;
+            return 1;
+        }
+
+        if (maxStep > 0.09f) {
+            std::cerr << "[FAIL] Excessive sample step during live keyboard oblique/legato play: " << maxStep << std::endl;
+            return 1;
+        }
+        std::cout << "[PASS] Intuitive MIDI keyboard audit (fingered I->IV->I oblique pull/return + overlapped lead gliss + C1-G1 bass): maxSampleStep="
+                  << juce::String(maxStep, 4) << std::endl;
+    }
+
     std::cout << "=== ALL DEEP DSP & REAL-TIME AUDITS PASSED ===" << std::endl;
     return 0;
 }
@@ -273,6 +365,56 @@ int main(int argc, char* argv[]) {
         const juce::String arg(argv[i]);
         if (arg == "--audit") {
             return runDeepDspAudit();
+        } else if (arg == "--demo-intuitive" && i + 1 < argc) {
+            const juce::File demoFile{ juce::String(argv[++i]) };
+            std::vector<ScheduledMidiEvent> ev;
+            // Pure Channel-1 standard MIDI keyboard notes ONLY (ZERO Pitch Wheel, ZERO Mod Wheel, ZERO Keyswitches, ZERO MPE!):
+            // 1. Hold G Major (G3-B3-D4) -> tap C4+E4 (fingered A+B oblique pull I -> IV/I!) -> release C4+E4 (melts back to G Major!)
+            ev.push_back({ 0.10, juce::MidiMessage::noteOn(1, 55, 0.82f) }); // G3
+            ev.push_back({ 0.13, juce::MidiMessage::noteOn(1, 59, 0.85f) }); // B3
+            ev.push_back({ 0.16, juce::MidiMessage::noteOn(1, 62, 0.88f) }); // D4
+            ev.push_back({ 1.05, juce::MidiMessage::noteOn(1, 60, 0.86f) }); // Finger tap C4 (+1st Pedal B!)
+            ev.push_back({ 1.08, juce::MidiMessage::noteOn(1, 64, 0.88f) }); // Finger tap E4 (+2st Pedal A!)
+            ev.push_back({ 2.25, juce::MidiMessage::noteOff(1, 60) });       // Lift C4 -> glides back to B3!
+            ev.push_back({ 2.27, juce::MidiMessage::noteOff(1, 64) });       // Lift E4 -> glides back to D4!
+            for (int n : { 55, 59, 62 }) ev.push_back({ 3.55, juce::MidiMessage::noteOff(1, n) });
+
+            // 2. Normal 2-finger pianist chord switch: D Major (D3-F#4-A4) -> lift F#4, press G4 (Dsus4) -> lift G4, press F#4!
+            ev.push_back({ 3.75, juce::MidiMessage::noteOn(1, 50, 0.82f) }); // D3 bass anchor!
+            ev.push_back({ 3.78, juce::MidiMessage::noteOn(1, 66, 0.86f) }); // F#4
+            ev.push_back({ 3.81, juce::MidiMessage::noteOn(1, 69, 0.88f) }); // A4
+            ev.push_back({ 4.55, juce::MidiMessage::noteOff(1, 66) });       // Lift F#4
+            ev.push_back({ 4.60, juce::MidiMessage::noteOn(1, 67, 0.87f) }); // Press G4 50ms later -> smooth sus4 pull!
+            ev.push_back({ 5.45, juce::MidiMessage::noteOff(1, 67) });       // Lift G4
+            ev.push_back({ 5.50, juce::MidiMessage::noteOn(1, 66, 0.86f) }); // Press F#4 50ms later -> smooth resolve!
+            for (int n : { 50, 66, 69 }) ev.push_back({ 6.55, juce::MidiMessage::noteOff(1, n) });
+
+            // 3. Pure overlapped single-note crying melody on keyboard (A4 -> B4 -> D5 -> E5 -> trill G5->E5 -> B4)
+            ev.push_back({ 6.75, juce::MidiMessage::noteOn(1, 69, 0.86f) }); // A4
+            ev.push_back({ 7.20, juce::MidiMessage::noteOn(1, 71, 0.90f) }); // Overlap B4 (+2st chrome-bar slide!)
+            ev.push_back({ 7.25, juce::MidiMessage::noteOff(1, 69) });
+            ev.push_back({ 7.85, juce::MidiMessage::noteOn(1, 74, 0.92f) }); // Overlap D5 (+3st chrome-bar slide!)
+            ev.push_back({ 7.90, juce::MidiMessage::noteOff(1, 71) });
+            ev.push_back({ 8.55, juce::MidiMessage::noteOn(1, 76, 0.92f) }); // Overlap E5 (+2st slide!)
+            ev.push_back({ 8.60, juce::MidiMessage::noteOff(1, 74) });
+            ev.push_back({ 9.10, juce::MidiMessage::noteOn(1, 79, 0.94f) }); // Tap G5 while holding E5 (+3st crying bend!)
+            ev.push_back({ 9.65, juce::MidiMessage::noteOff(1, 79) });       // Release G5 -> weeps right back down to E5!
+            ev.push_back({ 10.35, juce::MidiMessage::noteOff(1, 76) });
+
+            // 4. Final low G2 (MIDI 43!) + G3 + B3 + D4 -> fingered Cadd9/G -> G Major resolution!
+            ev.push_back({ 10.55, juce::MidiMessage::noteOn(1, 43, 0.84f) }); // Low G2 (MIDI 43) plays warm bass!
+            ev.push_back({ 10.58, juce::MidiMessage::noteOn(1, 55, 0.82f) }); // G3
+            ev.push_back({ 10.61, juce::MidiMessage::noteOn(1, 67, 0.86f) }); // G4
+            ev.push_back({ 10.64, juce::MidiMessage::noteOn(1, 71, 0.88f) }); // B4
+            ev.push_back({ 10.67, juce::MidiMessage::noteOn(1, 74, 0.90f) }); // D5
+            ev.push_back({ 11.35, juce::MidiMessage::noteOn(1, 72, 0.88f) }); // Tap C5 (+1st)
+            ev.push_back({ 11.37, juce::MidiMessage::noteOn(1, 76, 0.90f) }); // Tap E5 (+2st)
+            ev.push_back({ 12.30, juce::MidiMessage::noteOff(1, 72) });       // Release -> resolves to B4!
+            ev.push_back({ 12.32, juce::MidiMessage::noteOff(1, 76) });       // Release -> resolves to D5!
+            for (int n : { 43, 55, 67, 71, 74 }) ev.push_back({ 14.00, juce::MidiMessage::noteOff(1, n) });
+
+            renderSequenceToWav(1, 15.2, 86.0, ev, demoFile); // Preset 02: Hedonist Bootgaze (Smart Auto-Pedal)
+            return 0;
         } else if (arg == "--from" && i + 1 < argc) {
             gMinPresetOneBased = juce::String(argv[++i]).getIntValue();
         } else if (arg == "--only" && i + 1 < argc) {
@@ -291,8 +433,8 @@ int main(int argc, char* argv[]) {
     // =========================================================================
     {
         std::vector<ScheduledMidiEvent> ev = {
-            { 0.00, juce::MidiMessage::noteOn(1, 43, 0.96f) },
-            { 11.45, juce::MidiMessage::noteOff(1, 43) }
+            { 0.00, juce::MidiMessage::noteOn(2, 45, 0.96f) },
+            { 11.45, juce::MidiMessage::noteOff(2, 45) }
         };
         renderSequenceToWav(0, 11.5, 83.0, ev, outDir.getChildFile("01_sweet_georgia_EMaj.wav"));
         renderSequenceToWav(0, 11.5, 83.0, ev, presetsDir.getChildFile("01_sweet_georgia_e9.wav"));
@@ -300,8 +442,8 @@ int main(int argc, char* argv[]) {
     {
         // Raw phrase reference render
         std::vector<ScheduledMidiEvent> evRef = {
-            { 0.00, juce::MidiMessage::noteOn(1, 43, 0.96f) },
-            { 10.60, juce::MidiMessage::noteOff(1, 43) }
+            { 0.00, juce::MidiMessage::noteOn(2, 45, 0.96f) },
+            { 10.60, juce::MidiMessage::noteOff(2, 45) }
         };
         renderSequenceToWav(1, 11.2, 90.0, evRef, outDir.getChildFile("02_hedonist_bootgaze_GMaj.wav"));
 
@@ -349,16 +491,16 @@ int main(int argc, char* argv[]) {
     }
     {
         std::vector<ScheduledMidiEvent> ev = {
-            { 0.00, juce::MidiMessage::noteOn(1, 43, 0.96f) },
-            { 11.45, juce::MidiMessage::noteOff(1, 43) }
+            { 0.00, juce::MidiMessage::noteOn(2, 45, 0.96f) },
+            { 11.45, juce::MidiMessage::noteOff(2, 45) }
         };
         renderSequenceToWav(2, 11.5, 120.0, ev, outDir.getChildFile("03_mikeys_grit_vibey_DMaj.wav"));
         renderSequenceToWav(2, 11.5, 120.0, ev, presetsDir.getChildFile("03_mikeys_grit_vibey.wav"));
     }
     {
         std::vector<ScheduledMidiEvent> ev = {
-            { 0.00, juce::MidiMessage::noteOn(1, 43, 0.96f) },
-            { 11.45, juce::MidiMessage::noteOff(1, 43) }
+            { 0.00, juce::MidiMessage::noteOn(2, 45, 0.96f) },
+            { 11.45, juce::MidiMessage::noteOff(2, 45) }
         };
         renderSequenceToWav(3, 11.5, 126.0, ev, outDir.getChildFile("04_montana_swell_GMaj.wav"));
         renderSequenceToWav(3, 11.5, 126.0, ev, presetsDir.getChildFile("04_montana_lush_swell.wav"));

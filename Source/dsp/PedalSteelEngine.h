@@ -15,6 +15,7 @@ struct CopedentStatus {
     int activeVoiceCount = 0;
     int presetStyle = 0;
     bool phrasePlaying = false;
+    bool phraseKsActive = false;
     int activeLickSlot = 0;
     std::array<float, 10> stringEnergy{};
     std::array<float, 10> stringPitchSemis{};
@@ -110,7 +111,14 @@ private:
         float velocity = 0.8f;
         double noteAgeSec = 0.0;
         double releaseAgeSec = 0.0;
+        double timeSinceLegatoSec = 10.0;
         uint64_t triggerOrder = 0;
+
+        // Per-string held MIDI key stack for natural keyboard trills & fingered pedal-tap return bends
+        std::array<int, 4> heldKeys{};
+        int numHeldKeys = 0;
+        bool isObliquePedalGlide = false;
+        float obliqueBaseMidi = 60.0f;
 
         // Continuous Tonebar, MPE & Mechanical Changer states
         float barTargetMidi = 60.0f;
@@ -344,7 +352,7 @@ private:
     void updateFilterCoeffs();
     void reassignChordRoles();
     void pushVoiceToChokeTail(const StringVoice& v, int strIdx);
-    int chooseBestStringForNote(int midiNote, int channel, float velocity, bool& outIsLegatoTransfer, float& outPrevBarMidi);
+    int chooseBestStringForNote(int midiNote, int channel, float velocity, bool& outIsLegatoTransfer, bool& outIsObliquePedal, float& outPrevBarMidi);
     int selectBestMultiSample(int midiNote, int style, float velocity) const;
     int selectPhraseSliceBySlot(int slotIndex, int style) const;
     void startPhraseVoice(int phraseIdx, int midiNote, int channel, float vel, float transposeSemis, bool fromUi);

@@ -15,11 +15,21 @@ public:
     PedalSteelKeyboardComponent(juce::MidiKeyboardState& state, Orientation orientation)
         : juce::MidiKeyboardComponent(state, orientation) {}
 
+    void setPhraseKeyswitchActive(bool active) {
+        if (phraseKsActive != active) {
+            phraseKsActive = active;
+            repaint();
+        }
+    }
+
 protected:
     void drawWhiteNote(int midiNoteNumber, juce::Graphics& g, juce::Rectangle<float> area,
                        bool isDown, bool isOver, juce::Colour lineColour, juce::Colour textColour) override;
     void drawBlackNote(int midiNoteNumber, juce::Graphics& g, juce::Rectangle<float> area,
                        bool isDown, bool isOver, juce::Colour noteFillColour) override;
+
+private:
+    bool phraseKsActive = false;
 };
 
 class FretboardVisualizer : public juce::Component {

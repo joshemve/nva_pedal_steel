@@ -12,7 +12,7 @@ namespace {
         return false;
     }
 
-    inline const char* getKeyswitchShortLabel(int midiNote) {
+    inline const char* getKeyswitchShortLabel(int midiNote, bool phraseKsActive) {
         switch (midiNote) {
             case 24: return "A";
             case 25: return "C";
@@ -20,11 +20,11 @@ namespace {
             case 28: return "AB";
             case 29: return "LK";
             case 31: return "LR";
-            case 36: return "L1";
-            case 38: return "L2";
-            case 40: return "L3";
-            case 41: return "L4";
-            case 43: return "LP";
+            case 36: return phraseKsActive ? "L1" : nullptr;
+            case 38: return phraseKsActive ? "L2" : nullptr;
+            case 40: return phraseKsActive ? "L3" : nullptr;
+            case 41: return phraseKsActive ? "L4" : nullptr;
+            case 43: return phraseKsActive ? "LP" : nullptr;
             default: return nullptr;
         }
     }
@@ -102,12 +102,12 @@ void PedalSteelLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, in
 void PedalSteelKeyboardComponent::drawWhiteNote(int midiNoteNumber, juce::Graphics& g, juce::Rectangle<float> area,
                                                 bool isDown, bool isOver, juce::Colour /*lineColour*/, juce::Colour /*textColour*/) {
     const bool isPedalKs  = (midiNoteNumber >= 24 && midiNoteNumber <= 31);
-    const bool isPhraseKs = (midiNoteNumber >= 36 && midiNoteNumber <= 43);
+    const bool isPhraseKs = phraseKsActive && (midiNoteNumber >= 36 && midiNoteNumber <= 43);
 
     juce::Colour baseCol = juce::Colour(0xfff5efe4); // Warm vintage ivory
     if (isPedalKs)       baseCol = juce::Colour(0xff6b4722); // Amber Pedal Keyswitches (C0..G0)
     else if (isPhraseKs) baseCol = juce::Colour(0xff234c54); // Teal Studio Lick Keyswitches (C1..G1)
-    else if (midiNoteNumber < 45) baseCol = juce::Colour(0xffcfc5b4);
+    else if (midiNoteNumber < 36) baseCol = juce::Colour(0xffcfc5b4);
 
     if (isDown)      baseCol = isPhraseKs ? juce::Colour(0xff4cd4dc) : juce::Colour(0xffffa834);
     else if (isOver) baseCol = baseCol.brighter(0.14f);
@@ -126,7 +126,7 @@ void PedalSteelKeyboardComponent::drawWhiteNote(int midiNoteNumber, juce::Graphi
         g.fillEllipse(area.getCentreX() - 2.5f, area.getBottom() - 23.0f, 5.0f, 5.0f);
     }
 
-    if (const char* ksLbl = getKeyswitchShortLabel(midiNoteNumber)) {
+    if (const char* ksLbl = getKeyswitchShortLabel(midiNoteNumber, phraseKsActive)) {
         g.setColour(isDown ? juce::Colour(0xff14100c) : juce::Colour(0xffffeed2));
         g.setFont(makeFont(10.0f, juce::Font::bold));
         g.drawText(ksLbl, area.withTrimmedTop(area.getHeight() - 28.0f).withHeight(14.0f).toNearestInt(), juce::Justification::centred, false);
@@ -143,7 +143,7 @@ void PedalSteelKeyboardComponent::drawWhiteNote(int midiNoteNumber, juce::Graphi
 void PedalSteelKeyboardComponent::drawBlackNote(int midiNoteNumber, juce::Graphics& g, juce::Rectangle<float> area,
                                                 bool isDown, bool isOver, juce::Colour /*noteFillColour*/) {
     const bool isPedalKs  = (midiNoteNumber >= 24 && midiNoteNumber <= 31);
-    const bool isPhraseKs = (midiNoteNumber >= 36 && midiNoteNumber <= 43);
+    const bool isPhraseKs = phraseKsActive && (midiNoteNumber >= 36 && midiNoteNumber <= 43);
 
     juce::Colour col = juce::Colour(0xff1e1915);
     if (isPedalKs)       col = juce::Colour(0xff3f2812);
@@ -162,7 +162,7 @@ void PedalSteelKeyboardComponent::drawBlackNote(int midiNoteNumber, juce::Graphi
         g.fillEllipse(area.getCentreX() - 2.2f, area.getBottom() - 10.0f, 4.4f, 4.4f);
     }
 
-    if (const char* ksLbl = getKeyswitchShortLabel(midiNoteNumber)) {
+    if (const char* ksLbl = getKeyswitchShortLabel(midiNoteNumber, phraseKsActive)) {
         g.setColour(isDown ? juce::Colour(0xff120e0a) : juce::Colour(0xffffdca0));
         g.setFont(makeFont(9.0f, juce::Font::bold));
         g.drawText(ksLbl, area.withTrimmedTop(area.getHeight() - 15.0f).toNearestInt(), juce::Justification::centred, false);
@@ -668,6 +668,7 @@ void PedalSteelAudioProcessorEditor::refreshVisualizer() {
 
     meterL = audioProcessor.getOutputPeakL();
     meterR = audioProcessor.getOutputPeakR();
+    midiKeyboard.setPhraseKeyswitchActive(st.phraseKsActive);
     fretboard.updateStatus(st);
 }
 
@@ -822,7 +823,7 @@ void PedalSteelAudioProcessorEditor::paint(juce::Graphics& g) {
     g.drawText("NVA PEDAL STEEL", 18, 11, 190, 22, juce::Justification::centredLeft, false);
     g.setColour(juce::Colour(0xffbfb099));
     g.setFont(makeFont(9.0f, juce::Font::plain));
-    g.drawText("C0-G0: PEDALS | C1-G1: LICKS | MPE", 18, 32, 196, 16, juce::Justification::centredLeft, false);
+    g.drawText("AUTO-OBLIQUE KEYS | LEGATO GLISS | MPE", 18, 32, 196, 16, juce::Justification::centredLeft, false);
 
     // Live Stereo Output Peak Meter on right of header
     auto meterBox = juce::Rectangle<float>(w - 68.0f, 15.0f, 48.0f, 34.0f);

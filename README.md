@@ -33,13 +33,14 @@
 
 | Input | Function |
 | :--- | :--- |
+| **Fingered Chord Obliques (`Ch 1`)** | Holding a chord (e.g. `C–E–G`) and tapping or switching neighbor tones (`F`, `A`, `sus4`, `sus2`) bends active strings obliquely at `PEDAL SPEED` with zero re-pluck — and glides back home when released |
+| **Overlapped Lead Legato (`Ch 1`)** | Overlapping single-note melody keys (`±4 st` in `Smart Auto-Pedal`, `±7 st` in `Crying Lead Gliss`) slides the solid chrome bar on one string with trill/bend return |
+| **Notes `C1+` (`MIDI 36+`, Ch 1)** | Full-range polyphonic 10-string performance (`C1–G1` becomes Lick Selector `L1–LP` in `Studio Phrase Licks` mode) |
 | **Notes `C0–G0` (`MIDI 24–31`)** | Momentary Copedent Keyswitches (`C0`=Pedal A, `C#0`=Pedal C, `D0`=Pedal B, `E0`=A+B Slant, `F0`=LKL, `G0`=LKR) |
-| **Notes `C1–G1` (`MIDI 36–43`, Ch 1)** | Studio Phrase Lick Keyswitches (`C1`=Lick 1, `D1`=Lick 2, `E1`=Lick 3, `F1`=Lick 4, `G1`=Full Studio Performance) |
-| **Notes `G#1+` (`MIDI 44+`, Ch 1)** | Polyphonic 10-String E9th Chromatic / Copedent / Lick Performance |
 | **MPE (`MIDI Ch 3–16`)** | Per-note independent oblique pitch bends (`±12` semitones) + Channel Pressure / Poly Aftertouch vibrato expression |
 | **`CC 1` (Mod Wheel)** | Smooth **A + B Pedal** slant (`I -> IV` / `vi` suspension) |
 | **`CC 7` / `CC 11`** | **Goodrich Optical Volume Pedal** swell |
-| **`CC 64` (Sustain Pedal)** | Natural 10-string damper sustain |
+| **`CC 64` (Sustain Pedal)** | Natural 10-string damper sustain (holds polyphonic arpeggio voices without legato stealing) |
 | **`CC 65 / 66 / 67 / 68 / 69`** | Continuous **Pedal A / Pedal B / Pedal C / LKL / LKR** control |
 | **`Pitch Wheel` (Ch 1)** | Solid Chrome Tonebar glissando (`±7` semitones) with hand/bar mass inertia |
 
