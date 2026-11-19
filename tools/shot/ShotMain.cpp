@@ -25,15 +25,41 @@ int main(int argc, char* argv[]) {
         processor.processBlock(audioBuf, midiBuf);
     }
 
-    // Verify full state & user-preset XML round-trip integrity
+    // Verify full state, MIDI CC Learn & Baseline Dirty/Revert round-trip integrity
     {
+        processor.loadPreset(14);
+        if (processor.isCurrentPresetModified()) {
+            std::cerr << "Freshly loaded preset should not be marked modified!" << std::endl;
+            return 4;
+        }
+        // Test MIDI CC Learn on ampDrive -> CC 74
+        processor.startMidiLearn(ParamIDs::ampDrive);
+        juce::MidiBuffer learnMidi;
+        learnMidi.addEvent(juce::MidiMessage::controllerEvent(1, 74, 100), 0);
+        processor.processBlock(audioBuf, learnMidi);
+        if (processor.getAssignedMidiCc(ParamIDs::ampDrive) != 74 || !processor.isCurrentPresetModified()) {
+            std::cerr << "MIDI CC Learn or modified-param tracking failed!" << std::endl;
+            return 5;
+        }
+        processor.revertToBaseline();
+        if (processor.isCurrentPresetModified()) {
+            std::cerr << "revertToBaseline() failed to clear modified state!" << std::endl;
+            return 6;
+        }
+
         juce::MemoryBlock stateBlob;
         processor.getStateInformation(stateBlob);
         if (stateBlob.getSize() == 0) {
             std::cerr << "State serialization failed!" << std::endl;
             return 2;
         }
+        processor.clearMidiCcForTarget(ParamIDs::ampDrive);
         processor.setStateInformation(stateBlob.getData(), static_cast<int>(stateBlob.getSize()));
+        if (processor.getAssignedMidiCc(ParamIDs::ampDrive) != 74) {
+            std::cerr << "MIDI CC Learn XML state persistence failed!" << std::endl;
+            return 7;
+        }
+        processor.clearMidiCcForTarget(ParamIDs::ampDrive);
 
         auto tempPreset = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("_nvps_audit_roundtrip.nvps");
         if (!processor.saveUserPreset(tempPreset) || !processor.loadUserPreset(tempPreset)) {
@@ -43,9 +69,10 @@ int main(int argc, char* argv[]) {
         }
         tempPreset.deleteFile();
         processor.loadPreset(14);
+        processor.triggerChordAudition(0);
         processor.setLivePedalState(0, 0.85f);
         processor.setLivePedalState(1, 1.0f);
-        for (int i = 0; i < 4; ++i) processor.processBlock(audioBuf, midiBuf);
+        for (int i = 0; i < 8; ++i) processor.processBlock(audioBuf, midiBuf);
     }
 
     std::unique_ptr<juce::AudioProcessorEditor> editor(processor.createEditor());

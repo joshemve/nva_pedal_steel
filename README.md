@@ -1,6 +1,6 @@
 # NVA Pedal Steel (`Nvps`)
 
-**NVA Pedal Steel** (`v1.5.0`) is a C++20 / JUCE 8 MIDI & MPE-playable 10-String Pedal Steel Guitar instrument plugin (`VST3`, `AU` on macOS, and `Standalone`) featuring **Nashville E9th**, **Western Swing Back-Neck C6th**, and **26.75" Baritone Canyon B6** copedents.
+**NVA Pedal Steel** (`v1.6.0`) is a C++20 / JUCE 8 MIDI & MPE-playable 10-String Pedal Steel Guitar instrument plugin (`VST3`, `AU` on macOS, and `Standalone`) featuring **Nashville E9th**, **Western Swing Back-Neck C6th**, and **26.75" Baritone Canyon B6** copedents.
 
 ![NVA Pedal Steel UI](renders/ui_screenshot.png)
 
@@ -26,7 +26,8 @@
   - Dedicated first-principles hardware modeling alongside `Studio Standard`: **Tascam 424 4-Track Cassette**, **Coles 4038 Ribbon + Teletronix LA-2A Opto Velvet**, **4-Stage Script Phase 90 / Uni-Vibe Analog Optical Phaser**, **Accutronics 3-Spring Tank Drip + Deep Fender Vibrolux Optical Bias Tremolo**, **24 dB/oct `1.35 kHz` Resampled Alt-R&B Underwater Filter**, **Boss VB-2 `1.55 Hz` Analog Pitch Vibrato + Stereo CE-2 + 12AX7 Tube Honey**, **Apollo `+12st` Shimmer**, **1965 Leslie 147 Rotary Speaker**, **Gated Diode Bloom**, **Standel 807 Chamber**, **Bosstone Violin Fuzz**, **Talk-Box Vowel**, **1937 Bakelite Lap**, **Abbey Road Tape ADT**, **'85 Bradshaw Tri-Rack**, **Poly-Octave Organ**, **Twin Peaks '89 Trem-Noir**, **Revolver Reverse Tape**, **Mohan Veena Jawari**, **Neo-Soul CE-1 Syrup**, **Binson Echorec Drum**, **CS-80 Synth-Steel**, **Scheerhorn Dobro Cone**, **Loveless SPX90 Reverse**, **King Tubby Dub Tank**, **Microcosm Granular**, **Dumble ODS Overdrive**, **'66 Cinecittà Twang**, **Khruangbin Cry-Spring**, **VHS Generation-Drift**, **Mercury7 Sub-Cathedra**, **Golden Hour 224XL Silk**, **Mellotron M400 Flute-Strings**, **'71 Maggot Brain Octavia Fuzz**, **'72 Suitcase Rhodes & Dyno**, **Blonde White-Ferrari Prism**, and **'77 Rumours Pianet & Instant-Flanger**.
 - **Full Studio QOL & Interactive UI**:
   - **Interactive 10-String Fretboard**: Dynamically displays `E9th`, `C6th`, or `Baritone B6` open string tunings and pedal pull labels; click any string to pluck and drag horizontally across frets `0–24` to slide the solid chrome bar in real time.
-  - **Front-Panel Analog Character Selector**: Mix and match any of the 37 character modes onto any preset with click-free `17 ms` live crossfading.
+  - **Front-Panel Categorized Character & Preset Browsers**: Browse all 50 Factory Presets and all 37 Analog Character Circuits by genre/hardware category, view live signal-chain descriptions, and switch character modes with click-free `17 ms` crossfading.
+  - **Hands-Free Pedal Latch, Draggable Optical Swell, MIDI CC Learn & QWERTY Typing**: `Shift+Click` / `Right-Click` any copedent pedal to latch it ON, drag the horizontal `OPTICAL SWELL` bar directly, `Right-Click` any of the 24 knobs or pedals for instant **MIDI CC Learn** (persisted with DAW project state), toggle **Laptop QWERTY Musical Typing** (`KEYS`: `A–L` white keys, `W/E/T/Y/U` sharps, `Z/X` octave, `1–5` pedals), and track tweaked knobs with glowing modified indicators + 1-click `REV` (`Revert`).
   - **50 Factory Presets + User Preset Save/Load** (`Documents/NVA Pedal Steel/Presets/*.nvps`), `<`/`>` quick-steppers, preset-aware double-click knob reset, `Ctrl/Cmd + Drag` fine precision mode, `PLAY LICK` & `E / G / D / C` chord audition buttons, live stereo `L/R` peak meter, resizable vector UI (`1060×660` to `1600×980`), hover tooltips, and full DAW state persistence.
 
 ## MIDI, Keyswitch & MPE Reference

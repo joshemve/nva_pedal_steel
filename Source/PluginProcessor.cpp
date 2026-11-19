@@ -6,6 +6,9 @@ PedalSteelAudioProcessor::PedalSteelAudioProcessor()
       apvts(*this, nullptr, "Parameters", createParameterLayout())
 {
     pendingUiCmds.reserve(64);
+    for (auto& slot : midiCcMap) {
+        slot.store(-1, std::memory_order_relaxed);
+    }
 
     pPresetStyle   = apvts.getRawParameterValue(ParamIDs::presetStyle);
     pPlayMode      = apvts.getRawParameterValue(ParamIDs::playMode);
@@ -326,7 +329,27 @@ void PedalSteelAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
             engine.renderBlock(buffer, currentSample, msgSample - currentSample);
             currentSample = msgSample;
         }
-        engine.handleMidiMessage(metadata.getMessage());
+        const auto msg = metadata.getMessage();
+        if (msg.isController()) {
+            const int cc = msg.getControllerNumber();
+            if (cc >= 0 && cc < 120) {
+                const float normVal = juce::jlimit(0.0f, 1.0f, static_cast<float>(msg.getControllerValue()) * (1.0f / 127.0f));
+                const int learnIdx = midiLearnTarget.exchange(-1, std::memory_order_acq_rel);
+                if (learnIdx >= 0 && learnIdx < kNumLearnableTargets) {
+                    for (auto& slot : midiCcMap) {
+                        int expected = learnIdx;
+                        slot.compare_exchange_strong(expected, -1, std::memory_order_acq_rel);
+                    }
+                    midiCcMap[static_cast<size_t>(cc)].store(learnIdx, std::memory_order_release);
+                }
+                const int mappedIdx = midiCcMap[static_cast<size_t>(cc)].load(std::memory_order_acquire);
+                if (mappedIdx >= 0 && mappedIdx < kNumLearnableTargets) {
+                    applyLearnedCcValue(mappedIdx, normVal);
+                    engine.setParams(readParamsFromAtomics());
+                }
+            }
+        }
+        engine.handleMidiMessage(msg);
     }
 
     if (currentSample < numSamples) {
@@ -454,6 +477,122 @@ float PedalSteelAudioProcessor::getBaselineParamValue(const juce::String& paramI
         return rp->convertFrom0to1(rp->getDefaultValue());
     }
     return 0.0f;
+}
+
+bool PedalSteelAudioProcessor::isParamModified(const juce::String& paramId) const {
+    auto* rp = apvts.getParameter(paramId);
+    if (rp == nullptr) return false;
+    const float curNorm  = rp->getValue();
+    const float baseNorm = rp->convertTo0to1(getBaselineParamValue(paramId));
+    return std::abs(curNorm - baseNorm) > 0.0025f;
+}
+
+bool PedalSteelAudioProcessor::isCurrentPresetModified() const {
+    static const char* const kTrackedIds[] = {
+        ParamIDs::presetStyle, ParamIDs::playMode, ParamIDs::fxCharacter, ParamIDs::tempoSync,
+        ParamIDs::scoopDepth, ParamIDs::pedalSpeed, ParamIDs::barGlide, ParamIDs::barSlideNoise,
+        ParamIDs::vibratoDepth, ParamIDs::vibratoRate, ParamIDs::autoSwell, ParamIDs::swellTime,
+        ParamIDs::sampleBlend, ParamIDs::pickSnap, ParamIDs::pickupPos, ParamIDs::coilPeakFreq,
+        ParamIDs::coilResonance, ParamIDs::sustainTime, ParamIDs::cabinetDrop, ParamIDs::stereoWidth,
+        ParamIDs::ampDrive, ParamIDs::toneWarmth, ParamIDs::delayMix, ParamIDs::delayTime,
+        ParamIDs::volumePedal, ParamIDs::reverbMix, ParamIDs::reverbDecay, ParamIDs::outputLevel
+    };
+    for (const char* id : kTrackedIds) {
+        if (isParamModified(id)) return true;
+    }
+    return false;
+}
+
+void PedalSteelAudioProcessor::revertToBaseline() {
+    std::map<juce::String, float> copy;
+    {
+        const juce::ScopedLock sl(presetMetaLock);
+        copy = baselineParamValues;
+    }
+    for (const auto& kv : copy) {
+        if (auto* rp = apvts.getParameter(kv.first)) {
+            rp->setValueNotifyingHost(rp->convertTo0to1(kv.second));
+        }
+    }
+    for (int p = 0; p < 5; ++p) {
+        setLivePedalState(p, getBaselineParamValue(getLearnableTargetId(24 + p)), false, false);
+    }
+    presetRevision.fetch_add(1, std::memory_order_relaxed);
+}
+
+const char* PedalSteelAudioProcessor::getLearnableTargetId(int targetIdx) {
+    static constexpr const char* kIds[kNumLearnableTargets] = {
+        ParamIDs::scoopDepth,    ParamIDs::pedalSpeed,    ParamIDs::barGlide,      ParamIDs::barSlideNoise,
+        ParamIDs::vibratoDepth,  ParamIDs::vibratoRate,   ParamIDs::autoSwell,     ParamIDs::swellTime,
+        ParamIDs::sampleBlend,   ParamIDs::pickSnap,      ParamIDs::pickupPos,     ParamIDs::coilPeakFreq,
+        ParamIDs::coilResonance, ParamIDs::sustainTime,   ParamIDs::cabinetDrop,   ParamIDs::stereoWidth,
+        ParamIDs::volumePedal,   ParamIDs::ampDrive,      ParamIDs::toneWarmth,    ParamIDs::delayMix,
+        ParamIDs::delayTime,     ParamIDs::reverbMix,     ParamIDs::reverbDecay,   ParamIDs::outputLevel,
+        ParamIDs::pedalA,        ParamIDs::pedalB,        ParamIDs::pedalC,        ParamIDs::leverLKL,
+        ParamIDs::leverLKR,      "pedalAB"
+    };
+    if (targetIdx >= 0 && targetIdx < kNumLearnableTargets) return kIds[targetIdx];
+    return "";
+}
+
+int PedalSteelAudioProcessor::findLearnableTargetIndex(const juce::String& targetId) {
+    for (int i = 0; i < kNumLearnableTargets; ++i) {
+        if (targetId == getLearnableTargetId(i)) return i;
+    }
+    return -1;
+}
+
+void PedalSteelAudioProcessor::startMidiLearn(const juce::String& targetId) {
+    midiLearnTarget.store(findLearnableTargetIndex(targetId), std::memory_order_release);
+}
+
+void PedalSteelAudioProcessor::cancelMidiLearn() {
+    midiLearnTarget.store(-1, std::memory_order_release);
+}
+
+bool PedalSteelAudioProcessor::isMidiLearningTarget(const juce::String& targetId) const {
+    const int idx = findLearnableTargetIndex(targetId);
+    return idx >= 0 && midiLearnTarget.load(std::memory_order_acquire) == idx;
+}
+
+int PedalSteelAudioProcessor::getAssignedMidiCc(const juce::String& targetId) const {
+    const int idx = findLearnableTargetIndex(targetId);
+    if (idx < 0) return -1;
+    for (int cc = 0; cc < 120; ++cc) {
+        if (midiCcMap[static_cast<size_t>(cc)].load(std::memory_order_acquire) == idx) return cc;
+    }
+    return -1;
+}
+
+void PedalSteelAudioProcessor::clearMidiCcForTarget(const juce::String& targetId) {
+    const int idx = findLearnableTargetIndex(targetId);
+    if (idx < 0) return;
+    for (auto& slot : midiCcMap) {
+        int expected = idx;
+        slot.compare_exchange_strong(expected, -1, std::memory_order_acq_rel);
+    }
+    int expectedLearn = idx;
+    midiLearnTarget.compare_exchange_strong(expectedLearn, -1, std::memory_order_acq_rel);
+}
+
+void PedalSteelAudioProcessor::applyLearnedCcValue(int targetIdx, float normVal) {
+    if (targetIdx == 29) { // Virtual A + B Slant target
+        const float bVal = juce::jlimit(0.0f, 1.0f, (normVal - 0.10f) * 1.12f);
+        engine.setManualPedal(0, normVal);
+        engine.setManualPedal(1, bVal);
+        if (auto* pA = apvts.getParameter(ParamIDs::pedalA)) pA->setValueNotifyingHost(normVal);
+        if (auto* pB = apvts.getParameter(ParamIDs::pedalB)) pB->setValueNotifyingHost(bVal);
+        return;
+    }
+    if (targetIdx >= 24 && targetIdx <= 28) {
+        engine.setManualPedal(targetIdx - 24, normVal);
+    }
+    const char* id = getLearnableTargetId(targetIdx);
+    if (id != nullptr && id[0] != '\0') {
+        if (auto* rp = apvts.getParameter(id)) {
+            rp->setValueNotifyingHost(normVal);
+        }
+    }
 }
 
 juce::File PedalSteelAudioProcessor::getUserPresetsFolder() {
@@ -594,6 +733,13 @@ void PedalSteelAudioProcessor::getStateInformation(juce::MemoryBlock& destData) 
         if (userName.isNotEmpty()) {
             xml->setAttribute("userPresetName", userName);
         }
+        auto* ccXml = xml->createNewChildElement("MidiCcMap");
+        for (int cc = 0; cc < 120; ++cc) {
+            const int tgt = midiCcMap[static_cast<size_t>(cc)].load(std::memory_order_acquire);
+            if (tgt >= 0 && tgt < kNumLearnableTargets) {
+                ccXml->setAttribute("cc_" + juce::String(cc), getLearnableTargetId(tgt));
+            }
+        }
         copyXmlToBinary(*xml, destData);
     }
 }
@@ -606,6 +752,22 @@ void PedalSteelAudioProcessor::setStateInformation(const void* data, int sizeInB
         {
             const juce::ScopedLock sl(presetMetaLock);
             activeUserPresetName = xmlState->getStringAttribute("userPresetName", "");
+        }
+        for (auto& slot : midiCcMap) slot.store(-1, std::memory_order_relaxed);
+        if (auto* ccXml = xmlState->getChildByName("MidiCcMap")) {
+            for (int i = 0; i < ccXml->getNumAttributes(); ++i) {
+                const juce::String attrName = ccXml->getAttributeName(i);
+                if (attrName.startsWith("cc_")) {
+                    const int cc = attrName.substring(3).getIntValue();
+                    const int tgt = findLearnableTargetIndex(ccXml->getAttributeValue(i));
+                    if (cc >= 0 && cc < 120 && tgt >= 0) {
+                        midiCcMap[static_cast<size_t>(cc)].store(tgt, std::memory_order_release);
+                    }
+                }
+            }
+        }
+        if (auto* ccChild = xmlState->getChildByName("MidiCcMap")) {
+            xmlState->removeChildElement(ccChild, true);
         }
         apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
         captureCurrentAsBaseline();

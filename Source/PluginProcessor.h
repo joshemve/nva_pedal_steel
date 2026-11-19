@@ -45,7 +45,7 @@ public:
     void slideFretboardNote(int stringIdx, float fret);
     void releaseFretboardNote(int stringIdx);
 
-    // User Preset Management (.nvps XML in Documents/NVA Pedal Steel/Presets)
+    // User Preset Management (.nvps XML in Documents/NVA Pedal Steel/Presets) & Baseline Dirty/Revert
     static juce::File getUserPresetsFolder();
     std::vector<juce::File> getUserPresetFiles() const;
     bool saveUserPreset(const juce::File& file);
@@ -53,6 +53,19 @@ public:
     juce::String getActiveUserPresetName() const;
     uint32_t getPresetRevision() const { return presetRevision.load(std::memory_order_relaxed); }
     float getBaselineParamValue(const juce::String& paramId) const;
+    bool isParamModified(const juce::String& paramId) const;
+    bool isCurrentPresetModified() const;
+    void revertToBaseline();
+
+    // Right-Click MIDI CC Learn (supports all 24 knobs + Pedals A, B, A+B Slant, C, LKL, LKR)
+    static constexpr int kNumLearnableTargets = 30;
+    static const char* getLearnableTargetId(int targetIdx);
+    static int findLearnableTargetIndex(const juce::String& targetId);
+    void startMidiLearn(const juce::String& targetId);
+    void cancelMidiLearn();
+    bool isMidiLearningTarget(const juce::String& targetId) const;
+    int getAssignedMidiCc(const juce::String& targetId) const;
+    void clearMidiCcForTarget(const juce::String& targetId);
 
     CopedentStatus getLiveStatus() const;
     float getOutputPeakL() const { return outputPeakL.load(std::memory_order_relaxed); }
@@ -86,7 +99,11 @@ private:
     std::atomic<float> outputPeakR{ 0.0f };
     std::atomic<double> currentHostBpm{ 120.0 };
 
+    std::array<std::atomic<int>, 128> midiCcMap{};
+    std::atomic<int> midiLearnTarget{ -1 };
+
     void captureCurrentAsBaseline();
+    void applyLearnedCcValue(int targetIdx, float normVal);
 
     // Cached atomic parameter pointers
     std::atomic<float>* pPresetStyle   = nullptr;
